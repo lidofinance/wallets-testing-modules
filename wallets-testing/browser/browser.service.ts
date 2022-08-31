@@ -16,7 +16,6 @@ import {
 import {
   WidgetConfig,
   StakeConfig,
-  WidgetPage,
 } from '@lidofinance/wallets-testing-widgets';
 import { WALLET_PAGES, WIDGET_PAGES } from './browser.constants';
 import { BrowserContextService } from './browser.context.service';
@@ -25,8 +24,9 @@ import { BrowserContextService } from './browser.context.service';
 export class BrowserService {
   private readonly logger = new Logger(BrowserService.name);
   private walletPage: WalletPage;
-  private widgetPage: WidgetPage;
   private account: Account;
+  private widgetConfig: WidgetConfig;
+  private stakeConfig: StakeConfig;
 
   constructor(
     private extensionService: ExtensionService,
@@ -40,6 +40,8 @@ export class BrowserService {
     widgetConfig: WidgetConfig,
     stakeConfig?: StakeConfig,
   ) {
+    this.widgetConfig = widgetConfig;
+    this.stakeConfig = stakeConfig;
     await this.ethereumNodeService.startNode();
     const walletConfig: WalletConfig = {
       SECRET_PHRASE: this.configService.get('WALLET_SECRET_PHRASE'),
@@ -52,7 +54,7 @@ export class BrowserService {
       );
     await this.browserContextService.setup(
       walletConfig,
-      widgetConfig.nodeUrl,
+      this.widgetConfig.nodeUrl,
     );
     const extension = new Extension(this.browserContextService.extensionId);
     this.walletPage = new WALLET_PAGES[commonWalletConfig.WALLET_NAME](
@@ -61,16 +63,16 @@ export class BrowserService {
       walletConfig,
     );
     this.account = this.ethereumNodeService.state.accounts[0];
-    this.widgetPage = new WIDGET_PAGES[widgetConfig.name](
-      await this.browserContextService.browserContext.newPage(),
-      widgetConfig || {},
-    );
-    if (widgetConfig && stakeConfig.tokenAddress && stakeConfig.mappingSlot) {
+    if (
+      this.stakeConfig &&
+      this.stakeConfig.tokenAddress &&
+      this.stakeConfig.mappingSlot
+    ) {
       await this.ethereumNodeService.setErc20Balance(
         this.account,
-        stakeConfig.tokenAddress,
-        stakeConfig.mappingSlot || 0,
-        stakeConfig.stakeAmount * 100,
+        this.stakeConfig.tokenAddress,
+        this.stakeConfig.mappingSlot || 0,
+        this.stakeConfig.stakeAmount * 100,
       );
     }
     await this.walletPage.setup();
@@ -80,9 +82,13 @@ export class BrowserService {
 
   async stake(): Promise<string> {
     try {
-      await this.widgetPage.navigate();
-      await this.widgetPage.connectWallet(this.walletPage);
-      await this.widgetPage.doStaking(this.walletPage);
+      const widgetPage = new WIDGET_PAGES[this.widgetConfig.name](
+        await this.browserContextService.browserContext.newPage(),
+        this.stakeConfig || {},
+      );
+      await widgetPage.navigate();
+      await widgetPage.connectWallet(this.walletPage);
+      await widgetPage.doStaking(this.walletPage);
     } finally {
       await this.browserContextService.closePages();
     }
@@ -94,8 +100,12 @@ export class BrowserService {
 
   async connectWallet(): Promise<string> {
     try {
-      await this.widgetPage.navigate();
-      await this.widgetPage.connectWallet(this.walletPage);
+      const widgetPage = new WIDGET_PAGES[this.widgetConfig.name](
+        await this.browserContextService.browserContext.newPage(),
+        this.widgetConfig || {},
+      );
+      await widgetPage.navigate();
+      await widgetPage.connectWallet(this.walletPage);
     } finally {
       await this.browserContextService.closePages();
     }
