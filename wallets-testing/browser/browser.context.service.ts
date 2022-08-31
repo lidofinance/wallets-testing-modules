@@ -5,7 +5,6 @@ import * as os from 'os';
 import * as path from 'path';
 import { WalletConfig } from '@lidofinance/wallets-testing-wallets';
 import { EthereumNodeService } from '@lidofinance/wallets-testing-nodes';
-import { NODE_URL } from '@lidofinance/wallets-testing-widgets';
 
 @Injectable()
 export class BrowserContextService {
@@ -14,12 +13,14 @@ export class BrowserContextService {
   extensionConfig: WalletConfig;
   extensionId: string;
   extensionPage: Page;
+  nodeUrl: string;
   private readonly logger = new Logger(BrowserContextService.name);
 
   constructor(private ethereumNodeService: EthereumNodeService) {}
 
-  async setup(walletConfig: WalletConfig) {
+  async setup(walletConfig: WalletConfig, nodeUrl: string) {
     this.extensionConfig = walletConfig;
+    this.nodeUrl = nodeUrl;
     await this.initBrowserContext();
   }
 
@@ -59,7 +60,7 @@ export class BrowserContextService {
       this.extensionConfig.COMMON.RPC_URL_PATTERN,
       this.browserContext,
     );
-    await this.ethereumNodeService.mockRoute(NODE_URL, this.browserContext);
+    await this.ethereumNodeService.mockRoute(this.nodeUrl, this.browserContext);
   }
 
   async setExtensionVars() {

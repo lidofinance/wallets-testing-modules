@@ -6,11 +6,12 @@ import {
   MATHWALLET_COMMON_CONFIG,
   METAMASK_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
-import { ETHEREUM_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
+import { POLYGON_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
 import { BrowserModule } from '../../browser/browser.module';
 import { BrowserService } from '../../browser/browser.service';
+import { MATIC_TOKEN } from './consts';
 
-describe('Ethereum widget testing', () => {
+describe('Polygon widget testing', () => {
   let app: INestApplication;
   let browserService: BrowserService;
 
@@ -24,22 +25,21 @@ describe('Ethereum widget testing', () => {
   });
 
   test.only(`Metamask wallet stake`, async () => {
-    await browserService.setup(METAMASK_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG, {
+    await browserService.setup(METAMASK_COMMON_CONFIG, POLYGON_WIDGET_CONFIG, {
       stakeAmount: 100,
+      tokenAddress: MATIC_TOKEN,
+      mappingSlot: 0,
     });
     await browserService.stake();
   }, 160000);
 
   test(`Coin98 wallet connect`, async () => {
-    await browserService.setup(COIN98_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
+    await browserService.setup(COIN98_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
     await browserService.connectWallet();
   }, 90000);
 
   test(`Mathwallet wallet connect`, async () => {
-    await browserService.setup(
-      MATHWALLET_COMMON_CONFIG,
-      ETHEREUM_WIDGET_CONFIG,
-    );
+    await browserService.setup(MATHWALLET_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
     await browserService.connectWallet();
   }, 90000);
 

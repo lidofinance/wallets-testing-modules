@@ -1,30 +1,26 @@
 import { Page } from 'playwright';
-import { ETHEREUM_WIDGET_CONFIG } from './ethereum.constants';
+import { POLYGON_WIDGET_CONFIG } from './polygon.constants';
 import { StakeConfig } from '../widgets.constants';
 import { WidgetPage } from '../widgets.page';
 import expect from 'expect';
 import { Logger } from '@nestjs/common';
 import { WalletPage } from '@lidofinance/wallets-testing-wallets';
 
-export class EthereumPage implements WidgetPage  {
-  private readonly logger = new Logger(EthereumPage.name);
+export class PolygonPage implements WidgetPage  {
+  private readonly logger = new Logger(PolygonPage.name);
   page: Page;
+
 
   constructor(page: Page, private stakeConfig: StakeConfig) {
     this.page = page;
   }
 
   async navigate() {
-    await this.page.goto(ETHEREUM_WIDGET_CONFIG.url);
+    await this.page.goto(POLYGON_WIDGET_CONFIG.url);
   }
 
   async connectWallet(walletPage: WalletPage) {
     await this.page.waitForTimeout(2000);
-    const popup =
-      (await this.page
-        .locator("button :has-text('Close and proceed')")
-        .count()) > 0;
-    if (popup) await this.page.click("button :has-text('Close and proceed')");
     const isConnected =
       (await this.page
         .locator("button :has-text('Connect wallet')")

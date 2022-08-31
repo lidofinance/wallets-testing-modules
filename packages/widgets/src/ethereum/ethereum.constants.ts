@@ -1,6 +1,7 @@
-export interface EthereumConfig {
-  stakeAmount: number;
-}
+import { WidgetConfig } from "../widgets.constants";
 
-export const WIDGET_URL = 'https://stake.lido.fi';
-export const NODE_URL = '**/api/rpc?chainId=1';
+export const ETHEREUM_WIDGET_CONFIG: WidgetConfig = {
+    url: 'https://stake.lido.fi',
+    nodeUrl: '**/api/rpc?chainId=1',
+    name: "ethereum"
+}
