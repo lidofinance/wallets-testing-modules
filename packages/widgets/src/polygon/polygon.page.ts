@@ -77,10 +77,6 @@ export class PolygonPage implements WidgetPage {
       this.page.click('button[type=submit]'),
     ]);
 
-    await walletPage.assertTxAmount(
-      stakeSignPage,
-      String(this.stakeConfig.stakeAmount),
-    );
     await walletPage.confirmTx(stakeSignPage);
   }
 }
