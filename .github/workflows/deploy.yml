@@ -31,7 +31,7 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run walllets tests
-        run: xvfb-run --auto-servernum -- yarn test
+        run: xvfb-run --auto-servernum -- yarn test -i
         working-directory: wallets-testing
         env:
           RPC_URL: ${{ secrets.RPC_URL }}
