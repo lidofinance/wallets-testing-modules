@@ -6,10 +6,9 @@ import expect from 'expect';
 import { Logger } from '@nestjs/common';
 import { WalletPage } from '@lidofinance/wallets-testing-wallets';
 
-export class PolygonPage implements WidgetPage  {
+export class PolygonPage implements WidgetPage {
   private readonly logger = new Logger(PolygonPage.name);
   page: Page;
-
 
   constructor(page: Page, private stakeConfig: StakeConfig) {
     this.page = page;
@@ -31,7 +30,9 @@ export class PolygonPage implements WidgetPage  {
         .first()
         .click();
       await this.page.waitForTimeout(2000);
-      if ((await this.page.locator('text=Submit').count()) === 0) {
+      if (
+        (await this.page.locator("button :has-text('Stake now')").count()) === 0
+      ) {
         if (!(await this.page.isChecked('input[type=checkbox]')))
           await this.page.click('input[type=checkbox]', { force: true });
         if (walletPage.config.COMMON.SIMPLE_CONNECT) {
@@ -48,22 +49,35 @@ export class PolygonPage implements WidgetPage  {
           await walletPage.connectWallet(connectWalletPage);
         }
         await this.page.waitForTimeout(1000);
-        expect(await this.page.locator('text=Submit').count()).toBe(1);
+        expect(
+          await this.page.locator("button :has-text('Stake now')").count(),
+        ).toBe(1);
       }
     }
   }
 
   async doStaking(walletPage: WalletPage) {
-    await this.page.fill('input[type=text]', String(this.stakeConfig.stakeAmount));
-    const [walletSignPage] = await Promise.all([
+    await this.page.fill(
+      'input[type=text]',
+      String(this.stakeConfig.stakeAmount),
+    );
+    const [unlockSignPage] = await Promise.all([
+      this.page.context().waitForEvent('page', { timeout: 120000 }),
+      this.page.click("button :has-text('Unlock tokens')"),
+    ]);
+    await walletPage.confirmTx(unlockSignPage);
+    await this.page.waitForSelector(`text=${this.stakeConfig.stakeAmount} MATIC unlocked`,{timeout:25000})
+    await this.page.mouse.click(20, 20)
+
+    const [stakeSignPage] = await Promise.all([
       this.page.context().waitForEvent('page', { timeout: 120000 }),
       this.page.click('button[type=submit]'),
     ]);
 
     await walletPage.assertTxAmount(
-      walletSignPage,
+      stakeSignPage,
       String(this.stakeConfig.stakeAmount),
     );
-    await walletPage.confirmTx(walletSignPage);
+    await walletPage.confirmTx(stakeSignPage);
   }
 }

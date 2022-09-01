@@ -56,10 +56,6 @@ export class BrowserContextService {
       this.extensionConfig.COMMON.RPC_URL_PATTERN,
       this.extensionPage,
     );
-    await this.ethereumNodeService.mockRoute(
-      this.extensionConfig.COMMON.RPC_URL_PATTERN,
-      this.browserContext,
-    );
     await this.ethereumNodeService.mockRoute(this.nodeUrl, this.browserContext);
   }
 

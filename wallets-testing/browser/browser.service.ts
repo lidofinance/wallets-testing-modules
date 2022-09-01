@@ -66,7 +66,7 @@ export class BrowserService {
     if (
       this.stakeConfig &&
       this.stakeConfig.tokenAddress &&
-      this.stakeConfig.mappingSlot
+      this.stakeConfig.mappingSlot != undefined
     ) {
       await this.ethereumNodeService.setErc20Balance(
         this.account,
