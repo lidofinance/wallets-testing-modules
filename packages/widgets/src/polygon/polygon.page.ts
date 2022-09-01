@@ -66,8 +66,11 @@ export class PolygonPage implements WidgetPage {
       this.page.click("button :has-text('Unlock tokens')"),
     ]);
     await walletPage.confirmTx(unlockSignPage);
-    await this.page.waitForSelector(`text=${this.stakeConfig.stakeAmount} MATIC unlocked`,{timeout:25000})
-    await this.page.mouse.click(20, 20)
+    await this.page.waitForSelector(
+      `text=${this.stakeConfig.stakeAmount} MATIC unlocked`,
+      { timeout: 25000 },
+    );
+    await this.page.mouse.click(20, 20);
 
     const [stakeSignPage] = await Promise.all([
       this.page.context().waitForEvent('page', { timeout: 120000 }),

@@ -3,10 +3,10 @@ import {
   MathWalletPage,
   MetamaskPage,
 } from '@lidofinance/wallets-testing-wallets';
- import {
+import {
   EthereumPage,
   PolygonPage,
- } from '@lidofinance/wallets-testing-widgets';
+} from '@lidofinance/wallets-testing-widgets';
 
 export const WALLET_PAGES = {
   metamask: MetamaskPage,

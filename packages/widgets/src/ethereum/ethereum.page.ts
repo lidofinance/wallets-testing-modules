@@ -6,7 +6,7 @@ import expect from 'expect';
 import { Logger } from '@nestjs/common';
 import { WalletPage } from '@lidofinance/wallets-testing-wallets';
 
-export class EthereumPage implements WidgetPage  {
+export class EthereumPage implements WidgetPage {
   private readonly logger = new Logger(EthereumPage.name);
   page: Page;
 
@@ -58,7 +58,10 @@ export class EthereumPage implements WidgetPage  {
   }
 
   async doStaking(walletPage: WalletPage) {
-    await this.page.fill('input[type=text]', String(this.stakeConfig.stakeAmount));
+    await this.page.fill(
+      'input[type=text]',
+      String(this.stakeConfig.stakeAmount),
+    );
     const [walletSignPage] = await Promise.all([
       this.page.context().waitForEvent('page', { timeout: 120000 }),
       this.page.click('button[type=submit]'),
