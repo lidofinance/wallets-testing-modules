@@ -15,10 +15,14 @@ NestJS modules for wallets integrations automated testing.
 
 ## Install
 
-1. `yarn && yarn postinstall`
+1. `yarn install`
 2. `yarn build`
 
 ## Usage
 
 - `yarn build` — Build all packages
 - `yarn lint` — Run eslint across packages
+
+## Run tests
+
+See [wallets-testing](/wallets-testing/README.md)
