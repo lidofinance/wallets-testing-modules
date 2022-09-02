@@ -70,6 +70,8 @@ export class PolygonPage implements WidgetPage {
       `text=${this.stakeConfig.stakeAmount} MATIC unlocked`,
       { timeout: 25000 },
     );
+    // Close cross on the po-up have no usable id or locator.
+    // Simple click to the non-pop-up zone will efficiently close it
     await this.page.mouse.click(20, 20);
 
     const [stakeSignPage] = await Promise.all([
