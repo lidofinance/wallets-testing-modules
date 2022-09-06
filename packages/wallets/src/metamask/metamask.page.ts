@@ -18,6 +18,7 @@ export class MetamaskPage implements WalletPage {
     await this.page.reload();
     await this.page.waitForTimeout(1000);
     await this.closePopover();
+    await this.unlock();
   }
 
   async setup() {
@@ -25,6 +26,14 @@ export class MetamaskPage implements WalletPage {
     if (!this.page) throw "Page isn't ready";
     const firstTime = (await this.page.locator('text=Get started').count()) > 0;
     if (firstTime) await this.firstTimeSetup();
+  }
+
+  async unlock() {
+    if (!this.page) throw "Page isn't ready";
+    if ((await this.page.locator('id=password').count()) > 0) {
+      await this.page.fill('id=password', this.config.PASSWORD);
+      await this.page.click('text=Unlock');
+    }
   }
 
   async importTokens(token: string) {
@@ -68,6 +77,7 @@ export class MetamaskPage implements WalletPage {
 
   async addNetwork(networkName: string, networkUrl: string, chainId: string) {
     if (!this.page) throw "Page isn't ready";
+    await this.navigate();
     await this.page.click('.account-menu__icon');
     await this.page.click('text=Settings');
     await this.page.click("text='Networks'");

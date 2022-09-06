@@ -2,7 +2,7 @@ name: test
 on:
   pull_request:
   schedule:
-    - cron:  '* 2,14 * * *'
+    - cron:  '0 2,14 * * *'
 jobs:
   test-packages:
     runs-on: ubuntu-latest
@@ -33,4 +33,4 @@ jobs:
           RPC_URL: ${{ secrets.RPC_URL }}
           WALLET_SECRET_PHRASE: ${{ secrets.WALLET_SECRET_PHRASE }}
           WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
-          NODE_OPTIONS: --max-old-space-size=4096
+          NODE_OPTIONS: --max-old-space-size=6144

@@ -24,7 +24,7 @@ describe('Polygon widget testing', () => {
     browserService = moduleFixture.get<BrowserService>(BrowserService);
   });
 
-  test.only(`Metamask wallet stake`, async () => {
+  test(`Metamask wallet stake`, async () => {
     await browserService.setup(METAMASK_COMMON_CONFIG, POLYGON_WIDGET_CONFIG, {
       stakeAmount: 100,
       tokenAddress: MATIC_TOKEN,
