@@ -16,6 +16,7 @@ export type Account = {
 
 export class ServiceUnreachableError extends Error {
   private cause: { message: string };
+  //eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(error: { message: string }, options: any) {
     super(error.message + `\n${JSON.stringify(options)}`);
     this.cause = error;

@@ -5,12 +5,13 @@ import {
   ExtensionsModule,
 } from '@lidofinance/wallets-testing-extensions';
 import * as fs from 'fs';
+import { test, expect } from '@playwright/test';
 
-describe('Extension service', () => {
+test.describe('Extension service', () => {
   let app: INestApplication;
   let extensionService: ExtensionService;
 
-  beforeEach(async () => {
+  test.beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [ExtensionsModule],
     }).compile();
@@ -20,11 +21,11 @@ describe('Extension service', () => {
     await app.init();
   });
 
-  it('should init', async () => {
+  test('should init', async () => {
     const extensionDir = await extensionService.getExtensionDirFromId(
       'nkbihfbeogaeaoehlefnkodbefgpgknn',
     );
     expect(extensionDir).toBeDefined();
     expect(fs.readdirSync(extensionDir).length).toBeGreaterThan(0);
-  }, 30000);
+  });
 });

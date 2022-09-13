@@ -3,12 +3,13 @@ import { INestApplication } from '@nestjs/common';
 import { EthereumNodeService } from '@lidofinance/wallets-testing-nodes';
 import { MATIC_TOKEN } from './consts';
 import { prepareNodeModule } from '../../commons';
+import { test, expect } from '@playwright/test';
 
-describe('Ethereum node', () => {
+test.describe('Ethereum node', () => {
   let app: INestApplication;
   let ethereumNodeService: EthereumNodeService;
 
-  beforeEach(async () => {
+  test.beforeEach(async () => {
     const moduleFixture = await Test.createTestingModule({
       imports: [prepareNodeModule()],
     }).compile();
@@ -19,14 +20,14 @@ describe('Ethereum node', () => {
     await app.init();
   });
 
-  it('should init', async () => {
+  test('should init', async () => {
     await ethereumNodeService.startNode();
     expect(ethereumNodeService.state).toBeDefined();
     const account = ethereumNodeService.state.accounts[0];
     expect(await ethereumNodeService.getBalance(account)).toEqual('1000.0');
-  }, 30000);
+  });
 
-  it('should set ERC20 balance', async () => {
+  test('should set ERC20 balance', async () => {
     await ethereumNodeService.startNode();
     expect(ethereumNodeService.state).toBeDefined();
     const account = ethereumNodeService.state.accounts[0];
@@ -35,9 +36,9 @@ describe('Ethereum node', () => {
         await ethereumNodeService.setErc20Balance(account, MATIC_TOKEN, 0, 100)
       ).toString(),
     ).toEqual('100');
-  }, 30000);
+  });
 
-  afterEach(async () => {
+  test.afterEach(async () => {
     await ethereumNodeService.stopNode();
   });
 });

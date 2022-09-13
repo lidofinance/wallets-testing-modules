@@ -12,7 +12,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install --immutable
@@ -27,10 +27,17 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run wallets tests
-        run: xvfb-run --auto-servernum -- yarn test -i
+        run: xvfb-run --auto-servernum -- yarn test
         working-directory: wallets-testing
         env:
           RPC_URL: ${{ secrets.RPC_URL }}
           WALLET_SECRET_PHRASE: ${{ secrets.WALLET_SECRET_PHRASE }}
           WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
-          NODE_OPTIONS: --max-old-space-size=6144
+          NODE_OPTIONS: --max-old-space-size=4096
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: playwright-report
+          path: wallets-testing/playwright-report/
+          retention-days: 30
+

@@ -81,7 +81,7 @@ export class EthereumNodeService {
     if (this.state === undefined) throw 'Node not ready';
 
     const ethersProvider = new providers.Web3Provider(
-      this.state.node.provider as any,
+      this.state.node.provider as unknown as providers.ExternalProvider,
     );
     const contract = new Contract(
       tokenAddress,
@@ -131,7 +131,7 @@ export class EthereumNodeService {
   async fetchSafety(
     request: APIRequestContext,
     urlOrRequest: string | Request,
-    options: any,
+    options: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   ): Promise<APIResponse | undefined> {
     let lastErr;
     options.timeout = 0;

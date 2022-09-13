@@ -38,6 +38,7 @@ export class BrowserContextService {
           '--disable-dev-shm-usage',
           `--disable-extensions-except=${this.extensionConfig.EXTENSION_PATH}`,
           `--load-extension=${this.extensionConfig.EXTENSION_PATH}`,
+          '--js-flags="--max-old-space-size=2048"',
         ],
       },
     );

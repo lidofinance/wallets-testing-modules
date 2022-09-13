@@ -10,12 +10,13 @@ import { POLYGON_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
 import { BrowserModule } from '../../browser/browser.module';
 import { BrowserService } from '../../browser/browser.service';
 import { MATIC_TOKEN } from './consts';
+import { test } from '@playwright/test';
 
-describe('Polygon widget testing', () => {
+test.describe('Polygon widget testing', () => {
   let app: INestApplication;
   let browserService: BrowserService;
 
-  beforeAll(async () => {
+  test.beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [prepareNodeModule(), BrowserModule],
     }).compile();
@@ -31,19 +32,19 @@ describe('Polygon widget testing', () => {
       mappingSlot: 0,
     });
     await browserService.stake();
-  }, 160000);
+  });
 
   test(`Coin98 wallet connect`, async () => {
     await browserService.setup(COIN98_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
     await browserService.connectWallet();
-  }, 90000);
+  });
 
   test(`Mathwallet wallet connect`, async () => {
     await browserService.setup(MATHWALLET_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
     await browserService.connectWallet();
-  }, 90000);
+  });
 
-  afterEach(async () => {
+  test.afterEach(async () => {
     await browserService.teardown();
   });
 });

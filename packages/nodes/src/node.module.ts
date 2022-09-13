@@ -4,6 +4,7 @@ import { OPTIONS } from './node.constants';
 
 @Module({})
 export class NodeModule {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   static forRoot(
     useFactory: (...args: any[]) => { rpcUrl: string },
     inject?: any[],

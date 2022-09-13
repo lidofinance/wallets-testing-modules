@@ -66,13 +66,14 @@ __metadata:
 
 "@lidofinance/wallets-testing-wallets@file:../wallets::locator=%40lidofinance%2Fwallets-testing-widgets%40workspace%3A.":
   version: 0.0.0-semantic-release
-  resolution: "@lidofinance/wallets-testing-wallets@file:../wallets#../wallets::hash=bebe2b&locator=%40lidofinance%2Fwallets-testing-widgets%40workspace%3A."
+  resolution: "@lidofinance/wallets-testing-wallets@file:../wallets#../wallets::hash=b60ada&locator=%40lidofinance%2Fwallets-testing-widgets%40workspace%3A."
   dependencies:
+    "@playwright/test": ^1.25.2
     expect: ^28.1.3
     playwright: ^1.21.1
     reflect-metadata: ^0.1.13
     rxjs: ^7.5.6
-  checksum: b46d08d7aa348c5323f2c902895b525b4423f9317671276e74f4833be21836d1da875fe2223e31534740ede71b2141c3325bb39eb716e530687f7933b2f62515
+  checksum: 9f86e19fb77c1a64033e24aaee9267634c712bf35ba34219dcc9eaf9032224199cef9a499e1098239874cd7654344ec518847958b4c164736be625bc9689db84
   languageName: node
   linkType: hard
 
@@ -85,6 +86,7 @@ __metadata:
     "@nestjs/config": ^2.2.0
     "@nestjs/core": ^8.2.5
     "@nestjs/testing": ^8.2.5
+    "@playwright/test": ^1.25.2
     expect: ^28.1.3
     playwright: ^1.21.1
     reflect-metadata: ^0.1.13
@@ -191,6 +193,18 @@ __metadata:
   bin:
     opencollective: bin/opencollective.js
   checksum: fd3737c12edf55b5c2279674664c3ed5e756410ea82e9cd324c3f0e032ed5ccd8df1959ec69ea97f2f1c9c33c884aae3d7a7108a73ea0faa90d74ea47cf364d4
+  languageName: node
+  linkType: hard
+
+"@playwright/test@npm:^1.25.2":
+  version: 1.25.2
+  resolution: "@playwright/test@npm:1.25.2"
+  dependencies:
+    "@types/node": "*"
+    playwright-core: 1.25.2
+  bin:
+    playwright: cli.js
+  checksum: 3c24027bd9b305a3985cae35a4046e656dd0ffb76ef4dfcfc864f6c8492a643fc21c79048ee8169c5c1562d3cae493e7223a5473b127fef3bda7c7c52795c17d
   languageName: node
   linkType: hard
 
@@ -660,6 +674,15 @@ __metadata:
   bin:
     playwright: cli.js
   checksum: 78a9c8857428c8e9fe3a2061672a2e9ce0106afec473281d3a6389ec29918fd1d29c9d2792edde90bfd92c4477151fbd2d8f9f5061fbddaf8c6995a91c9cf2de
+  languageName: node
+  linkType: hard
+
+"playwright-core@npm:1.25.2":
+  version: 1.25.2
+  resolution: "playwright-core@npm:1.25.2"
+  bin:
+    playwright: cli.js
+  checksum: 24ada61e2132bd7278cf0aa0ef711280e1519c437efa0088a99c47ef994202f4c9880521d8c0c51ab854bef08806f372477d754aac1e790ea64f18cd346b5b2f
   languageName: node
   linkType: hard
 

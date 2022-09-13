@@ -9,12 +9,13 @@ import {
 import { ETHEREUM_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
 import { BrowserModule } from '../../browser/browser.module';
 import { BrowserService } from '../../browser/browser.service';
+import { test } from '@playwright/test';
 
-describe('Ethereum widget testing', () => {
+test.describe('Ethereum widget testing', () => {
   let app: INestApplication;
   let browserService: BrowserService;
 
-  beforeAll(async () => {
+  test.beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [prepareNodeModule(), BrowserModule],
     }).compile();
@@ -28,12 +29,12 @@ describe('Ethereum widget testing', () => {
       stakeAmount: 100,
     });
     await browserService.stake();
-  }, 160000);
+  });
 
   test(`Coin98 wallet connect`, async () => {
     await browserService.setup(COIN98_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
-  }, 90000);
+  });
 
   test(`Mathwallet wallet connect`, async () => {
     await browserService.setup(
@@ -41,9 +42,9 @@ describe('Ethereum widget testing', () => {
       ETHEREUM_WIDGET_CONFIG,
     );
     await browserService.connectWallet();
-  }, 90000);
+  });
 
-  afterEach(async () => {
+  test.afterEach(async () => {
     await browserService.teardown();
   });
 });

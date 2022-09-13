@@ -63,9 +63,8 @@ export class ExtensionService {
     this.idToExtension[id] = extensionDir;
   }
 
-  private arrayBufferToStream(arraybuffer: any) {
-    const data = arraybuffer;
-    let buf = new Uint8Array(data);
+  private arrayBufferToStream(arraybuffer: ArrayBuffer) {
+    let buf = new Uint8Array(arraybuffer);
     let publicKeyLength, signatureLength, header, zipStartOffset;
     if (buf[4] === 2) {
       header = 16;
