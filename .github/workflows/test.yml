@@ -35,9 +35,30 @@ jobs:
           WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
           NODE_OPTIONS: --max-old-space-size=4096
       - uses: actions/upload-artifact@v2
-        if: always()
+        if: ${{ always() }}
         with:
           name: playwright-report
           path: wallets-testing/playwright-report/
           retention-days: 30
 
+      - name: Discord notification
+        if: ${{ failure() && github.event_name == 'schedule' }}
+        uses: Ilshidur/action-discord@0.3.2
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_EMBEDS: '[{
+            "title": "🙅‍♂️ Periodically running wallet tests failed",
+            "description": "[🔗 Tests summary](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})",
+            "color": 13959168
+          }]'
+
+      - name: Discord notification
+        if: ${{ success() && github.event_name == 'schedule' }}
+        uses: Ilshidur/action-discord@0.3.2
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_EMBEDS: '[{
+            "title": "💆‍♂️️ Periodically running wallet tests pass",
+            "description": "There is no link here, just relax",
+            "color": 47872
+          }]'
