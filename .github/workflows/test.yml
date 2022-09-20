@@ -1,4 +1,4 @@
-name: test
+name: Test wallets
 on:
   pull_request:
   schedule:
@@ -43,7 +43,7 @@ jobs:
 
       - name: Discord notification
         if: ${{ failure() && github.event_name == 'schedule' }}
-        uses: Ilshidur/action-discord@0.3.2
+        uses: lidofinance/action-discord@master
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           DISCORD_EMBEDS: '[{
@@ -54,7 +54,7 @@ jobs:
 
       - name: Discord notification
         if: ${{ success() && github.event_name == 'schedule' }}
-        uses: Ilshidur/action-discord@0.3.2
+        uses: lidofinance/action-discord@master
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           DISCORD_EMBEDS: '[{

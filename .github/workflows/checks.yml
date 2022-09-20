@@ -1,4 +1,4 @@
-name: Tests and Checks
+name: Static checks
 
 on: pull_request
 
