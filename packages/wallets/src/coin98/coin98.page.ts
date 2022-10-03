@@ -40,6 +40,7 @@ export class Coin98 implements WalletPage {
       await inputs.nth(1).fill(this.config.PASSWORD);
       await this.page.click('button:has-text("Setup Password")');
       await this.page.click('button:has-text("Ok")');
+      await this.page.click('button:has-text("Confirm")');
       await this.page.fill('[placeholder="Search chain"]', 'eth');
       await this.page.click('.box-logo');
       await this.page.fill('[placeholder="Wallet name"]', 'test');
