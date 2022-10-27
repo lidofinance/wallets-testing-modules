@@ -14,4 +14,6 @@ export interface WalletPage {
   assertTxAmount(page: Page, expectedAmount: string): Promise<void>;
 
   confirmTx(page: Page): Promise<void>;
+
+  getReceiptAddress(page: Page): Promise<string>;
 }

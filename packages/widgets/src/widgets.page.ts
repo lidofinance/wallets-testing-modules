@@ -9,4 +9,6 @@ export interface WidgetPage {
   connectWallet(walletPage: WalletPage): Promise<void>;
 
   doStaking(walletPage: WalletPage): Promise<void>;
+
+  getReceiptAddress(walletPage: WalletPage): Promise<string>;
 }

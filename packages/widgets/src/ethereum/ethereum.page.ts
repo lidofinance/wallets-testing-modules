@@ -83,4 +83,23 @@ export class EthereumPage implements WidgetPage {
       await walletPage.confirmTx(walletSignPage);
     });
   }
+
+  async getReceiptAddress(walletPage: WalletPage) {
+    return await test.step('Do staking', async () => {
+      await this.page.fill(
+        'input[type=text]',
+        String(this.stakeConfig.stakeAmount),
+      );
+      const [walletSignPage] = await Promise.all([
+        this.page.context().waitForEvent('page', { timeout: 120000 }),
+        this.page.click('button[type=submit]'),
+      ]);
+
+      await walletPage.assertTxAmount(
+        walletSignPage,
+        String(this.stakeConfig.stakeAmount),
+      );
+      return await walletPage.getReceiptAddress(walletSignPage);
+    });
+  }
 }

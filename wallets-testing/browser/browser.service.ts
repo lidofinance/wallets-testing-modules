@@ -104,6 +104,16 @@ export class BrowserService {
     return 'Success';
   }
 
+  async getReceiptAddress(): Promise<string> {
+    const widgetPage = new WIDGET_PAGES[this.widgetConfig.name](
+      await this.browserContextService.browserContext.newPage(),
+      this.widgetConfig || {},
+    );
+    await widgetPage.navigate();
+    await widgetPage.connectWallet(this.walletPage);
+    return await widgetPage.getReceiptAddress(this.walletPage);
+  }
+
   async connectWallet(): Promise<string> {
     try {
       const widgetPage = new WIDGET_PAGES[this.widgetConfig.name](

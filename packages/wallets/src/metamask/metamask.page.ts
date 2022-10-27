@@ -145,4 +145,17 @@ export class MetamaskPage implements WalletPage {
       await page.click('text=Confirm');
     });
   }
+
+  async getReceiptAddress(page: Page) {
+    return await test.step('Get receipt address', async () => {
+      await page.click('div :has-text(Liquid staked Ether 2.0)');
+      await page.click('button[type=link]');
+      await page.click('button[data-testid=popover-close]');
+      const receiptAddress = String(
+        page.evaluate('navigator.clipboard.getText()'),
+      );
+      console.log(receiptAddress);
+      return receiptAddress;
+    });
+  }
 }
