@@ -80,4 +80,7 @@ export class Coin98 implements WalletPage {
       await page.click('button:has-text("Confirm")');
     });
   }
+
+  // eslint-disable-next-line
+  async assertReceiptAddress(page: Page, expectedAmount: string) {}
 }

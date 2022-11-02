@@ -71,4 +71,7 @@ export class MathWalletPage implements WalletPage {
 
   // eslint-disable-next-line
   async confirmTx(page: Page) {}
+
+  // eslint-disable-next-line
+  async assertReceiptAddress(page: Page, expectedAmount: string) {}
 }
