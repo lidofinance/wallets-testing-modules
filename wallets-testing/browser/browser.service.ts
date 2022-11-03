@@ -108,7 +108,7 @@ export class BrowserService {
     try {
       const widgetPage = new WIDGET_PAGES[this.widgetConfig.name](
         await this.browserContextService.browserContext.newPage(),
-        this.widgetConfig || {},
+        this.stakeConfig || {},
       );
       await widgetPage.navigate();
       await widgetPage.connectWallet(this.walletPage);

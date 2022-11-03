@@ -80,6 +80,10 @@ export class EthereumPage implements WidgetPage {
         walletSignPage,
         String(this.stakeConfig.stakeAmount),
       );
+      await walletPage.assertReceiptAddress(
+        walletSignPage,
+        String(ETHEREUM_WIDGET_CONFIG.stakeContract),
+      );
       await walletPage.confirmTx(walletSignPage);
     });
   }

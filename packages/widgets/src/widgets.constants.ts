@@ -8,4 +8,6 @@ export interface WidgetConfig {
   url: string;
   nodeUrl: string;
   name: string;
+  stakeContract: string;
+  wrapContract: string;
 }
