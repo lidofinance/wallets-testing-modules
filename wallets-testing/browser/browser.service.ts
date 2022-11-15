@@ -86,6 +86,13 @@ export class BrowserService {
       walletConfig,
     );
     await this.walletPage.setup();
+    if (!this.widgetConfig.isDefaultNetwork)
+      await this.walletPage.addNetwork(
+        this.widgetConfig.chainName,
+        this.widgetConfig.nodeUrl,
+        this.widgetConfig.chainId,
+        this.widgetConfig.tokenSymbol,
+      );
     await this.browserContextService.closePages();
   }
 

@@ -83,4 +83,7 @@ export class Coin98 implements WalletPage {
 
   // eslint-disable-next-line
   async assertReceiptAddress(page: Page, expectedAmount: string) {}
+
+  // eslint-disable-next-line
+  async addNetwork(networkName: string, networkUrl: string, chainId: number, tokenSymbol: string) {}
 }
