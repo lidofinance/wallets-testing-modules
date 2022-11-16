@@ -6,6 +6,7 @@ import {
 import {
   EthereumPage,
   KusamaPage,
+  PolkadotPage,
   PolygonPage,
 } from '@lidofinance/wallets-testing-widgets';
 
@@ -19,4 +20,5 @@ export const WIDGET_PAGES = {
   ethereum: EthereumPage,
   polygon: PolygonPage,
   kusama: KusamaPage,
+  polkadot: PolkadotPage,
 };
