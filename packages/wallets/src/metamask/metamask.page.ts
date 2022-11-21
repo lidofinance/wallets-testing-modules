@@ -84,7 +84,12 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
-  async addNetwork(networkName: string, networkUrl: string, chainId: string) {
+  async addNetwork(
+    networkName: string,
+    networkUrl: string,
+    chainId: number,
+    tokenSymbol: string,
+  ) {
     await test.step('Add network', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.navigate();
@@ -92,6 +97,7 @@ export class MetamaskPage implements WalletPage {
       await this.page.click('text=Settings');
       await this.page.click("text='Networks'");
       await this.page.click('text=Add a network');
+      await this.page.click("a :has-text('Add a network manually')");
       await this.page.fill(
         ".form-field :has-text('Network Name') >> input",
         networkName,
@@ -102,11 +108,11 @@ export class MetamaskPage implements WalletPage {
       );
       await this.page.fill(
         ".form-field :has-text('Chain ID') >> input",
-        chainId,
+        String(chainId),
       );
       await this.page.fill(
         ".form-field :has-text('Currency symbol') >> input",
-        'ETH',
+        tokenSymbol,
       );
       await this.page.click('text=Save');
       await this.navigate();

@@ -16,4 +16,11 @@ export interface WalletPage {
   confirmTx(page: Page): Promise<void>;
 
   assertReceiptAddress(page: Page, expectedAmount: string): Promise<void>;
+
+  addNetwork(
+    networkName: string,
+    networkUrl: string,
+    chainId: number,
+    tokenSymbol: string,
+  ): Promise<void>;
 }
