@@ -32,8 +32,6 @@ export class TallyPage implements WalletPage {
     });
   }
 
-  async importTokens(token: string) {}
-
   async closePopover() {
     await test.step('Close popover if exists', async () => {
       if (!this.page) throw "Page isn't ready";
@@ -96,6 +94,8 @@ export class TallyPage implements WalletPage {
       await page.click('text=Sign');
     });
   }
+  // eslint-disable-next-line
+  async importTokens(token: string) {}
 
   // eslint-disable-next-line
   async assertReceiptAddress(page: Page, expectedAddress: string) {}
