@@ -96,16 +96,10 @@ export class TallyPage implements WalletPage {
       await page.click('text=Sign');
     });
   }
+
   // eslint-disable-next-line
   async assertReceiptAddress(page: Page, expectedAddress: string) {}
 
   // eslint-disable-next-line
-  async addNetwork(
-    networkName: string,
-    networkUrl: string,
-    chainId: number,
-    tokenSymbol: string,
-  ): Promise<void> {
-    return Promise.resolve(undefined);
-  }
+  async addNetwork(networkName: string, networkUrl: string, chainId: number, tokenSymbol: string) {}
 }
