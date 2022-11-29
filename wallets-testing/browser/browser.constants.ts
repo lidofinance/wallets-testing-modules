@@ -2,18 +2,21 @@ import {
   Coin98,
   MathWalletPage,
   MetamaskPage,
+  PhantomPage,
 } from '@lidofinance/wallets-testing-wallets';
 import {
   EthereumPage,
   KusamaPage,
   PolkadotPage,
   PolygonPage,
+  SolanaPage,
 } from '@lidofinance/wallets-testing-widgets';
 
 export const WALLET_PAGES = {
   metamask: MetamaskPage,
   coin98: Coin98,
   mathwallet: MathWalletPage,
+  phantom: PhantomPage,
 };
 
 export const WIDGET_PAGES = {
@@ -21,4 +24,5 @@ export const WIDGET_PAGES = {
   polygon: PolygonPage,
   kusama: KusamaPage,
   polkadot: PolkadotPage,
+  solana: SolanaPage,
 };
