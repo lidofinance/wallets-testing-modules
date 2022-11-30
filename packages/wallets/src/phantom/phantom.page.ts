@@ -117,10 +117,5 @@ export class PhantomPage implements WalletPage {
   }
 
   // eslint-disable-next-line
-  async addNetwork(
-    networkName: string,
-    networkUrl: string,
-    chainId: number,
-    tokenSymbol: string,
-  ) {}
+  async addNetwork(networkName: string, networkUrl: string, chainId: number, tokenSymbol: string) {}
 }
