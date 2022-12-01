@@ -5,6 +5,7 @@ import {
   COIN98_COMMON_CONFIG,
   MATHWALLET_COMMON_CONFIG,
   METAMASK_COMMON_CONFIG,
+  TALLY_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import { ETHEREUM_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
 import { BrowserModule } from '../../browser/browser.module';
@@ -45,6 +46,11 @@ test.describe('Ethereum widget testing', () => {
       MATHWALLET_COMMON_CONFIG,
       ETHEREUM_WIDGET_CONFIG,
     );
+    await browserService.connectWallet();
+  });
+
+  test(`Tally wallet connect`, async () => {
+    await browserService.setup(TALLY_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 
