@@ -60,7 +60,7 @@ export class PhantomPage implements WalletPage {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.page.click('button:has-text("I already have a wallet")');
-      const inputs = this.page.locator('.sc-bdvvtL >> input');
+      const inputs = this.page.locator('input[data-testid]');
       const seedWords = this.config.SECRET_PHRASE.split(' ');
       for (let i = 0; i < seedWords.length; i++) {
         await inputs.nth(i).fill(seedWords[i]);
