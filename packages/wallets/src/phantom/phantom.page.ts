@@ -80,7 +80,7 @@ export class PhantomPage implements WalletPage {
     await test.step('Import key', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.navigate();
-      await this.page.click('.sc-bYoBSM bBxQWq');
+      await this.page.click('text=W1');
       await this.page.click('div:has-text("Wallet 1")');
       await this.page.click('button:has-text("Add / Connect Wallet")');
       await this.page.click(
@@ -99,10 +99,9 @@ export class PhantomPage implements WalletPage {
 
   async assertTxAmount(page: Page, expectedAmount: string) {
     await test.step('Assert TX Amount', async () => {
-      const sendAmount = String(
-        await page.textContent('.sc-hKwDye byucnr'),
-      ).replace(/[^\d.-]/g, '');
-      expect(sendAmount).toBe(expectedAmount);
+      expect(
+        await page.locator(`text=Send ${expectedAmount} SOL`).count(),
+      ).toBe(1);
     });
   }
 
