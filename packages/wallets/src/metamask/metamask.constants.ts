@@ -6,4 +6,5 @@ export const METAMASK_COMMON_CONFIG: CommonWalletConfig = {
   STORE_EXTENSION_ID: 'nkbihfbeogaeaoehlefnkodbefgpgknn',
   CONNECT_BUTTON_NAME: 'Metamask',
   SIMPLE_CONNECT: false,
+  EXTENSION_START_PATH: '/home.html',
 };

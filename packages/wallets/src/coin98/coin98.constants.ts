@@ -6,4 +6,5 @@ export const COIN98_COMMON_CONFIG: CommonWalletConfig = {
   STORE_EXTENSION_ID: 'aeachknmefphepccionboohckonoeemg',
   CONNECT_BUTTON_NAME: 'Coin98',
   SIMPLE_CONNECT: false,
+  EXTENSION_START_PATH: '/popup.html',
 };

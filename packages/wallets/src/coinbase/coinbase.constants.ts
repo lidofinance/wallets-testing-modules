@@ -6,4 +6,5 @@ export const COINBASE_COMMON_CONFIG: CommonWalletConfig = {
   STORE_EXTENSION_ID: 'hnfanknocfeofbddgcijnmhnfnkdnaad',
   CONNECT_BUTTON_NAME: 'Coinbase',
   SIMPLE_CONNECT: false,
+  EXTENSION_START_PATH: '/index.html',
 };

@@ -52,7 +52,9 @@ export class BrowserContextService {
       this.browserContextPaths.push(browserContextPath);
       this.logger.debug('Browser context closed');
     });
-    await this.setExtensionVars();
+    await this.setExtensionVars(
+      this.extensionConfig.COMMON.EXTENSION_START_PATH,
+    );
     if (this.ethereumNodeService.state) {
       await this.ethereumNodeService.mockRoute(
         this.extensionConfig.COMMON.RPC_URL_PATTERN,
@@ -65,14 +67,21 @@ export class BrowserContextService {
     }
   }
 
-  async setExtensionVars() {
-    this.extensionPage = this.browserContext.backgroundPages()[0];
-    if (this.extensionPage === undefined)
-      this.extensionPage = await Promise.race([
-        this.browserContext.waitForEvent('page'),
+  async setExtensionVars(extensionStartPath: string) {
+    let [background] =
+      this.browserContext.serviceWorkers() ||
+      this.browserContext.backgroundPages();
+    if (background === undefined)
+      background = await Promise.race([
+        this.browserContext.waitForEvent('serviceworker'),
         this.browserContext.waitForEvent('backgroundpage'),
       ]);
-    this.extensionId = await this.extensionPage.evaluate('chrome.runtime.id');
+    this.extensionId = background.url().split('/')[2];
+
+    this.extensionPage = await this.browserContext.newPage();
+    await this.extensionPage.goto(
+      `chrome-extension://${this.extensionId}${extensionStartPath}`,
+    );
   }
 
   async closePages() {

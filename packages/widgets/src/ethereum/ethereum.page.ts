@@ -57,7 +57,8 @@ export class EthereumPage implements WidgetPage {
               ]);
               await walletPage.connectWallet(connectWalletPage);
             }
-            await this.page.waitForTimeout(1000);
+            //TODO: `Add more clear assert for connection
+            await this.page.waitForSelector('text=Submit');
             expect(await this.page.locator('text=Submit').count()).toBe(1);
           }
         }
