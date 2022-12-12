@@ -77,7 +77,7 @@ export class BrowserContextService {
         this.browserContext.waitForEvent('backgroundpage'),
       ]);
     this.extensionId = background.url().split('/')[2];
-
+    console.log(`~~~~~~~ ${background}`);
     this.extensionPage = await this.browserContext.newPage();
     await this.extensionPage.goto(
       `chrome-extension://${this.extensionId}${extensionStartPath}`,
