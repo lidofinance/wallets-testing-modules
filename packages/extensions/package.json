@@ -1,8 +1,8 @@
 {
   "name": "@lidofinance/wallets-testing-extensions",
-  "version": "0.0.0-semantic-release",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "version": "0.0.1",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "license": "MIT",
   "homepage": "https://github.com/lidofinance/wallets-testing-modules",
   "repository": {

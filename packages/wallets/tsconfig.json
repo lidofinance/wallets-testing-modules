@@ -1,7 +1,24 @@
 {
   "compilerOptions": {
-      "experimentalDecorators": true,
-      "resolveJsonModule": true
+    "strict": true,
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictNullChecks": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "declaration": true,
+    "declarationMap": true,
+    "incremental": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "module": "esnext",
+    "target": "es2017",
+    "resolveJsonModule": true,
+    "composite": true,
+    "outDir": "./dist",
+    "rootDir": "."
   },
-  "extends": "../../tsconfig.json"
+  "references": []
 }
