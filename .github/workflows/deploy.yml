@@ -25,12 +25,9 @@ jobs:
       - name: Build Components
         run: yarn build
 
-      - name: Install dependencies in wallets-testing
-        working-directory: wallets-testing
-        run: yarn install --immutable
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-      - name: Run walllets tests
+      - name: Run wallets tests
         run: xvfb-run --auto-servernum -- yarn test
         working-directory: wallets-testing
         env:

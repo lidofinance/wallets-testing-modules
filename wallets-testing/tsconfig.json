@@ -1,22 +1,41 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
+    "skipLibCheck": true,
+    "alwaysStrict": true,
+    "strict": true,
+    "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "es2017",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true,
-    "skipLibCheck": true,
     "strictNullChecks": false,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
     "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
-    "resolveJsonModule": true
-  }
+    "declaration": true,
+    "declarationMap": true,
+    "incremental": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "target": "ES2020",
+    "resolveJsonModule": true,
+    "composite": true,
+    "sourceMap": true,
+    "lib": ["ES2020"],
+    "outDir": "./dist",
+    "rootDir": "."
+  },
+  "references": [
+    {
+      "path": "../packages/extensions"
+    },
+    {
+      "path": "../packages/nodes"
+    },
+    {
+      "path": "../packages/wallets"
+    },
+    {
+      "path": "../packages/widgets"
+    },
+  ]
 }
