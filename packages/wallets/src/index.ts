@@ -7,3 +7,4 @@ export * from './trustwallet';
 export * from './phantom';
 export * from './coinbase';
 export * from './tally';
+export * from './exodus';
