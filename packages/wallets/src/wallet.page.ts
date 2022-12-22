@@ -5,7 +5,7 @@ export interface WalletPage {
   page: Page | undefined;
   config: WalletConfig;
 
-  setup(): Promise<void>;
+  setup(network?: string): Promise<void>;
 
   importKey(key: string): Promise<void>;
 

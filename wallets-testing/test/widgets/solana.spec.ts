@@ -1,7 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { prepareNodeModule } from '../../commons';
-import { PHANTOM_COMMON_CONFIG } from '@lidofinance/wallets-testing-wallets';
+import {
+  PHANTOM_COMMON_CONFIG,
+  COINBASE_COMMON_CONFIG,
+  COIN98_COMMON_CONFIG,
+} from '@lidofinance/wallets-testing-wallets';
 import { SOLANA_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
 import { BrowserModule } from '../../browser/browser.module';
 import { BrowserService } from '../../browser/browser.service';
@@ -22,6 +26,16 @@ test.describe('Solana widget testing', () => {
 
   test(`Phantom wallet connect`, async () => {
     await browserService.setup(PHANTOM_COMMON_CONFIG, SOLANA_WIDGET_CONFIG);
+    await browserService.connectWallet();
+  });
+
+  test(`Coinbase wallet connect`, async () => {
+    await browserService.setup(COINBASE_COMMON_CONFIG, SOLANA_WIDGET_CONFIG);
+    await browserService.connectWallet();
+  });
+
+  test(`Coin98 wallet connect`, async () => {
+    await browserService.setup(COIN98_COMMON_CONFIG, SOLANA_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 

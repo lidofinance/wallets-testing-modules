@@ -20,17 +20,17 @@ export class Coin98 implements WalletPage {
     });
   }
 
-  async setup() {
+  async setup(network: string) {
     await test.step('Setup', async () => {
       await this.navigate();
       if (!this.page) throw "Page isn't ready";
       const firstTime =
         (await this.page.locator('text=Create Wallet').count()) > 0;
-      if (firstTime) await this.firstTimeSetup();
+      if (firstTime) await this.firstTimeSetup(network);
     });
   }
 
-  async firstTimeSetup() {
+  async firstTimeSetup(network: string) {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.page.click('text=Restore Wallet');
@@ -41,7 +41,7 @@ export class Coin98 implements WalletPage {
       await this.page.click('button:has-text("Setup Password")');
       await this.page.click('button:has-text("Ok")');
       await this.page.click('button:has-text("Confirm")');
-      await this.page.fill('[placeholder="Search chain"]', 'eth');
+      await this.page.fill('[placeholder="Search chain"]', network);
       await this.page.click('.box-logo');
       await this.page.fill('[placeholder="Wallet name"]', 'test');
       await this.page.fill(
