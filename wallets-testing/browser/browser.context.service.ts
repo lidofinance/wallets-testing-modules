@@ -5,21 +5,28 @@ import * as os from 'os';
 import * as path from 'path';
 import { WalletConfig } from '@lidofinance/wallets-testing-wallets';
 import { EthereumNodeService } from '@lidofinance/wallets-testing-nodes';
+import {
+  ExtensionService,
+  Manifest,
+} from '@lidofinance/wallets-testing-extensions';
 
 @Injectable()
 export class BrowserContextService {
   browserContext: BrowserContext = null;
   browserContextPaths: string[] = [];
-  extensionConfig: WalletConfig;
+  walletConfig: WalletConfig;
   extensionId: string;
   extensionPage: Page;
   nodeUrl: string;
   private readonly logger = new Logger(BrowserContextService.name);
 
-  constructor(private ethereumNodeService: EthereumNodeService) {}
+  constructor(
+    private ethereumNodeService: EthereumNodeService,
+    private extensionService: ExtensionService,
+  ) {}
 
   async setup(walletConfig: WalletConfig, nodeUrl: string) {
-    this.extensionConfig = walletConfig;
+    this.walletConfig = walletConfig;
     this.nodeUrl = nodeUrl;
     await this.initBrowserContext();
   }
@@ -36,8 +43,8 @@ export class BrowserContextService {
         args: [
           '--lang=en-US',
           '--disable-dev-shm-usage',
-          `--disable-extensions-except=${this.extensionConfig.EXTENSION_PATH}`,
-          `--load-extension=${this.extensionConfig.EXTENSION_PATH}`,
+          `--disable-extensions-except=${this.walletConfig.EXTENSION_PATH}`,
+          `--load-extension=${this.walletConfig.EXTENSION_PATH}`,
           '--js-flags="--max-old-space-size=2048"',
         ],
       },
@@ -52,12 +59,10 @@ export class BrowserContextService {
       this.browserContextPaths.push(browserContextPath);
       this.logger.debug('Browser context closed');
     });
-    await this.setExtensionVars(
-      this.extensionConfig.COMMON.EXTENSION_START_PATH,
-    );
+    await this.setExtensionVars(this.walletConfig.COMMON.EXTENSION_START_PATH);
     if (this.ethereumNodeService.state) {
       await this.ethereumNodeService.mockRoute(
-        this.extensionConfig.COMMON.RPC_URL_PATTERN,
+        this.walletConfig.COMMON.RPC_URL_PATTERN,
         this.extensionPage,
       );
       await this.ethereumNodeService.mockRoute(
@@ -68,20 +73,32 @@ export class BrowserContextService {
   }
 
   async setExtensionVars(extensionStartPath: string) {
-    let [background] =
-      this.browserContext.serviceWorkers() ||
-      this.browserContext.backgroundPages();
-    if (background === undefined)
-      background = await Promise.race([
-        this.browserContext.waitForEvent('serviceworker'),
-        this.browserContext.waitForEvent('backgroundpage'),
-      ]);
-    this.extensionId = background.url().split('/')[2];
-    console.log(`~~~~~~~ ${background}`);
-    this.extensionPage = await this.browserContext.newPage();
-    await this.extensionPage.goto(
-      `chrome-extension://${this.extensionId}${extensionStartPath}`,
+    const manifest = await this.extensionService.getManifestVersion(
+      this.walletConfig.EXTENSION_PATH,
     );
+    switch (manifest) {
+      case Manifest.v2: {
+        let [background] = this.browserContext.backgroundPages();
+        if (background === undefined)
+          background = await this.browserContext.waitForEvent('backgroundpage');
+        this.extensionPage = background;
+        this.extensionId = await this.extensionPage.evaluate(
+          'chrome.runtime.id',
+        );
+        break;
+      }
+      case Manifest.v3: {
+        let [background] = this.browserContext.serviceWorkers();
+        if (!background)
+          background = await this.browserContext.waitForEvent('serviceworker');
+        const extensionId = background.url().split('/')[2];
+        this.extensionPage = await this.browserContext.newPage();
+        await this.extensionPage.goto(
+          `chrome-extension://${extensionId}${extensionStartPath}`,
+        );
+        this.extensionId = extensionId;
+      }
+    }
   }
 
   async closePages() {

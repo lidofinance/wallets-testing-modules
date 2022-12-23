@@ -17,7 +17,6 @@ export class TrustWalletPage implements WalletPage {
     await test.step('Navigate to Trust wallet', async () => {
       this.page = await this.browserContext.newPage();
       await this.page.goto(this.extensionUrl + '/home.html');
-      await this.page.reload();
       await this.page.waitForTimeout(1000);
       await this.closePopover();
       await this.unlock();
@@ -63,6 +62,7 @@ export class TrustWalletPage implements WalletPage {
       if (!this.page) throw "Page isn't ready";
       await this.page.click('text="Import or recover wallet"');
       await this.page.click('button:has-text("No thanks")');
+      await this.page.waitForTimeout(2000);
       const inputs = this.page.locator('input[type="password"]');
       const seedWords = this.config.SECRET_PHRASE.split(' ');
       for (let i = 0; i < seedWords.length; i++) {
