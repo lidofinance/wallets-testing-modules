@@ -7,6 +7,7 @@ import {
   PhantomPage,
   CoinbasePage,
   TallyPage,
+  GameStopPage,
 } from '@lidofinance/wallets-testing-wallets';
 import {
   EthereumPage,
@@ -25,6 +26,7 @@ export const WALLET_PAGES = {
   phantom: PhantomPage,
   coinbase: CoinbasePage,
   tally: TallyPage,
+  gamestop: GameStopPage,
 };
 
 export const WIDGET_PAGES = {

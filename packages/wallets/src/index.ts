@@ -8,3 +8,4 @@ export * from './phantom';
 export * from './coinbase';
 export * from './tally';
 export * from './exodus';
+export * from './gamestop';
