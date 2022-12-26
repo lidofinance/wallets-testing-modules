@@ -6,4 +6,7 @@ export const POLYGON_WIDGET_CONFIG: WidgetConfig = {
   isDefaultNetwork: true,
   name: 'polygon',
   stakeContract: '',
+  chainName: 'Mainnet',
+  chainId: 1,
+  tokenSymbol: 'ETH',
 };

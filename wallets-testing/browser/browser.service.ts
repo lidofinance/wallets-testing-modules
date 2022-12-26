@@ -56,6 +56,12 @@ export class BrowserService {
       );
     }
     await this.walletPage.importKey(this.account.secretKey);
+    await this.walletPage.addNetwork(
+      this.widgetConfig.chainName,
+      this.ethereumNodeService.state.nodeUrl,
+      this.widgetConfig.chainId,
+      this.widgetConfig.tokenSymbol,
+    );
     await this.browserContextService.closePages();
   }
 
