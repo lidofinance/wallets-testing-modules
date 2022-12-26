@@ -5,7 +5,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import * as unzipper from 'unzipper';
 import { once } from 'events';
-import { ExtensionVersionChange } from './extension.model';
+import { ExtensionVersionChange, Manifest } from './extension.model';
 import { ExtensionStorePage } from './extension.store.page';
 import { BrowserContext, chromium } from 'playwright';
 import { Readable } from 'node:stream';
@@ -26,6 +26,11 @@ export class ExtensionService {
   async getExtensionDirFromId(id: string): Promise<string> {
     await this.downloadFromStore(id);
     return this.idToExtension[id];
+  }
+
+  async getManifestVersion(extensionDir: string): Promise<Manifest> {
+    const content = await fs.readFile(extensionDir + '/manifest.json');
+    return JSON.parse(String(content)).manifest_version;
   }
 
   async downloadFromUrl(url: string) {

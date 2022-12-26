@@ -4,6 +4,7 @@ export interface CommonWalletConfig {
   STORE_EXTENSION_ID: string;
   CONNECT_BUTTON_NAME: string;
   SIMPLE_CONNECT: boolean;
+  EXTENSION_START_PATH: string;
 }
 
 export interface WalletConfig {

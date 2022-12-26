@@ -6,4 +6,5 @@ export const MATHWALLET_COMMON_CONFIG: CommonWalletConfig = {
   STORE_EXTENSION_ID: 'afbcbjpbpfadlkmhmclhkeeodmamcflc',
   CONNECT_BUTTON_NAME: 'MathWallet',
   SIMPLE_CONNECT: true,
+  EXTENSION_START_PATH: '/popup/popup.html',
 };

@@ -6,4 +6,5 @@ export const TALLY_COMMON_CONFIG: CommonWalletConfig = {
   STORE_EXTENSION_ID: 'eajafomhmkipbjmfmhebemolkcicgfmd',
   CONNECT_BUTTON_NAME: 'Tally',
   SIMPLE_CONNECT: false,
+  EXTENSION_START_PATH: '/popup.html',
 };
