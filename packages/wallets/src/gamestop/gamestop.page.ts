@@ -59,6 +59,7 @@ export class GameStopPage implements WalletPage {
       await this.page.click('input[id="self-custody"]');
       await this.page.click('input[id="terms"]');
       await this.page.click('button:has-text("Recover My Wallet")');
+      console.log(`[${this.config.SECRET_PHRASE}]`);
       await this.page.fill('textarea', this.config.SECRET_PHRASE);
       await this.page.click('button:has-text("Import Wallet")');
       await this.page.fill('input[id="password"]', this.config.PASSWORD);

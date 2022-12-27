@@ -53,7 +53,7 @@ test.describe('Ethereum widget testing', () => {
     await browserService.connectWallet();
   });
 
-  test(`GameStop wallet connect`, async () => {
+  test.only(`GameStop wallet connect`, async () => {
     await browserService.setup(GAMESTOP_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
