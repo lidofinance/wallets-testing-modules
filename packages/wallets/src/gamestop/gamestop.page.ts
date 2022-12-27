@@ -59,14 +59,11 @@ export class GameStopPage implements WalletPage {
       await this.page.click('input[id="self-custody"]');
       await this.page.click('input[id="terms"]');
       await this.page.click('button:has-text("Recover My Wallet")');
-      const seed = this.config.SECRET_PHRASE;
-      seed.trim();
-      seed.replace('\n', '');
-      console.log(seed);
-      await this.page.fill(
-        'textarea',
-        this.config.SECRET_PHRASE.replace('\n', ''),
-      );
+      // const seed = this.config.SECRET_PHRASE;
+      // seed.trim();
+      // seed.replace('\n', '');
+      // console.log(seed);
+      await this.page.fill('textarea', this.config.SECRET_PHRASE.trim());
       await this.page.click('button:has-text("Import Wallet")');
       await this.page.fill('input[id="password"]', this.config.PASSWORD);
       await this.page.fill('input[id="password_conf"]', this.config.PASSWORD);
