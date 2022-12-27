@@ -91,7 +91,7 @@ export class BrowserService {
       extension.url,
       walletConfig,
     );
-    await this.walletPage.setup(this.widgetConfig.name);
+    await this.walletPage.setup(this.widgetConfig.networkName);
     if (!this.widgetConfig.isDefaultNetwork)
       await this.walletPage.addNetwork(
         this.widgetConfig.chainName,

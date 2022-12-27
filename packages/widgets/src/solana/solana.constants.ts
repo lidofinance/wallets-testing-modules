@@ -5,5 +5,6 @@ export const SOLANA_WIDGET_CONFIG: WidgetConfig = {
   nodeUrl: '',
   isDefaultNetwork: true,
   name: 'solana',
+  networkName: 'solana',
   stakeContract: '7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj',
 };
