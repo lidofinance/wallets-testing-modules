@@ -5,6 +5,7 @@ export const KUSAMA_WIDGET_CONFIG: WidgetConfig = {
   nodeUrl: 'https://rpc.moonriver.moonbeam.network',
   isDefaultNetwork: false,
   name: 'kusama',
+  networkName: 'ethereum',
   stakeContract: '0xffc7780c34b450d917d557e728f033033cb4fa8c',
   wrapContract: '',
   chainId: 1285,

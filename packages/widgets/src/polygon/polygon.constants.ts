@@ -5,5 +5,9 @@ export const POLYGON_WIDGET_CONFIG: WidgetConfig = {
   nodeUrl: '**/api/rpc?chainId=1',
   isDefaultNetwork: true,
   name: 'polygon',
+  networkName: 'ethereum',
   stakeContract: '',
+  chainName: 'Mainnet',
+  chainId: 1,
+  tokenSymbol: 'ETH',
 };

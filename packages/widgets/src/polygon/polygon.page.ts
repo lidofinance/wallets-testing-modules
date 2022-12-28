@@ -55,10 +55,9 @@ export class PolygonPage implements WidgetPage {
               ]);
               await walletPage.connectWallet(connectWalletPage);
             }
-            await this.page.waitForTimeout(1000);
             expect(
-              await this.page.locator("button :has-text('Stake now')").count(),
-            ).toBe(1);
+              await this.page.waitForSelector("button :has-text('Stake now')"),
+            ).not.toBeNaN();
           }
         }
       },

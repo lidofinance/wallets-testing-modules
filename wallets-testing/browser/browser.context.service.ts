@@ -62,10 +62,6 @@ export class BrowserContextService {
     await this.setExtensionVars(this.walletConfig.COMMON.EXTENSION_START_PATH);
     if (this.ethereumNodeService.state) {
       await this.ethereumNodeService.mockRoute(
-        this.walletConfig.COMMON.RPC_URL_PATTERN,
-        this.extensionPage,
-      );
-      await this.ethereumNodeService.mockRoute(
         this.nodeUrl,
         this.browserContext,
       );

@@ -31,7 +31,6 @@ export class CoinbasePage implements WalletPage {
         (await this.page
           .locator('button:has-text("Create new wallet")')
           .count()) > 0;
-      console.log(firstTime);
       if (firstTime) await this.firstTimeSetup();
     });
   }

@@ -5,9 +5,11 @@ import {
   COIN98_COMMON_CONFIG,
   MATHWALLET_COMMON_CONFIG,
   METAMASK_COMMON_CONFIG,
+  GAMESTOP_COMMON_CONFIG,
   TRUST_WALLET_COMMON_CONFIG,
   COINBASE_COMMON_CONFIG,
   TALLY_COMMON_CONFIG,
+  EXODUS_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import { ETHEREUM_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
 import { BrowserModule } from '../../browser/browser.module';
@@ -48,6 +50,16 @@ test.describe('Ethereum widget testing', () => {
       MATHWALLET_COMMON_CONFIG,
       ETHEREUM_WIDGET_CONFIG,
     );
+    await browserService.connectWallet();
+  });
+
+  test(`GameStop wallet connect`, async () => {
+    await browserService.setup(GAMESTOP_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
+    await browserService.connectWallet();
+  });
+
+  test(`Exodus wallet connect`, async () => {
+    await browserService.setup(EXODUS_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 

@@ -3,9 +3,11 @@ import {
   MathWalletPage,
   MetamaskPage,
   TrustWalletPage,
+  ExodusPage,
   PhantomPage,
   CoinbasePage,
   TallyPage,
+  GameStopPage,
 } from '@lidofinance/wallets-testing-wallets';
 import {
   EthereumPage,
@@ -20,9 +22,11 @@ export const WALLET_PAGES = {
   coin98: Coin98,
   mathwallet: MathWalletPage,
   trust: TrustWalletPage,
+  exodus: ExodusPage,
   phantom: PhantomPage,
   coinbase: CoinbasePage,
   tally: TallyPage,
+  gamestop: GameStopPage,
 };
 
 export const WIDGET_PAGES = {
