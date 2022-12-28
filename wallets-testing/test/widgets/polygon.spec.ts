@@ -56,14 +56,6 @@ test.describe('Polygon widget testing', () => {
     await browserService.connectWallet();
   });
 
-  test(`Trust wallet connect`, async () => {
-    await browserService.setup(
-      TRUST_WALLET_COMMON_CONFIG,
-      POLYGON_WIDGET_CONFIG,
-    );
-    await browserService.connectWallet();
-  });
-
   test('Coinbase wallet connect', async () => {
     await browserService.setup(COINBASE_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
     await browserService.connectWallet();
