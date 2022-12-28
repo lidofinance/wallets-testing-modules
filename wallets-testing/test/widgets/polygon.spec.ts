@@ -7,7 +7,6 @@ import {
   METAMASK_COMMON_CONFIG,
   COINBASE_COMMON_CONFIG,
   EXODUS_COMMON_CONFIG,
-  TRUST_WALLET_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import { POLYGON_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
 import { BrowserModule } from '../../browser/browser.module';
