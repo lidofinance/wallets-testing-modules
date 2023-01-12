@@ -10,18 +10,18 @@ const testStatusToEmoji = {
   passed: '✅',
   failed: '❌',
   timedOut: '⏰',
-  skipped: '⏭️',
+  skipped: '⏸️',
   interrupted: '🚫',
 };
 
 const successField = {
-  name: '**💆‍♂️️ Periodically running wallet tests pass**',
+  name: '**💆‍♂️️ Periodically running wallet tests PASSED**',
   value: `[🔗 Tests summary](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID})`,
   inline: false,
 };
 
 const failedField = {
-  name: '🙅‍♂️ Periodically running wallet tests failed',
+  name: '🙅‍♂️ Periodically running wallet tests FAILED',
   value: `[🔗 Tests summary](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID})`,
   inline: false,
 };
