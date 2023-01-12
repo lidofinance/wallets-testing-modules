@@ -2,7 +2,8 @@ name: Test wallets
 on:
   pull_request:
   schedule:
-    - cron:  '0 2,14 * * *'
+     - cron: '0 */6 * * *'
+
 jobs:
   test-packages:
     runs-on: ubuntu-latest
@@ -24,13 +25,14 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run wallets tests
-        run: xvfb-run --auto-servernum -- yarn test
+        run: xvfb-run --auto-servernum -- yarn test:widgets
         working-directory: wallets-testing
         env:
           RPC_URL: ${{ secrets.RPC_URL }}
           WALLET_SECRET_PHRASE: ${{ secrets.WALLET_SECRET_PHRASE }}
           WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
           NODE_OPTIONS: --max-old-space-size=4096
+
       - uses: actions/upload-artifact@v2
         if: ${{ always() }}
         with:
@@ -38,24 +40,16 @@ jobs:
           path: wallets-testing/playwright-report/
           retention-days: 30
 
-      - name: Discord notification
-        if: ${{ failure() && github.event_name == 'schedule' }}
-        uses: lidofinance/action-discord@0.3.2
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          DISCORD_EMBEDS: '[{
-            "title": "🙅‍♂️ Periodically running wallet tests failed",
-            "description": "[🔗 Tests summary](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})",
-            "color": 13959168
-          }]'
+      - name: Set embeds
+        if: ${{ always() }}
+        working-directory: wallets-testing
+        run: |
+          EMBEDS=$(cat embeds.json)
+          echo "EMBEDS=$EMBEDS" >> $GITHUB_ENV
 
       - name: Discord notification
-        if: ${{ success() && github.event_name == 'schedule' }}
+        if: ${{ always() && github.event_name == 'schedule' }}
         uses: lidofinance/action-discord@0.3.2
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          DISCORD_EMBEDS: '[{
-            "title": "💆‍♂️️ Periodically running wallet tests pass",
-            "description": "There is no link here, just relax",
-            "color": 47872
-          }]'
+          DISCORD_EMBEDS: ${{ env.EMBEDS }}

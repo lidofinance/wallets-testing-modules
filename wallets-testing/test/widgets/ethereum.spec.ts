@@ -16,7 +16,7 @@ import { BrowserModule } from '../../browser/browser.module';
 import { BrowserService } from '../../browser/browser.service';
 import { test } from '@playwright/test';
 
-test.describe('Ethereum widget testing', () => {
+test.describe('Ethereum', () => {
   let app: INestApplication;
   let browserService: BrowserService;
 
@@ -29,7 +29,7 @@ test.describe('Ethereum widget testing', () => {
     browserService = moduleFixture.get<BrowserService>(BrowserService);
   });
 
-  test(`Metamask wallet stake`, async () => {
+  test(`Metamask stake`, async () => {
     await browserService.setupWithNode(
       METAMASK_COMMON_CONFIG,
       ETHEREUM_WIDGET_CONFIG,
@@ -40,12 +40,12 @@ test.describe('Ethereum widget testing', () => {
     await browserService.stake();
   });
 
-  test(`Coin98 wallet connect`, async () => {
+  test(`Coin98 connect`, async () => {
     await browserService.setup(COIN98_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 
-  test(`Mathwallet wallet connect`, async () => {
+  test(`Mathwallet connect`, async () => {
     await browserService.setup(
       MATHWALLET_COMMON_CONFIG,
       ETHEREUM_WIDGET_CONFIG,
@@ -53,17 +53,17 @@ test.describe('Ethereum widget testing', () => {
     await browserService.connectWallet();
   });
 
-  test(`GameStop wallet connect`, async () => {
+  test(`GameStop connect`, async () => {
     await browserService.setup(GAMESTOP_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 
-  test(`Exodus wallet connect`, async () => {
+  test(`Exodus connect`, async () => {
     await browserService.setup(EXODUS_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 
-  test(`Trust wallet connect`, async () => {
+  test(`Trust connect`, async () => {
     await browserService.setup(
       TRUST_WALLET_COMMON_CONFIG,
       ETHEREUM_WIDGET_CONFIG,
@@ -71,12 +71,12 @@ test.describe('Ethereum widget testing', () => {
     await browserService.connectWallet();
   });
 
-  test(`Coinbase wallet connect`, async () => {
+  test(`Coinbase connect`, async () => {
     await browserService.setup(COINBASE_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 
-  test(`Tally wallet connect`, async () => {
+  test(`Tally connect`, async () => {
     await browserService.setup(TALLY_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });

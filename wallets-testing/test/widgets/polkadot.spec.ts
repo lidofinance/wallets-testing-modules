@@ -7,7 +7,7 @@ import { BrowserModule } from '../../browser/browser.module';
 import { BrowserService } from '../../browser/browser.service';
 import { test } from '@playwright/test';
 
-test.describe('Polkadot widget testing', () => {
+test.describe('Polkadot', () => {
   let app: INestApplication;
   let browserService: BrowserService;
 
@@ -20,7 +20,7 @@ test.describe('Polkadot widget testing', () => {
     browserService = moduleFixture.get<BrowserService>(BrowserService);
   });
 
-  test(`Metamask wallet connect`, async () => {
+  test(`Metamask connect`, async () => {
     await browserService.setup(METAMASK_COMMON_CONFIG, POLKADOT_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
