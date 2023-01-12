@@ -15,7 +15,9 @@ export class CoinbasePage implements WalletPage {
   async navigate() {
     await test.step('Navigate to coinbase', async () => {
       this.page = await this.browserContext.newPage();
-      await this.page.goto(this.extensionUrl + '/index.html');
+      await this.page.goto(
+        this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+      );
       await this.page.reload();
       await this.page.waitForTimeout(1000);
       await this.unlock();

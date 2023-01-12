@@ -6,5 +6,5 @@ export const XDEFI_COMMON_CONFIG: CommonWalletConfig = {
   STORE_EXTENSION_ID: 'hmeobnfnfcmdkdcmlblgagmfpfboieaf',
   CONNECT_BUTTON_NAME: 'XDEFI',
   SIMPLE_CONNECT: false,
-  EXTENSION_START_PATH: '/onboarding.html',
+  EXTENSION_START_PATH: '/app.html',
 };
