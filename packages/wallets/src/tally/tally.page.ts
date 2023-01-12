@@ -18,7 +18,6 @@ export class TallyPage implements WalletPage {
       await this.page.goto(this.extensionUrl + '/popup.html');
       await this.page.reload();
       await this.page.waitForTimeout(1000);
-      await this.closePopover();
     });
   }
 
@@ -29,15 +28,6 @@ export class TallyPage implements WalletPage {
       const firstTime =
         (await this.page.locator('text=Welcome to Tally Ho!').count()) > 0;
       if (firstTime) await this.firstTimeSetup();
-    });
-  }
-
-  async closePopover() {
-    await test.step('Close popover if exists', async () => {
-      if (!this.page) throw "Page isn't ready";
-      const popover =
-        (await this.page.locator('data-testid=popover-close').count()) > 0;
-      if (popover) await this.page.click('data-testid=popover-close');
     });
   }
 
@@ -58,7 +48,6 @@ export class TallyPage implements WalletPage {
       await this.page.click('text=Begin the hunt');
       await this.page.fill('id=recovery_phrase', this.config.SECRET_PHRASE);
       await this.page.click('button:has-text("Import account")');
-      await this.closePopover();
     });
   }
 
@@ -94,8 +83,6 @@ export class TallyPage implements WalletPage {
       await page.click('text=Sign');
     });
   }
-  // eslint-disable-next-line
-  async importTokens(token: string) {}
 
   // eslint-disable-next-line
   async assertReceiptAddress(page: Page, expectedAddress: string) {}

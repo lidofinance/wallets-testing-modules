@@ -18,7 +18,6 @@ export class XdefiPage implements WalletPage {
       await this.page.goto(this.extensionUrl + '/app.html');
       await this.page.reload();
       await this.page.waitForTimeout(1000);
-      await this.closePopover();
     });
   }
 
@@ -45,15 +44,6 @@ export class XdefiPage implements WalletPage {
     });
   }
 
-  async closePopover() {
-    await test.step('Close popover if exists', async () => {
-      if (!this.page) throw "Page isn't ready";
-      const popover =
-        (await this.page.locator('data-testid=popover-close').count()) > 0;
-      if (popover) await this.page.click('data-testid=popover-close');
-    });
-  }
-
   async firstTimeSetup() {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
@@ -77,7 +67,6 @@ export class XdefiPage implements WalletPage {
       await this.page.click('button[type="submit"]');
       await this.page.click('span[data-testid=switchBtn]');
       await this.page.click('button[data-testid=nextBtn]');
-      await this.closePopover();
     });
   }
 
