@@ -63,7 +63,7 @@ class DiscordReporter implements Reporter {
       value: tests.join('\n'),
       inline: true,
     }));
-    let embeds = {
+    const embeds = {
       embeds: [
         {
           color: resultToStatus[result.status].color,
