@@ -12,7 +12,7 @@ import { BrowserModule } from '../../browser/browser.module';
 import { BrowserService } from '../../browser/browser.service';
 import { test } from '@playwright/test';
 
-test.describe('Solana widget testing', () => {
+test.describe('Solana', () => {
   let app: INestApplication;
   let browserService: BrowserService;
 
@@ -25,22 +25,22 @@ test.describe('Solana widget testing', () => {
     browserService = moduleFixture.get<BrowserService>(BrowserService);
   });
 
-  test(`Phantom wallet connect`, async () => {
+  test(`Phantom connect`, async () => {
     await browserService.setup(PHANTOM_COMMON_CONFIG, SOLANA_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 
-  test(`Coinbase wallet connect`, async () => {
+  test(`Coinbase connect`, async () => {
     await browserService.setup(COINBASE_COMMON_CONFIG, SOLANA_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 
-  test(`Coin98 wallet connect`, async () => {
+  test(`Coin98 connect`, async () => {
     await browserService.setup(COIN98_COMMON_CONFIG, SOLANA_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 
-  test(`Exodus wallet connect`, async () => {
+  test(`Exodus connect`, async () => {
     await browserService.setup(EXODUS_COMMON_CONFIG, SOLANA_WIDGET_CONFIG);
     await browserService.connectWallet();
   });

@@ -14,7 +14,7 @@ import { BrowserService } from '../../browser/browser.service';
 import { MATIC_TOKEN } from './consts';
 import { test } from '@playwright/test';
 
-test.describe('Polygon widget testing', () => {
+test.describe('Polygon', () => {
   let app: INestApplication;
   let browserService: BrowserService;
 
@@ -27,7 +27,7 @@ test.describe('Polygon widget testing', () => {
     browserService = moduleFixture.get<BrowserService>(BrowserService);
   });
 
-  test(`Metamask wallet stake`, async () => {
+  test(`Metamask stake`, async () => {
     await browserService.setupWithNode(
       METAMASK_COMMON_CONFIG,
       POLYGON_WIDGET_CONFIG,
@@ -40,22 +40,22 @@ test.describe('Polygon widget testing', () => {
     await browserService.stake();
   });
 
-  test(`Coin98 wallet connect`, async () => {
+  test(`Coin98 connect`, async () => {
     await browserService.setup(COIN98_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 
-  test(`Mathwallet wallet connect`, async () => {
+  test(`Mathwallet connect`, async () => {
     await browserService.setup(MATHWALLET_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 
-  test('Exodus wallet connect', async () => {
+  test('Exodus connect', async () => {
     await browserService.setup(EXODUS_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 
-  test('Coinbase wallet connect', async () => {
+  test('Coinbase connect', async () => {
     await browserService.setup(COINBASE_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
