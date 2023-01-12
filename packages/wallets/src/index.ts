@@ -9,3 +9,4 @@ export * from './coinbase';
 export * from './tally';
 export * from './exodus';
 export * from './gamestop';
+export * from './xdefi';
