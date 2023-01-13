@@ -52,7 +52,7 @@ jobs:
         if: ${{ always() }}
         working-directory: wallets-testing
         run: |
-          EMBEDS=$(cat embeds.json | jq .embeds)
+          EMBEDS=$(cat embeds.json | jq -c .embeds)
           echo "EMBEDS=$EMBEDS" >> $GITHUB_ENV
 
       - name: Discord notification
