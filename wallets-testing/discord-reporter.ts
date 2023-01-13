@@ -42,7 +42,7 @@ export const discordReporterSkipAnnotation = {
 };
 
 class DiscordReporter implements Reporter {
-  groups: { [key: string]: string[] } = {};
+  groups: { [key: string]: { [key: string]: string } } = {};
   options: { outputFile: string };
 
   constructor(options: { outputFile: string }) {
@@ -50,17 +50,16 @@ class DiscordReporter implements Reporter {
   }
 
   onTestEnd(test: TestCase, result: TestResult) {
-    if (!this.groups[test.parent.title]) this.groups[test.parent.title] = [];
+    if (!this.groups[test.parent.title]) this.groups[test.parent.title] = {};
 
-    this.groups[test.parent.title].push(
-      testStatusToEmoji[result.status] + ' ' + test.title,
-    );
+    this.groups[test.parent.title][test.id] =
+      testStatusToEmoji[result.status] + ' ' + test.title;
   }
 
   onEnd(result: FullResult): void | Promise<void> {
     const fields = Object.entries(this.groups).map(([name, tests]) => ({
       name,
-      value: tests.join('\n'),
+      value: Object.values(tests).join('\n'),
       inline: true,
     }));
     const embeds = {

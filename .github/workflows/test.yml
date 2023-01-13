@@ -1,6 +1,13 @@
 name: Test widgets and wallets integration
 on:
   pull_request:
+  workflow_dispatch:
+    inputs:
+      notify:
+        description: 'Notify about test results to the discord channel'
+        required: false
+        default: false
+        type: boolean
   schedule:
      - cron: '0 */6 * * *'
 
@@ -45,11 +52,11 @@ jobs:
         if: ${{ always() }}
         working-directory: wallets-testing
         run: |
-          EMBEDS=$(cat embeds.json)
+          EMBEDS=$(cat embeds.json | jq .embeds)
           echo "EMBEDS=$EMBEDS" >> $GITHUB_ENV
 
       - name: Discord notification
-        if: ${{ always() && github.event_name == 'schedule' }}
+        if: ${{ always() && (github.event_name == 'schedule' || inputs.notify) }}
         uses: lidofinance/action-discord@0.3.2
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
