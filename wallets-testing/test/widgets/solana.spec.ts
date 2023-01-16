@@ -6,6 +6,7 @@ import {
   COINBASE_COMMON_CONFIG,
   COIN98_COMMON_CONFIG,
   EXODUS_COMMON_CONFIG,
+  MATHWALLET_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import { SOLANA_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
 import { BrowserModule } from '../../browser/browser.module';
@@ -42,6 +43,11 @@ test.describe('Solana widget testing', () => {
 
   test(`Exodus wallet connect`, async () => {
     await browserService.setup(EXODUS_COMMON_CONFIG, SOLANA_WIDGET_CONFIG);
+    await browserService.connectWallet();
+  });
+
+  test(`Solana wallet connect`, async () => {
+    await browserService.setup(MATHWALLET_COMMON_CONFIG, SOLANA_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 

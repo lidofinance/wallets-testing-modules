@@ -22,16 +22,16 @@ export class MathWalletPage implements WalletPage {
     });
   }
 
-  async setup() {
+  async setup(network: string) {
     await test.step('Setup', async () => {
       await this.navigate();
       if (!this.page) throw "Page isn't ready";
       const firstTime = (await this.page.locator('text=Create').count()) > 0;
-      if (firstTime) await this.firstTimeSetup();
+      if (firstTime) await this.firstTimeSetup(network);
     });
   }
 
-  async firstTimeSetup() {
+  async firstTimeSetup(network: string) {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
       const inputs = this.page.locator('input[type=password]');
@@ -39,7 +39,7 @@ export class MathWalletPage implements WalletPage {
       await inputs.nth(1).fill(this.config.PASSWORD);
       await this.page.click('.create');
       await this.page.click('.select-net');
-      await this.page.click('text=Ethereum');
+      await this.page.click(`text=${network}`);
       await this.page.click('.back');
       await this.page.click('.network-add');
       await this.page.click('text="Import Wallet"');
@@ -65,8 +65,11 @@ export class MathWalletPage implements WalletPage {
     });
   }
 
-  // eslint-disable-next-line
-  async connectWallet(page: Page) {}
+  async connectWallet(page: Page) {
+    const popup = (await page.locator('div[class="card"]').count()) > 0;
+    if (popup) await page.click('div[class="card"]');
+    await page.click('text=Accept');
+  }
 
   // eslint-disable-next-line
   async assertTxAmount(page: Page, expectedAmount: string) {}
