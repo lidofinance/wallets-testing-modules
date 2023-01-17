@@ -25,12 +25,6 @@ export class EthereumPage implements WidgetPage {
       'Connect wallet ' + walletPage.config.COMMON.WALLET_NAME,
       async () => {
         await this.page.waitForTimeout(2000);
-        const popup =
-          (await this.page
-            .locator("button :has-text('Close and proceed')")
-            .count()) > 0;
-        if (popup)
-          await this.page.click("button :has-text('Close and proceed')");
         const isConnected =
           (await this.page
             .locator("button :has-text('Connect wallet')")

@@ -8,6 +8,7 @@ import {
   CoinbasePage,
   TallyPage,
   GameStopPage,
+  XdefiPage,
 } from '@lidofinance/wallets-testing-wallets';
 import {
   EthereumPage,
@@ -27,6 +28,7 @@ export const WALLET_PAGES = {
   coinbase: CoinbasePage,
   tally: TallyPage,
   gamestop: GameStopPage,
+  xdefi: XdefiPage,
 };
 
 export const WIDGET_PAGES = {

@@ -18,7 +18,6 @@ export class PhantomPage implements WalletPage {
       await this.page.goto(this.extensionUrl + '/popup.html');
       await this.page.reload();
       await this.page.waitForTimeout(1000);
-      await this.closePopover();
       await this.unlock();
     });
   }
@@ -47,15 +46,6 @@ export class PhantomPage implements WalletPage {
     });
   }
 
-  async closePopover() {
-    await test.step('Close popover if exists', async () => {
-      if (!this.page) throw "Page isn't ready";
-      const popover =
-        (await this.page.locator('data-testid=popover-close').count()) > 0;
-      if (popover) await this.page.click('data-testid=popover-close');
-    });
-  }
-
   async firstTimeSetup() {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
@@ -72,7 +62,6 @@ export class PhantomPage implements WalletPage {
       await this.page.click('input[type=checkbox]');
       await this.page.click('button:has-text("Continue")');
       await this.page.click('button:has-text("Continue")');
-      await this.closePopover();
     });
   }
 

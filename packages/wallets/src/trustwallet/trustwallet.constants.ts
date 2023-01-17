@@ -6,5 +6,5 @@ export const TRUST_WALLET_COMMON_CONFIG: CommonWalletConfig = {
   STORE_EXTENSION_ID: 'egjidjbpglichdcondbcbdnbeeppgdph',
   CONNECT_BUTTON_NAME: 'Trust Wallet',
   SIMPLE_CONNECT: false,
-  EXTENSION_START_PATH: '/home.html#/onboarding',
+  EXTENSION_START_PATH: '/home.html',
 };

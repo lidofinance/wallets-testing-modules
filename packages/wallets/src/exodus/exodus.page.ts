@@ -14,7 +14,9 @@ export class ExodusPage implements WalletPage {
   async navigate() {
     await test.step('Navigate to exodus', async () => {
       this.page = await this.browserContext.newPage();
-      await this.page.goto(this.extensionUrl + '/onboarding.html');
+      await this.page.goto(
+        this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+      );
       await this.page.reload();
       await this.page.waitForTimeout(1000);
       await this.unlock();

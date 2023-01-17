@@ -12,17 +12,17 @@ export class TrustWalletPage implements WalletPage {
     public config: WalletConfig,
   ) {}
 
-  //+
   async navigate() {
     await test.step('Navigate to Trust wallet', async () => {
       this.page = await this.browserContext.newPage();
-      await this.page.goto(this.extensionUrl + '/home.html');
+      await this.page.goto(
+        this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+      );
       await this.page.waitForTimeout(1000);
-      await this.closePopover();
       await this.unlock();
     });
   }
-  //+
+
   async setup() {
     await test.step('Setup', async () => {
       // added explicit route to /onboarding due to unexpected first time route from /home.html to /onboarding - page is close
@@ -37,7 +37,7 @@ export class TrustWalletPage implements WalletPage {
       if (firstTime) await this.firstTimeSetup();
     });
   }
-  //+
+
   async unlock() {
     await test.step('Unlock', async () => {
       if (!this.page) throw "Page isn't ready";
@@ -48,15 +48,6 @@ export class TrustWalletPage implements WalletPage {
     });
   }
 
-  async closePopover() {
-    await test.step('Close popover if exists', async () => {
-      if (!this.page) throw "Page isn't ready";
-      const popover =
-        (await this.page.locator('data-testid=popover-close').count()) > 0;
-      if (popover) await this.page.click('data-testid=popover-close');
-    });
-  }
-  //+
   async firstTimeSetup() {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
@@ -82,10 +73,9 @@ export class TrustWalletPage implements WalletPage {
       await this.page.waitForSelector(
         'text=You have successfully imported your wallet!',
       );
-      await this.closePopover();
     });
   }
-  //+
+
   async addNetwork(
     networkName: string,
     networkUrl: string,
@@ -107,7 +97,7 @@ export class TrustWalletPage implements WalletPage {
       await this.navigate();
     });
   }
-  //+
+
   async importTokens(token: string) {
     await test.step('Import token', async () => {
       await this.navigate();
@@ -119,7 +109,7 @@ export class TrustWalletPage implements WalletPage {
       );
     });
   }
-  //+
+
   async connectWallet(page: Page) {
     await test.step('Connect wallet', async () => {
       await page.waitForTimeout(1000);
