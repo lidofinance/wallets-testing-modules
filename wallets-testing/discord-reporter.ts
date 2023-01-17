@@ -9,9 +9,9 @@ import * as fs from 'fs';
 const testStatusToEmoji = {
   passed: '✅',
   failed: '❌',
-  timedOut: '⏰',
+  timedOut: '❌',
   skipped: '⏸️',
-  interrupted: '🚫',
+  interrupted: '❌',
 };
 
 const successField = {
