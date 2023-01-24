@@ -80,14 +80,27 @@ export class CoinbasePage implements WalletPage {
       await this.navigate();
       await this.page.click('text="Settings"');
       await this.page.click('text="Networks"');
-      await this.page.click('text=Add a network');
-      await this.page.click('button[data-testid="add-custom-network"]');
-      await this.page.fill('input[name="chainName"]', networkName);
-      await this.page.fill('input[name="rpcUrls[0]"]', networkUrl);
-      await this.page.fill('input[name="chainId"]', String(chainId));
-      await this.page.fill('input[name="nativeCurrency.symbol"]', tokenSymbol);
-      await this.page.click('text=Save');
-      await this.navigate();
+      const [addNetworkPage] = await Promise.all([
+        this.page.context().waitForEvent('page', { timeout: 5000 }),
+        await this.page.click('button[data-testid="add-custom-network"]'),
+      ]);
+      await addNetworkPage.fill('input[name="chainName"]', networkName);
+      await addNetworkPage.fill('input[name="rpcUrls[0]"]', networkUrl);
+      await addNetworkPage.fill('input[name="chainId"]', String(chainId));
+      await addNetworkPage.fill(
+        'input[name="nativeCurrency.symbol"]',
+        tokenSymbol,
+      );
+      await addNetworkPage.click('text=Save');
+    });
+  }
+
+  //Check me if it persists
+  async closeTransactionPopover() {
+    await test.step('Close popover if exists', async () => {
+      if (!this.page) throw "Page isn't ready";
+      const popover = (await this.page.locator('text="Got it"').count()) > 0;
+      if (popover) await this.page.click('text="Got it"');
     });
   }
 
@@ -107,12 +120,14 @@ export class CoinbasePage implements WalletPage {
 
   async confirmTx(page: Page) {
     await test.step('Confirm TX', async () => {
-      await page.click('text=Confirm');
+      await this.closeTransactionPopover();
+      await page.click('button[data-testid="request-confirm-button"]');
     });
   }
 
   // eslint-disable-next-line
-  async assertReceiptAddress(page: Page, expectedAddress: string) {}
+  async assertReceiptAddress(page: Page, expectedAddress: string) {
+  }
 
   // eslint-disable-next-line
   async importKey(key: string) {}
