@@ -30,7 +30,7 @@ export class MetamaskPage implements WalletPage {
       await this.navigate();
       if (!this.page) throw "Page isn't ready";
       const firstTime =
-        (await this.page.locator('text=Get started').count()) > 0;
+        (await this.page.locator('data-testid=onboarding-welcome').count()) > 0;
       if (firstTime) await this.firstTimeSetup();
     });
   }
@@ -59,7 +59,7 @@ export class MetamaskPage implements WalletPage {
     await test.step('Close popover if exists', async () => {
       if (!this.page) throw "Page isn't ready";
       const popover =
-        (await this.page.locator('data-testid=popover-close').count()) > 0;
+        (await this.page.getByTestId('popover-close').count()) > 0;
       if (popover) await this.page.click('data-testid=popover-close');
     });
   }
@@ -67,9 +67,8 @@ export class MetamaskPage implements WalletPage {
   async firstTimeSetup() {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
-      await this.page.click('text=Get started');
-      await this.page.click('text=No thanks');
-      await this.page.click('text=Import wallet');
+      await this.page.click('data-testid=onboarding-import-wallet');
+      await this.page.click('data-testid=metametrics-i-agree');
       const inputs = this.page.locator(
         '.import-srp__srp-word >> input[type=password]',
       );
@@ -77,11 +76,20 @@ export class MetamaskPage implements WalletPage {
       for (let i = 0; i < seedWords.length; i++) {
         await inputs.nth(i).fill(seedWords[i]);
       }
-      await this.page.fill('id=password', this.config.PASSWORD);
-      await this.page.fill('id=confirm-password', this.config.PASSWORD);
-      await this.page.click('id=create-new-vault__terms-checkbox');
-      await this.page.click('button[type=submit]');
-      await this.page.click('button');
+      await this.page.click('data-testid=import-srp-confirm');
+      await this.page.fill(
+        'data-testid=create-password-new',
+        this.config.PASSWORD,
+      );
+      await this.page.fill(
+        'data-testid=create-password-confirm',
+        this.config.PASSWORD,
+      );
+      await this.page.click('data-testid=create-password-terms');
+      await this.page.click('data-testid=create-password-import');
+      await this.page.click('data-testid=onboarding-complete-done');
+      await this.page.click('data-testid=pin-extension-next');
+      await this.page.click('data-testid=pin-extension-done');
       await this.closePopover();
     });
   }
