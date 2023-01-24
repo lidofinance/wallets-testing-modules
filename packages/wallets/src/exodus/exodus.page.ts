@@ -52,7 +52,7 @@ export class ExodusPage implements WalletPage {
   async firstTimeSetup() {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
-      await this.page.click('text=Skip');
+      await this.page.click('data-testid=exodusmovement.exodus:id/button-skip');
       await this.page.click('text=I Have A Wallet');
       await this.page.fill('input[type="text"]', this.config.SECRET_PHRASE);
       await this.page.click(':nth-match(:text("Restore"), 2)');
@@ -82,8 +82,12 @@ export class ExodusPage implements WalletPage {
   // eslint-disable-next-line
   async importKey(key: string) {}
 
-  // eslint-disable-next-line
-  async addNetwork(networkName: string, networkUrl: string, chainId: number, tokenSymbol: string) {}
+  async addNetwork(
+    networkName: string, // eslint-disable-line
+    networkUrl: string, // eslint-disable-line
+    chainId: number, // eslint-disable-line
+    tokenSymbol: string, // eslint-disable-line
+  ) {} // eslint-disable-line
 
   // eslint-disable-next-line
   async assertTxAmount(page: Page, expectedAmount: string) {}
