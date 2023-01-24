@@ -127,7 +127,6 @@ export class CoinbasePage implements WalletPage {
 
   // eslint-disable-next-line
   async assertReceiptAddress(page: Page, expectedAddress: string) {
-    //TODO add external check for address in etherscan
   }
 
   // eslint-disable-next-line
