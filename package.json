@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@release-it-plugins/workspaces": "^3.2.0",
+    "@release-it/conventional-changelog": "^5.1.1",
     "@types/eslint-plugin-prettier": "^3.1.0",
     "@types/node": "^18.11.15",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
@@ -50,7 +51,10 @@
       "ignoreVersion": true
     },
     "plugins": {
-      "@release-it-plugins/workspaces": true
+      "@release-it-plugins/workspaces": true,
+      "@release-it/conventional-changelog": {
+        "preset": "angular"
+      }
     }
   }
 }
