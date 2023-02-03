@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -44,8 +47,8 @@ jobs:
           path: wallets-testing/playwright-report/
           retention-days: 30
 
-#      - name: Publish to NPM
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-#        run: yarn multi-semantic-release --deps.bump=override --deps.release=patch --sequential-init
+      - name: Publish to NPM
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: release-it --ci
