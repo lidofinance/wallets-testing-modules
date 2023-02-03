@@ -39,6 +39,16 @@
   },
   "packageManager": "yarn@3.3.0",
   "release-it": {
+    "git": {
+      "commit": false,
+      "tag": true
+    },
+    "github": {
+      "release": true
+    },
+    "npm": {
+      "ignoreVersion": true
+    },
     "plugins": {
       "@release-it-plugins/workspaces": true
     }
