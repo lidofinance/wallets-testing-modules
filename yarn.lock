@@ -1297,7 +1297,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lidofinance/wallets-testing-extensions@^0.0.1, @lidofinance/wallets-testing-extensions@workspace:packages/extensions":
+"@lidofinance/wallets-testing-extensions@workspace:*, @lidofinance/wallets-testing-extensions@workspace:packages/extensions":
   version: 0.0.0-use.local
   resolution: "@lidofinance/wallets-testing-extensions@workspace:packages/extensions"
   dependencies:
@@ -1314,7 +1314,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@lidofinance/wallets-testing-nodes@^0.0.1, @lidofinance/wallets-testing-nodes@workspace:packages/nodes":
+"@lidofinance/wallets-testing-nodes@workspace:*, @lidofinance/wallets-testing-nodes@workspace:packages/nodes":
   version: 0.0.0-use.local
   resolution: "@lidofinance/wallets-testing-nodes@workspace:packages/nodes"
   dependencies:
@@ -1331,7 +1331,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@lidofinance/wallets-testing-wallets@^0.0.1, @lidofinance/wallets-testing-wallets@workspace:packages/wallets":
+"@lidofinance/wallets-testing-wallets@workspace:*, @lidofinance/wallets-testing-wallets@workspace:packages/wallets":
   version: 0.0.0-use.local
   resolution: "@lidofinance/wallets-testing-wallets@workspace:packages/wallets"
   dependencies:
@@ -1343,11 +1343,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@lidofinance/wallets-testing-widgets@^0.0.1, @lidofinance/wallets-testing-widgets@workspace:packages/widgets":
+"@lidofinance/wallets-testing-widgets@workspace:*, @lidofinance/wallets-testing-widgets@workspace:packages/widgets":
   version: 0.0.0-use.local
   resolution: "@lidofinance/wallets-testing-widgets@workspace:packages/widgets"
   dependencies:
-    "@lidofinance/wallets-testing-wallets": ^0.0.1
+    "@lidofinance/wallets-testing-wallets": "workspace:*"
     "@nestjs/common": ^8.2.5
     "@nestjs/config": ^2.2.0
     "@nestjs/core": ^8.2.5
@@ -10503,10 +10503,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "wallets-testing@workspace:wallets-testing"
   dependencies:
-    "@lidofinance/wallets-testing-extensions": ^0.0.1
-    "@lidofinance/wallets-testing-nodes": ^0.0.1
-    "@lidofinance/wallets-testing-wallets": ^0.0.1
-    "@lidofinance/wallets-testing-widgets": ^0.0.1
+    "@lidofinance/wallets-testing-extensions": "workspace:*"
+    "@lidofinance/wallets-testing-nodes": "workspace:*"
+    "@lidofinance/wallets-testing-wallets": "workspace:*"
+    "@lidofinance/wallets-testing-widgets": "workspace:*"
     "@nestjs/cli": ^9.0.0
     "@nestjs/common": ^9.0.0
     "@nestjs/config": ^2.2.0
