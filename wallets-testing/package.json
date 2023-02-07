@@ -19,10 +19,10 @@
     "test:widgets": "yarn pretest && playwright test -c ./dist widgets"
   },
   "dependencies": {
-    "@lidofinance/wallets-testing-extensions": "^0.0.1",
-    "@lidofinance/wallets-testing-nodes": "^0.0.1",
-    "@lidofinance/wallets-testing-wallets": "^0.0.1",
-    "@lidofinance/wallets-testing-widgets": "^0.0.1",
+    "@lidofinance/wallets-testing-extensions": "link:../packages/extensions",
+    "@lidofinance/wallets-testing-nodes": "link:../packages/nodes",
+    "@lidofinance/wallets-testing-wallets": "link:../packages/wallets",
+    "@lidofinance/wallets-testing-widgets": "link:../packages/widgets",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
