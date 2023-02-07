@@ -29,8 +29,9 @@ export class XdefiPage implements WalletPage {
       this.page = await this.browserContext.newPage();
       await this.page.goto(this.extensionUrl + '/onboarding.html');
       if (!this.page) throw "Page isn't ready";
-      const firstTime =
-        (await this.page.locator("text=Let's get started").count()) > 0;
+      const firstTime = await this.page.waitForSelector(
+        "text=Let's get started",
+      );
       if (firstTime) await this.firstTimeSetup();
     });
   }
@@ -49,25 +50,24 @@ export class XdefiPage implements WalletPage {
   async firstTimeSetup() {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
-      await this.page.click('svg:below(input)');
       await this.page.click('text=Restore XDEFI Wallet');
       await this.page.click('text=Restore with secret phrase');
-      await this.page.fill(
-        'textarea[name="phrase"]',
-        this.config.SECRET_PHRASE,
-      );
+      const inputs = this.page.locator('input[data-testid=input]');
+      const seedWords = this.config.SECRET_PHRASE.split(' ');
+      for (let i = 0; i < seedWords.length; i++) {
+        await inputs.nth(i).fill(seedWords[i]);
+      }
+      await this.page.click('text=Next');
       await this.page.fill('input[name="password"]', this.config.PASSWORD);
-      await this.page.fill(
-        'input[name="confirmPassword"]',
-        this.config.PASSWORD,
-      );
+      await this.page.fill('input[name="cpassword"]', this.config.PASSWORD);
+      await this.page.click('div[data-testid=termsAndConditionsCheckbox]');
       await this.page.click('button[type="submit"]');
       await this.page.fill(
         'input[name="walletName"]',
         this.config.COMMON.WALLET_NAME,
       );
       await this.page.click('button[type="submit"]');
-      await this.page.click('span[data-testid=switchBtn]');
+      await this.page.click('div[data-testid=prioritiesXdefiToggle]');
       await this.page.click('button[data-testid=nextBtn]');
     });
   }
