@@ -37,7 +37,8 @@ export class Coin98 implements WalletPage {
       if (!this.page) throw "Page isn't ready";
       await this.page.click('text=Restore Wallet');
       await this.page.click('text=Ok');
-      const inputs = this.page.locator('input[type=password]');
+      await this.page.waitForSelector('input[type=password]');
+      const inputs = await this.page.locator('input[type=password]');
       await inputs.nth(0).fill(this.config.PASSWORD);
       await inputs.nth(1).fill(this.config.PASSWORD);
       await this.page.click('button:has-text("Setup Password")');
