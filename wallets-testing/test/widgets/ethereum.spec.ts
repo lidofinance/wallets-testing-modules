@@ -77,7 +77,7 @@ test.describe('Ethereum', () => {
     await browserService.connectWallet();
   });
 
-  test.only(`Taho connect`, async () => {
+  test(`Taho connect`, async () => {
     await browserService.setup(TAHO_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
