@@ -6,7 +6,7 @@ import {
   ExodusPage,
   PhantomPage,
   CoinbasePage,
-  TallyPage,
+  TahoPage,
   GameStopPage,
   XdefiPage,
 } from '@lidofinance/wallets-testing-wallets';
@@ -26,7 +26,7 @@ export const WALLET_PAGES = {
   exodus: ExodusPage,
   phantom: PhantomPage,
   coinbase: CoinbasePage,
-  tally: TallyPage,
+  taho: TahoPage,
   gamestop: GameStopPage,
   xdefi: XdefiPage,
 };

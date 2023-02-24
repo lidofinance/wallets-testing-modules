@@ -6,7 +6,7 @@ export * from './metamask';
 export * from './trustwallet';
 export * from './phantom';
 export * from './coinbase';
-export * from './tally';
+export * from './taho';
 export * from './exodus';
 export * from './gamestop';
 export * from './xdefi';

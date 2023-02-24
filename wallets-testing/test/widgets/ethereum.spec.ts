@@ -8,7 +8,7 @@ import {
   GAMESTOP_COMMON_CONFIG,
   TRUST_WALLET_COMMON_CONFIG,
   COINBASE_COMMON_CONFIG,
-  TALLY_COMMON_CONFIG,
+  TAHO_COMMON_CONFIG,
   EXODUS_COMMON_CONFIG,
   XDEFI_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
@@ -77,8 +77,8 @@ test.describe('Ethereum', () => {
     await browserService.connectWallet();
   });
 
-  test(`Tally connect`, async () => {
-    await browserService.setup(TALLY_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
+  test(`Taho connect`, async () => {
+    await browserService.setup(TAHO_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 

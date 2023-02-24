@@ -3,7 +3,7 @@ import { WalletPage } from '../wallet.page';
 import expect from 'expect';
 import { test, BrowserContext, Page } from '@playwright/test';
 
-export class TallyPage implements WalletPage {
+export class TahoPage implements WalletPage {
   page: Page | undefined;
 
   constructor(
@@ -13,7 +13,7 @@ export class TallyPage implements WalletPage {
   ) {}
 
   async navigate() {
-    await test.step('Navigate to tally', async () => {
+    await test.step('Navigate to taho', async () => {
       this.page = await this.browserContext.newPage();
       await this.page.goto(
         this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
@@ -28,7 +28,7 @@ export class TallyPage implements WalletPage {
       await this.navigate();
       if (!this.page) throw "Page isn't ready";
       const firstTime =
-        (await this.page.locator('text=Welcome to Tally Ho!').count()) > 0;
+        (await this.page.locator('text=Welcome to Taho').count()) > 0;
       if (firstTime) await this.firstTimeSetup();
     });
   }
