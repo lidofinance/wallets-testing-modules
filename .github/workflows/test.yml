@@ -40,6 +40,46 @@ jobs:
           WALLET_SECRET_PHRASE: ${{ secrets.WALLET_SECRET_PHRASE }}
           WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
           NODE_OPTIONS: --max-old-space-size=4096
+      - name: Run wallets tests
+        run: xvfb-run --auto-servernum -- yarn test:widgets
+        working-directory: wallets-testing
+        env:
+          RPC_URL: ${{ secrets.RPC_URL }}
+          WALLET_SECRET_PHRASE: ${{ secrets.WALLET_SECRET_PHRASE }}
+          WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
+          NODE_OPTIONS: --max-old-space-size=4096
+      - name: Run wallets tests
+        run: xvfb-run --auto-servernum -- yarn test:widgets
+        working-directory: wallets-testing
+        env:
+          RPC_URL: ${{ secrets.RPC_URL }}
+          WALLET_SECRET_PHRASE: ${{ secrets.WALLET_SECRET_PHRASE }}
+          WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
+          NODE_OPTIONS: --max-old-space-size=4096
+      - name: Run wallets tests
+        run: xvfb-run --auto-servernum -- yarn test:widgets
+        working-directory: wallets-testing
+        env:
+          RPC_URL: ${{ secrets.RPC_URL }}
+          WALLET_SECRET_PHRASE: ${{ secrets.WALLET_SECRET_PHRASE }}
+          WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
+          NODE_OPTIONS: --max-old-space-size=4096
+      - name: Run wallets tests
+        run: xvfb-run --auto-servernum -- yarn test:widgets
+        working-directory: wallets-testing
+        env:
+          RPC_URL: ${{ secrets.RPC_URL }}
+          WALLET_SECRET_PHRASE: ${{ secrets.WALLET_SECRET_PHRASE }}
+          WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
+          NODE_OPTIONS: --max-old-space-size=4096
+      - name: Run wallets tests
+        run: xvfb-run --auto-servernum -- yarn test:widgets
+        working-directory: wallets-testing
+        env:
+          RPC_URL: ${{ secrets.RPC_URL }}
+          WALLET_SECRET_PHRASE: ${{ secrets.WALLET_SECRET_PHRASE }}
+          WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
+          NODE_OPTIONS: --max-old-space-size=4096
 
       - uses: actions/upload-artifact@v2
         if: ${{ always() }}
