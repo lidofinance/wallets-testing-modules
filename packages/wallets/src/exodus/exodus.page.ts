@@ -70,7 +70,6 @@ export class ExodusPage implements WalletPage {
     await test.step('Connect wallet', async () => {
       await page.waitForTimeout(2000);
       await page.click(':nth-match(:text("Connect"), 3)');
-      await page.waitForTimeout(2000);
       await page.close();
     });
   }
