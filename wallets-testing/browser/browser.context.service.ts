@@ -78,9 +78,7 @@ export class BrowserContextService {
         if (background === undefined)
           background = await this.browserContext.waitForEvent('backgroundpage');
         this.extensionPage = background;
-        this.extensionId = await this.extensionPage.evaluate(
-          'chrome.runtime.id',
-        );
+        this.extensionId = background.url().split('/')[2];
         break;
       }
       case Manifest.v3: {
