@@ -162,6 +162,15 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
+  async approveTokenTx(page: Page) {
+    await test.step('Approve token tx', async () => {
+      await page.click('text=Use default');
+      await page.click('text=Next');
+      await page.waitForTimeout(2000);
+      await page.click('text=Approve');
+    });
+  }
+
   async assertReceiptAddress(page: Page, expectedAddress: string) {
     await test.step('Assert receiptAddress/Contract', async () => {
       await page.click('text=Liquid staked Ether 2.0');
