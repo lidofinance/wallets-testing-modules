@@ -25,10 +25,12 @@ export class TahoPage implements WalletPage {
 
   async setup() {
     await test.step('Setup', async () => {
-      await this.navigate();
+      // added explicit route to /onboarding due to unexpected first time route from /home.html to /onboarding - page always closing
+      this.page = await this.browserContext.newPage();
+      await this.page.goto(this.extensionUrl + '/tab.html#/onboarding');
       if (!this.page) throw "Page isn't ready";
       const firstTime =
-        (await this.page.locator('text=Welcome to Taho').count()) > 0;
+        (await this.page.locator('text=Use existing wallet').count()) > 0;
       if (firstTime) await this.firstTimeSetup();
     });
   }
@@ -36,8 +38,7 @@ export class TahoPage implements WalletPage {
   async firstTimeSetup() {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
-      await this.page.click('text=Continue');
-      await this.page.click('text=Continue');
+      await this.page.click('text=Use existing wallet');
       await this.page.click('text=Import recovery phrase');
       await this.page.fill(
         '[type=password]:above(:text("Password"))',
