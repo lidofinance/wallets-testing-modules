@@ -41,7 +41,7 @@ jobs:
           WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
           NODE_OPTIONS: --max-old-space-size=4096
 
-      - run: ls -la wallets-testing/test-results/
+      - run: ls -la wallets-testing/dist/test-results/
         if: ${{ always() }}
 
       - uses: actions/upload-artifact@v2
