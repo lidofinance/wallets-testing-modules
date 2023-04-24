@@ -5,7 +5,6 @@ import expect from 'expect';
 import { Logger } from '@nestjs/common';
 import { WalletPage } from '@lidofinance/wallets-testing-wallets';
 import { test, Page } from '@playwright/test';
-import exp from 'constants';
 
 export class EthereumPage implements WidgetPage {
   private readonly logger = new Logger(EthereumPage.name);
