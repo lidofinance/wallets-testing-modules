@@ -32,6 +32,7 @@ export class TahoPage implements WalletPage {
       const firstTime =
         (await this.page.locator('text=Use existing wallet').count()) > 0;
       if (firstTime) await this.firstTimeSetup();
+      await this.page.screenshot({ path: 'taho.png' });
     });
   }
 
@@ -91,5 +92,10 @@ export class TahoPage implements WalletPage {
   async assertReceiptAddress(page: Page, expectedAddress: string) {}
 
   // eslint-disable-next-line
-  async addNetwork(networkName: string, networkUrl: string, chainId: number, tokenSymbol: string) {}
+  async addNetwork(
+    networkName: string,
+    networkUrl: string,
+    chainId: number,
+    tokenSymbol: string,
+  ) {}
 }
