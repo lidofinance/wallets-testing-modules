@@ -14,6 +14,8 @@ on:
 jobs:
   test:
     name: Testing
+    container:
+      image: mcr.microsoft.com/playwright:v1.29.1-focal
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -30,8 +32,6 @@ jobs:
       - name: Build Components
         run: yarn build
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
       - name: Run wallets tests
         run: xvfb-run --auto-servernum -- yarn test:widgets
         working-directory: wallets-testing
@@ -45,7 +45,9 @@ jobs:
         if: ${{ always() }}
         with:
           name: playwright-report
-          path: wallets-testing/playwright-report/
+          path: |
+            wallets-testing/playwright-report/
+            wallets-testing/test-results/
           retention-days: 30
 
       - name: Set embeds
