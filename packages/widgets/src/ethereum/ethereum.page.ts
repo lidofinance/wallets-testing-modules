@@ -5,6 +5,7 @@ import expect from 'expect';
 import { Logger } from '@nestjs/common';
 import { WalletPage } from '@lidofinance/wallets-testing-wallets';
 import { test, Page } from '@playwright/test';
+import exp from 'constants';
 
 export class EthereumPage implements WidgetPage {
   private readonly logger = new Logger(EthereumPage.name);
@@ -29,6 +30,7 @@ export class EthereumPage implements WidgetPage {
           (await this.page
             .locator("button :has-text('Connect wallet')")
             .count()) === 0;
+        expect(isConnected).toBe(true);
         if (!isConnected) {
           await this.page
             .locator("button :has-text('Connect wallet')")
