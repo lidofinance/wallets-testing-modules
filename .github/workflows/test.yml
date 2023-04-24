@@ -41,7 +41,7 @@ jobs:
           WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
           NODE_OPTIONS: --max-old-space-size=4096
 
-      - run: ls -lRa wallets-testing/dist/test-results/
+      - run: ls -lRa wallets-testing/test-results/
         if: ${{ always() }}
 
       - uses: actions/upload-artifact@v2
@@ -50,7 +50,7 @@ jobs:
           name: playwright-report
           path: |
             wallets-testing/playwright-report/
-            wallets-testing/dist/test-results/
+            wallets-testing/test-results/
           retention-days: 30
 
       - name: Set embeds
