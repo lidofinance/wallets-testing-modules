@@ -47,7 +47,7 @@ export class SolanaPage implements WidgetPage {
               );
             } else {
               const [connectWalletPage] = await Promise.all([
-                this.page.context().waitForEvent('page', { timeout: 5000 }),
+                this.page.context().waitForEvent('page', { timeout: 15000 }),
                 this.page.click(
                   `button[type=button] :text('${walletPage.config.COMMON.CONNECT_BUTTON_NAME}')`,
                 ),
