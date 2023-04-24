@@ -47,7 +47,7 @@ jobs:
           name: playwright-report
           path: |
             wallets-testing/playwright-report/
-            wallets-testing/test-results/
+            wallets-testing/dist/test-results/
           retention-days: 30
 
       - name: Set embeds
