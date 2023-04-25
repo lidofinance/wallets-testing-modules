@@ -25,13 +25,15 @@ jobs:
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install --immutable
+      - name: Install dependencies
+        run: npm ci
       - name: Run lint
         run: yarn lint
       - name: Build Components
         run: yarn build
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install-deps chromium && pnpx playwright install chromium
       - name: Run wallets tests
         run: xvfb-run --auto-servernum -- yarn test:widgets
         working-directory: wallets-testing
