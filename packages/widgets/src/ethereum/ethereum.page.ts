@@ -29,7 +29,7 @@ export class EthereumPage implements WidgetPage {
           (await this.page
             .locator("button :has-text('Connect wallet')")
             .count()) === 0;
-        // expect(isConnected).toBe(false);
+        expect(isConnected).toBe(false);
         if (!isConnected) {
           await this.page
             .locator("button :has-text('Connect wallet')")

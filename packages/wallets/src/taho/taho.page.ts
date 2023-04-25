@@ -31,7 +31,6 @@ export class TahoPage implements WalletPage {
       if (!this.page) throw "Page isn't ready";
       const firstTime =
         (await this.page.locator('text=Use existing wallet').count()) > 0;
-      await this.page.screenshot({ path: 'taho.png' });
       expect(firstTime).toBe(true);
       if (firstTime) await this.firstTimeSetup();
     });
