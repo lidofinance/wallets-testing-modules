@@ -28,6 +28,9 @@ export class PhantomPage implements WalletPage {
       this.page = await this.browserContext.newPage();
       await this.page.goto(this.extensionUrl + '/onboarding.html');
       if (!this.page) throw "Page isn't ready";
+      await this.page.waitForSelector(
+        'button:has-text("I already have a wallet")',
+      );
       const firstTime =
         (await this.page
           .locator('button:has-text("I already have a wallet")')
