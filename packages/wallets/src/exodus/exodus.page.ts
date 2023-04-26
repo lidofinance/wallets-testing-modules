@@ -56,18 +56,13 @@ export class ExodusPage implements WalletPage {
       await this.page.click('text=I Have A Wallet');
       await this.page.fill('input[type="text"]', this.config.SECRET_PHRASE);
       await this.page.click(':nth-match(:text("Restore"), 2)');
-      await this.page.fill('input[type=password]', this.config.PASSWORD);
-      await this.page.click('text=Next');
-      await this.page.fill('input[type=password]', this.config.PASSWORD);
-      await this.page.click(
-        'div[data-testid="exodusmovement.exodus:id/button-next"]',
-      );
       await this.page.waitForSelector('text=Continue');
     });
   }
 
   async connectWallet(page: Page) {
     await test.step('Connect wallet', async () => {
+      await page.waitForTimeout(2000);
       await page.click(':nth-match(:text("Connect"), 3)');
       await page.close();
     });
