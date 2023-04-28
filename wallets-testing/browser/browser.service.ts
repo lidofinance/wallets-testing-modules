@@ -81,6 +81,10 @@ export class BrowserService {
       await this.extensionService.getExtensionDirFromId(
         commonWalletConfig.STORE_EXTENSION_ID,
       );
+    await this.extensionService.checkPersistent(
+      walletConfig.EXTENSION_PATH,
+      commonWalletConfig.WALLET_NAME,
+    );
     await this.browserContextService.setup(
       walletConfig,
       this.widgetConfig.nodeUrl,

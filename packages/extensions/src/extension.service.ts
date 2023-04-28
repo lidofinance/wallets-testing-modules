@@ -28,6 +28,25 @@ export class ExtensionService {
     return this.idToExtension[id];
   }
 
+  // Check "persistent" tag from extension manifest for Slope wallet, since it`s false by default.
+  // The "persistent": false tag in the manifest.json file of a Google Chrome extension indicates
+  // that the extension should not run continuously and remain active throughout the entire time
+  // the browser is being used. Instead, the extension will only run in response to certain events,
+  // such as a user clicking on the extension button or visiting a specific web page.
+  async checkPersistent(extensionDir: string, walletName: string) {
+    if (walletName === 'slope') {
+      const content = await fs.readFile(extensionDir + '/manifest.json');
+      const manifestObj = JSON.parse(String(content));
+      if (manifestObj.background.persistent === false) {
+        manifestObj.background.persistent = true;
+        await fs.writeFile(
+          extensionDir + '/manifest.json',
+          JSON.stringify(manifestObj, null, 2),
+        );
+      }
+    }
+  }
+
   async getManifestVersion(extensionDir: string): Promise<Manifest> {
     const content = await fs.readFile(extensionDir + '/manifest.json');
     return JSON.parse(String(content)).manifest_version;

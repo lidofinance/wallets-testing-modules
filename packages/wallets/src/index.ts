@@ -10,3 +10,4 @@ export * from './taho';
 export * from './exodus';
 export * from './gamestop';
 export * from './xdefi';
+export * from './slope';
