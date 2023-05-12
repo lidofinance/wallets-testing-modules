@@ -59,7 +59,12 @@ export class PhantomPage implements WalletPage {
         await inputs.nth(i).fill(seedWords[i]);
       }
       await this.page.click('button[type=submit]');
-      await this.page.click('button:has-text("Import Selected Accounts")');
+      await this.page.waitForSelector(
+        "button[data-testid='onboarding-form-submit-button']",
+      );
+      await this.page.click(
+        "button[data-testid='onboarding-form-submit-button']",
+      );
       await this.page.fill('input[name=password]', this.config.PASSWORD);
       await this.page.fill('input[name=confirmPassword]', this.config.PASSWORD);
       await this.page.click('input[type=checkbox]');
