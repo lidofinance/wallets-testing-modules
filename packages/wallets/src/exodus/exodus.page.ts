@@ -27,7 +27,8 @@ export class ExodusPage implements WalletPage {
     await test.step('Setup', async () => {
       await this.navigate();
       if (!this.page) throw "Page isn't ready";
-      const firstTime = (await this.page.locator('text=Next').count()) > 0;
+      const firstTime =
+        (await this.page.locator('text=I Have A Wallet').count()) > 0;
       if (firstTime) await this.firstTimeSetup();
     });
   }
@@ -52,20 +53,9 @@ export class ExodusPage implements WalletPage {
   async firstTimeSetup() {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
-      await this.page.click('data-testid=exodusmovement.exodus:id/button-skip');
       await this.page.click('text=I Have A Wallet');
       await this.page.fill('input[type="text"]', this.config.SECRET_PHRASE);
       await this.page.click(':nth-match(:text("Restore"), 2)');
-      await this.page.fill(
-        'input[placeholder="Enter a unique password"]',
-        this.config.PASSWORD,
-      );
-      await this.page.click('text=Next');
-      await this.page.fill(
-        'input[placeholder="Enter your password again"]',
-        this.config.PASSWORD,
-      );
-      await this.page.click('text=Restore');
       await this.page.waitForSelector('text=Continue');
     });
   }

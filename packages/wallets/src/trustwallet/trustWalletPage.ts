@@ -52,13 +52,6 @@ export class TrustWalletPage implements WalletPage {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.page.click('text="Import or recover wallet"');
-      await this.page.waitForTimeout(2000);
-      const inputs = this.page.locator('input[type="password"]');
-      const seedWords = this.config.SECRET_PHRASE.split(' ');
-      for (let i = 0; i < seedWords.length; i++) {
-        await inputs.nth(i).fill(seedWords[i]);
-      }
-      await this.page.click('button:has-text("Proceed")');
       await this.page.fill(
         'input[placeholder="New password"]',
         this.config.PASSWORD,
@@ -69,6 +62,13 @@ export class TrustWalletPage implements WalletPage {
       );
       await this.page.click('span[aria-hidden=true]');
       await this.page.click('button:has-text("Next")');
+      await this.page.waitForTimeout(2000);
+      const inputs = this.page.locator('input[type="password"]');
+      const seedWords = this.config.SECRET_PHRASE.split(' ');
+      for (let i = 0; i < seedWords.length; i++) {
+        await inputs.nth(i).fill(seedWords[i]);
+      }
+      await this.page.click('button:has-text("next")');
       await this.page.click('button:has-text("No thanks")');
       await this.page.waitForSelector(
         'text=You have successfully imported your wallet!',
