@@ -32,6 +32,7 @@ jobs:
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
+
       - name: Run wallets tests
         run: xvfb-run --auto-servernum -- yarn test:widgets
         working-directory: wallets-testing
@@ -55,8 +56,17 @@ jobs:
           EMBEDS=$(cat embeds.json | jq -c .embeds)
           echo "EMBEDS=$EMBEDS" >> $GITHUB_ENV
 
-      - name: Discord notification
-        if: ${{ always() && (github.event_name == 'schedule' || inputs.notify) }}
+      - name: Discord notification when fails (include mentions)
+        if: ${{ failure() && (github.event_name == 'schedule' || inputs.notify) }}
+        uses: lidofinance/action-discord@0.3.2
+        with:
+          args: "<@&1118836223495131167> please take a look at the test results"
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_EMBEDS: ${{ env.EMBEDS }}
+
+      - name: Discord notification when success
+        if: ${{ success() && (github.event_name == 'schedule' || inputs.notify) }}
         uses: lidofinance/action-discord@0.3.2
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
