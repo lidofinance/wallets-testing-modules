@@ -68,6 +68,8 @@ export class TahoPage implements WalletPage {
 
   async connectWallet(page: Page) {
     await test.step('Connect wallet', async () => {
+      await page.locator('button').nth(3).click();
+      await page.locator('button').nth(1).click();
       await page.click('button:has-text("Connect")');
       await page.close();
     });
