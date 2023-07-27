@@ -38,4 +38,7 @@ jobs:
       - name: Publish to NPM
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: yarn run publish
+        run: |
+          git config --global user.email "ci@github.com"
+          git config --global user.name "Robot"
+          yarn run publish
