@@ -12,7 +12,7 @@
     "build": "tsc --build",
     "test": "playwright test",
     "lint": "eslint --ext ts .",
-    "publish": "release-it --ci",
+    "publish": "release-it --ci --verbose",
     "publish:dry": "release-it --ci --dry-run"
   },
   "devDependencies": {
