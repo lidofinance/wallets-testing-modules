@@ -1,5 +1,5 @@
 {
-  "name": "@lidofinance/wallets-testing-widgets",
+  "name": "wallets-testing-widgets",
   "version": "0.0.1",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",

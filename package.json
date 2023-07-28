@@ -43,6 +43,7 @@
     "git": {
       "requireCleanWorkingDir": false,
       "commit": false,
+      "tagName": "${version}"
     },
     "github": {
       "release": true
