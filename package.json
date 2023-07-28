@@ -41,7 +41,7 @@
   },
   "release-it": {
     "git": {
-      "requireCleanWorkingDir": true,
+      "requireCleanWorkingDir": false,
       "commit": false,
       "tagName": "${version}"
     },
