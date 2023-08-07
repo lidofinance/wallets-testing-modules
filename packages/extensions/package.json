@@ -4,6 +4,7 @@
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "license": "MIT",
+
   "homepage": "https://github.com/lidofinance/wallets-testing-modules",
   "repository": {
     "type": "git",
@@ -14,6 +15,9 @@
     "url": "https://github.com/lidofinance/wallets-testing-modules/issues"
   },
   "sideEffects": false,
+  "scripts": {
+    "release": "release-it"
+  },
   "keywords": [
     "lido",
     "lidofinance"
@@ -39,5 +43,8 @@
     "@nestjs/core": "^8.2.5",
     "@nestjs/testing": "^8.2.5",
     "@types/unzipper": "^0.10.5"
+  },
+  "release-it": {
+    "git": false
   }
 }

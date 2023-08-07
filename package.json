@@ -4,7 +4,10 @@
   "description": "Common modules for testing wallets",
   "private": true,
   "workspaces": [
-    "packages/*",
+    "packages/extensions",
+    "packages/nodes",
+    "packages/wallets",
+    "packages/widgets",
     "wallets-testing/"
   ],
   "sideEffects": false,
@@ -12,7 +15,7 @@
     "build": "tsc --build",
     "test": "playwright test",
     "lint": "eslint --ext ts .",
-    "publish": "release-it --ci -VV",
+    "publish": "npm run release --workspaces && release-it",
     "publish:dry": "release-it --ci --dry-run"
   },
   "devDependencies": {
