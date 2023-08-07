@@ -15,7 +15,7 @@
     "build": "tsc --build",
     "test": "playwright test",
     "lint": "eslint --ext ts .",
-    "publish": "npm run release --workspaces && release-it",
+    "publish": "npm run release --workspaces && release-it --VV",
     "publish:dry": "release-it --ci --dry-run"
   },
   "devDependencies": {
