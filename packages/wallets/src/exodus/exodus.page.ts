@@ -1,6 +1,7 @@
 import { WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import { test, BrowserContext, Page } from '@playwright/test';
+import {timeout} from "rxjs";
 
 export class ExodusPage implements WalletPage {
   page: Page | undefined;
@@ -65,6 +66,7 @@ export class ExodusPage implements WalletPage {
         "input[placeholder='Enter your password again']",
         this.config.PASSWORD,
       );
+      await this.page.waitForTimeout(100000);
       await this.page.click('text=Restore');
       await this.page.waitForSelector('text=Continue');
     });
