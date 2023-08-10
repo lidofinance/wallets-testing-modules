@@ -64,6 +64,7 @@ export class CoinbasePage implements WalletPage {
       await this.page.click('data-testid=terms-and-privacy-policy');
 
       await this.page.click('button:has-text("Submit")');
+      await this.page.click('text=Maybe later');
       //wait for complete of recover process(need to wait for wallet page to be opened after seed recover)
       await this.page.waitForSelector('data-testid=portfolio-header--switcher');
     });
