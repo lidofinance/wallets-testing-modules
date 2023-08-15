@@ -2,13 +2,6 @@
   "name": "wallets-testing-modules",
   "version": "0.0.1",
   "description": "Common modules for testing wallets",
-  "private": true,
-  "workspaces": [
-    "packages/extensions",
-    "packages/nodes",
-    "packages/wallets",
-    "packages/widgets"
-  ],
   "sideEffects": false,
   "scripts": {
     "build": "tsc --build",
@@ -59,7 +52,8 @@
       "publish": true
     },
     "plugins": {
-      "@release-it-plugins/workspaces": true,
+      "@release-it-plugins/workspaces": {
+        "workspaces": ["dist/packages/*"]},
       "@release-it/conventional-changelog": {
         "preset": "angular"
       }
