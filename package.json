@@ -2,6 +2,13 @@
   "name": "wallets-testing-modules",
   "version": "0.0.1",
   "description": "Common modules for testing wallets",
+  "private": true,
+  "workspaces": [
+    "packages/extensions",
+    "packages/nodes",
+    "packages/wallets",
+    "packages/widgets"
+  ],
   "sideEffects": false,
   "scripts": {
     "build": "tsc --build",
@@ -28,30 +35,31 @@
     "typescript": "4.7.4"
   },
   "lint-staged": {
-    "./**/src/**/*.ts": [
+    ".//src//*.ts": [
       "yarn eslint --max-warnings=0"
     ],
     "./**/*.{ts,js,md,json}": [
       "prettier --write"
     ]
   },
+  "publishConfig":{
+    "access": "restricted",
+    "registry": "https://registry.npmjs.org/"
+  },
   "release-it": {
     "git": {
       "requireCleanWorkingDir": false,
       "commit": false,
-      "tag": true
+      "tagName": "${version}"
     },
     "github": {
       "release": true
     },
     "npm": {
-      "ignoreVersion": true
+      "publish": true
     },
     "plugins": {
-      "@release-it-plugins/workspaces": {
-        "workspaces": ["packages/*"]
-      }
-      },
+      "@release-it-plugins/workspaces": true,
       "@release-it/conventional-changelog": {
         "preset": "angular"
       }
