@@ -2,7 +2,6 @@
   "name": "wallets-testing-modules",
   "version": "0.0.1",
   "description": "Common modules for testing wallets",
-  "private": true,
   "workspaces": [
     "packages/extensions",
     "packages/nodes",
