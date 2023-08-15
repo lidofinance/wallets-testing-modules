@@ -42,7 +42,7 @@
   "release-it": {
     "git": {
       "requireCleanWorkingDir": false,
-      "commit": false,
+      "commit": false
     },
     "github": {
       "release": true
