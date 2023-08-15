@@ -42,7 +42,8 @@
   "release-it": {
     "git": {
       "requireCleanWorkingDir": false,
-      "commit": false
+      "commit": false,
+      "tagName": "${version}"
     },
     "github": {
       "release": true
@@ -52,7 +53,9 @@
     },
     "plugins": {
       "@release-it-plugins/workspaces": {
-        "workspaces": ["dist/packages/*"]},
+        "workspaces": ["dist/packages/*"],
+        "distTag": "lts"
+      },
       "@release-it/conventional-changelog": {
         "preset": "angular"
       }
