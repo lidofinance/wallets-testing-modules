@@ -7,8 +7,7 @@
     "packages/extensions",
     "packages/nodes",
     "packages/wallets",
-    "packages/widgets",
-    "wallets-testing/"
+    "packages/widgets"
   ],
   "sideEffects": false,
   "scripts": {
