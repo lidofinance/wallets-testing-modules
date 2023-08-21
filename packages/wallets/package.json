@@ -16,7 +16,7 @@
   },
   "sideEffects": false,
   "scripts": {
-    "release": "release-it"
+    "release": "release-it --ci"
   },
   "keywords": [
     "lido",

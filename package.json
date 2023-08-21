@@ -41,14 +41,19 @@
   },
   "release-it": {
     "git": {
-      "commit": false,
-      "tag": true
+      "changelog": "auto-changelog --stdout --commit-limit false -u --template https://raw.githubusercontent.com/release-it/release-it/master/templates/changelog-compact.hbs",
+      "commitMessage": "chore: release ${version}",
+      "requireCleanWorkingDir": false,
+      "tagName": "${version}"
     },
     "github": {
       "release": true
     },
+    "hooks": {
+      "after:bump": "auto-changelog -p"
+    },
     "npm": {
-      "ignoreVersion": true
+      "publish": true
     },
     "plugins": {
       "@release-it-plugins/workspaces": {
