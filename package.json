@@ -1,6 +1,6 @@
 {
-  "name": "wallets-testing-modules1",
-  "version": "0.0.0",
+  "name": "wallets-testing-modules2",
+  "version": "1.0.0",
   "description": "Common modules for testing wallets",
   "sideEffects": false,
   "scripts": {
@@ -41,20 +41,16 @@
   },
   "release-it": {
     "git": {
-      "commit": false,
+      "commit": true,
       "requireCleanWorkingDir": false,
       "tag": true
     },
     "github": {
       "release": true
     },
-    "npm": {
-      "ignoreVersion": false
-    },
     "plugins": {
       "@release-it-plugins/workspaces": {
-        "workspaces": ["dist/packages/*"],
-        "distTag": "lts"
+        "workspaces": ["dist/packages/*"]
       },
       "@release-it/conventional-changelog": {
         "preset": "angular"
