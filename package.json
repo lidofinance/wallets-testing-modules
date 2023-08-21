@@ -60,6 +60,7 @@
         "workspaces": ["dist/packages/*"],
         "distTag": "lts"
       },
+      "npm": false,
       "@release-it/conventional-changelog": {
         "preset": "angular"
       }
