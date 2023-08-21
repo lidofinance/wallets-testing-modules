@@ -49,7 +49,7 @@
       "release": true
     },
     "npm": {
-      "ignoreVersion": true
+      "ignoreVersion": false
     },
     "plugins": {
       "@release-it-plugins/workspaces": {
