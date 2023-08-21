@@ -48,7 +48,6 @@
       "release": true
     },
     "npm": {
-      "publish": true,
       "ignoreVersion": true
     },
     "plugins": {
@@ -58,16 +57,6 @@
       },
       "@release-it/conventional-changelog": {
         "preset": "angular"
-      },
-      "@release-it/bumper": {
-        "in": {
-          "file": "package.json",
-          "type": "text/plain"
-        },
-        "out": {
-          "file": "VERSION",
-          "type": "text/plain"
-        }
       }
 
     }
