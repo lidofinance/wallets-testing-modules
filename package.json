@@ -41,8 +41,7 @@
   },
   "release-it": {
     "git": {
-      "requireCleanWorkingDir": false,
-      "tagName": "v${version}"
+      "requireCleanWorkingDir": false
     },
     "github": {
       "releaseNotes": "generate-release-notes.sh --from=${latestTag} --to=${tagName}",
