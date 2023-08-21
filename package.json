@@ -42,11 +42,7 @@
   "release-it": {
     "git": {
       "requireCleanWorkingDir": false
-    },
-    "github": {
-      "releaseNotes": "generate-release-notes.sh --from=${latestTag} --to=${tagName}",
-      "release": true
-    },
+    }
     "npm": {
       "publish": true
     },
