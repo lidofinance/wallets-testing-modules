@@ -45,9 +45,8 @@
       "tagName": "v${version}"
     },
     "github": {
-      "draft": true,
-      "release": true,
-      "tokenRef": "GITHUB_TOKEN"
+      "releaseNotes": "generate-release-notes.sh --from=${latestTag} --to=${tagName}",
+      "release": true
     },
     "npm": {
       "publish": true
