@@ -40,4 +40,5 @@ jobs:
         run: |
           git config --global user.email "ci@github.com"
           git config --global user.name "Robot"
+          WIREIT_PARALLEL=1
           yarn publish
