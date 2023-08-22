@@ -51,6 +51,7 @@
       "releaseName": "Release {{version}}"
     },
     "npm": {
+      "tarballDir": "dist",
       "publish": true
     },
     "plugins": {
@@ -63,10 +64,7 @@
         ]
       },
       "@release-it/bumper": {
-        "in": "package.json",
-        "folders": [
-          "dist/packages"
-        ]
+        "in": "package.json"
       }
     }
   }
