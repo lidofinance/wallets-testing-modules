@@ -1,5 +1,5 @@
 {
-  "name": "wallets-testing-modules4",
+  "name": "wallets-testing-modules5",
   "version": "1.0.0",
   "description": "Common modules for testing wallets",
   "sideEffects": false,
@@ -33,10 +33,6 @@
     "./**/*.{ts,js,md,json}": [
       "prettier --write"
     ]
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
   },
   "wireit": {
     "release": {
