@@ -1,6 +1,6 @@
 {
   "name": "wallets-testing-modules2",
-  "version": "14.0.0",
+  "version": "16.0.0",
   "description": "Common modules for testing wallets",
   "sideEffects": false,
   "scripts": {
@@ -51,13 +51,9 @@
       "releaseName": "Release {{version}}"
     },
     "npm": {
-      "tarballDir": "dist",
       "publish": true
     },
     "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": "angular"
-      },
       "@release-it-plugins/workspaces": {
         "workspaces": [
           "packages/*",
