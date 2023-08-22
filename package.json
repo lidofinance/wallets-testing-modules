@@ -3,15 +3,11 @@
   "version": "16.0.0",
   "description": "Common modules for testing wallets",
   "sideEffects": false,
-  "workspaces": [
-    "packages/*",
-    "wallets-testing/"
-  ],
   "scripts": {
     "build": "tsc --build",
     "test": "playwright test",
     "lint": "eslint --ext ts .",
-    "publish": "npm run release --workspaces && release-it --debug",
+    "publish": "npm run release-it --debug",
     "publish:dry": "release-it --ci --dry-run"
   },
   "devDependencies": {
@@ -60,6 +56,9 @@
     "plugins": {
       "@release-it/conventional-changelog": {
         "preset": "angular"
+      },
+      "@release-it-plugins/workspaces": {
+        "workspaces": ["extensions/", "packages/nodes", "packages/wallets","packages/widgets"]
       }
     }
   }
