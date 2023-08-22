@@ -42,13 +42,7 @@
   },
   "release-it": {
     "git": {
-      "requireCleanWorkingDir": false,
-      "commit": false,
-      "tagName": "${version}"
-    },
-    "github": {
-      "release": true,
-      "releaseName": "Release {{version}}"
+      "requireCleanWorkingDir": false
     },
     "npm": {
       "publish": false
@@ -58,7 +52,7 @@
         "preset": "angular"
       },
       "@release-it-plugins/workspaces": {
-        "workspaces": ["extensions/", "packages/nodes", "packages/wallets","packages/widgets"]
+        "workspaces": ["packages/extensions/", "packages/nodes", "packages/wallets","packages/widgets"]
       }
     }
   }
