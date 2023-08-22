@@ -38,24 +38,5 @@
   "publishConfig":{
     "access": "public",
     "registry": "https://registry.npmjs.org/"
-  },
-  "release-it": {
-    "git": {
-      "commit": true,
-      "requireCleanWorkingDir": false,
-      "tag": true
-    },
-    "github": {
-      "release": true
-    },
-    "plugins": {
-      "@release-it-plugins/workspaces": {
-        "workspaces": ["dist/packages/*"]
-      },
-      "@release-it/conventional-changelog": {
-        "preset": "angular"
-      }
-
-    }
   }
 }
