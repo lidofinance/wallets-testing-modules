@@ -1,6 +1,6 @@
 {
   "name": "wallets-testing-modules2",
-  "version": "8.0.0",
+  "version": "9.0.0",
   "description": "Common modules for testing wallets",
   "sideEffects": false,
   "scripts": {
