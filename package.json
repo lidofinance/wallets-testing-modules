@@ -7,7 +7,7 @@
     "build": "tsc --build",
     "test": "playwright test",
     "lint": "eslint --ext ts .",
-    "publish": "release-it --debug",
+    "publish": "release-it --ci --debug",
     "publish:dry": "release-it --ci --dry-run"
   },
   "devDependencies": {
@@ -59,13 +59,13 @@
       },
       "@release-it-plugins/workspaces": {
         "workspaces": [
-          "dist/packages/*"
+          "packages/*"
         ]
       },
       "@release-it/bumper": {
         "in": "package.json",
         "folders": [
-          "dist/packages/*"
+          "packages/*"
         ]
       }
     }
