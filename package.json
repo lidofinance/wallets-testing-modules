@@ -1,6 +1,6 @@
 {
   "name": "wallets-testing-modules2",
-  "version": "6.0.0",
+  "version": "7.0.0",
   "description": "Common modules for testing wallets",
   "sideEffects": false,
   "scripts": {
@@ -47,7 +47,8 @@
       "tagName": "${version}"
     },
     "github": {
-      "release": true
+      "release": true,
+      "releaseName": "Release {{version}}"
     },
     "npm": {
       "publish": true
