@@ -1,19 +1,16 @@
 {
-  "name": "wallets-testing-modules3",
-  "version": "16.0.0",
+  "name": "wallets-testing-modules4",
+  "version": "1.0.0",
   "description": "Common modules for testing wallets",
   "sideEffects": false,
   "scripts": {
     "build": "tsc --build",
     "test": "playwright test",
     "lint": "eslint --ext ts .",
-    "publish": "release-it --debug",
+    "publish": "wireit",
     "publish:dry": "release-it --ci --dry-run"
   },
   "devDependencies": {
-    "@release-it-plugins/workspaces": "^4.0.0",
-    "@release-it/bumper": "^5.1.0",
-    "@release-it/conventional-changelog": "^7.0.0",
     "@types/eslint-plugin-prettier": "^3.1.0",
     "@types/node": "^18.11.15",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
@@ -25,6 +22,7 @@
     "lint-staged": "^13.1.0",
     "prettier": "^2.8.1",
     "release-it": "^16.0.0",
+    "wireit": "0.4.1",
     "tslib": "^2.4.1",
     "typescript": "4.7.4"
   },
@@ -40,35 +38,15 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "release-it": {
-    "git": {
-      "requireCleanWorkingDir": false
-    },
-    "npm": {
-      "publish": false
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": "angular"
-      },
-      "@release-it-plugins/workspaces": {
-        "workspaces": [
-          "packages/extensions/",
-          "packages/nodes",
-          "packages/wallets",
-          "packages/widgets"
-        ]
-      },
-      "@release-it/bumper": {
-        "in": {
-          "file": "package",
-          "type": "json"
-        },
-        "out": {
-          "file": "package",
-          "type": "json"
-        }
-      }
+  "wireit": {
+    "release": {
+      "command": "release-it --no-npm --no-git.requireCleanWorkingDir",
+      "dependencies": [
+        "./packages/extensions:release",
+        "./packages/nodes:release",
+        "./packages/wallets:release",
+        "./packages/widgets:release"
+      ]
     }
   }
 }
