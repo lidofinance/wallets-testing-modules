@@ -1,0 +1,19 @@
+{
+  "git":{
+    "requireCleanWorkingDir": false
+  },
+  "plugins": {
+    "@release-it/bumper": {
+      "in": "package.json"
+    },
+    "@release-it/conventional-changelog": {
+      "preset": "angular"
+    },
+    "@release-it/github": {
+      "releaseName": "Release {{version}}"
+    },
+    "@release-it-plugins/workspaces": {
+      "workspaces": ["dist/packages/*"]
+    }
+  }
+}
