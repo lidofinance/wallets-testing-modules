@@ -11,6 +11,7 @@ export type EthereumNodeServiceOptions = {
 
 export type Account = {
   address: string;
+  address1: string;
   secretKey: string;
 };
 
