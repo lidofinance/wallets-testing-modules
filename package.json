@@ -1,13 +1,13 @@
 {
   "name": "wallets-testing-modules2",
-  "version": "11.0.0",
+  "version": "12.0.0",
   "description": "Common modules for testing wallets",
   "sideEffects": false,
   "scripts": {
     "build": "tsc --build",
     "test": "playwright test",
     "lint": "eslint --ext ts .",
-    "publish": "npm run release && release-it",
+    "publish": "release-it --debug",
     "publish:dry": "release-it --ci --dry-run"
   },
   "devDependencies": {
@@ -43,7 +43,9 @@
   "release-it": {
     "git": {
       "requireCleanWorkingDir": false,
-      "commit": false,
+      "commit": false,      "@release-it/bumper": {
+        "in": "package.json"
+      }
       "tagName": "${version}"
     },
     "github": {
