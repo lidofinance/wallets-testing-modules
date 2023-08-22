@@ -60,7 +60,8 @@
       },
       "@release-it-plugins/workspaces": {
         "workspaces": [
-          "dist/packages/*"
+          "packages/*",
+          "wallets-testing/"
         ]
       }
     }
