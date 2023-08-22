@@ -56,9 +56,6 @@
       "@release-it/conventional-changelog": {
         "preset": "angular"
       },
-      "@release-it/github": {
-        "releaseName": "Release {{version}}"
-      },
       "@release-it-plugins/workspaces": {
         "workspaces": [
           "dist/packages/*"
