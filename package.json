@@ -1,6 +1,6 @@
 {
   "name": "wallets-testing-modules2",
-  "version": "7.0.0",
+  "version": "8.0.0",
   "description": "Common modules for testing wallets",
   "sideEffects": false,
   "scripts": {
@@ -65,7 +65,7 @@
       "@release-it/bumper": {
         "in": "package.json",
         "folders": [
-          "dist/packages/*"
+          "dist/packages"
         ]
       }
     }
