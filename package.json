@@ -43,9 +43,7 @@
   "release-it": {
     "git": {
       "requireCleanWorkingDir": false,
-      "commit": false,      "@release-it/bumper": {
-        "in": "package.json"
-      }
+      "commit": false,
       "tagName": "${version}"
     },
     "github": {
