@@ -1,13 +1,13 @@
 {
   "name": "wallets-testing-modules2",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Common modules for testing wallets",
   "sideEffects": false,
   "scripts": {
     "build": "tsc --build",
     "test": "playwright test",
     "lint": "eslint --ext ts .",
-    "publish": "release-it",
+    "publish": "release-it --debug",
     "publish:dry": "release-it --ci --dry-run"
   },
   "devDependencies": {

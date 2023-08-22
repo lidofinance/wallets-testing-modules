@@ -4,7 +4,8 @@
   },
   "plugins": {
     "@release-it/bumper": {
-      "in": "package.json"
+      "in": "package.json",
+      "folders": ["dist/packages/*"]
     },
     "@release-it/conventional-changelog": {
       "preset": "angular"
