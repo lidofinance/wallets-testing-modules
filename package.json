@@ -53,6 +53,9 @@
       },
       "@release-it-plugins/workspaces": {
         "workspaces": ["packages/extensions/", "packages/nodes", "packages/wallets","packages/widgets"]
+      },
+      "@release-it/bumper": {
+        "in": "packages/*"
       }
     }
   }
