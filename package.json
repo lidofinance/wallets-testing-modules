@@ -52,10 +52,22 @@
         "preset": "angular"
       },
       "@release-it-plugins/workspaces": {
-        "workspaces": ["packages/extensions/", "packages/nodes", "packages/wallets","packages/widgets"]
+        "workspaces": [
+          "packages/extensions/",
+          "packages/nodes",
+          "packages/wallets",
+          "packages/widgets"
+        ]
       },
       "@release-it/bumper": {
-        "out": "packages/*"
+        "in": {
+          "file": "package",
+          "type": "json"
+        },
+        "out": {
+          "file": "package",
+          "type": "json"
+        }
       }
     }
   }
