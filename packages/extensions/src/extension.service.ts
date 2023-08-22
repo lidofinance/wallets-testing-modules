@@ -27,10 +27,11 @@ export class ExtensionService {
     await this.downloadFromStore(id);
     return this.idToExtension[id];
   }
-    async getExtensionDir2FromId(id: string): Promise<string> {
-        await this.downloadFromStore(id);
-        return this.idToExtension[id];
-    }
+
+  async getExtensionDir2FromId(id: string): Promise<string> {
+    await this.downloadFromStore(id);
+    return this.idToExtension[id];
+  }
 
   async getManifestVersion(extensionDir: string): Promise<Manifest> {
     const content = await fs.readFile(extensionDir + '/manifest.json');
