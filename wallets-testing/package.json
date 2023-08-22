@@ -1,5 +1,5 @@
 {
-  "name": "wallets-testing2",
+  "name": "wallets-testing3",
   "version": "16.0.0",
   "description": "",
   "author": "",
@@ -15,7 +15,8 @@
     "pretest": "tsc --incremental -p tsconfig.json",
     "test": "yarn pretest && playwright test -c ./dist",
     "test:smoke": "yarn pretest && playwright test -c ./dist smoke",
-    "test:widgets": "yarn pretest && playwright test -c ./dist widgets"
+    "test:widgets": "yarn pretest && playwright test -c ./dist widgets",
+    "release": "release-it"
   },
   "dependencies": {
     "@lidofinance/wallets-testing-extensions": "link:../packages/extensions",

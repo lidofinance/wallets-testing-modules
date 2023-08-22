@@ -1,5 +1,5 @@
 {
-  "name": "wallets-testing-wallets2",
+  "name": "wallets-testing-wallets3",
   "version": "15.0.0",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -16,7 +16,7 @@
   },
   "sideEffects": false,
   "scripts": {
-    "release": "release-it --ci"
+    "release": "release-it"
   },
   "keywords": [
     "lido",
