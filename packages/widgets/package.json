@@ -16,7 +16,7 @@
   },
   "sideEffects": false,
   "scripts": {
-    "release": "release-it"
+    "publish": "release-it"
   },
   "keywords": [
     "lido",
@@ -45,6 +45,13 @@
     "@nestjs/testing": "^8.2.5"
   },
   "release-it": {
-    "git": false
+    "git": {
+      "requireCleanWorkingDir": false,
+      "requiredBranch": "main"
+    },
+    "github": {
+      "release": true,
+      "autoGenerate": true
+    }
   }
 }
