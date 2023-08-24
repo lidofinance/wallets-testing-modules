@@ -44,6 +44,6 @@
     "@nestjs/testing": "^8.2.5"
   },
   "release-it": {
-    "git": true
+    "git": false
   }
 }

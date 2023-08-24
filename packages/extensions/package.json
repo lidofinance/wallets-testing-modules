@@ -44,6 +44,6 @@
     "@types/unzipper": "^0.10.5"
   },
   "release-it": {
-    "git": true
+    "git": false
   }
 }
