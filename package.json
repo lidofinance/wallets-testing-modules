@@ -7,7 +7,7 @@
     "build": "tsc --build",
     "test": "playwright test",
     "lint": "eslint --ext ts .",
-    "publish": "release-it --ci --debug",
+    "publish": "release-it --config release-it.json",
     "publish:dry": "release-it --ci --dry-run"
   },
   "devDependencies": {
