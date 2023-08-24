@@ -4,7 +4,6 @@
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "license": "MIT",
-  "private": false,
   "homepage": "https://github.com/lidofinance/wallets-testing-modules",
   "repository": {
     "type": "git",
@@ -16,7 +15,7 @@
   },
   "sideEffects": false,
   "scripts": {
-    "publish": "release-it"
+    "release": "release-it"
   },
   "keywords": [
     "lido",
