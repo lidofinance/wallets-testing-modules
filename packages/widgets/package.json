@@ -46,7 +46,15 @@
   },
   "release-it": {
     "git": {
-      "commit": true
+      "requireCleanWorkingDir": false,
+      "requiredBranch": "main"
+    },
+    "github": {
+      "release": true,
+      "autoGenerate": true
+    },
+    "npm": {
+      "publish": false
     }
   }
 }
