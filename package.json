@@ -54,8 +54,8 @@
     },
     "plugins": {
       "@release-it/bumper": {
-        "in": "packages/package.json",
-        "out": "packages/package.json"
+        "in": "dist/packages/*/packages.json",
+        "out": "dist/packages/*/packages.json"
       },
       "@release-it-plugins/workspaces": {
         "workspaces": ["dist/packages/*"]
