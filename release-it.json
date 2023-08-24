@@ -1,0 +1,16 @@
+{
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": "angular"
+    }
+  },
+  "github": {
+    "release": true,
+    "assets": "dist/packages/*"
+  },
+  "git": {
+    "tagName": "v${version}",
+    "commitMessage": "chore(release): ${version}",
+    "requireCleanWorkingDir": false
+  }
+}
