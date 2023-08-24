@@ -1,5 +1,5 @@
 {
-  "name": "wallets-testing-modules11",
+  "name": "wallets-testing-modules",
   "version": "0.0.0",
   "private": true,
   "workspaces": ["packages/*"],
