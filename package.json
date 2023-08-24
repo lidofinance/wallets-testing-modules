@@ -1,5 +1,5 @@
 {
-  "name": "wallets-testing-modules10",
+  "name": "wallets-testing-modules11",
   "version": "7.0.0",
   "description": "Common modules for testing wallets",
   "sideEffects": false,
@@ -42,32 +42,14 @@
   },
   "release-it": {
     "git": {
-      "requireCleanWorkingDir": false,
-      "commit": true,
-      "tagName": "${version}"
+      "requiredBranch": "main"
     },
     "github": {
       "release": true,
-      "releaseName": "Release {{version}}"
+      "autoGenerate": true
     },
     "npm": {
-      "publish": true
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": "angular"
-      },
-      "@release-it-plugins/workspaces": {
-        "workspaces": [
-          "packages/*"
-        ]
-      },
-      "@release-it/bumper": {
-        "in": "package.json",
-        "folders": [
-          "packages/*"
-        ]
-      }
+      "publish": false
     }
   }
 }
