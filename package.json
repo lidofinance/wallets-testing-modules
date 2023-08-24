@@ -42,6 +42,7 @@
   },
   "release-it": {
     "git": {
+      "requireCleanWorkingDir": false,
       "requiredBranch": "main"
     },
     "github": {
