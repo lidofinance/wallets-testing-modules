@@ -1,15 +1,5 @@
 {
-  "increment": "patch",
-  "plugins": {
-    "@release-it/conventional-changelog": {
-      "preset": "angular"
-    }
-  },
   "git": {
     "requireCleanWorkingDir": false
-  },
-  "workspaces": {
-    "path": "packages/*",
-    "publish": true
   }
 }
