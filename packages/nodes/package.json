@@ -1,5 +1,5 @@
 {
-  "name": "@tester713//wallets-testing-nodes",
+  "name": "@tester713/wallets-testing-nodes",
   "version": "0.0.1",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
