@@ -1,5 +1,5 @@
 {
-  "name": "wallets-testing11",
+  "name": "@tester713/wallets-testing11",
   "version": "1.0.0",
   "description": "",
   "author": "",
@@ -73,12 +73,5 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  },
-  "release-it": {
-    "git": {
-      "commit": false,
-      "tag": false,
-      "push": false
-    }
   }
 }
