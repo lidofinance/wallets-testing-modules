@@ -51,6 +51,12 @@
     },
     "npm": {
       "publish": false
+    },
+    "plugins": {
+      "@release-it/bumper": {
+        "in": "packages/package.json",
+        "out": "packages/package.json"
+      }
     }
   }
 }
