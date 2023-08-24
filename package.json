@@ -46,7 +46,7 @@
       "autoGenerate": true
     },
     "@release-it-plugins/workspaces": {
-      "workspaces": ["dist/packages/*"]
+      "workspaces": ["packages/*"]
     }
   }
 }
