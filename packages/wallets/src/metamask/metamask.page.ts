@@ -165,18 +165,19 @@ export class MetamaskPage implements WalletPage {
 
   async approveTokenTx(page: Page) {
     await test.step('Approve token tx', async () => {
-      await this.useDefaultToApprove();
+      await this.useDefaultToApprove(page);
       await page.click('text=Next');
       await page.waitForTimeout(2000);
       await page.click('text=Approve');
     });
   }
 
-  async useDefaultToApprove() {
+  async useDefaultToApprove(page: Page) {
     await test.step('Click "Use default" button in case if it exist', async () => {
-      if (!this.page) throw "Page isn't ready";
-      const popover = (await this.page.locator('text=Use default').count()) > 0;
-      if (popover) await this.page.click('text=Use default');
+      if (!page) throw "Page isn't ready";
+      const useDefaultButton =
+        (await page.locator('text=Use default').count()) > 0;
+      if (useDefaultButton) await page.click('text=Use default');
     });
   }
 
