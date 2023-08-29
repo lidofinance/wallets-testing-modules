@@ -1,6 +1,6 @@
 {
-  "name": "@tester713/wallets-testing-extensions",
-  "version": "4.0.0",
+  "name": "@tester116/wallets-testing-extensions",
+  "version": "0.0.1",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "license": "MIT",

@@ -1,6 +1,6 @@
 {
   "name": "wallets-testing-modules",
-  "version": "3.0.0",
+  "version": "0.0.0",
   "private": true,
   "workspaces": ["packages/*"],
   "description": "Common modules for testing wallets",
@@ -41,5 +41,10 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
+  },
+  "release-it": {
+    "git": {
+      "requireCleanWorkingDir": false
+    }
   }
 }

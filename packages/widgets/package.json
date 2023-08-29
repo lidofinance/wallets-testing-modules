@@ -1,6 +1,6 @@
 {
-  "name": "@tester713/wallets-testing-widgets",
-  "version": "4.0.0",
+  "name": "@tester116/wallets-testing-widgets",
+  "version": "0.0.1",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "license": "MIT",
@@ -51,7 +51,7 @@
       "@release-it/bumper": {
         "out": {
           "file": "package.json",
-          "path": ["dependencies.@tester713/wallets-testing-wallets"]
+          "path": ["dependencies.@tester116/wallets-testing-wallets"]
         }
       }
     }
