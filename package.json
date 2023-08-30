@@ -1,27 +1,26 @@
 {
   "name": "wallets-testing-modules",
-  "version": "0.0.1",
+  "version": "0.0.0-development",
   "description": "Common modules for testing wallets",
   "private": true,
   "workspaces": [
-    "packages/*",
-    "wallets-testing/"
+    "packages/wallets",
+    "packages/extensions",
+    "packages/widgets",
+    "packages/nodes"
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "tsc --build",
+    "build": "yarn workspaces run build",
     "test": "playwright test",
-    "lint": "eslint --ext ts .",
-    "publish": "release-it --ci",
-    "publish:dry": "release-it --ci --dry-run"
+    "lint": "eslint --ext ts ."
   },
   "devDependencies": {
-    "@release-it-plugins/workspaces": "^3.2.0",
-    "@release-it/conventional-changelog": "^5.1.1",
     "@types/eslint-plugin-prettier": "^3.1.0",
     "@types/node": "^18.11.15",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
     "@typescript-eslint/parser": "^5.46.1",
+    "@qiwi/multi-semantic-release": "6.7.0",
     "dotenv": "^16.0.3",
     "eslint": "^8.29.0",
     "eslint-config-prettier": "^8.5.0",
@@ -40,22 +39,9 @@
       "prettier --write"
     ]
   },
-  "release-it": {
-    "git": {
-      "commit": false,
-      "tag": true
-    },
-    "github": {
-      "release": true
-    },
-    "npm": {
-      "ignoreVersion": true
-    },
-    "plugins": {
-      "@release-it-plugins/workspaces": true,
-      "@release-it/conventional-changelog": {
-        "preset": "angular"
-      }
-    }
+  "release": {
+    "branches": [
+      "main"
+    ]
   }
 }

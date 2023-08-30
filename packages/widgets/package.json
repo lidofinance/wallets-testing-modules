@@ -1,6 +1,6 @@
 {
   "name": "@lidofinance/wallets-testing-widgets",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "license": "MIT",
@@ -14,19 +14,22 @@
     "url": "https://github.com/lidofinance/wallets-testing-modules/issues"
   },
   "sideEffects": false,
+  "scripts": {
+    "build": "tsc --build"
+  },
   "keywords": [
     "lido",
     "lidofinance"
   ],
   "files": [
-    "dist/*"
+    "dist"
   ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
   "dependencies": {
-    "@lidofinance/wallets-testing-wallets": "link:../wallets",
+    "@lidofinance/wallets-testing-wallets": "*",
     "@nestjs/common": "^8.2.5",
     "@nestjs/config": "^2.2.0",
     "@playwright/test": "^1.29.1",

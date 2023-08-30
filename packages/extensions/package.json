@@ -1,6 +1,6 @@
 {
   "name": "@lidofinance/wallets-testing-extensions",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "license": "MIT",
@@ -14,12 +14,15 @@
     "url": "https://github.com/lidofinance/wallets-testing-modules/issues"
   },
   "sideEffects": false,
+  "scripts": {
+    "build": "tsc --build"
+  },
   "keywords": [
     "lido",
     "lidofinance"
   ],
   "files": [
-    "dist/*"
+    "dist"
   ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
