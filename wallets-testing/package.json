@@ -1,6 +1,6 @@
 {
   "name": "wallets-testing",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "",
   "author": "",
   "private": true,
@@ -13,16 +13,15 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "pretest": "tsc --incremental -p tsconfig.json",
-    "test": "yarn pretest && playwright test -c ./dist",
-    "test:smoke": "yarn pretest && playwright test -c ./dist smoke",
-    "test:widgets": "yarn pretest && playwright test -c ./dist widgets"
+    "test": "playwright test -c ./dist",
+    "test:smoke": "playwright test -c ./dist smoke",
+    "test:widgets": "playwright test -c ./dist widgets"
   },
   "dependencies": {
-    "@lidofinance/wallets-testing-extensions": "link:../packages/extensions",
-    "@lidofinance/wallets-testing-nodes": "link:../packages/nodes",
-    "@lidofinance/wallets-testing-wallets": "link:../packages/wallets",
-    "@lidofinance/wallets-testing-widgets": "link:../packages/widgets",
+    "@lidofinance/wallets-testing-extensions": "*",
+    "@lidofinance/wallets-testing-nodes": "*",
+    "@lidofinance/wallets-testing-wallets": "*",
+    "@lidofinance/wallets-testing-widgets": "*",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",

@@ -1,4 +1,4 @@
-name: deploy
+name: publish
 
 on:
   push:
@@ -21,14 +21,14 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '18.15'
+          node-version: 16
           cache: 'yarn'
-      - name: Install dependencies
-        run: yarn install --immutable
+      - name: Install root dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build
+        run: yarn build
       - name: Run lint
         run: yarn lint
-      - name: Build Components
-        run: yarn build
 
       - name: Setup NPM token
         run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
@@ -38,4 +38,6 @@ jobs:
       - name: Publish to NPM
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: yarn run publish
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run:
+          yarn multi-semantic-release --deps.bump=override --deps.release=patch --sequential-init
