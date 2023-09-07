@@ -7,6 +7,7 @@ import {
   METAMASK_COMMON_CONFIG,
   COINBASE_COMMON_CONFIG,
   EXODUS_COMMON_CONFIG,
+  OKX_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import { POLYGON_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
 import { BrowserModule } from '../../browser/browser.module';
@@ -57,6 +58,11 @@ test.describe('Polygon', () => {
 
   test('Coinbase connect', async () => {
     await browserService.setup(COINBASE_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
+    await browserService.connectWallet();
+  });
+
+  test(`OKX connect`, async () => {
+    await browserService.setup(OKX_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 
