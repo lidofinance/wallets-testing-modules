@@ -127,6 +127,7 @@ export class OkxPage implements WalletPage {
   //+
   async connectWallet(page: Page) {
     await test.step('Connect wallet', async () => {
+      await page.waitForTimeout(2000);
       await page.getByRole('button', { name: 'Connect' }).click();
       await page.waitForSelector('text=Connected');
       await page.close();
