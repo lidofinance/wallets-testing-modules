@@ -82,6 +82,7 @@ export class BrowserService {
         commonWalletConfig.STORE_EXTENSION_ID,
       );
     await this.browserContextService.setup(
+      commonWalletConfig.WALLET_NAME,
       walletConfig,
       this.widgetConfig.nodeUrl,
     );
