@@ -11,6 +11,7 @@ import {
   TAHO_COMMON_CONFIG,
   EXODUS_COMMON_CONFIG,
   XDEFI_COMMON_CONFIG,
+  OKX_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import { ETHEREUM_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
 import { BrowserModule } from '../../browser/browser.module';
@@ -84,6 +85,11 @@ test.describe('Ethereum', () => {
 
   test.skip(`Xdefi wallet connect`, async () => {
     await browserService.setup(XDEFI_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
+    await browserService.connectWallet();
+  });
+
+  test(`OKX connect`, async () => {
+    await browserService.setup(OKX_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 

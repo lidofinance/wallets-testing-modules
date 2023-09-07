@@ -9,6 +9,7 @@ import {
   TahoPage,
   GameStopPage,
   XdefiPage,
+  OkxPage,
 } from '@lidofinance/wallets-testing-wallets';
 import {
   EthereumPage,
@@ -29,6 +30,7 @@ export const WALLET_PAGES = {
   taho: TahoPage,
   gamestop: GameStopPage,
   xdefi: XdefiPage,
+  okx: OkxPage,
 };
 
 export const WIDGET_PAGES = {
