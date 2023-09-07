@@ -25,7 +25,7 @@ export class BitKeepPage implements WalletPage {
 
   async setup() {
     await test.step('Setup', async () => {
-      // added explicit route to /onboarding due to unexpected first time route from /home.html to /onboarding - page is close
+      // added explicit route to /welcome.html due to unexpected first time route from /home.html to /welcome.html - page is close
       this.page = await this.browserContext.newPage();
       await this.page.goto(this.extensionUrl + '/welcome.html');
       await this.page.waitForSelector('text=Welcome to Bitget Wallet');
