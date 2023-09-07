@@ -3,10 +3,7 @@ import { BrowserContext, chromium, Page } from 'playwright';
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';
-import {
-  CommonWalletConfig,
-  WalletConfig,
-} from '@lidofinance/wallets-testing-wallets';
+import { WalletConfig } from '@lidofinance/wallets-testing-wallets';
 import { EthereumNodeService } from '@lidofinance/wallets-testing-nodes';
 import {
   ExtensionService,

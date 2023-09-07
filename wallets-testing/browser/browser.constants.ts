@@ -31,7 +31,8 @@ export const WALLET_PAGES = {
   taho: TahoPage,
   gamestop: GameStopPage,
   xdefi: XdefiPage,
-  okx: OkxPage
+  okx: OkxPage,
+  bitKeep: BitKeepPage,
 };
 
 export const WIDGET_PAGES = {
