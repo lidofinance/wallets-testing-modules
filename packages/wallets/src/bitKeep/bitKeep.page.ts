@@ -60,10 +60,11 @@ export class BitKeepPage implements WalletPage {
         this.config.PASSWORD,
       );
       await this.page.click("button:has-text('Next')");
-      await this.page.fill(
-        'textarea[id=outlined-multiline-static]',
-        this.config.SECRET_PHRASE,
-      );
+      const inputs = this.page.locator('.wordInput-contaniner-input');
+      const seedWords = this.config.SECRET_PHRASE.split(' ');
+      for (let i = 0; i < seedWords.length; i++) {
+        await inputs.nth(i).fill(seedWords[i]);
+      }
       await this.page.click("button:has-text('Confirm')");
       await this.page.waitForSelector('text=Wallet successfully imported');
     });
