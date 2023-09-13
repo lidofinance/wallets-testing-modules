@@ -26,8 +26,7 @@ export class Coin98 implements WalletPage {
     await test.step('Setup', async () => {
       await this.navigate();
       if (!this.page) throw "Page isn't ready";
-      const firstTime =
-        (await this.page.locator('text=Create Wallet').count()) > 0;
+      const firstTime = await this.page.waitForSelector('text=Restore Wallet');
       if (firstTime) await this.firstTimeSetup(network);
     });
   }
@@ -45,13 +44,14 @@ export class Coin98 implements WalletPage {
       await this.page.click('button:has-text("Ok")');
       await this.page.click('button:has-text("Confirm")');
       await this.page.fill('[placeholder="Search chain"]', network);
-      await this.page.click('.box-logo');
+      await this.page.getByText('Ethereum', { exact: true }).click();
       await this.page.fill('[placeholder="Wallet name"]', 'test');
       await this.page.fill(
-        '.content-editable--password',
+        'div[class="relative w-full"] >> div',
         this.config.SECRET_PHRASE,
       );
-      await this.page.click('button:has-text("Restore")');
+      await this.page.locator('button:has-text("Restore")').nth(1).click();
+      await this.page.waitForSelector('text=Success!');
     });
   }
 
@@ -71,7 +71,18 @@ export class Coin98 implements WalletPage {
 
   async connectWallet(page: Page) {
     await test.step('Connect wallet', async () => {
+      await this.unlock(page);
       await page.click('button:has-text("Connect")');
+    });
+  }
+
+  async unlock(page: Page) {
+    await test.step('Unlock', async () => {
+      await page.waitForSelector('input[name="password"]');
+      if ((await page.locator('input[name="password"]').count()) > 0) {
+        await page.fill('input[name=password]', this.config.PASSWORD);
+        await page.click('text=Unlock Wallet');
+      }
     });
   }
 
