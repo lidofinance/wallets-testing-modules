@@ -7,5 +7,4 @@ export const METAMASK_COMMON_CONFIG: CommonWalletConfig = {
   CONNECT_BUTTON_NAME: 'Metamask',
   SIMPLE_CONNECT: false,
   EXTENSION_START_PATH: '/home.html',
-  TESTNET_NETWORK: 'Goerli',
 };
