@@ -25,4 +25,6 @@ export interface WalletPage {
     chainId: number,
     tokenSymbol: string,
   ): Promise<void>;
+
+  setTestnetNetwork?(networkName: string): Promise<void>;
 }

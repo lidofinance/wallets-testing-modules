@@ -5,6 +5,7 @@ export interface CommonWalletConfig {
   CONNECT_BUTTON_NAME: string;
   SIMPLE_CONNECT: boolean;
   EXTENSION_START_PATH: string;
+  TESTNET_NETWORK?: string;
 }
 
 export interface WalletConfig {
