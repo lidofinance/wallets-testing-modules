@@ -94,15 +94,23 @@ export class MetamaskPage implements WalletPage {
       await this.closePopover();
     });
   }
-  async setTestnetNetwork(networkName: string) {
-    await test.step(`Set Metamask to ${networkName} testnet network`, async () => {
+  async setNetwork(networkName: string) {
+    await test.step(`Set Metamask to ${networkName} network`, async () => {
       if (!this.page) throw "Page isn't ready";
       await this.navigate();
       await this.page.click('data-testid=network-display');
-      await this.page.click('label[class="toggle-button toggle-button--off"]');
-      await this.page.click('button:has-text("Goerli")');
+      if (
+        (await this.page
+          .locator(`button:has-text("${networkName}")`)
+          .count()) === 0
+      ) {
+        await this.page.click(
+          'label[class="toggle-button toggle-button--off"]',
+        );
+      }
+      await this.page.click(`button:has-text("${networkName}")`);
       await this.page.waitForSelector(
-        'button[data-testid="network-display"]:has-text("Goerli")',
+        `button[data-testid="network-display"]:has-text("${networkName}")`,
       );
     });
   }
