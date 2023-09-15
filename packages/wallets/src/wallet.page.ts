@@ -26,5 +26,5 @@ export interface WalletPage {
     tokenSymbol: string,
   ): Promise<void>;
 
-  setNetwork?(networkName: string): Promise<void>;
+  changeNetwork?(networkName: string): Promise<void>;
 }

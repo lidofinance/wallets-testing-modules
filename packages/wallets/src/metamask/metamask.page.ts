@@ -94,8 +94,8 @@ export class MetamaskPage implements WalletPage {
       await this.closePopover();
     });
   }
-  async setNetwork(networkName: string) {
-    await test.step(`Set Metamask to ${networkName} network`, async () => {
+  async changeNetwork(networkName: string) {
+    await test.step(`Change Metamask network to ${networkName}`, async () => {
       if (!this.page) throw "Page isn't ready";
       await this.navigate();
       await this.page.click('data-testid=network-display');
