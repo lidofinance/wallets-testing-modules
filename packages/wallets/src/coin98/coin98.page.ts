@@ -48,8 +48,9 @@ export class Coin98 implements WalletPage {
       await this.page.fill('[placeholder="Wallet name"]', 'test');
       await this.page.fill(
         'div[class="relative w-full"] >> div',
-        this.config.SECRET_PHRASE,
+        this.config.SECRET_PHRASE.trim(),
       );
+      await this.page.pause();
       await this.page.locator('button:has-text("Restore")').nth(1).click();
       await this.page.waitForSelector('text=Success!');
     });

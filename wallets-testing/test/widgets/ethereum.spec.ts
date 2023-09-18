@@ -43,7 +43,7 @@ test.describe('Ethereum', () => {
     await browserService.stake();
   });
 
-  test(`Coin98 connect`, async () => {
+  test.only(`Coin98 connect`, async () => {
     await browserService.setup(COIN98_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
