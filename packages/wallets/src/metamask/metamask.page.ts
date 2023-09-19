@@ -202,10 +202,10 @@ export class MetamaskPage implements WalletPage {
 
   async assertReceiptAddress(page: Page, expectedAddress: string) {
     await test.step('Assert receiptAddress/Contract', async () => {
-      await page.click('text=Liquid staked Ether 2.0');
+      await page.getByTestId('sender-to-recipient__name').click();
       const receiptAddress = await page
-        .locator(`text=${expectedAddress}`)
-        .innerText();
+        .locator('div[class="nickname-popover__public-address__constant"]')
+        .textContent();
       await page.click('button[data-testid=popover-close]');
       expect(receiptAddress).toBe(expectedAddress);
     });
