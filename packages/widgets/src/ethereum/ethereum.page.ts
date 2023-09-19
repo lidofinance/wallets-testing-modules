@@ -79,7 +79,7 @@ export class EthereumPage implements WidgetPage {
         walletSignPage,
         String(ETHEREUM_WIDGET_CONFIG.stakeContract),
       );
-      await walletPage.confirmTx(walletSignPage);
+      await walletPage.confirmTx(walletSignPage, true);
     });
   }
 }

@@ -176,8 +176,12 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
-  async confirmTx(page: Page) {
+  async confirmTx(page: Page, setAggressiveGas?: boolean) {
     await test.step('Confirm TX', async () => {
+      if (setAggressiveGas) {
+        await page.getByTestId('edit-gas-fee-button').click();
+        await page.getByTestId('edit-gas-fee-item-high').click();
+      }
       await page.click('text=Confirm');
     });
   }
