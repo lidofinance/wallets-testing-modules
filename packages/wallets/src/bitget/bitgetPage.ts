@@ -2,7 +2,7 @@ import { WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import { test, BrowserContext, Page } from '@playwright/test';
 
-export class BitKeepPage implements WalletPage {
+export class BitgetPage implements WalletPage {
   page: Page | undefined;
 
   constructor(
@@ -12,7 +12,7 @@ export class BitKeepPage implements WalletPage {
   ) {}
 
   async navigate() {
-    await test.step('Navigate to BitKeep', async () => {
+    await test.step('Navigate to Bitget', async () => {
       this.page = await this.browserContext.newPage();
       await this.page.goto(
         this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,

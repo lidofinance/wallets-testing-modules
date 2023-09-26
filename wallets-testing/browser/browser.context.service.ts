@@ -72,7 +72,7 @@ export class BrowserContextService {
   }
 
   async setExtensionVars(walletName: string, extensionStartPath: string) {
-    if (walletName === 'bitKeep') {
+    if (walletName === 'bitget') {
       const page = await this.browserContext.newPage();
       await page.goto('chrome://extensions/');
       await page.click('id=devMode');
