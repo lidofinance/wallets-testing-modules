@@ -11,4 +11,4 @@ export * from './exodus';
 export * from './gamestop';
 export * from './xdefi';
 export * from './okx';
-export * from './bitKeep';
+export * from './bitget';
