@@ -52,8 +52,16 @@ export class TrustWalletPage implements WalletPage {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.page.click('text="Import or recover wallet"');
-        await this.page.locator('xpath=//p[contains(text(), "New password")]//following-sibling::div//input').fill(this.config.PASSWORD);
-        await this.page.locator('xpath=//p[contains(text(), "Confirm new password")]//following-sibling::div//input').fill(this.config.PASSWORD);
+      await this.page
+        .locator(
+          'xpath=//p[contains(text(), "New password")]//following-sibling::div//input',
+        )
+        .fill(this.config.PASSWORD);
+      await this.page
+        .locator(
+          'xpath=//p[contains(text(), "Confirm new password")]//following-sibling::div//input',
+        )
+        .fill(this.config.PASSWORD);
       await this.page.click('input[type=checkbox]');
       await this.page.click('button:has-text("Next")');
       await this.page.waitForTimeout(2000);
