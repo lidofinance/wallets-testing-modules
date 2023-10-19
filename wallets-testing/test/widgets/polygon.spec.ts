@@ -10,6 +10,7 @@ import {
   OKX_COMMON_CONFIG,
   BITGET_COMMON_CONFIG,
   TAHO_COMMON_CONFIG,
+  TRUST_WALLET_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import {
   ETHEREUM_WIDGET_CONFIG,
@@ -78,6 +79,14 @@ test.describe('Polygon', () => {
 
   test(`Taho connect`, async () => {
     await browserService.setup(TAHO_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
+    await browserService.connectWallet();
+  });
+
+  test(`Trust wallet connect`, async () => {
+    await browserService.setup(
+      TRUST_WALLET_COMMON_CONFIG,
+      POLYGON_WIDGET_CONFIG,
+    );
     await browserService.connectWallet();
   });
 
