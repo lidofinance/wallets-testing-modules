@@ -76,7 +76,7 @@ export class OkxPage implements WalletPage {
             .locator(
               `div[class="mnemonic-words-inputs__container__candidate-word"]`,
             )
-            .getByText('bus', { exact: true })
+            .getByText(`${seedWords[i]}`, { exact: true })
             .click();
         }
       }
