@@ -65,7 +65,7 @@ export class OkxPage implements WalletPage {
       for (let i = 0; i < seedWords.length; i++) {
         await inputs.nth(i).fill(seedWords[i]);
         if (
-          i == seedWords.length - 1 &&
+          i === seedWords.length - 1 &&
           (await this.page
             .locator(
               'div[class="mnemonic-words-inputs__container__candidate columns-3"]',
