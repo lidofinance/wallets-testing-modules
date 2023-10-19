@@ -61,7 +61,7 @@ test.describe('Ethereum', () => {
     await browserService.connectWallet();
   });
 
-  test.only(`Exodus connect`, async () => {
+  test(`Exodus connect`, async () => {
     await browserService.setup(EXODUS_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
@@ -84,7 +84,7 @@ test.describe('Ethereum', () => {
     await browserService.connectWallet();
   });
 
-  test.skip(`Xdefi wallet connect`, async () => {
+  test(`Xdefi wallet connect`, async () => {
     await browserService.setup(XDEFI_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
