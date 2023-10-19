@@ -94,7 +94,7 @@ test.describe('Ethereum', () => {
     await browserService.connectWallet();
   });
 
-  test(`bitget connect`, async () => {
+  test(`Bitget connect`, async () => {
     await browserService.setup(BITGET_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
