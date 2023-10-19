@@ -68,8 +68,9 @@ export class OkxPage implements WalletPage {
           i === seedWords.length - 1 &&
           (await this.page
             .locator(
-              'div[class="mnemonic-words-inputs__container__candidate columns-3"]',
+              `div[class="mnemonic-words-inputs__container__candidate-word"]`,
             )
+            .getByText(`${seedWords[i]}`)
             .count()) > 0
         ) {
           await this.page
