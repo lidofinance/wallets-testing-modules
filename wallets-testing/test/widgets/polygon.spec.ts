@@ -9,8 +9,12 @@ import {
   EXODUS_COMMON_CONFIG,
   OKX_COMMON_CONFIG,
   BITGET_COMMON_CONFIG,
+  TAHO_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
-import { POLYGON_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
+import {
+  ETHEREUM_WIDGET_CONFIG,
+  POLYGON_WIDGET_CONFIG,
+} from '@lidofinance/wallets-testing-widgets';
 import { BrowserModule } from '../../browser/browser.module';
 import { BrowserService } from '../../browser/browser.service';
 import { MATIC_TOKEN } from './consts';
@@ -69,6 +73,11 @@ test.describe('Polygon', () => {
 
   test(`BitGet connect`, async () => {
     await browserService.setup(BITGET_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
+    await browserService.connectWallet();
+  });
+
+  test(`Taho connect`, async () => {
+    await browserService.setup(TAHO_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 
