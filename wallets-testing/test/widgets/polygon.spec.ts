@@ -11,6 +11,7 @@ import {
   BITGET_COMMON_CONFIG,
   TAHO_COMMON_CONFIG,
   TRUST_WALLET_COMMON_CONFIG,
+  PHANTOM_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import {
   ETHEREUM_WIDGET_CONFIG,
@@ -87,6 +88,11 @@ test.describe('Polygon', () => {
       TRUST_WALLET_COMMON_CONFIG,
       POLYGON_WIDGET_CONFIG,
     );
+    await browserService.connectWallet();
+  });
+
+  test(`Phantom connect`, async () => {
+    await browserService.setup(PHANTOM_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 
