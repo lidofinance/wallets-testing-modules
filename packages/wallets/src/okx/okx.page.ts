@@ -64,6 +64,21 @@ export class OkxPage implements WalletPage {
       const seedWords = this.config.SECRET_PHRASE.split(' ');
       for (let i = 0; i < seedWords.length; i++) {
         await inputs.nth(i).fill(seedWords[i]);
+        if (
+          i == seedWords.length - 1 &&
+          (await this.page
+            .locator(
+              'div[class="mnemonic-words-inputs__container__candidate columns-3"]',
+            )
+            .count()) > 0
+        ) {
+          await this.page
+            .locator(
+              `div[class="mnemonic-words-inputs__container__candidate-word"]`,
+            )
+            .getByText('bus', { exact: true })
+            .click();
+        }
       }
       await this.page.getByRole('button', { name: 'Confirm' }).click();
       await this.page
