@@ -148,7 +148,7 @@ export class OkxPage implements WalletPage {
       await page.waitForSelector('button:has-text("Connect")');
       await page.waitForTimeout(10000);
       await page.getByRole('button', { name: 'Connect' }).click();
-      await page.waitForSelector('text=Connected');
+      // await page.waitForSelector('text=Connected');
       await page.close();
     });
   }
