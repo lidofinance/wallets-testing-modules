@@ -13,6 +13,7 @@ import {
   XDEFI_COMMON_CONFIG,
   OKX_COMMON_CONFIG,
   BITGET_COMMON_CONFIG,
+  PHANTOM_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import { ETHEREUM_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
 import { BrowserModule } from '../../browser/browser.module';
@@ -94,8 +95,13 @@ test.describe('Ethereum', () => {
     await browserService.connectWallet();
   });
 
-  test(`bitget connect`, async () => {
+  test(`Bitget connect`, async () => {
     await browserService.setup(BITGET_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
+    await browserService.connectWallet();
+  });
+
+  test(`Phantom connect`, async () => {
+    await browserService.setup(PHANTOM_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 
