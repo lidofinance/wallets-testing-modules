@@ -123,9 +123,7 @@ export class MetamaskPage implements WalletPage {
     await test.step('Add network', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.navigate();
-      await this.page.click('data-testid=account-options-menu-button', {
-        force: true,
-      });
+      await this.page.click('data-testid=account-options-menu-button');
       await this.page.click('text=Settings');
       await this.page.click("text='Networks'");
       await this.page.click('text=Add a network');
@@ -155,7 +153,7 @@ export class MetamaskPage implements WalletPage {
     await test.step('Import key', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.navigate();
-      await this.page.click('data-testid=account-menu-icon');
+      await this.page.click('data-testid=account-menu-icon', { force: true });
       await this.page.click('text=Add account or hardware wallet');
       await this.page.click('text=Import account');
       await this.page.fill('id=private-key-box', key);
