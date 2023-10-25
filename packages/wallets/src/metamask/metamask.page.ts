@@ -27,11 +27,10 @@ export class MetamaskPage implements WalletPage {
 
   async setup() {
     await test.step('Setup', async () => {
-      this.page = await this.browserContext.newPage();
-      await this.page.goto(this.extensionUrl + '/home.html#onboarding/welcome');
+      await this.navigate();
       if (!this.page) throw "Page isn't ready";
       const firstTime =
-        (await this.page.locator("text=Let's get started").count()) > 0;
+        (await this.page.locator('data-testid=onboarding-welcome').count()) > 0;
       if (firstTime) await this.firstTimeSetup();
     });
   }
