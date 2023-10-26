@@ -29,6 +29,9 @@ export class MetamaskPage implements WalletPage {
     await test.step('Setup', async () => {
       await this.navigate();
       if (!this.page) throw "Page isn't ready";
+      await this.page.waitForTimeout(20000);
+      await this.page.screenshot({ fullPage: true });
+      console.log(await this.page.content());
       const firstTime =
         (await this.page.locator('data-testid=onboarding-welcome').count()) > 0;
       if (firstTime) await this.firstTimeSetup();
