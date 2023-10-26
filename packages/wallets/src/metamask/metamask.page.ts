@@ -30,9 +30,6 @@ export class MetamaskPage implements WalletPage {
     await test.step('Setup', async () => {
       await this.navigate();
       if (!this.page) throw "Page isn't ready";
-      process.stdout.write(this.page.url());
-      await this.page.waitForTimeout(20000);
-      process.stdout.write(await this.page.content());
       const firstTime =
         (await this.page.locator('data-testid=onboarding-welcome').count()) > 0;
       if (firstTime) await this.firstTimeSetup();
@@ -65,7 +62,10 @@ export class MetamaskPage implements WalletPage {
       process.stdout.write('~~ ' + (await this.page.content()));
       const popover =
         (await this.page.getByTestId('popover-close').count()) > 0;
-      if (popover) await this.page.click('data-testid=popover-close');
+      if (popover) {
+        await this.page.click('data-testid=popover-close');
+        expect((await this.page.getByTestId('popover-close').count()) === 0);
+      }
     });
   }
 
