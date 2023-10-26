@@ -62,6 +62,7 @@ export class MetamaskPage implements WalletPage {
   async closePopover() {
     await test.step('Close popover if exists', async () => {
       if (!this.page) throw "Page isn't ready";
+      process.stdout.write('~~ ' + (await this.page.content()));
       const popover =
         (await this.page.getByTestId('popover-close').count()) > 0;
       if (popover) await this.page.click('data-testid=popover-close');
