@@ -2,7 +2,6 @@ import { WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import expect from 'expect';
 import { test, BrowserContext, Page } from '@playwright/test';
-import * as process from 'process';
 
 export class MetamaskPage implements WalletPage {
   page: Page | undefined;
@@ -29,16 +28,25 @@ export class MetamaskPage implements WalletPage {
   async setup() {
     await test.step('Setup', async () => {
       this.page = await this.browserContext.newPage();
-      await this.page.goto(this.extensionUrl + '/home.html#onboarding/welcome');
+      // await this.page.goto(this.extensionUrl + '/home.html#onboarding/welcome');
       if (!this.page) throw "Page isn't ready";
-      const firstTime =
-        (await this.page.locator('data-testid=onboarding-welcome').count()) > 0;
-      if (firstTime) {
-        await this.firstTimeSetup();
-      } else {
-        process.stdout.write(this.page.url());
-        process.stdout.write(await this.page.content());
-      }
+      // let firstTime =
+      //   (await this.page.locator('data-testid=onboarding-welcome').count()) > 0;
+      // if (firstTime) {
+      //   await this.firstTimeSetup();
+      // } else {
+      //   process.stdout.write(this.page.url());
+      //   process.stdout.write(await this.page.content());
+      // }
+      do {
+        await this.page.goto(
+          this.extensionUrl + '/home.html#onboarding/welcome',
+        );
+      } while (
+        (await this.page.locator('data-testid=onboarding-welcome').count()) ===
+        0
+      );
+      await this.firstTimeSetup();
     });
   }
 
