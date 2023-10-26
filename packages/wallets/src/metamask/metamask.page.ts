@@ -77,6 +77,7 @@ export class MetamaskPage implements WalletPage {
         (await this.page.getByTestId('popover-close').count()) > 0;
       if (popover) {
         await this.page.click('data-testid=popover-close');
+        await this.page.waitForTimeout(10000);
         expect((await this.page.getByTestId('popover-close').count()) === 0);
       }
     });
