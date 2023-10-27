@@ -28,7 +28,7 @@ export class MetamaskPage implements WalletPage {
   async setup() {
     await test.step('Setup', async () => {
       this.page = await this.browserContext.newPage();
-      // await this.page.goto(this.extensionUrl + '/home.html#onboarding/welcome');
+      await this.page.goto(this.extensionUrl + '/home.html#onboarding/welcome');
       if (!this.page) throw "Page isn't ready";
       // let firstTime =
       //   (await this.page.locator('data-testid=onboarding-welcome').count()) > 0;
@@ -39,9 +39,7 @@ export class MetamaskPage implements WalletPage {
       //   process.stdout.write(await this.page.content());
       // }
       do {
-        await this.page.goto(
-          this.extensionUrl + '/home.html#onboarding/welcome',
-        );
+        await this.page.reload();
       } while (
         (await this.page.locator('data-testid=onboarding-welcome').count()) ===
         0
@@ -172,14 +170,14 @@ export class MetamaskPage implements WalletPage {
     await test.step('Import key', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.navigate();
-      while (
+      do {
+        await this.page.reload();
+        await this.page.click('data-testid=account-menu-icon');
+      } while (
         (await this.page
           .locator('text=Add account or hardware wallet')
           .count()) === 0
-      ) {
-        await this.page.reload();
-        await this.page.click('data-testid=account-menu-icon');
-      }
+      );
       await this.page.click('text=Add account or hardware wallet');
       await this.page.click('text=Import account');
       await this.page.fill('id=private-key-box', key);
