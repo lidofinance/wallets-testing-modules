@@ -32,7 +32,7 @@ test.describe('Polygon', () => {
     browserService = moduleFixture.get<BrowserService>(BrowserService);
   });
 
-  test.only(`Metamask stake`, async () => {
+  test(`Metamask stake`, async () => {
     await browserService.setupWithNode(
       METAMASK_COMMON_CONFIG,
       POLYGON_WIDGET_CONFIG,
