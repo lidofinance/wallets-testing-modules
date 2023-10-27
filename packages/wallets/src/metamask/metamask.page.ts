@@ -176,7 +176,7 @@ export class MetamaskPage implements WalletPage {
           .locator('text=Add account or hardware wallet')
           .count()) === 0
       ) {
-        await this.page.reload();
+        await this.navigate();
         await this.page.click('data-testid=account-menu-icon');
       }
       await this.page.click('text=Add account or hardware wallet');
