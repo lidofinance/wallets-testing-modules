@@ -171,12 +171,13 @@ export class MetamaskPage implements WalletPage {
   async importKey(key: string) {
     await test.step('Import key', async () => {
       if (!this.page) throw "Page isn't ready";
+      await this.navigate();
       while (
         (await this.page
           .locator('text=Add account or hardware wallet')
           .count()) === 0
       ) {
-        await this.navigate();
+        await this.page.reload();
         await this.page.click('data-testid=account-menu-icon');
       }
       await this.page.click('text=Add account or hardware wallet');
