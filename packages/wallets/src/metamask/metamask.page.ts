@@ -27,9 +27,9 @@ export class MetamaskPage implements WalletPage {
 
   async setup() {
     await test.step('Setup', async () => {
-      await this.navigate();
+      this.page = await this.browserContext.newPage();
+      // await this.page.goto(this.extensionUrl + '/home.html#onboarding/welcome');
       if (!this.page) throw "Page isn't ready";
-      // Remove me after Metamask to be stable
       // let firstTime =
       //   (await this.page.locator('data-testid=onboarding-welcome').count()) > 0;
       // if (firstTime) {
@@ -39,7 +39,9 @@ export class MetamaskPage implements WalletPage {
       //   process.stdout.write(await this.page.content());
       // }
       do {
-        await this.page.reload();
+        await this.page.goto(
+          this.extensionUrl + '/home.html#onboarding/welcome',
+        );
       } while (
         (await this.page.locator('data-testid=onboarding-welcome').count()) ===
         0
@@ -75,6 +77,8 @@ export class MetamaskPage implements WalletPage {
         (await this.page.getByTestId('popover-close').count()) > 0;
       if (popover) {
         await this.page.click('data-testid=popover-close');
+        await this.page.waitForTimeout(10000);
+        expect((await this.page.getByTestId('popover-close').count()) === 0);
       }
     });
   }
@@ -168,16 +172,14 @@ export class MetamaskPage implements WalletPage {
     await test.step('Import key', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.navigate();
-      // Remove me after MM to be stable
-      do {
-        await this.page.reload();
-        await this.closePopover();
-        await this.page.click('data-testid=account-menu-icon');
-      } while (
+      while (
         (await this.page
           .locator('text=Add account or hardware wallet')
           .count()) === 0
-      );
+      ) {
+        await this.page.reload();
+        await this.page.click('data-testid=account-menu-icon');
+      }
       await this.page.click('text=Add account or hardware wallet');
       await this.page.click('text=Import account');
       await this.page.fill('id=private-key-box', key);
