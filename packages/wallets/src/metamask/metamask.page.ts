@@ -171,6 +171,7 @@ export class MetamaskPage implements WalletPage {
       // Remove me when MM to be more stable
       do {
         await this.page.reload();
+        await this.closePopover();
         await this.page.click('data-testid=account-menu-icon');
       } while (
         (await this.page
