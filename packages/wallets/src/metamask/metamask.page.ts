@@ -27,17 +27,14 @@ export class MetamaskPage implements WalletPage {
 
   async setup() {
     await test.step('Setup', async () => {
+      // added explicit route to #onboarding due to unexpected first time route from /home.html to /onboarding - page is close
       this.page = await this.browserContext.newPage();
       await this.page.goto(this.extensionUrl + '/home.html#onboarding/welcome');
       if (!this.page) throw "Page isn't ready";
-      // let firstTime =
+      // Remove me when MM to be more stable
+      // const firstTime =
       //   (await this.page.locator('data-testid=onboarding-welcome').count()) > 0;
-      // if (firstTime) {
-      //   await this.firstTimeSetup();
-      // } else {
-      //   process.stdout.write(this.page.url());
-      //   process.stdout.write(await this.page.content());
-      // }
+      // if (firstTime) await this.firstTimeSetup();
       do {
         await this.page.reload();
       } while (
@@ -75,6 +72,7 @@ export class MetamaskPage implements WalletPage {
         (await this.page.getByTestId('popover-close').count()) > 0;
       if (popover) {
         await this.page.click('data-testid=popover-close');
+        // Remove me when MM to be more stable
         await this.page.waitForTimeout(10000);
         expect((await this.page.getByTestId('popover-close').count()) === 0);
       }
@@ -170,6 +168,7 @@ export class MetamaskPage implements WalletPage {
     await test.step('Import key', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.navigate();
+      // Remove me when MM to be more stable
       do {
         await this.page.reload();
         await this.page.click('data-testid=account-menu-icon');
