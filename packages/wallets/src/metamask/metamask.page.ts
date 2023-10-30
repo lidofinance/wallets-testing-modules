@@ -73,7 +73,7 @@ export class MetamaskPage implements WalletPage {
       if (popover) {
         await this.page.click('data-testid=popover-close');
         // Remove me when MM to be more stable
-        await this.page.waitForTimeout(10000);
+        await this.page.waitForTimeout(1000);
         expect((await this.page.getByTestId('popover-close').count()) === 0);
       }
     });
@@ -171,7 +171,6 @@ export class MetamaskPage implements WalletPage {
       // Remove me when MM to be more stable
       do {
         await this.page.reload();
-        await this.closePopover();
         await this.closePopover();
         await this.page.click('data-testid=account-menu-icon');
       } while (
