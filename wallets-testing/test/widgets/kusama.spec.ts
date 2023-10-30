@@ -20,7 +20,7 @@ test.describe('Kusama', () => {
     browserService = moduleFixture.get<BrowserService>(BrowserService);
   });
 
-  test(`Metamask connect`, async () => {
+  test.only(`Metamask connect`, async () => {
     await browserService.setup(METAMASK_COMMON_CONFIG, KUSAMA_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
