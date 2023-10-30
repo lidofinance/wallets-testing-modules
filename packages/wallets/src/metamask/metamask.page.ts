@@ -172,6 +172,7 @@ export class MetamaskPage implements WalletPage {
       do {
         await this.page.reload();
         await this.closePopover();
+        await this.page.click('data-testid=account-menu-icon');
       } while (
         (await this.page
           .locator('text=Add account or hardware wallet')
