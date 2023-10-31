@@ -27,11 +27,21 @@ export class MetamaskPage implements WalletPage {
 
   async setup() {
     await test.step('Setup', async () => {
-      await this.navigate();
+      // added explicit route to #onboarding due to unexpected first time route from /home.html to /onboarding - page is close
+      this.page = await this.browserContext.newPage();
+      await this.page.goto(this.extensionUrl + '/home.html#onboarding/welcome');
       if (!this.page) throw "Page isn't ready";
-      const firstTime =
-        (await this.page.locator('data-testid=onboarding-welcome').count()) > 0;
-      if (firstTime) await this.firstTimeSetup();
+      // Remove me when MM to be more stable
+      // const firstTime =
+      //   (await this.page.locator('data-testid=onboarding-welcome').count()) > 0;
+      // if (firstTime) await this.firstTimeSetup();
+      do {
+        await this.page.reload();
+      } while (
+        (await this.page.locator('data-testid=onboarding-welcome').count()) ===
+        0
+      );
+      await this.firstTimeSetup();
     });
   }
 
@@ -60,7 +70,12 @@ export class MetamaskPage implements WalletPage {
       if (!this.page) throw "Page isn't ready";
       const popover =
         (await this.page.getByTestId('popover-close').count()) > 0;
-      if (popover) await this.page.click('data-testid=popover-close');
+      if (popover) {
+        await this.page.click('data-testid=popover-close');
+        // Remove me when MM to be more stable
+        await this.page.waitForTimeout(1000);
+        expect((await this.page.getByTestId('popover-close').count()) === 0);
+      }
     });
   }
 
@@ -153,7 +168,17 @@ export class MetamaskPage implements WalletPage {
     await test.step('Import key', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.navigate();
-      await this.page.click('data-testid=account-menu-icon');
+      // Remove me when MM to be more stable
+      do {
+        await this.page.reload();
+        await this.closePopover();
+        await this.page.click('data-testid=account-menu-icon');
+      } while (
+        (await this.page
+          .locator('text=Add account or hardware wallet')
+          .count()) === 0
+      );
+      await this.page.click('text=Add account or hardware wallet');
       await this.page.click('text=Import account');
       await this.page.fill('id=private-key-box', key);
       await this.page.click("text='Import'");
