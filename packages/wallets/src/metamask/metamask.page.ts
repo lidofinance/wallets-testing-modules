@@ -17,9 +17,8 @@ export class MetamaskPage implements WalletPage {
       this.page = await this.browserContext.newPage();
       await this.page.goto(
         this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+        { waitUntil: 'load' },
       );
-      await this.page.reload();
-      await this.page.waitForTimeout(1000);
       await this.closePopover();
       await this.unlock();
     });
@@ -28,20 +27,12 @@ export class MetamaskPage implements WalletPage {
   async setup() {
     await test.step('Setup', async () => {
       // added explicit route to #onboarding due to unexpected first time route from /home.html to /onboarding - page is close
-      this.page = await this.browserContext.newPage();
-      await this.page.goto(this.extensionUrl + '/home.html#onboarding/welcome');
+      await this.navigate();
       if (!this.page) throw "Page isn't ready";
-      // Remove me when MM to be more stable
-      // const firstTime =
-      //   (await this.page.locator('data-testid=onboarding-welcome').count()) > 0;
-      // if (firstTime) await this.firstTimeSetup();
-      do {
-        await this.page.reload();
-      } while (
-        (await this.page.locator('data-testid=onboarding-welcome').count()) ===
-        0
-      );
-      await this.firstTimeSetup();
+      const firstTime = await this.page
+        .locator('data-testid=onboarding-welcome')
+        .isVisible();
+      if (firstTime) await this.firstTimeSetup();
     });
   }
 
@@ -68,13 +59,16 @@ export class MetamaskPage implements WalletPage {
   async closePopover() {
     await test.step('Close popover if exists', async () => {
       if (!this.page) throw "Page isn't ready";
-      const popover =
-        (await this.page.getByTestId('popover-close').count()) > 0;
-      if (popover) {
-        await this.page.click('data-testid=popover-close');
+      const popover = this.page.getByTestId('popover-close');
+      try {
+        await popover.waitFor({ state: 'visible', timeout: 7000 });
+      } catch (error) {
+        return;
+      }
+
+      if (await popover.isVisible()) {
+        await popover.click();
         // Remove me when MM to be more stable
-        await this.page.waitForTimeout(1000);
-        expect((await this.page.getByTestId('popover-close').count()) === 0);
       }
     });
   }
@@ -174,9 +168,9 @@ export class MetamaskPage implements WalletPage {
         await this.closePopover();
         await this.page.click('data-testid=account-menu-icon');
       } while (
-        (await this.page
+        !(await this.page
           .locator('text=Add account or hardware wallet')
-          .count()) === 0
+          .isVisible())
       );
       await this.page.click('text=Add account or hardware wallet');
       await this.page.click('text=Import account');
