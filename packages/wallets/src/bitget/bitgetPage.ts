@@ -52,11 +52,11 @@ export class BitgetPage implements WalletPage {
       if (!this.page) throw "Page isn't ready";
       await this.page.click("button:has-text('Import a wallet')");
       await this.page.fill(
-        "input[placeholder='Minimum 6 characters']",
+        "input:below(div > p:has-text('Enter password'))",
         this.config.PASSWORD,
       );
       await this.page.fill(
-        "input[placeholder='Enter the password again']",
+        "input:below(p:has-text('Confirm password'))",
         this.config.PASSWORD,
       );
       await this.page.click("button:has-text('Next')");
