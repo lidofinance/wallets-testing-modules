@@ -17,6 +17,12 @@ export interface WalletPage {
 
   approveTokenTx?(page: Page): Promise<void>;
 
+  openLastTxInEthplorer?(txIndex?: number): Promise<Page>;
+
+  getTokenBalance?(tokenName: string): Promise<void>;
+
+  confirmAddTokenToWallet?(page: Page): Promise<void>;
+
   assertReceiptAddress(page: Page, expectedAmount: string): Promise<void>;
 
   addNetwork(
@@ -24,6 +30,7 @@ export interface WalletPage {
     networkUrl: string,
     chainId: number,
     tokenSymbol: string,
+    blockExplorer?: string,
   ): Promise<void>;
 
   changeNetwork?(networkName: string): Promise<void>;

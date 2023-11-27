@@ -54,6 +54,11 @@ export class EthereumPage implements WidgetPage {
             expect(
               await this.page.waitForSelector('text=Submit'),
             ).not.toBeNaN();
+            await this.page.locator('data-testid=accountSectionHeader').click();
+            expect(
+              await this.page.textContent('div[data-testid="providerName"]'),
+            ).toContain(walletPage.config.COMMON.CONNECTED_WALLET_NAME);
+            await this.page.locator('div[role="dialog"] button').nth(0).click();
           }
         }
       },

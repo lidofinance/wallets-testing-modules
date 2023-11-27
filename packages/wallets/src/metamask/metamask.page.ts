@@ -24,6 +24,10 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
+  async goToActivity() {
+    await this.page.locator('button:has-text("Activity")').click();
+  }
+
   async setup() {
     await test.step('Setup', async () => {
       // added explicit route to #onboarding due to unexpected first time route from /home.html to /onboarding - page is close
@@ -128,6 +132,7 @@ export class MetamaskPage implements WalletPage {
     networkUrl: string,
     chainId: number,
     tokenSymbol: string,
+    blockExplorer = '',
   ) {
     await test.step('Add network', async () => {
       if (!this.page) throw "Page isn't ready";
@@ -153,6 +158,11 @@ export class MetamaskPage implements WalletPage {
         ".form-field :has-text('Currency symbol') >> input",
         tokenSymbol,
       );
+      if (blockExplorer != '')
+        await this.page.fill(
+          ".form-field :has-text('Block explorer URL') >> input",
+          blockExplorer,
+        );
       await this.page.click('text=Save');
       await this.navigate();
     });
@@ -193,6 +203,31 @@ export class MetamaskPage implements WalletPage {
         expectedAmount,
       );
     });
+  }
+
+  async confirmAddTokenToWallet(confirmPage: Page) {
+    await test.step('Confirm add token to wallet', async () => {
+      await confirmPage.locator('button:has-text("Add token")').click();
+    });
+  }
+  async openLastTxInEthplorer(txIndex = 0) {
+    if (!this.page) throw "Page isn't ready";
+    await this.navigate();
+    await this.goToActivity();
+    await this.page.getByTestId('activity-list-item').nth(txIndex).click();
+    const [, etherscanPage] = await Promise.all([
+      await this.page.locator('text=View on block explorer').click(),
+      await this.page.context().waitForEvent('page', { timeout: 120000 }),
+    ]);
+    return etherscanPage;
+  }
+
+  async getTokenBalance(tokenName: string) {
+    await this.navigate();
+    await this.page
+      .getByTestId('multichain-token-list-button')
+      .locator(`p:has-text(${tokenName})`)
+      .textContent();
   }
 
   async confirmTx(page: Page, setAggressiveGas?: boolean) {

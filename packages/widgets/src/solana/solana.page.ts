@@ -22,7 +22,7 @@ export class SolanaPage implements WidgetPage {
 
   async connectWallet(walletPage: WalletPage) {
     await test.step(
-      'Connect wallet' + walletPage.config.COMMON.WALLET_NAME,
+      'Connect wallet ' + walletPage.config.COMMON.WALLET_NAME,
       async () => {
         await this.page.waitForTimeout(2000);
         const isConnected =

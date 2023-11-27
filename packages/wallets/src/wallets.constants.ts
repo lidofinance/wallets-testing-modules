@@ -1,5 +1,6 @@
 export interface CommonWalletConfig {
   WALLET_NAME: string;
+  CONNECTED_WALLET_NAME: string;
   RPC_URL_PATTERN: string;
   STORE_EXTENSION_ID: string;
   CONNECT_BUTTON_NAME: string;

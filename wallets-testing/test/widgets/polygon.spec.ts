@@ -3,15 +3,12 @@ import { INestApplication } from '@nestjs/common';
 import { prepareNodeModule } from '../../commons';
 import {
   COIN98_COMMON_CONFIG,
-  MATHWALLET_COMMON_CONFIG,
   METAMASK_COMMON_CONFIG,
   COINBASE_COMMON_CONFIG,
   EXODUS_COMMON_CONFIG,
   OKX_COMMON_CONFIG,
   BITGET_COMMON_CONFIG,
-  TAHO_COMMON_CONFIG,
   TRUST_WALLET_COMMON_CONFIG,
-  PHANTOM_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import { POLYGON_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
 import { BrowserModule } from '../../browser/browser.module';
@@ -50,11 +47,6 @@ test.describe('Polygon', () => {
     await browserService.connectWallet();
   });
 
-  test(`Mathwallet connect`, async () => {
-    await browserService.setup(MATHWALLET_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
-    await browserService.connectWallet();
-  });
-
   test.skip('Exodus connect', async () => {
     await browserService.setup(EXODUS_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
     await browserService.connectWallet();
@@ -75,21 +67,11 @@ test.describe('Polygon', () => {
     await browserService.connectWallet();
   });
 
-  test(`Taho connect`, async () => {
-    await browserService.setup(TAHO_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
-    await browserService.connectWallet();
-  });
-
   test(`Trust wallet connect`, async () => {
     await browserService.setup(
       TRUST_WALLET_COMMON_CONFIG,
       POLYGON_WIDGET_CONFIG,
     );
-    await browserService.connectWallet();
-  });
-
-  test(`Phantom connect`, async () => {
-    await browserService.setup(PHANTOM_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 

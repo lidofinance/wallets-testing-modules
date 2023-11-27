@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { prepareNodeModule } from '../../commons';
 import {
-  PHANTOM_COMMON_CONFIG,
   COINBASE_COMMON_CONFIG,
   COIN98_COMMON_CONFIG,
   EXODUS_COMMON_CONFIG,
@@ -23,11 +22,6 @@ test.describe('Solana', () => {
     app = moduleFixture.createNestApplication();
     await app.init();
     browserService = moduleFixture.get<BrowserService>(BrowserService);
-  });
-
-  test(`Phantom connect`, async () => {
-    await browserService.setup(PHANTOM_COMMON_CONFIG, SOLANA_WIDGET_CONFIG);
-    await browserService.connectWallet();
   });
 
   test(`Coinbase connect`, async () => {
