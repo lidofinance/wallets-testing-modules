@@ -198,6 +198,12 @@ export class MetamaskPage implements WalletPage {
       );
     });
   }
+
+  async confirmAddTokenToWallet(confirmPage: Page) {
+    await test.step('Confirm add token to wallet', async () => {
+      await confirmPage.locator('button:has-text("Add token")').click();
+    });
+  }
   async openLastTxInEthplorer(txIndex = 0) {
     if (!this.page) throw "Page isn't ready";
     await this.navigate();
