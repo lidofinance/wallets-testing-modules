@@ -24,6 +24,10 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
+  async goToActivity() {
+    await this.page.locator('button:has-text("Activity")').click();
+  }
+
   async setup() {
     await test.step('Setup', async () => {
       // added explicit route to #onboarding due to unexpected first time route from /home.html to /onboarding - page is close
@@ -193,6 +197,17 @@ export class MetamaskPage implements WalletPage {
         expectedAmount,
       );
     });
+  }
+  async openLastTxInEthplorer(txIndex = 0) {
+    if (!this.page) throw "Page isn't ready";
+    await this.navigate();
+    await this.goToActivity();
+    await this.page.getByTestId('activity-list-item').nth(txIndex).click();
+    const [, etherscanPage] = await Promise.all([
+      await this.page.locator('text=View on block explorer').click(),
+      await this.page.context().waitForEvent('page', { timeout: 120000 }),
+    ]);
+    return etherscanPage;
   }
 
   async confirmTx(page: Page, setAggressiveGas?: boolean) {

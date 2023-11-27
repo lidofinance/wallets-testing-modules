@@ -17,6 +17,8 @@ export interface WalletPage {
 
   approveTokenTx?(page: Page): Promise<void>;
 
+  openLastTxInEthplorer?(txIndex?: number): Promise<Page>;
+
   assertReceiptAddress(page: Page, expectedAmount: string): Promise<void>;
 
   addNetwork(
