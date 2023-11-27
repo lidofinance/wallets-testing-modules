@@ -30,6 +30,7 @@ export interface WalletPage {
     networkUrl: string,
     chainId: number,
     tokenSymbol: string,
+    blockExplorer?: string,
   ): Promise<void>;
 
   changeNetwork?(networkName: string): Promise<void>;

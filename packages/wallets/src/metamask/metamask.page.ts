@@ -132,6 +132,7 @@ export class MetamaskPage implements WalletPage {
     networkUrl: string,
     chainId: number,
     tokenSymbol: string,
+    blockExplorer = '',
   ) {
     await test.step('Add network', async () => {
       if (!this.page) throw "Page isn't ready";
@@ -157,6 +158,11 @@ export class MetamaskPage implements WalletPage {
         ".form-field :has-text('Currency symbol') >> input",
         tokenSymbol,
       );
+      if (blockExplorer != '')
+        await this.page.fill(
+          ".form-field :has-text('Block explorer URL') >> input",
+          blockExplorer,
+        );
       await this.page.click('text=Save');
       await this.navigate();
     });
