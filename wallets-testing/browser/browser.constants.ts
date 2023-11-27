@@ -1,6 +1,5 @@
 import {
   Coin98,
-  MathWalletPage,
   MetamaskPage,
   TrustWalletPage,
   ExodusPage,
@@ -22,7 +21,6 @@ import {
 export const WALLET_PAGES = {
   metamask: MetamaskPage,
   coin98: Coin98,
-  mathwallet: MathWalletPage,
   trust: TrustWalletPage,
   exodus: ExodusPage,
   phantom: PhantomPage,

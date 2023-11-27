@@ -3,7 +3,6 @@ import { INestApplication } from '@nestjs/common';
 import { prepareNodeModule } from '../../commons';
 import {
   COIN98_COMMON_CONFIG,
-  MATHWALLET_COMMON_CONFIG,
   METAMASK_COMMON_CONFIG,
   TRUST_WALLET_COMMON_CONFIG,
   COINBASE_COMMON_CONFIG,
@@ -45,14 +44,6 @@ test.describe('Ethereum', () => {
 
   test(`Coin98 connect`, async () => {
     await browserService.setup(COIN98_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
-    await browserService.connectWallet();
-  });
-
-  test(`Mathwallet connect`, async () => {
-    await browserService.setup(
-      MATHWALLET_COMMON_CONFIG,
-      ETHEREUM_WIDGET_CONFIG,
-    );
     await browserService.connectWallet();
   });
 
