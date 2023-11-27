@@ -19,6 +19,8 @@ export interface WalletPage {
 
   openLastTxInEthplorer?(txIndex?: number): Promise<Page>;
 
+  getTokenBalance?(tokenName: string): Promise<void>;
+
   confirmAddTokenToWallet?(page: Page): Promise<void>;
 
   assertReceiptAddress(page: Page, expectedAmount: string): Promise<void>;

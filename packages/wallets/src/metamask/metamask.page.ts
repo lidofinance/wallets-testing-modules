@@ -216,6 +216,14 @@ export class MetamaskPage implements WalletPage {
     return etherscanPage;
   }
 
+  async getTokenBalance(tokenName: string) {
+    await this.navigate();
+    await this.page
+      .getByTestId('multichain-token-list-button')
+      .locator(`p:has-text(${tokenName})`)
+      .textContent();
+  }
+
   async confirmTx(page: Page, setAggressiveGas?: boolean) {
     await test.step('Confirm TX', async () => {
       if (setAggressiveGas) {
