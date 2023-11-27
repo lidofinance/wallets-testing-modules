@@ -3,7 +3,6 @@ export * from './wallets.constants';
 export * from './coin98';
 export * from './metamask';
 export * from './trustwallet';
-export * from './phantom';
 export * from './coinbase';
 export * from './taho';
 export * from './exodus';
