@@ -55,12 +55,14 @@ export class PolygonPage implements WidgetPage {
               ]);
               await walletPage.connectWallet(connectWalletPage);
             }
-            expect(await this.page.waitForSelector("button :has-text('Stake now')"))
-                .not.toBeNaN();
+            expect(
+              await this.page.waitForSelector("button :has-text('Stake now')"),
+            ).not.toBeNaN();
             await this.page.locator('header > div > button').nth(0).click();
-            expect(await this.page.textContent('div[role="dialog"]'))
-                .toContain(`Connected with ${walletPage.config.COMMON.CONNECTED_WALLET_NAME}`);
-            await this.page.locator('div[role="dialog"] button').nth(0).click()
+            expect(await this.page.textContent('div[role="dialog"]')).toContain(
+              `Connected with ${walletPage.config.COMMON.CONNECTED_WALLET_NAME}`,
+            );
+            await this.page.locator('div[role="dialog"] button').nth(0).click();
           }
         }
       },

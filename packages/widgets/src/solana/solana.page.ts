@@ -54,8 +54,9 @@ export class SolanaPage implements WidgetPage {
               ]);
               await walletPage.connectWallet(connectWalletPage);
             }
-            expect(await this.page.waitForSelector("button:has-text('Submit')"))
-                .not.toBeNaN();
+            expect(
+              await this.page.waitForSelector("button:has-text('Submit')"),
+            ).not.toBeNaN();
           }
         }
       },
