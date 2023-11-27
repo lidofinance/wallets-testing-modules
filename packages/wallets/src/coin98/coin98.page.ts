@@ -26,7 +26,7 @@ export class Coin98 implements WalletPage {
     await test.step('Setup', async () => {
       await this.navigate();
       if (!this.page) throw "Page isn't ready";
-      const firstTime = await this.page.waitForSelector('text=Restore Wallet');
+      const firstTime = await this.page.waitForSelector('text=Get Started');
       if (firstTime) await this.firstTimeSetup(network);
     });
   }
@@ -34,7 +34,7 @@ export class Coin98 implements WalletPage {
   async firstTimeSetup(network: string) {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
-      await this.page.click('text=Restore Wallet');
+      await this.page.click('text=Get Started');
       await this.page.click('text=Ok');
       await this.page.waitForSelector('input[type=password]');
       const inputs = await this.page.locator('input[type=password]');
@@ -42,14 +42,16 @@ export class Coin98 implements WalletPage {
       await inputs.nth(1).fill(this.config.PASSWORD);
       await this.page.click('button:has-text("Setup Password")');
       await this.page.click('button:has-text("Ok")');
+      await this.page.click('button:has-text("Continue")');
       await this.page.fill('[placeholder="Search"]', network);
       await this.page.getByText(network, { exact: true }).click();
+      await this.page.click('button:has-text("Restore")');
       await this.page.fill('input[name="name"]', 'test');
       await this.page.fill(
         'div[class="relative w-full"] >> div',
         this.config.SECRET_PHRASE.trim(),
       );
-      await this.page.locator('button:has-text("Restore")').nth(1).click();
+      await this.page.locator('button:has-text("Restore")').click();
       await this.page.waitForSelector('text=Success!');
     });
   }
