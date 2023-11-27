@@ -6,7 +6,6 @@ import {
   METAMASK_COMMON_CONFIG,
   TRUST_WALLET_COMMON_CONFIG,
   COINBASE_COMMON_CONFIG,
-  TAHO_COMMON_CONFIG,
   EXODUS_COMMON_CONFIG,
   XDEFI_COMMON_CONFIG,
   OKX_COMMON_CONFIG,
@@ -61,11 +60,6 @@ test.describe('Ethereum', () => {
 
   test(`Coinbase connect`, async () => {
     await browserService.setup(COINBASE_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
-    await browserService.connectWallet();
-  });
-
-  test(`Taho connect`, async () => {
-    await browserService.setup(TAHO_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 

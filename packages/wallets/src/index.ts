@@ -4,7 +4,6 @@ export * from './coin98';
 export * from './metamask';
 export * from './trustwallet';
 export * from './coinbase';
-export * from './taho';
 export * from './exodus';
 export * from './xdefi';
 export * from './okx';
