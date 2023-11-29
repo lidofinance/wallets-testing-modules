@@ -19,7 +19,7 @@ export interface WalletPage {
 
   openLastTxInEthplorer?(txIndex?: number): Promise<Page>;
 
-  getTokenBalance?(tokenName: string): Promise<void>;
+  getTokenBalance?(tokenName: string): Promise<number>;
 
   confirmAddTokenToWallet?(page: Page): Promise<void>;
 

@@ -224,10 +224,21 @@ export class MetamaskPage implements WalletPage {
 
   async getTokenBalance(tokenName: string) {
     await this.navigate();
-    await this.page
-      .getByTestId('multichain-token-list-button')
-      .locator(`p:has-text(${tokenName})`)
-      .textContent();
+    //Cannot find locator by exact text since need to find row by text "stETH"/"ETH" but "stETH" contains "ETH"
+    const elements = await this.page.$$(
+      'data-testid=multichain-token-list-item-value',
+    );
+    let tokenBalance = NaN;
+    for (const element of elements) {
+      await element.waitForElementState('visible');
+      const textContent = await element.textContent();
+      const letterTextContent = textContent.match(/[a-zA-Z]+/g);
+      if (letterTextContent.toString().trim() === tokenName) {
+        tokenBalance = parseFloat(await element.textContent());
+        break;
+      }
+    }
+    return tokenBalance;
   }
 
   async confirmTx(page: Page, setAggressiveGas?: boolean) {
