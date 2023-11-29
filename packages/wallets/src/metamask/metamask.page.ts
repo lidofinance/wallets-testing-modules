@@ -5,7 +5,7 @@ import {
   test,
   BrowserContext,
   Page,
-  expect as expect_pw
+  expect as expect_pw,
 } from '@playwright/test';
 
 export class MetamaskPage implements WalletPage {
@@ -274,15 +274,15 @@ export class MetamaskPage implements WalletPage {
     });
   }
   async assertWalletAddress(expectedAddress: string) {
-    await test.step('Assert connected address with wallet', async() => {
+    await test.step('Assert connected address with wallet', async () => {
       await this.navigate();
       await this.page.getByTestId('account-menu-icon').click();
       await this.page.click(
-        'section .multichain-account-list-item--selected [data-testid=account-list-item-menu-button]'
+        'section .multichain-account-list-item--selected [data-testid=account-list-item-menu-button]',
 			);
       await this.page.getByTestId('account-list-menu-details').click();
       await expect_pw(
-				this.page.locator('section [data-testid=address-copy-button-text]')
+        this.page.locator('section [data-testid=address-copy-button-text]')
       ).toContainText(expectedAddress);
       await this.page.close();
     });
