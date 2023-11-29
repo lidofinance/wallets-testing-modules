@@ -2,10 +2,10 @@ import { WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import expect from 'expect';
 import {
-	test,
-	BrowserContext,
-	Page,
-	expect as expect_pw
+  test,
+  BrowserContext,
+  Page,
+  expect as expect_pw
 } from '@playwright/test';
 
 export class MetamaskPage implements WalletPage {
@@ -273,18 +273,17 @@ export class MetamaskPage implements WalletPage {
       expect(receiptAddress).toBe(expectedAddress);
     });
   }
-
   async assertWalletAddress(expectedAddress: string) {
     await test.step('Assert connected address with wallet', async() => {
       await this.navigate();
       await this.page.getByTestId('account-menu-icon').click();
       await this.page.click(
-				'section .multichain-account-list-item--selected [data-testid=account-list-item-menu-button]'
+        'section .multichain-account-list-item--selected [data-testid=account-list-item-menu-button]'
 			);
       await this.page.getByTestId('account-list-menu-details').click();
       await expect_pw(
 				this.page.locator('section [data-testid=address-copy-button-text]')
-			).toContainText(expectedAddress);
+      ).toContainText(expectedAddress);
       await this.page.close();
     });
   }
