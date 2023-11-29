@@ -283,8 +283,8 @@ export class MetamaskPage implements WalletPage {
 			);
       await this.page.getByTestId('account-list-menu-details').click();
       await expect_pw(
-				this.page.locator('section [data-testid=address-copy-button-text]'))
-        .toContainText(expectedAddress);
+				this.page.locator('section [data-testid=address-copy-button-text]')
+			).toContainText(expectedAddress);
       await this.page.close();
     });
   }
