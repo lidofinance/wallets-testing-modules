@@ -1,12 +1,7 @@
-import { WalletConfig } from '../wallets.constants';
-import { WalletPage } from '../wallet.page';
+import {WalletConfig} from '../wallets.constants';
+import {WalletPage} from '../wallet.page';
 import expect from 'expect';
-import {
-  test,
-  BrowserContext,
-  Page,
-  expect as expect_pw,
-} from '@playwright/test';
+import {BrowserContext, Page, test,} from '@playwright/test';
 
 export class MetamaskPage implements WalletPage {
   page: Page | undefined;
@@ -273,18 +268,18 @@ export class MetamaskPage implements WalletPage {
       expect(receiptAddress).toBe(expectedAddress);
     });
   }
-  async assertWalletAddress(expectedAddress: string) {
-    await test.step('Assert connected address with wallet', async () => {
+  async getWalletAddress()  {
+    await test.step('Check connected address with wallet', async () => {
       await this.navigate();
       await this.page.getByTestId('account-menu-icon').click();
       await this.page.click(
         'section .multichain-account-list-item--selected [data-testid=account-list-item-menu-button]',
       );
       await this.page.getByTestId('account-list-menu-details').click();
-      await expect_pw(
-        this.page.locator('section [data-testid=address-copy-button-text]'),
-      ).toContainText(expectedAddress);
-      await this.page.close();
+      // Copy the wallet address to clipboard. Use page.evaluate('navigator.clipboard.readText()') for get copied value
+      await this.page.locator('section')
+        .getByTestId( 'address-copy-button-text').click()
+      await this.page.close()
     });
   }
 }
