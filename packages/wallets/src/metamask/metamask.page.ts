@@ -268,7 +268,7 @@ export class MetamaskPage implements WalletPage {
       expect(receiptAddress).toBe(expectedAddress);
     });
   }
-  async getWalletAddress(): Promise<string> {
+  async getWalletAddress() {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<string>(async (resolve) => {
       await test.step('Check connected address with wallet', async () => {
