@@ -269,18 +269,14 @@ export class MetamaskPage implements WalletPage {
     });
   }
   async getWalletAddress() {
-    // eslint-disable-next-line no-async-promise-executor
-    return new Promise<string>(async (resolve) => {
-      await test.step('Check connected address with wallet', async () => {
-        await this.navigate();
-        await this.page.getByTestId('account-options-menu-button').click();
-        await this.page.getByTestId('account-list-menu-details').click();
-        const address = await this.page
-          .getByTestId('address-copy-button-text')
-          .nth(1)
-          .textContent();
-        resolve(`${address}`);
-      });
-    });
+    await this.navigate();
+    await this.page.getByTestId('account-options-menu-button').click();
+    await this.page.getByTestId('account-list-menu-details').click();
+    const address = await this.page
+      .getByTestId('address-copy-button-text')
+      .nth(1)
+      .textContent();
+    await this.page.close();
+    return address;
   }
 }
