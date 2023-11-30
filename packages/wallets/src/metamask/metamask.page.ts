@@ -268,20 +268,19 @@ export class MetamaskPage implements WalletPage {
       expect(receiptAddress).toBe(expectedAddress);
     });
   }
-  async getWalletAddress() {
-    await test.step('Check connected address with wallet', async () => {
-      await this.navigate();
-      await this.page.getByTestId('account-menu-icon').click();
-      await this.page.click(
-        'section .multichain-account-list-item--selected [data-testid=account-list-item-menu-button]',
-      );
-      await this.page.getByTestId('account-list-menu-details').click();
-      // Copy the wallet address to clipboard. Use page.evaluate('navigator.clipboard.readText()') for get copied value
-      await this.page
-        .locator('section')
-        .getByTestId('address-copy-button-text')
-        .click();
-      await this.page.close();
+  async getWalletAddress(): Promise<string> {
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise<string>(async (resolve) => {
+      await test.step('Check connected address with wallet', async () => {
+        await this.navigate();
+        await this.page.getByTestId('account-options-menu-button').click();
+        await this.page.getByTestId('account-list-menu-details').click();
+        const address = await this.page
+          .getByTestId('address-copy-button-text')
+          .nth(1)
+          .textContent();
+        resolve(`${address}`);
+      });
     });
   }
 }
