@@ -1,7 +1,7 @@
 import { WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import expect from 'expect';
-import { test, BrowserContext, Page } from '@playwright/test';
+import { BrowserContext, Page, test } from '@playwright/test';
 
 export class MetamaskPage implements WalletPage {
   page: Page | undefined;
@@ -278,5 +278,16 @@ export class MetamaskPage implements WalletPage {
       await page.click('button[data-testid=popover-close]');
       expect(receiptAddress).toBe(expectedAddress);
     });
+  }
+  async getWalletAddress() {
+    await this.navigate();
+    await this.page.getByTestId('account-options-menu-button').click();
+    await this.page.getByTestId('account-list-menu-details').click();
+    const address = await this.page
+      .getByTestId('address-copy-button-text')
+      .nth(1)
+      .textContent();
+    await this.page.close();
+    return address;
   }
 }

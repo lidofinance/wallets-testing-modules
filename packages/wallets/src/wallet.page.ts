@@ -25,6 +25,8 @@ export interface WalletPage {
 
   assertReceiptAddress(page: Page, expectedAmount: string): Promise<void>;
 
+  getWalletAddress?(): Promise<string>;
+
   addNetwork(
     networkName: string,
     networkUrl: string,
