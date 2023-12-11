@@ -155,7 +155,7 @@ export class MetamaskPage implements WalletPage {
         String(chainId),
       );
       await this.page.fill(
-        ".form-field :has-text('Currency symbol') >> input",
+        '[data-testid="network-form-ticker-input"]',
         tokenSymbol,
       );
       if (blockExplorer != '')
