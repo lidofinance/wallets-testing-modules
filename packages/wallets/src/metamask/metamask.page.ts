@@ -164,6 +164,7 @@ export class MetamaskPage implements WalletPage {
           blockExplorer,
         );
       await this.page.click('text=Save');
+      await this.page.click('text=Switch to ');
       await this.navigate();
     });
   }
