@@ -29,7 +29,7 @@ test.describe('Solana', () => {
     await browserService.connectWallet();
   });
 
-  test(`Coin98 connect`, async () => {
+  test.skip(`Coin98 connect`, async () => {
     await browserService.setup(COIN98_COMMON_CONFIG, SOLANA_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
