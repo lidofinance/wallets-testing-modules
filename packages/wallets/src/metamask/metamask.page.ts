@@ -252,6 +252,12 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
+  async rejectTx(page: Page) {
+    await test.step('Reject TX', async () => {
+      await page.click('text=Reject');
+    });
+  }
+
   async approveTokenTx(page: Page) {
     await test.step('Approve token tx', async () => {
       await this.useDefaultToApprove(page);
