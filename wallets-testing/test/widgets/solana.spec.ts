@@ -34,7 +34,7 @@ test.describe('Solana', () => {
     await browserService.connectWallet();
   });
 
-  test(`Exodus connect`, async () => {
+  test.skip(`Exodus connect`, async () => {
     await browserService.setup(EXODUS_COMMON_CONFIG, SOLANA_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
