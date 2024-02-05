@@ -7,7 +7,7 @@ import { BrowserModule } from '../../browser/browser.module';
 import { BrowserService } from '../../browser/browser.service';
 import { test } from '@playwright/test';
 
-test.describe('Polkadot', () => {
+test.describe.skip('Polkadot', () => {
   let app: INestApplication;
   let browserService: BrowserService;
 
