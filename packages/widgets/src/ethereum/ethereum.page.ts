@@ -62,6 +62,7 @@ export class EthereumPage implements WidgetPage {
 
   async doStaking(walletPage: WalletPage) {
     await test.step('Do staking', async () => {
+      await this.page.waitForTimeout(4000);
       await this.page.fill(
         'input[type=text]',
         String(this.stakeConfig.stakeAmount),
