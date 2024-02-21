@@ -85,6 +85,9 @@ export class ExodusPage implements WalletPage {
   }
 
   // eslint-disable-next-line
+  async signTx(page: Page) {}
+
+  // eslint-disable-next-line
   async importKey(key: string) {}
 
   async addNetwork(
