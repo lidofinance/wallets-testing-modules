@@ -251,6 +251,13 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
+  async signTx(page: Page) {
+    await test.step('Sign TX', async () => {
+      await page.getByTestId('signature-request-scroll-button').click();
+      await page.getByTestId('page-container-footer-next').click();
+    });
+  }
+
   async approveTokenTx(page: Page) {
     await test.step('Approve token tx', async () => {
       await this.useDefaultToApprove(page);

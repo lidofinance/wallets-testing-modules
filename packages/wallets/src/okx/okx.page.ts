@@ -166,6 +166,9 @@ export class OkxPage implements WalletPage {
     });
   }
 
+  // eslint-disable-next-line
+  async signTx(page: Page) {}
+
   async approveTokenTx(page: Page) {
     await test.step('Approve token tx', async () => {
       await page.getByRole('button', { name: 'Confirm' }).click();

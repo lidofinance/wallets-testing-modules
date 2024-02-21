@@ -91,6 +91,9 @@ export class BitgetPage implements WalletPage {
   async confirmTx(page: Page) {}
 
   // eslint-disable-next-line
+  async signTx(page: Page) {}
+
+  // eslint-disable-next-line
   async approveTokenTx(page: Page) {}
 
   // eslint-disable-next-line

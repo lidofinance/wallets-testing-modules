@@ -108,6 +108,9 @@ export class XdefiPage implements WalletPage {
   }
 
   // eslint-disable-next-line
+  async signTx(page: Page) {}
+
+  // eslint-disable-next-line
   async assertReceiptAddress(page: Page, expectedAddress: string) {}
 
   // eslint-disable-next-line

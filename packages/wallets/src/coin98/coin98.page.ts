@@ -97,6 +97,9 @@ export class Coin98 implements WalletPage {
   }
 
   // eslint-disable-next-line
+  async signTx(page: Page) {}
+
+  // eslint-disable-next-line
   async assertReceiptAddress(page: Page, expectedAmount: string) {}
 
   // eslint-disable-next-line
