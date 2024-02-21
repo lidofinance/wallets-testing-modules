@@ -16,7 +16,7 @@ export interface WalletPage {
   confirmTx(page: Page, setAggressiveGas?: boolean): Promise<void>;
 
   signTx(page: Page): Promise<void>;
-  
+
   rejectTx?(page: Page): Promise<void>;
 
   approveTokenTx?(page: Page): Promise<void>;
