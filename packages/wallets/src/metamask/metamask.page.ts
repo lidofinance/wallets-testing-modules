@@ -164,6 +164,7 @@ export class MetamaskPage implements WalletPage {
           blockExplorer,
         );
       await this.page.click('text=Save');
+      await this.page.click('text=Switch to ');
       await this.navigate();
     });
   }
@@ -244,17 +245,24 @@ export class MetamaskPage implements WalletPage {
   async confirmTx(page: Page, setAggressiveGas?: boolean) {
     await test.step('Confirm TX', async () => {
       if (setAggressiveGas) {
-        await page.getByTestId('edit-gas-fee-button').click();
+        await page.getByTestId('edit-gas-fee-icon').click();
         await page.getByTestId('edit-gas-fee-item-high').click();
       }
       await page.click('text=Confirm');
     });
   }
 
+
   async signTx(page: Page) {
     await test.step('Sign TX', async () => {
       await page.getByTestId('signature-request-scroll-button').click();
       await page.getByTestId('page-container-footer-next').click();
+    });
+  }
+
+  async rejectTx(page: Page) {
+    await test.step('Reject TX', async () => {
+      await page.click('text=Reject');
     });
   }
 

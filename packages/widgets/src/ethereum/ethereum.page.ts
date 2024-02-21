@@ -26,16 +26,11 @@ export class EthereumPage implements WidgetPage {
       async () => {
         await this.page.waitForTimeout(2000);
         const isConnected =
-          (await this.page
-            .locator("button :has-text('Connect wallet')")
-            .count()) === 0;
+          (await this.page.getByTestId('connectBtn').count()) === 0;
         if (!isConnected) {
-          await this.page
-            .locator("button :has-text('Connect wallet')")
-            .first()
-            .click();
+          await this.page.getByTestId('connectBtn').first().click();
           await this.page.waitForTimeout(2000);
-          if ((await this.page.locator('text=Submit').count()) === 0) {
+          if ((await this.page.getByTestId('stakeSubmitBtn').count()) === 0) {
             if (!(await this.page.isChecked('input[type=checkbox]')))
               await this.page.click('input[type=checkbox]', { force: true });
             if (walletPage.config.COMMON.SIMPLE_CONNECT) {
@@ -52,7 +47,7 @@ export class EthereumPage implements WidgetPage {
               await walletPage.connectWallet(connectWalletPage);
             }
             expect(
-              await this.page.waitForSelector('text=Submit'),
+              await this.page.waitForSelector('data-testid=stakeSubmitBtn'),
             ).not.toBeNaN();
             await this.page.locator('data-testid=accountSectionHeader').click();
             expect(
@@ -67,6 +62,7 @@ export class EthereumPage implements WidgetPage {
 
   async doStaking(walletPage: WalletPage) {
     await test.step('Do staking', async () => {
+      await this.page.waitForTimeout(4000);
       await this.page.fill(
         'input[type=text]',
         String(this.stakeConfig.stakeAmount),
