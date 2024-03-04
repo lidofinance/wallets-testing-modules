@@ -33,10 +33,7 @@ export class MetamaskPage implements WalletPage {
       // added explicit route to #onboarding due to unexpected first time route from /home.html to /onboarding - page is close
       await this.navigate();
       if (!this.page) throw "Page isn't ready";
-      const firstTime = await this.page
-        .locator('data-testid=onboarding-welcome')
-        .isVisible();
-      if (firstTime) await this.firstTimeSetup();
+      await this.firstTimeSetup();
     });
   }
 
@@ -64,11 +61,6 @@ export class MetamaskPage implements WalletPage {
     await test.step('Close popover if exists', async () => {
       if (!this.page) throw "Page isn't ready";
       const popover = this.page.getByTestId('popover-close');
-      try {
-        await popover.waitFor({ state: 'visible', timeout: 7000 });
-      } catch (error) {
-        return;
-      }
 
       if (await popover.isVisible()) {
         await popover.click();
@@ -112,21 +104,23 @@ export class MetamaskPage implements WalletPage {
       if (!this.page) throw "Page isn't ready";
       await this.navigate();
       await this.page.click('data-testid=network-display');
-      if (
-        (await this.page
-          .locator(`button:has-text("${networkName}")`)
-          .count()) === 0
-      ) {
-        await this.page.click(
-          'label[class="toggle-button toggle-button--off"]',
-        );
-      }
-      await this.page.click(`button:has-text("${networkName}")`);
-      await this.page.waitForSelector(
-        `button[data-testid="network-display"]:has-text("${networkName}")`,
-      );
+      await this.page.getByText(networkName).click();
+
+      //Linea network require additional confirmation
+      if (networkName === 'Linea Mainnet')
+        await this.page.getByText('Got it').click();
+      await this.page.close();
     });
   }
+
+  async switchNetwork(networkName = 'Linea Mainnet') {
+    await this.navigate();
+    await this.page.getByTestId('network-display').click();
+    await this.page.getByText(networkName).click();
+    await this.page.getByText('Got it').click();
+    await this.page.close();
+  }
+
   async addNetwork(
     networkName: string,
     networkUrl: string,
@@ -135,8 +129,6 @@ export class MetamaskPage implements WalletPage {
     blockExplorer = '',
   ) {
     await test.step('Add network', async () => {
-      if (!this.page) throw "Page isn't ready";
-      await this.navigate();
       await this.page.click('data-testid=account-options-menu-button');
       await this.page.click('text=Settings');
       await this.page.click("text='Networks'");
@@ -165,7 +157,6 @@ export class MetamaskPage implements WalletPage {
         );
       await this.page.click('text=Save');
       await this.page.click('text=Switch to ');
-      await this.navigate();
     });
   }
 
@@ -245,7 +236,7 @@ export class MetamaskPage implements WalletPage {
   async confirmTx(page: Page, setAggressiveGas?: boolean) {
     await test.step('Confirm TX', async () => {
       if (setAggressiveGas) {
-        await page.getByTestId('edit-gas-fee-icon').click();
+        await page.locator('button[data-testid="edit-gas-fee-icon"]').click();
         await page.getByTestId('edit-gas-fee-item-high').click();
       }
       await page.click('text=Confirm');
