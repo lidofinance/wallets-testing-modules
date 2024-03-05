@@ -60,12 +60,11 @@ export class MetamaskPage implements WalletPage {
   async closePopover() {
     await test.step('Close popover if exists', async () => {
       if (!this.page) throw "Page isn't ready";
-      const popover = this.page.getByTestId('popover-close');
-
-      if (await popover.isVisible()) {
-        await popover.click();
-        // Remove me when MM to be more stable
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (await this.page.getByTestId('popover-close').isVisible()) {
+        await this.page.getByTestId('popover-close').click();
       }
+      // Remove me when MM to be more stable
     });
   }
 
@@ -93,9 +92,9 @@ export class MetamaskPage implements WalletPage {
       );
       await this.page.click('data-testid=create-password-terms');
       await this.page.click('data-testid=create-password-import');
-      await this.page.click('data-testid=onboarding-complete-done');
-      await this.page.click('data-testid=pin-extension-next');
-      await this.page.click('data-testid=pin-extension-done');
+      await this.page.getByTestId('onboarding-complete-done').click();
+      await this.page.getByTestId('pin-extension-next').click();
+      await this.page.getByTestId('pin-extension-done').click();
       await this.closePopover();
     });
   }
@@ -276,11 +275,21 @@ export class MetamaskPage implements WalletPage {
 
   async assertReceiptAddress(page: Page, expectedAddress: string) {
     await test.step('Assert receiptAddress/Contract', async () => {
-      await page.getByTestId('sender-to-recipient__name').click();
+      const unrecognizedReceiptName = page.locator(
+        'div[class="name name__missing"]',
+      );
+      const recognizedReceiptNae = page.locator(
+        'div[class="name name__recognized_unsaved"]',
+      );
+      if (await unrecognizedReceiptName.isVisible()) {
+        await unrecognizedReceiptName.click();
+      } else {
+        await recognizedReceiptNae.click();
+      }
       const receiptAddress = await page
-        .locator('div[class="nickname-popover__public-address__constant"]')
-        .textContent();
-      await page.click('button[data-testid=popover-close]');
+        .locator('input[id="address"]')
+        .getAttribute('value');
+      await page.click('button[aria-label="Close"]');
       expect(receiptAddress).toBe(expectedAddress);
     });
   }

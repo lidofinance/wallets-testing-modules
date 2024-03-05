@@ -4,7 +4,7 @@ import { WidgetPage } from '../widgets.page';
 import expect from 'expect';
 import { Logger } from '@nestjs/common';
 import { WalletPage } from '@lidofinance/wallets-testing-wallets';
-import { test, Page } from '@playwright/test';
+import { test, Page, Locator } from '@playwright/test';
 
 export class EthereumPage implements WidgetPage {
   private readonly logger = new Logger(EthereumPage.name);
@@ -17,6 +17,22 @@ export class EthereumPage implements WidgetPage {
   async navigate() {
     await test.step('Navigate to Ethereum widget', async () => {
       await this.page.goto(ETHEREUM_WIDGET_CONFIG.url);
+    });
+  }
+
+  async waitForTextContent(locator: Locator) {
+    return await locator.evaluate(async (element) => {
+      return new Promise<string>((resolve) => {
+        const checkText = () => {
+          const text = element.textContent.trim();
+          if (text.length > 0) {
+            resolve(text);
+          } else {
+            requestAnimationFrame(checkText);
+          }
+        };
+        requestAnimationFrame(checkText);
+      });
     });
   }
 
@@ -62,7 +78,9 @@ export class EthereumPage implements WidgetPage {
 
   async doStaking(walletPage: WalletPage) {
     await test.step('Do staking', async () => {
-      await this.page.waitForTimeout(4000);
+      await this.waitForTextContent(
+        this.page.getByTestId('stakeCardSection').getByTestId('stEthStaked'),
+      );
       await this.page.fill(
         'input[type=text]',
         String(this.stakeConfig.stakeAmount),
