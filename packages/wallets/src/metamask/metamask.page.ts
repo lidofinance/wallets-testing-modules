@@ -71,7 +71,9 @@ export class MetamaskPage implements WalletPage {
   async firstTimeSetup() {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
-      await this.page.click('data-testid=onboarding-terms-checkbox');
+      await this.page.click('data-testid=onboarding-terms-checkbox', {
+        force: true,
+      });
       await this.page.click('data-testid=onboarding-import-wallet');
       await this.page.click('data-testid=metametrics-i-agree');
       const inputs = this.page.locator(
