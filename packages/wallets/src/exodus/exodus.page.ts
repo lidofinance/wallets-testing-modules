@@ -65,6 +65,7 @@ export class ExodusPage implements WalletPage {
         "input[placeholder='Enter your password again']",
         this.config.PASSWORD,
       );
+      await this.page.waitForTimeout(100000);
       await this.page.click('text=Restore');
       await this.page.waitForSelector('text=Continue');
     });
