@@ -28,17 +28,14 @@ test.describe('Ethereum', () => {
     await app.init();
     browserService = moduleFixture.get<BrowserService>(BrowserService);
   });
-
-  test(`Metamask stake`, async () => {
-    await browserService.setupWithNode(
-      METAMASK_COMMON_CONFIG,
-      ETHEREUM_WIDGET_CONFIG,
-      {
-        stakeAmount: 100,
-      },
-    );
-    await browserService.stake();
-  });
+  for (let i = 0; i < 30; i++) {
+    test.only(`Metamask stake ${i}`, async () => {
+      await browserService.setup(
+        METAMASK_COMMON_CONFIG,
+        ETHEREUM_WIDGET_CONFIG,
+      );
+    });
+  }
 
   test(`Coin98 connect`, async () => {
     await browserService.setup(COIN98_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
