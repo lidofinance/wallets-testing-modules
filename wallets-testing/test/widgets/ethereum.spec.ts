@@ -28,6 +28,10 @@ test.describe('Ethereum', () => {
     await app.init();
     browserService = moduleFixture.get<BrowserService>(BrowserService);
   });
+  test.beforeEach(async () => {
+    await browserService.setup(METAMASK_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
+  });
+
   for (let i = 0; i < 30; i++) {
     test.only(`Metamask stake ${i}`, async () => {
       await browserService.setup(
