@@ -27,7 +27,7 @@ export interface WalletPage {
 
   confirmAddTokenToWallet?(page: Page): Promise<void>;
 
-  assertReceiptAddress(page: Page, expectedAmount: string): Promise<void>;
+  assertRecipientAddress(page: Page, expectedAmount: string): Promise<void>;
 
   getWalletAddress?(): Promise<string>;
 

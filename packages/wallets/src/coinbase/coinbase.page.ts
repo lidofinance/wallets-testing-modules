@@ -128,7 +128,7 @@ export class CoinbasePage implements WalletPage {
   async signTx(page: Page) {}
 
   // eslint-disable-next-line
-  async assertReceiptAddress(page: Page, expectedAddress: string) {
+  async assertRecipientAddress(page: Page, expectedAddress: string) {
   }
 
   // eslint-disable-next-line

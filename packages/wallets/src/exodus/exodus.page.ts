@@ -101,5 +101,5 @@ export class ExodusPage implements WalletPage {
   async assertTxAmount(page: Page, expectedAmount: string) {}
 
   // eslint-disable-next-line
-  async assertReceiptAddress(page: Page, expectedAddress: string) {}
+  async assertRecipientAddress(page: Page, expectedAddress: string) {}
 }
