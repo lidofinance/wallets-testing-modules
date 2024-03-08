@@ -278,7 +278,7 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
-  async assertRecipientAddress(page: Page, expectedAddress: string) {
+  async assertReceiptAddress(page: Page, expectedAddress: string) {
     await test.step('Assert receiptAddress/Contract', async () => {
       const recipient = page.locator(
         '.sender-to-recipient__party--recipient-with-address',

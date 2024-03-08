@@ -178,5 +178,5 @@ export class OkxPage implements WalletPage {
   }
 
   // eslint-disable-next-line
-    async assertRecipientAddress(page: Page, expectedAmount: string) {}
+    async assertReceiptAddress(page: Page, expectedAmount: string) {}
 }

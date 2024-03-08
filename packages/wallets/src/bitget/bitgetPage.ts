@@ -100,5 +100,5 @@ export class BitgetPage implements WalletPage {
   async useDefaultToApprove(page: Page) {}
 
   // eslint-disable-next-line
-  async assertRecipientAddress(page: Page, expectedAddress: string) {}
+  async assertReceiptAddress(page: Page, expectedAddress: string) {}
 }

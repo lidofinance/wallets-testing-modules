@@ -137,7 +137,7 @@ export class TrustWalletPage implements WalletPage {
   async signTx(page: Page) {}
 
   // eslint-disable-next-line
-  async assertRecipientAddress(page: Page, expectedAddress: string) {}
+  async assertReceiptAddress(page: Page, expectedAddress: string) {}
 
   // eslint-disable-next-line
   async importKey(key: string) {}

@@ -111,7 +111,7 @@ export class XdefiPage implements WalletPage {
   async signTx(page: Page) {}
 
   // eslint-disable-next-line
-  async assertRecipientAddress(page: Page, expectedAddress: string) {}
+  async assertReceiptAddress(page: Page, expectedAddress: string) {}
 
   // eslint-disable-next-line
   async addNetwork(networkName: string, networkUrl: string, chainId: number, tokenSymbol: string) {}
