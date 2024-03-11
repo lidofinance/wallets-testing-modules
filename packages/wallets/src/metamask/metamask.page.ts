@@ -71,9 +71,12 @@ export class MetamaskPage implements WalletPage {
   async firstTimeSetup() {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
-      await this.page.click('data-testid=onboarding-terms-checkbox', {
-        force: true,
-      });
+
+      const checkbox = this.page.getByTestId('onboarding-terms-checkbox');
+      while (!(await this.page.locator('.check-box__checked').isVisible())) {
+        console.log('Checkbox is not checked');
+        await checkbox.click();
+      }
       await this.page.click('data-testid=onboarding-import-wallet');
       await this.page.click('data-testid=metametrics-i-agree');
       const inputs = this.page.locator(
@@ -277,22 +280,18 @@ export class MetamaskPage implements WalletPage {
 
   async assertReceiptAddress(page: Page, expectedAddress: string) {
     await test.step('Assert receiptAddress/Contract', async () => {
-      const unrecognizedReceiptName = page.locator(
-        'div[class="name name__missing"]',
+      const recipient = page.locator(
+        '.sender-to-recipient__party--recipient-with-address',
       );
-      const recognizedReceiptNae = page.locator(
-        'div[class="name name__recognized_unsaved"]',
-      );
-      if (await unrecognizedReceiptName.isVisible()) {
-        await unrecognizedReceiptName.click();
-      } else {
-        await recognizedReceiptNae.click();
+      while (!(await recipient.isEnabled())) {
+        await this.page.waitForTimeout(500);
       }
-      const receiptAddress = await page
+      await recipient.click();
+      const recipientAddress = await page
         .locator('input[id="address"]')
         .getAttribute('value');
       await page.click('button[aria-label="Close"]');
-      expect(receiptAddress).toBe(expectedAddress);
+      expect(recipientAddress).toBe(expectedAddress);
     });
   }
   async getWalletAddress() {
