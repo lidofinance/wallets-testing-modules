@@ -64,7 +64,6 @@ export class MetamaskPage implements WalletPage {
       if (await this.page.getByTestId('popover-close').isVisible()) {
         await this.page.getByTestId('popover-close').click();
       }
-      // Remove me when MM to be more stable
     });
   }
 
