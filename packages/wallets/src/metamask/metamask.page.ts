@@ -298,8 +298,7 @@ export class MetamaskPage implements WalletPage {
     await this.page.getByTestId('account-options-menu-button').click();
     await this.page.getByTestId('account-list-menu-details').click();
     const address = await this.page
-      .getByTestId('address-copy-button-text')
-      .nth(1)
+      .locator("button[data-testid='address-copy-button-text']")
       .textContent();
     await this.page.close();
     return address;
