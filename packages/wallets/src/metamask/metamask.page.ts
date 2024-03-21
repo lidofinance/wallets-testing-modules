@@ -239,8 +239,9 @@ export class MetamaskPage implements WalletPage {
   async confirmTx(page: Page, setAggressiveGas?: boolean) {
     await test.step('Confirm TX', async () => {
       if (setAggressiveGas) {
-        await page.locator('button[data-testid="edit-gas-fee-icon"]').click();
-        await page.getByTestId('edit-gas-fee-item-high').click();
+        await page.click('button[data-testid="edit-gas-fee-icon"]');
+        await page.mouse.move(1, 1);
+        await page.click('button[data-testid="edit-gas-fee-item-high"]');
       }
       await page.click('text=Confirm');
     });
