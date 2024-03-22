@@ -60,7 +60,7 @@ export class OkxPage implements WalletPage {
       if (!this.page) throw "Page isn't ready";
       await this.page.click("button:has-text('Import wallet')");
       await this.page.click('text=Seed Phrase');
-      const inputs = this.page.locator('input[type=text]');
+      const inputs = this.page.locator('div[data-testid="okd-popup"] >> input');
       const seedWords = this.config.SECRET_PHRASE.split(' ');
       for (let i = 0; i < seedWords.length; i++) {
         await inputs.nth(i).fill(seedWords[i]);
