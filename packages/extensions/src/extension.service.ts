@@ -13,7 +13,7 @@ import { Readable } from 'node:stream';
 @Injectable()
 export class ExtensionService {
   staleExtensionDirs: string[] = [];
-  extensionDir = path.join(__dirname, 'extension');
+  extensionDirBasePath = path.join(__dirname, 'extension');
   urlToExtension: Record<string, string> = {};
   idToExtension: Record<string, string> = {};
   private readonly logger = new Logger(ExtensionService.name);
@@ -33,21 +33,20 @@ export class ExtensionService {
     const content = await fs.readFile(extensionDir + '/manifest.json');
     return JSON.parse(String(content)).manifest_version;
   }
-  async createExtensionDir() {
+  async createExtensionDir(id: string) {
+    const extensionDirById = `${this.extensionDirBasePath}/${id}`;
     try {
-      await fs.access(this.extensionDir, fs.constants.F_OK);
-      return this.extensionDir;
+      await fs.access(extensionDirById, fs.constants.F_OK);
+      return (this.urlToExtension[id] = extensionDirById);
     } catch (error) {
-      await fs.mkdir(this.extensionDir);
+      await fs.mkdir(this.extensionDirBasePath);
       this.logger.debug(`Dir for the extension created`);
-      return this.extensionDir;
+      return extensionDirById;
     }
   }
   async isExtensionDirEmpty() {
-    const extensionDir = path.join(__dirname, 'extension');
-
     try {
-      const files = await fs.readdir(extensionDir);
+      const files = await fs.readdir(this.extensionDirBasePath);
       return files.length < 0;
     } catch (error) {
       this.logger.debug('Extension dir not exist/Unexpected error', error);
@@ -72,7 +71,7 @@ export class ExtensionService {
   async downloadFromStore(id: string) {
     if (await this.isExtensionDirEmpty()) {
       this.logger.debug(`Download extension ${id} from chrome store`);
-      const extensionDir = await this.createExtensionDir();
+      const extensionDir = await this.createExtensionDir(id);
       const browser = await chromium.launch();
       const chromeVersion = browser.version();
       await browser.close();
@@ -91,7 +90,7 @@ export class ExtensionService {
       this.idToExtension[id] = extensionDir;
     }
     //extension files exist - just return dir
-    this.idToExtension[id] = this.extensionDir;
+    this.idToExtension[id] = `${this.extensionDirBasePath}/${id}`;
   }
 
   private arrayBufferToStream(arraybuffer: ArrayBuffer) {
