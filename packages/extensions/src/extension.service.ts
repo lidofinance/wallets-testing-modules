@@ -39,14 +39,14 @@ export class ExtensionService {
       await fs.access(extensionDirById, fs.constants.F_OK);
       return (this.urlToExtension[id] = extensionDirById);
     } catch (error) {
-      await fs.mkdir(this.extensionDirBasePath);
+      await fs.mkdir(extensionDirById);
       this.logger.debug(`Dir for the extension created`);
       return extensionDirById;
     }
   }
-  async isExtensionDirEmpty() {
+  async isExtensionDirEmpty(id: string) {
     try {
-      const files = await fs.readdir(this.extensionDirBasePath);
+      const files = await fs.readdir(`${this.extensionDirBasePath}/${id}`);
       return files.length < 0;
     } catch (error) {
       this.logger.debug('Extension dir not exist/Unexpected error', error);
@@ -69,7 +69,7 @@ export class ExtensionService {
   }
 
   async downloadFromStore(id: string) {
-    if (await this.isExtensionDirEmpty()) {
+    if (await this.isExtensionDirEmpty(id)) {
       this.logger.debug(`Download extension ${id} from chrome store`);
       const extensionDir = await this.createExtensionDir(id);
       const browser = await chromium.launch();
