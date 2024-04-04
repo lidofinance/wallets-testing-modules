@@ -33,18 +33,28 @@ export class ExtensionService {
     const content = await fs.readFile(extensionDir + '/manifest.json');
     return JSON.parse(String(content)).manifest_version;
   }
-  async createExtensionDir(id: string) {
+  async createExtensionDirById(id: string) {
     const extensionDirById = `${this.extensionDirBasePath}/${id}`;
     try {
-      await fs.access(extensionDirById, fs.constants.F_OK);
-      return (this.urlToExtension[id] = extensionDirById);
-    } catch (error) {
       await fs.mkdir(extensionDirById);
-      this.logger.debug(`Dir for the extension created`);
+      this.logger.debug(`Dir for the extension created ${extensionDirById}`);
+      return extensionDirById;
+    } catch (error) {
+      this.logger.debug('', error);
       return extensionDirById;
     }
   }
-  async isExtensionDirEmpty(id: string) {
+  async createBaseExtensionDir() {
+    try {
+      await fs.access(`${this.extensionDirBasePath}`, fs.constants.F_OK);
+      this.logger.debug(`Extension base dir exist`);
+    } catch (error) {
+      await fs.mkdir(`${this.extensionDirBasePath}`);
+      this.logger.debug(error);
+    }
+  }
+
+  async isExtensionByIdEmpty(id: string) {
     try {
       const files = await fs.readdir(`${this.extensionDirBasePath}/${id}`);
       return files.length < 0;
@@ -69,9 +79,10 @@ export class ExtensionService {
   }
 
   async downloadFromStore(id: string) {
-    if (await this.isExtensionDirEmpty(id)) {
+    await this.createBaseExtensionDir();
+    if (await this.isExtensionByIdEmpty(id)) {
       this.logger.debug(`Download extension ${id} from chrome store`);
-      const extensionDir = await this.createExtensionDir(id);
+      const extensionDir = await this.createExtensionDirById(id);
       const browser = await chromium.launch();
       const chromeVersion = browser.version();
       await browser.close();
