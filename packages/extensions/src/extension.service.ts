@@ -37,17 +37,15 @@ export class ExtensionService {
     const extensionDirById = `${this.extensionDirBasePath}/${id}`;
     try {
       await fs.mkdir(extensionDirById);
-      this.logger.debug(`Dir for the extension created ${extensionDirById}`);
       return extensionDirById;
     } catch (error) {
-      this.logger.debug('', error);
+      this.logger.debug('Extension dir by id not created', error);
       return extensionDirById;
     }
   }
   async createBaseExtensionDir() {
     try {
       await fs.access(`${this.extensionDirBasePath}`, fs.constants.F_OK);
-      this.logger.debug(`Extension base dir exist`);
     } catch (error) {
       await fs.mkdir(`${this.extensionDirBasePath}`);
       this.logger.debug(error);
@@ -59,7 +57,6 @@ export class ExtensionService {
       const files = await fs.readdir(`${this.extensionDirBasePath}/${id}`);
       return files.length < 0;
     } catch (error) {
-      this.logger.debug('Extension dir not exist/Unexpected error', error);
       return true;
     }
   }
