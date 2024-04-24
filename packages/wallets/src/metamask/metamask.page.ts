@@ -304,4 +304,31 @@ export class MetamaskPage implements WalletPage {
     await this.page.close();
     return address;
   }
+
+  // Need to fill the name or key parameter.
+  // If you filled the key - wallet will create account using the 'Import account' button.
+  // If key is empty - wallet will create account using the 'Add new account' button.
+  async createAccount(options: { name?: string; key?: string }) {
+    await test.step(`Create account`, async () => {
+      await this.navigate();
+      await this.page.click('data-testid=account-menu-icon');
+      await this.page.click(
+        'data-testid=multichain-account-menu-popover-action-button',
+      );
+      if (options.key) {
+        await this.page.locator('section div button').nth(3).click();
+        await this.page.locator('input[id=private-key-box]').fill(options.key);
+        await this.page.click('data-testid=import-account-confirm-button');
+      } else {
+        if (!options.name) options.name = '';
+        await this.page.click(
+          'data-testid=multichain-account-menu-popover-add-account',
+        );
+        await this.page.locator('input[id=account-name]').fill(options.name);
+        await this.page.click('button[type="submit"]');
+      }
+      await this.page.waitForTimeout(2000);
+      await this.page.close();
+    });
+  }
 }

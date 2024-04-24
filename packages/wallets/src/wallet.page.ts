@@ -40,4 +40,6 @@ export interface WalletPage {
   ): Promise<void>;
 
   changeNetwork?(networkName: string): Promise<void>;
+
+  createAccount?(options: { name?: string; key?: string }): Promise<void>;
 }
