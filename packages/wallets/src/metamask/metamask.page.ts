@@ -249,7 +249,11 @@ export class MetamaskPage implements WalletPage {
 
   async signTx(page: Page) {
     await test.step('Sign TX', async () => {
-      await page.getByTestId('signature-request-scroll-button').click();
+      try {
+        await page.getByTestId('signature-request-scroll-button').click();
+      } catch {
+        console.error('Scroll button is not found');
+      }
       await page.getByTestId('page-container-footer-next').click();
     });
   }
