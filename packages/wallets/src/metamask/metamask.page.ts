@@ -243,7 +243,7 @@ export class MetamaskPage implements WalletPage {
         await page.mouse.move(1, 1);
         await page.click('button[data-testid="edit-gas-fee-item-high"]');
       }
-      await page.click('text=Confirm');
+      await page.getByTestId('page-container-footer-next').click();
     });
   }
 
