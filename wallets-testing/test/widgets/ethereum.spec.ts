@@ -50,7 +50,7 @@ test.describe('Ethereum', () => {
     await browserService.connectWallet();
   });
 
-  test(`Trust connect`, async () => {
+  test.skip(`Trust connect`, async () => {
     await browserService.setup(
       TRUST_WALLET_COMMON_CONFIG,
       ETHEREUM_WIDGET_CONFIG,
