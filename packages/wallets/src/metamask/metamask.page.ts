@@ -134,7 +134,6 @@ export class MetamaskPage implements WalletPage {
     blockExplorer = '',
   ) {
     await test.step('Add network', async () => {
-      await this.closePopover();
       await this.page.click('data-testid=account-options-menu-button');
       await this.page.click('text=Settings');
       await this.page.click("text='Networks'");
