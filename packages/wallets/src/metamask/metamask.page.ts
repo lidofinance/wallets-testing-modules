@@ -64,6 +64,15 @@ export class MetamaskPage implements WalletPage {
       if (await this.page.getByTestId('popover-close').isVisible()) {
         await this.page.getByTestId('popover-close').click();
       }
+      if (
+        await this.page
+          .locator('button:has-text("Don\'t enable enhanced protection")')
+          .isVisible()
+      ) {
+        await this.page
+          .locator('button:has-text("Don\'t enable enhanced protection")')
+          .click();
+      }
       if (await this.page.getByText('Not right now').isVisible())
         await this.page.click('text=Not right now');
     });
