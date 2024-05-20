@@ -81,6 +81,11 @@ export class EthereumPage implements WidgetPage {
       await this.waitForTextContent(
         this.page.getByTestId('stakeCardSection').getByTestId('stEthStaked'),
       );
+      await this.waitForTextContent(
+        this.page
+          .getByTestId('stakeCardSection')
+          .getByTestId('ethAvailableToStake'),
+      );
       await this.page.fill(
         'input[type=text]',
         String(this.stakeConfig.stakeAmount),
