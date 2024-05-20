@@ -179,7 +179,6 @@ export class MetamaskPage implements WalletPage {
     await test.step('Import key', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.navigate();
-      await this.page.pause();
       // Remove me when MM to be more stable
       do {
         await this.page.reload();
