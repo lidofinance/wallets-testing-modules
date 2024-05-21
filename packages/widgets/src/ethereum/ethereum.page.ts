@@ -90,6 +90,7 @@ export class EthereumPage implements WidgetPage {
         'input[type=text]',
         String(this.stakeConfig.stakeAmount),
       );
+      await this.page.waitForTimeout(1000);
       const [walletSignPage] = await Promise.all([
         this.page.context().waitForEvent('page', { timeout: 120000 }),
         this.page.click('button[type=submit]'),
