@@ -107,6 +107,9 @@ export class MetamaskPage implements WalletPage {
       );
       await this.page.click('data-testid=create-password-terms');
       await this.page.click('data-testid=create-password-import');
+      await this.page.waitForSelector('onboarding-complete-done', {
+        state: 'visible',
+      });
       await this.page.getByTestId('onboarding-complete-done').click();
       await this.page.getByTestId('pin-extension-next').click();
       await this.page.getByTestId('pin-extension-done').click();
