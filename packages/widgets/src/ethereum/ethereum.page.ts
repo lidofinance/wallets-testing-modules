@@ -92,9 +92,17 @@ export class EthereumPage implements WidgetPage {
         'input[type=text]',
         String(this.stakeConfig.stakeAmount),
       );
+
+      await this.page.waitForFunction(() => {
+        return (
+          document
+            .querySelector('button[data-testid="stakeSubmitBtn"]')
+            .getAttribute('disabled') === null
+        );
+      });
       const [walletSignPage] = await Promise.all([
         this.page.context().waitForEvent('page', { timeout: 180000 }),
-        this.page.click('button[type=submit]'),
+        this.page.click('data-testid=stakeSubmitBtn'),
       ]);
 
       await walletPage.assertTxAmount(
