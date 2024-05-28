@@ -60,7 +60,7 @@ export class MetamaskPage implements WalletPage {
   async closePopover() {
     await test.step('Close popover if exists', async () => {
       if (!this.page) throw "Page isn't ready";
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 5000));
       if (await this.page.getByTestId('popover-close').isVisible()) {
         await this.page.getByTestId('popover-close').click();
       }
@@ -183,11 +183,8 @@ export class MetamaskPage implements WalletPage {
         await this.page.reload();
         await this.closePopover();
         await this.page.click('data-testid=account-menu-icon');
-      } while (
-        !(await this.page
-          .locator('text=Add account or hardware wallet')
-          .isVisible())
-      );
+      } while (!(await this.page.getByTestId('account-menu-icon').isVisible()));
+      await this.page.click('data-testid=account-menu-icon');
       await this.page.click('text=Add account or hardware wallet');
       await this.page.click('text=Import account');
       await this.page.fill('id=private-key-box', key);
