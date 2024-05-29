@@ -33,7 +33,9 @@ export class MetamaskPage implements WalletPage {
       // added explicit route to #onboarding due to unexpected first time route from /home.html to /onboarding - page is close
       await this.navigate();
       if (!this.page) throw "Page isn't ready";
-      await this.firstTimeSetup();
+      if (!(await this.page.getByTestId('network-display').isVisible())) {
+        await this.firstTimeSetup();
+      }
     });
   }
 
@@ -43,6 +45,7 @@ export class MetamaskPage implements WalletPage {
       if ((await this.page.locator('id=password').count()) > 0) {
         await this.page.fill('id=password', this.config.PASSWORD);
         await this.page.click('text=Unlock');
+        await this.closePopover();
       }
     });
   }
@@ -57,11 +60,21 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
+  async isPopoverVisible() {
+    try {
+      const popoverContent = await this.page.getByTestId('popover-close');
+      await popoverContent.waitFor({ state: 'visible', timeout: 1500 });
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   async closePopover() {
     await test.step('Close popover if exists', async () => {
       if (!this.page) throw "Page isn't ready";
-      await new Promise((resolve) => setTimeout(resolve, 5000));
-      if (await this.page.getByTestId('popover-close').isVisible()) {
+
+      if (await this.isPopoverVisible()) {
         await this.page.getByTestId('popover-close').click();
       }
       if (
