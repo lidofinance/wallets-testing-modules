@@ -15,7 +15,7 @@
     "start:prod": "node dist/main",
     "test": "playwright test -c ./dist",
     "test:smoke": "playwright test -c ./dist smoke",
-    "test:widgets": "playwright test -c ./dist widgets --repeat-each=10"
+    "test:widgets": "playwright test -c ./dist widgets --repeat-each=20"
   },
   "dependencies": {
     "@lidofinance/wallets-testing-extensions": "*",
