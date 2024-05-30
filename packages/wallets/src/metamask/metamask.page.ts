@@ -63,7 +63,7 @@ export class MetamaskPage implements WalletPage {
   async isPopoverVisible() {
     try {
       const popoverContent = await this.page.getByTestId('popover-close');
-      await popoverContent.waitFor({ state: 'visible', timeout: 1500 });
+      await popoverContent.waitFor({ state: 'visible', timeout: 3000 });
       return true;
     } catch (error) {
       return false;
