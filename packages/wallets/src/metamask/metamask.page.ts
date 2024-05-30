@@ -86,11 +86,6 @@ export class MetamaskPage implements WalletPage {
           .locator('button:has-text("Manage in settings")')
           .click();
       }
-      if (
-        await this.page.getByText('Enhanced Transaction Protection').isVisible()
-      ) {
-        await this.page.locator('button:has-text("Enable")').click();
-      }
 
       if (await this.page.getByText('Not right now').isVisible())
         await this.page.click('text=Not right now');
