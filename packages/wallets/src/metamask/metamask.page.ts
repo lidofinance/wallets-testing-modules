@@ -79,11 +79,11 @@ export class MetamaskPage implements WalletPage {
       }
       if (
         await this.page
-          .locator('button:has-text("Don\'t enable enhanced protection")')
+          .locator('button:has-text("Manage in settings")')
           .isVisible()
       ) {
         await this.page
-          .locator('button:has-text("Don\'t enable enhanced protection")')
+          .locator('button:has-text("Manage in settings")')
           .click();
       }
       if (
