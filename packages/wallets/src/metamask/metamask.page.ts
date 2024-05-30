@@ -73,8 +73,8 @@ export class MetamaskPage implements WalletPage {
   async closePopover() {
     await test.step('Close popover if exists', async () => {
       if (!this.page) throw "Page isn't ready";
-
-      if (await this.isPopoverVisible()) {
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      if (await this.page.getByTestId('popover-close').isVisible()) {
         await this.page.getByTestId('popover-close').click();
       }
       if (
