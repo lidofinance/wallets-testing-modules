@@ -19,7 +19,12 @@ export class MetamaskPage implements WalletPage {
         this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
         { waitUntil: 'load' },
       );
-      await this.closePopover();
+      await this.page
+        .getByTestId('app-header-logo')
+        .waitFor({ state: 'visible' });
+      if (!(await this.page.getByText('Welcome back').isVisible())) {
+        await this.closePopover();
+      }
       await this.unlock();
     });
   }
@@ -45,6 +50,7 @@ export class MetamaskPage implements WalletPage {
       if ((await this.page.locator('id=password').count()) > 0) {
         await this.page.fill('id=password', this.config.PASSWORD);
         await this.page.click('text=Unlock');
+        await this.page.waitForURL('**/home.html#');
         await this.closePopover();
       }
     });
@@ -71,7 +77,7 @@ export class MetamaskPage implements WalletPage {
   }
 
   async closePopover() {
-    await test.step('Close popover if exists', async () => {
+    await test.step('Close popover if it exists', async () => {
       if (!this.page) throw "Page isn't ready";
 
       if (await this.isPopoverVisible()) {
@@ -89,6 +95,8 @@ export class MetamaskPage implements WalletPage {
 
       if (await this.page.getByText('Not right now').isVisible())
         await this.page.click('text=Not right now');
+      if (await this.page.getByText('Got it').isVisible())
+        await this.page.click('text=Got it');
     });
   }
 
@@ -124,6 +132,7 @@ export class MetamaskPage implements WalletPage {
       await this.page.getByTestId('onboarding-complete-done').click();
       await this.page.getByTestId('pin-extension-next').click();
       await this.page.getByTestId('pin-extension-done').click();
+      await this.page.waitForURL('**/home.html#');
       await this.closePopover();
     });
   }
