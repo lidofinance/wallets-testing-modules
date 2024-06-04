@@ -20,11 +20,8 @@ export class MetamaskPage implements WalletPage {
         { waitUntil: 'load' },
       );
       await this.page
-        .getByTestId('app-header-logo')
+        .locator('button[data-testid="app-header-logo"]')
         .waitFor({ state: 'visible' });
-      if (!(await this.page.getByText('Welcome back').isVisible())) {
-        await this.closePopover();
-      }
       await this.unlock();
     });
   }
@@ -48,6 +45,9 @@ export class MetamaskPage implements WalletPage {
     await test.step('Unlock', async () => {
       if (!this.page) throw "Page isn't ready";
       if ((await this.page.locator('id=password').count()) > 0) {
+        if (!(await this.page.getByText('Welcome back').isVisible())) {
+          await this.closePopover();
+        }
         await this.page.fill('id=password', this.config.PASSWORD);
         await this.page.click('text=Unlock');
         await this.page.waitForURL('**/home.html#');
