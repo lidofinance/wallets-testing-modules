@@ -1,0 +1,15 @@
+name: Manual Job
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  run-manual-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Run a script
+        run: echo "This is a manually triggered job"
