@@ -1,7 +1,6 @@
 name: Manual Job
 
-on:
-  workflow_dispatch:
+on: workflow_dispatch
 
 jobs:
   run-manual-job:
