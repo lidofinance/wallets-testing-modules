@@ -7,7 +7,7 @@ import * as unzipper from 'unzipper';
 import { once } from 'events';
 import { ExtensionVersionChange, Manifest } from './extension.model';
 import { ExtensionStorePage } from './extension.store.page';
-import { BrowserContext, chromium } from 'playwright';
+import { BrowserContext, chromium } from '@playwright/test';
 import { Readable } from 'node:stream';
 
 @Injectable()
@@ -53,6 +53,7 @@ export class ExtensionService {
   }
 
   async isExtensionByIdEmpty(id: string) {
+    console.log(`${this.extensionDirBasePath}/${id}`);
     try {
       const files = await fs.readdir(`${this.extensionDirBasePath}/${id}`);
       return files.length < 0;

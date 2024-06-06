@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page } from '@playwright/test';
 import { WalletPage } from '@lidofinance/wallets-testing-wallets';
 
 export interface WidgetPage {

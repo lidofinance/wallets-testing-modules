@@ -7,7 +7,7 @@ import {
   APIResponse,
   BrowserContext,
   Page,
-} from 'playwright';
+} from '@playwright/test';
 import { providers, utils, BigNumber, Contract } from 'ethers';
 import {
   EthereumNodeServiceOptions,
