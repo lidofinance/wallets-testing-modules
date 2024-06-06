@@ -68,7 +68,7 @@ test.describe('Ethereum', () => {
     await browserService.connectWallet();
   });
 
-  test.only(`OKX connect`, async () => {
+  test(`OKX connect`, async () => {
     await browserService.setup(OKX_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
