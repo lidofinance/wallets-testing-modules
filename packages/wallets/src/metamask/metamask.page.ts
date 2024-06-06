@@ -1,7 +1,7 @@
 import { WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import expect from 'expect';
-import { BrowserContext, Page, test } from '@playwright/test';
+import { test, BrowserContext, Page } from '@playwright/test';
 
 export class MetamaskPage implements WalletPage {
   page: Page | undefined;
