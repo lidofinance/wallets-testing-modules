@@ -1,7 +1,6 @@
 name: Manual Job
 
 on:
-  pull_request:
   workflow_dispatch:
 
 jobs:
