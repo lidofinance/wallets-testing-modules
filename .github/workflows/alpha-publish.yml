@@ -37,4 +37,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run:
-          cd packages/wallets && yarn publish --non-interactive
+          ls -la && cat .npmrc && cd packages/wallets && yarn publish --non-interactive
