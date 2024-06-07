@@ -28,7 +28,7 @@ jobs:
         run: yarn lint
 
       - name: Setup NPM token
-        run: cd packages/wallets && echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+        run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -36,5 +36,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run:
-          ls -la && cat .npmrc && cd packages/wallets && yarn publish --non-interactive
+        run: |
+          ls -la
+          cd packages/wallets
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+          cat .npmrc
+          echo $NPM_TOKEN
+          yarn publish --non-interactive
