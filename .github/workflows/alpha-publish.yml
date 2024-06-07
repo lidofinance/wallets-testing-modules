@@ -28,7 +28,7 @@ jobs:
         run: yarn lint
 
       - name: Setup NPM token
-        run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > packages/wallets/.npmrc
+        run: cd packages/wallets && echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
