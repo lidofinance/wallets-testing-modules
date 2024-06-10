@@ -23,6 +23,9 @@ export class MetamaskPage implements WalletPage {
         .locator('button[data-testid="app-header-logo"]')
         .waitFor({ state: 'visible' });
       await this.unlock();
+      if (await this.page.getByTestId('network-display').isVisible()) {
+        await this.closePopover();
+      }
     });
   }
 
@@ -45,9 +48,6 @@ export class MetamaskPage implements WalletPage {
     await test.step('Unlock', async () => {
       if (!this.page) throw "Page isn't ready";
       if ((await this.page.locator('id=password').count()) > 0) {
-        if (!(await this.page.getByText('Welcome back').isVisible())) {
-          await this.closePopover();
-        }
         await this.page.fill('id=password', this.config.PASSWORD);
         await this.page.click('text=Unlock');
         await this.page.waitForURL('**/home.html#');
@@ -69,7 +69,7 @@ export class MetamaskPage implements WalletPage {
   async isPopoverVisible() {
     try {
       const popoverContent = this.page.getByTestId('popover-close');
-      await popoverContent.waitFor({ state: 'visible', timeout: 5000 });
+      await popoverContent.waitFor({ state: 'visible', timeout: 1000 });
       return true;
     } catch (error) {
       return false;
