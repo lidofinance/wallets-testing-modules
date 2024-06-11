@@ -13,6 +13,8 @@
   "sideEffects": false,
   "scripts": {
     "build": "yarn workspaces run build",
+    "bump:alpha": "yarn workspaces run bump:alpha",
+    "pkg:publish": "yarn workspaces run publish",
     "test": "playwright test",
     "lint": "eslint --ext ts ."
   },
