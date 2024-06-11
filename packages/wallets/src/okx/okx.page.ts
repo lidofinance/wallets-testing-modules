@@ -59,7 +59,7 @@ export class OkxPage implements WalletPage {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.page.click("button:has-text('Import wallet')");
-      await this.page.getByText('Import wallet').click();
+      await this.page.getByText('Import wallet').last().click();
       await this.page.click('text=Seed Phrase');
       const inputs = this.page.locator('div[data-testid="okd-popup"] >> input');
       const seedWords = this.config.SECRET_PHRASE.split(' ');
