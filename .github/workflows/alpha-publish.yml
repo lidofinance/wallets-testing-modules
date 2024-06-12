@@ -1,7 +1,6 @@
 name: Publish Beta version to registry
 on:
   workflow_dispatch:
-  pull_request:
 
 permissions:
   contents: write
