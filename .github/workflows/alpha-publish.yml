@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: develop
     # restricts job to develop branch
-    if: github.ref != 'refs/heads/develop'
+    if: github.ref != 'refs/heads/main'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
