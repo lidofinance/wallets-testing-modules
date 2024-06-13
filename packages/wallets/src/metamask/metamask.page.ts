@@ -19,8 +19,13 @@ export class MetamaskPage implements WalletPage {
         this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
         { waitUntil: 'load' },
       );
-      await this.closePopover();
+      await this.page
+        .locator('button[data-testid="app-header-logo"]')
+        .waitFor({ state: 'visible' });
       await this.unlock();
+      if (await this.page.getByTestId('network-display').isVisible()) {
+        await this.closePopover();
+      }
     });
   }
 
@@ -45,6 +50,7 @@ export class MetamaskPage implements WalletPage {
       if ((await this.page.locator('id=password').count()) > 0) {
         await this.page.fill('id=password', this.config.PASSWORD);
         await this.page.click('text=Unlock');
+        await this.page.waitForURL('**/home.html#');
         await this.closePopover();
       }
     });
@@ -63,7 +69,7 @@ export class MetamaskPage implements WalletPage {
   async isPopoverVisible() {
     try {
       const popoverContent = this.page.getByTestId('popover-close');
-      await popoverContent.waitFor({ state: 'visible', timeout: 5000 });
+      await popoverContent.waitFor({ state: 'visible', timeout: 1000 });
       return true;
     } catch (error) {
       return false;
@@ -71,7 +77,7 @@ export class MetamaskPage implements WalletPage {
   }
 
   async closePopover() {
-    await test.step('Close popover if exists', async () => {
+    await test.step('Close popover if it exists', async () => {
       if (!this.page) throw "Page isn't ready";
 
       if (await this.isPopoverVisible()) {
@@ -89,6 +95,9 @@ export class MetamaskPage implements WalletPage {
 
       if (await this.page.getByText('Not right now').isVisible())
         await this.page.click('text=Not right now');
+
+      const gotItBtn = await this.page.getByText('Got it');
+      if (await gotItBtn.first().isVisible()) await gotItBtn.first().click();
     });
   }
 
@@ -124,6 +133,7 @@ export class MetamaskPage implements WalletPage {
       await this.page.getByTestId('onboarding-complete-done').click();
       await this.page.getByTestId('pin-extension-next').click();
       await this.page.getByTestId('pin-extension-done').click();
+      await this.page.waitForURL('**/home.html#');
       await this.closePopover();
     });
   }
