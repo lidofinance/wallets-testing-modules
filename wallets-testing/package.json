@@ -8,8 +8,6 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "bump:alpha": "yarn version --prerelease --no-git-tag-version --no-commit-hooks --preid alpha",
-    "publish": "yarn publish --non-interactive",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",

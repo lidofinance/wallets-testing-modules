@@ -15,9 +15,7 @@
   },
   "sideEffects": false,
   "scripts": {
-    "build": "tsc --build",
-    "bump:alpha": "yarn version --prerelease --no-git-tag-version --no-commit-hooks --preid alpha",
-    "publish": "yarn publish --non-interactive"
+    "build": "tsc --build"
   },
   "keywords": [
     "lido",
