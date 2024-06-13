@@ -42,7 +42,12 @@
   },
   "release": {
     "branches": [
-      "main"
+      "main",
+      {
+        "name": "develop",
+        "channel": "alpha",
+        "prerelease": "alpha"
+      }
     ]
   }
 }
