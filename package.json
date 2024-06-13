@@ -44,7 +44,7 @@
     "branches": [
       "main",
       {
-        "name": "fix/mm-get-token-balance",
+        "name": "develop",
         "channel": "alpha",
         "prerelease": "alpha"
       }
