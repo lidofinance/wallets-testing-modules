@@ -9,7 +9,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     environment: develop
-    # restricts job to develop branch
+    # restricts job to main branch
     if: github.ref != 'refs/heads/main'
     steps:
       - name: Checkout

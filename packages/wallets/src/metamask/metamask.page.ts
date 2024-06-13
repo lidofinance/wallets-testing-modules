@@ -95,8 +95,9 @@ export class MetamaskPage implements WalletPage {
 
       if (await this.page.getByText('Not right now').isVisible())
         await this.page.click('text=Not right now');
-      if (await this.page.getByText('Got it').isVisible())
-        await this.page.click('text=Got it');
+
+      const gotItBtn = await this.page.getByText('Got it');
+      if (await gotItBtn.first().isVisible()) await gotItBtn.first().click();
     });
   }
 
