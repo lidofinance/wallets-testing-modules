@@ -1,16 +1,31 @@
 import { WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import expect from 'expect';
-import { test, BrowserContext, Page } from '@playwright/test';
+import { test, BrowserContext, Page, Locator } from '@playwright/test';
 
 export class MetamaskPage implements WalletPage {
   page: Page | undefined;
+  networkDisplay: Locator;
+  networkDisplayDialog: Locator;
+  networkDisplayCloseBtn: Locator;
+  networkItemBtn: Locator;
+  networkItemText: Locator;
 
   constructor(
     private browserContext: BrowserContext,
     private extensionUrl: string,
     public config: WalletConfig,
-  ) {}
+  ) {
+    this.networkDisplay = this.page.getByTestId('network-display');
+    this.networkDisplayDialog = this.page.locator('[role = "dialog"]');
+    this.networkDisplayCloseBtn = this.networkDisplayDialog
+      .locator('[aria-label="Close"]')
+      .first();
+
+    this.networkItemBtn =
+      this.networkDisplayDialog.locator('div[role="button"]');
+    this.networkItemText = this.networkItemBtn.locator('p');
+  }
 
   async navigate() {
     await test.step('Navigate to metamask', async () => {
@@ -23,7 +38,7 @@ export class MetamaskPage implements WalletPage {
         .locator('button[data-testid="app-header-logo"]')
         .waitFor({ state: 'visible' });
       await this.unlock();
-      if (await this.page.getByTestId('network-display').isVisible()) {
+      if (await this.networkDisplay.isVisible()) {
         await this.closePopover();
       }
     });
@@ -38,7 +53,7 @@ export class MetamaskPage implements WalletPage {
       // added explicit route to #onboarding due to unexpected first time route from /home.html to /onboarding -> page is close
       await this.navigate();
       if (!this.page) throw "Page isn't ready";
-      if (!(await this.page.getByTestId('network-display').isVisible())) {
+      if (!(await this.networkDisplay.isVisible())) {
         await this.firstTimeSetup();
       }
     });
@@ -157,6 +172,37 @@ export class MetamaskPage implements WalletPage {
     await this.page.getByText(networkName).click();
     await this.page.getByText('Got it').click();
     await this.page.close();
+  }
+
+  async setupNetwork(standConfig: Record<string, any>) {
+    const networkDisplayText = await this.networkDisplay.textContent();
+
+    if (!networkDisplayText.includes(standConfig.chainName)) {
+      await this.networkDisplay.click();
+
+      const networkListText = await this.getNetworkListText();
+      if (networkListText.includes(standConfig.chainName)) {
+        await this.networkItemBtn.getByText(standConfig.chainName).click();
+      } else {
+        await this.networkDisplayCloseBtn.click();
+        await this.addNetwork(
+          standConfig.chainName,
+          standConfig.rpcUrl,
+          standConfig.chainId,
+          standConfig.tokenSymbol,
+          standConfig.scan,
+        );
+      }
+    }
+  }
+
+  async getNetworkListText() {
+    const networkList = await this.networkItemText.all();
+    return Promise.all(
+      networkList.map(async (networkType) => {
+        return await networkType.textContent();
+      }),
+    );
   }
 
   async addNetwork(
