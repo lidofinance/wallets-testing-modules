@@ -15,7 +15,9 @@ export class MetamaskPage implements WalletPage {
     private browserContext: BrowserContext,
     private extensionUrl: string,
     public config: WalletConfig,
-  ) {
+  ) {}
+
+  async initLocators() {
     this.networkDisplay = this.page.getByTestId('network-display');
     this.networkDisplayDialog = this.page.locator('[role = "dialog"]');
     this.networkDisplayCloseBtn = this.networkDisplayDialog
@@ -30,6 +32,7 @@ export class MetamaskPage implements WalletPage {
   async navigate() {
     await test.step('Navigate to metamask', async () => {
       this.page = await this.browserContext.newPage();
+      await this.initLocators();
       await this.page.goto(
         this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
         { waitUntil: 'load' },
