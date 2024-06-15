@@ -388,4 +388,11 @@ export class MetamaskPage implements WalletPage {
     await this.page.close();
     return address;
   }
+
+  async changeWalletAddress(addressNumber: number) {
+    await this.navigate();
+    await this.page.click('data-testid=account-menu-icon');
+    await this.page.click(`text=Account ${addressNumber}`);
+    await this.page.close();
+  }
 }
