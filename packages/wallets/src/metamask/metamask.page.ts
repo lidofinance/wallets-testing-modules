@@ -160,11 +160,13 @@ export class MetamaskPage implements WalletPage {
       if (!this.page) throw "Page isn't ready";
       await this.navigate();
       await this.page.click('data-testid=network-display');
-      await this.page.getByText(networkName).click();
+      await this.page.locator('section').getByText(networkName).click();
 
       //Linea network require additional confirmation
-      if (networkName === 'Linea Mainnet')
-        await this.page.getByText('Got it').click();
+      if (networkName === 'Linea Mainnet') {
+        await this.closePopover();
+      }
+
       await this.page.close();
     });
   }
