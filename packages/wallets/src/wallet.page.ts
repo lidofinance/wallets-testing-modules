@@ -43,5 +43,5 @@ export interface WalletPage {
 
   changeNetwork?(networkName: string): Promise<void>;
 
-  changeWalletAddress?(addressNumber: number): Promise<void>;
+  changeWalletAddress?(addressName: string): Promise<void>;
 }

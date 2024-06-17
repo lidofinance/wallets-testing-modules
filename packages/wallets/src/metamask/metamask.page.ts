@@ -389,10 +389,10 @@ export class MetamaskPage implements WalletPage {
     return address;
   }
 
-  async changeWalletAddress(addressNumber: number) {
+  async changeWalletAddress(addressName: string) {
     await this.navigate();
     await this.page.click('data-testid=account-menu-icon');
-    await this.page.click(`text=Account ${addressNumber}`);
+    await this.page.click(`text=${addressName}`);
     await this.page.close();
   }
 }
