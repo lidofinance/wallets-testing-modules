@@ -395,6 +395,10 @@ export class MetamaskPage implements WalletPage {
     await this.navigate();
     await this.page.click('data-testid=account-menu-icon');
     await this.page.click(`text=${addressName}`);
+    const accountNumber = this.page.locator(
+      `button[data-testid="account-menu-icon"]:has-text("${addressName}")`,
+    );
+    await accountNumber.waitFor({ state: 'visible', timeout: 2000 });
     await this.page.close();
   }
 }
