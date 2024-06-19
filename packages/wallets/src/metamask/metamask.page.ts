@@ -400,6 +400,7 @@ export class MetamaskPage implements WalletPage {
     );
     await accountNumber.waitFor({ state: 'visible', timeout: 2000 });
     await this.page.waitForTimeout(2000);
+    //delete me
     await this.page.close();
   }
 }
