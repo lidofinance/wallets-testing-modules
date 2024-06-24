@@ -96,6 +96,10 @@ export class OkxPage implements WalletPage {
       await this.page.click("button:has-text('Start your Web3 journey')");
       await this.page.waitForSelector('text=Account 01');
       await this.page.waitForTimeout(10000);
+      await test.info().attach(`${test.info().title}.jpg`, {
+        body: await this.page.screenshot({ fullPage: true }),
+        contentType: 'image/jpg',
+      });
     });
   }
 
