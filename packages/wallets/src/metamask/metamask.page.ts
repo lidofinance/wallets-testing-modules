@@ -114,13 +114,22 @@ export class MetamaskPage implements WalletPage {
       if (await this.page.getByText('Not right now').isVisible())
         await this.page.click('text=Not right now');
 
-      const gotItBtn = await this.page.getByText('Got it');
+      const gotItBtn = this.page.getByText('Got it');
       if (await gotItBtn.first().isVisible()) await gotItBtn.first().click();
 
-      const rejectTxBtn = this.page.getByTestId('page-container-footer-cancel');
-      while (await rejectTxBtn.isVisible({ timeout: 1000 }))
-        await this.rejectTx(this.page);
+      // reject tx in queue.
+      while (await this.isTxInQueue()) await this.rejectTx(this.page);
     });
+  }
+
+  async isTxInQueue() {
+    try {
+      const rejectTxBtn = this.page.getByTestId('page-container-footer-cancel');
+      await rejectTxBtn.waitFor({ state: 'visible', timeout: 1000 });
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
   async firstTimeSetup() {
