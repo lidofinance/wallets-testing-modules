@@ -58,7 +58,7 @@ test.describe('Ethereum', () => {
     await browserService.connectWallet();
   });
 
-  test.only(`Coinbase connect`, async () => {
+  test(`Coinbase connect`, async () => {
     await browserService.setup(COINBASE_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
@@ -68,7 +68,7 @@ test.describe('Ethereum', () => {
     await browserService.connectWallet();
   });
 
-  test(`OKX connect`, async () => {
+  test.only(`OKX connect`, async () => {
     await browserService.setup(OKX_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
