@@ -22,7 +22,7 @@ export class PolygonPage implements WidgetPage {
 
   async connectWallet(walletPage: WalletPage) {
     await test.step(
-      'Connect wallet' + walletPage.config.COMMON.WALLET_NAME,
+      'Connect wallet ' + walletPage.config.COMMON.WALLET_NAME,
       async () => {
         await this.page.waitForTimeout(2000);
         const isConnected =
@@ -58,6 +58,11 @@ export class PolygonPage implements WidgetPage {
             expect(
               await this.page.waitForSelector("button :has-text('Stake now')"),
             ).not.toBeNaN();
+            await this.page.locator('header > div > button').nth(0).click();
+            expect(await this.page.textContent('div[role="dialog"]')).toContain(
+              `Connected with ${walletPage.config.COMMON.CONNECTED_WALLET_NAME}`,
+            );
+            await this.page.locator('div[role="dialog"] button').nth(0).click();
           }
         }
       },
@@ -66,6 +71,7 @@ export class PolygonPage implements WidgetPage {
 
   async doStaking(walletPage: WalletPage) {
     await test.step('Do staking', async () => {
+      await this.page.waitForTimeout(4000);
       await this.page.fill(
         'input[type=text]',
         String(this.stakeConfig.stakeAmount),

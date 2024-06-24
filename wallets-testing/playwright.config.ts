@@ -12,7 +12,7 @@ import type { PlaywrightTestConfig } from '@playwright/test';
 const config: PlaywrightTestConfig = {
   testDir: './test',
   /* Maximum time one test can run for. */
-  timeout: 180 * 1000,
+  timeout: 240 * 1000,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.

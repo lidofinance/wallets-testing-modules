@@ -7,12 +7,13 @@ import * as unzipper from 'unzipper';
 import { once } from 'events';
 import { ExtensionVersionChange, Manifest } from './extension.model';
 import { ExtensionStorePage } from './extension.store.page';
-import { BrowserContext, chromium } from 'playwright';
+import { BrowserContext, chromium } from '@playwright/test';
 import { Readable } from 'node:stream';
 
 @Injectable()
 export class ExtensionService {
   staleExtensionDirs: string[] = [];
+  extensionDirBasePath = path.join(__dirname, 'extension');
   urlToExtension: Record<string, string> = {};
   idToExtension: Record<string, string> = {};
   private readonly logger = new Logger(ExtensionService.name);
@@ -32,6 +33,34 @@ export class ExtensionService {
     const content = await fs.readFile(extensionDir + '/manifest.json');
     return JSON.parse(String(content)).manifest_version;
   }
+  async createExtensionDirById(id: string) {
+    const extensionDirById = `${this.extensionDirBasePath}/${id}`;
+    try {
+      await fs.mkdir(extensionDirById);
+      return extensionDirById;
+    } catch (error) {
+      this.logger.debug('Extension dir by id not created', error);
+      return extensionDirById;
+    }
+  }
+  async createBaseExtensionDir() {
+    try {
+      await fs.access(`${this.extensionDirBasePath}`, fs.constants.F_OK);
+    } catch (error) {
+      await fs.mkdir(`${this.extensionDirBasePath}`);
+      this.logger.debug(error);
+    }
+  }
+
+  async isExtensionByIdEmpty(id: string) {
+    console.log(`${this.extensionDirBasePath}/${id}`);
+    try {
+      const files = await fs.readdir(`${this.extensionDirBasePath}/${id}`);
+      return files.length < 0;
+    } catch (error) {
+      return true;
+    }
+  }
 
   async downloadFromUrl(url: string) {
     this.logger.debug(`Download extension from ${url}`);
@@ -48,24 +77,29 @@ export class ExtensionService {
   }
 
   async downloadFromStore(id: string) {
-    this.logger.debug(`Download extension ${id} from chrome store`);
-    const extensionDir = await fs.mkdtemp(os.tmpdir() + path.sep);
-    const browser = await chromium.launch();
-    const chromeVersion = browser.version();
-    await browser.close();
-    const url = `https://clients2.google.com/service/update2/crx?response=redirect&prodversion=${chromeVersion}&x=id%3D${id}%26installsource%3Dondemand%26uc&nacl_arch=x86-64&acceptformat=crx2,crx3`;
-    await axios
-      .get(url, { responseType: 'arraybuffer' })
-      .then((response) => this.arrayBufferToStream(response.data))
-      .then((response) => {
-        const zip = unzipper.Extract({ path: extensionDir });
-        response.pipe(zip);
-        return once(zip, 'close');
-      });
-    if (this.idToExtension[id] !== undefined) {
-      this.staleExtensionDirs.push(this.idToExtension[id]);
+    await this.createBaseExtensionDir();
+    if (await this.isExtensionByIdEmpty(id)) {
+      this.logger.debug(`Download extension ${id} from chrome store`);
+      const extensionDir = await this.createExtensionDirById(id);
+      const browser = await chromium.launch();
+      const chromeVersion = browser.version();
+      await browser.close();
+      const url = `https://clients2.google.com/service/update2/crx?response=redirect&prodversion=${chromeVersion}&x=id%3D${id}%26installsource%3Dondemand%26uc&nacl_arch=x86-64&acceptformat=crx2,crx3`;
+      await axios
+        .get(url, { responseType: 'arraybuffer' })
+        .then((response) => this.arrayBufferToStream(response.data))
+        .then((response) => {
+          const zip = unzipper.Extract({ path: extensionDir });
+          response.pipe(zip);
+          return once(zip, 'close');
+        });
+      if (this.idToExtension[id] !== undefined) {
+        this.staleExtensionDirs.push(this.idToExtension[id]);
+      }
+      this.idToExtension[id] = extensionDir;
     }
-    this.idToExtension[id] = extensionDir;
+    //extension files exist - just return dir
+    this.idToExtension[id] = `${this.extensionDirBasePath}/${id}`;
   }
 
   private arrayBufferToStream(arraybuffer: ArrayBuffer) {

@@ -88,8 +88,12 @@ export class XdefiPage implements WalletPage {
 
   async connectWallet(page: Page) {
     await test.step('Connect wallet', async () => {
-      await page.click('label[data-testid="selectAllBtn"]');
       await page.click('button[data-testid="nextBtn"]');
+      await page
+        .locator('svg[data-testid="checkbox-unchecked"]')
+        .first()
+        .locator('..')
+        .click();
       await page.click('button[data-testid="connectBtn"]');
       await page.close();
     });
@@ -106,6 +110,9 @@ export class XdefiPage implements WalletPage {
       await page.click('button[data-testid="confirmBtn"]');
     });
   }
+
+  // eslint-disable-next-line
+  async signTx(page: Page) {}
 
   // eslint-disable-next-line
   async assertReceiptAddress(page: Page, expectedAddress: string) {}

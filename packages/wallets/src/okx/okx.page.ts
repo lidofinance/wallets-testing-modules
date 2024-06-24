@@ -59,8 +59,9 @@ export class OkxPage implements WalletPage {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.page.click("button:has-text('Import wallet')");
+      await this.page.getByText('Import wallet').last().click();
       await this.page.click('text=Seed Phrase');
-      const inputs = this.page.locator('input[type=text]');
+      const inputs = this.page.locator('div[data-testid="okd-popup"] >> input');
       const seedWords = this.config.SECRET_PHRASE.split(' ');
       for (let i = 0; i < seedWords.length; i++) {
         await inputs.nth(i).fill(seedWords[i]);
@@ -92,7 +93,9 @@ export class OkxPage implements WalletPage {
         .fill(this.config.PASSWORD);
       await this.page.waitForTimeout(2000);
       await this.page.getByRole('button', { name: 'Confirm' }).click();
-      await this.page.waitForSelector("button:has-text('Maybe later')");
+      await this.page.waitForSelector(
+        "button:has-text('Start your Web3 journey')",
+      );
       await this.page.waitForTimeout(2000);
     });
   }
@@ -148,7 +151,6 @@ export class OkxPage implements WalletPage {
       await page.waitForSelector('button:has-text("Connect")');
       await page.waitForTimeout(10000);
       await page.getByRole('button', { name: 'Connect' }).click();
-      // await page.waitForSelector('text=Connected');
       await page.close();
     });
   }
@@ -166,6 +168,9 @@ export class OkxPage implements WalletPage {
       await page.getByRole('button', { name: 'Confirm' }).click();
     });
   }
+
+  // eslint-disable-next-line
+  async signTx(page: Page) {}
 
   async approveTokenTx(page: Page) {
     await test.step('Approve token tx', async () => {

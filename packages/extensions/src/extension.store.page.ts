@@ -1,4 +1,4 @@
-import { BrowserContext, Page } from 'playwright';
+import { BrowserContext, Page } from '@playwright/test';
 import { CHROME_WEBSTORE_URL } from './extension.constants';
 
 export class ExtensionStorePage {

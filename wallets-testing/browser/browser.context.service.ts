@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BrowserContext, chromium, Page } from 'playwright';
+import { BrowserContext, chromium, Page } from '@playwright/test';
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as path from 'path';

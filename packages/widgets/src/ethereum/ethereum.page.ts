@@ -4,7 +4,7 @@ import { WidgetPage } from '../widgets.page';
 import expect from 'expect';
 import { Logger } from '@nestjs/common';
 import { WalletPage } from '@lidofinance/wallets-testing-wallets';
-import { test, Page } from '@playwright/test';
+import { test, Page, Locator } from '@playwright/test';
 
 export class EthereumPage implements WidgetPage {
   private readonly logger = new Logger(EthereumPage.name);
@@ -20,22 +20,33 @@ export class EthereumPage implements WidgetPage {
     });
   }
 
+  async waitForTextContent(locator: Locator) {
+    return await locator.evaluate(async (element) => {
+      return new Promise<string>((resolve) => {
+        const checkText = () => {
+          const text = element.textContent.trim();
+          if (text.length > 0) {
+            resolve(text);
+          } else {
+            requestAnimationFrame(checkText);
+          }
+        };
+        requestAnimationFrame(checkText);
+      });
+    });
+  }
+
   async connectWallet(walletPage: WalletPage) {
     await test.step(
       'Connect wallet ' + walletPage.config.COMMON.WALLET_NAME,
       async () => {
         await this.page.waitForTimeout(2000);
         const isConnected =
-          (await this.page
-            .locator("button :has-text('Connect wallet')")
-            .count()) === 0;
+          (await this.page.getByTestId('connectBtn').count()) === 0;
         if (!isConnected) {
-          await this.page
-            .locator("button :has-text('Connect wallet')")
-            .first()
-            .click();
+          await this.page.getByTestId('connectBtn').first().click();
           await this.page.waitForTimeout(2000);
-          if ((await this.page.locator('text=Submit').count()) === 0) {
+          if ((await this.page.getByTestId('stakeSubmitBtn').count()) === 0) {
             if (!(await this.page.isChecked('input[type=checkbox]')))
               await this.page.click('input[type=checkbox]', { force: true });
             if (walletPage.config.COMMON.SIMPLE_CONNECT) {
@@ -52,8 +63,13 @@ export class EthereumPage implements WidgetPage {
               await walletPage.connectWallet(connectWalletPage);
             }
             expect(
-              await this.page.waitForSelector('text=Submit'),
+              await this.page.waitForSelector('data-testid=stakeSubmitBtn'),
             ).not.toBeNaN();
+            await this.page.locator('data-testid=accountSectionHeader').click();
+            expect(
+              await this.page.textContent('div[data-testid="providerName"]'),
+            ).toContain(walletPage.config.COMMON.CONNECTED_WALLET_NAME);
+            await this.page.locator('div[role="dialog"] button').nth(0).click();
           }
         }
       },
@@ -62,13 +78,27 @@ export class EthereumPage implements WidgetPage {
 
   async doStaking(walletPage: WalletPage) {
     await test.step('Do staking', async () => {
+      await this.waitForTextContent(
+        this.page
+          .getByTestId('stakeCardSection')
+          .getByTestId('ethAvailableToStake'),
+      );
+      await this.waitForTextContent(
+        this.page
+          .getByTestId('stakeCardSection')
+          .getByTestId('ethAvailableToStake'),
+      );
       await this.page.fill(
         'input[type=text]',
         String(this.stakeConfig.stakeAmount),
       );
+      await this.page.waitForSelector(
+        'button[data-testid="stakeSubmitBtn"]:not([disabled])',
+        { timeout: 15000 },
+      );
       const [walletSignPage] = await Promise.all([
-        this.page.context().waitForEvent('page', { timeout: 120000 }),
-        this.page.click('button[type=submit]'),
+        this.page.context().waitForEvent('page', { timeout: 180000 }),
+        this.page.click('data-testid=stakeSubmitBtn'),
       ]);
 
       await walletPage.assertTxAmount(
