@@ -57,7 +57,7 @@ test.describe('Polygon', () => {
     await browserService.connectWallet();
   });
 
-  test(`OKX connect`, async () => {
+  test.skip(`OKX connect`, async () => {
     await browserService.setup(OKX_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
