@@ -44,7 +44,7 @@
     "branches": [
       "main",
       {
-        "name": "develop",
+        "name": "rejectTx",
         "channel": "alpha",
         "prerelease": "alpha"
       }
