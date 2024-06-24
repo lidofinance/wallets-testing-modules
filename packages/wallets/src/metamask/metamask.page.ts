@@ -116,6 +116,10 @@ export class MetamaskPage implements WalletPage {
 
       const gotItBtn = await this.page.getByText('Got it');
       if (await gotItBtn.first().isVisible()) await gotItBtn.first().click();
+
+      const rejectTxBtn = this.page.getByTestId('page-container-footer-cancel');
+      while (await rejectTxBtn.isVisible({ timeout: 1000 }))
+        await this.rejectTx(this.page);
     });
   }
 
@@ -342,7 +346,7 @@ export class MetamaskPage implements WalletPage {
 
   async rejectTx(page: Page) {
     await test.step('Reject TX', async () => {
-      await page.click('text=Reject');
+      await page.getByTestId('page-container-footer-cancel').click();
     });
   }
 
