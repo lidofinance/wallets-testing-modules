@@ -95,6 +95,7 @@ export class OkxPage implements WalletPage {
       await this.page.getByRole('button', { name: 'Confirm' }).click();
       await this.page.click("button:has-text('Start your Web3 journey')");
       await this.page.waitForSelector('text=Account 01');
+      await this.page.waitForTimeout(10000);
     });
   }
 
