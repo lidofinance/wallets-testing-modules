@@ -52,6 +52,9 @@ export class CoinbasePage implements WalletPage {
       await this.page.click('text=I already have a wallet');
       await this.page.click('text=Enter recovery phrase');
       await this.page.fill('input[type=input]', this.config.SECRET_PHRASE);
+      const acknowledgePopUp = this.page.locator('text=AcknowLedge');
+      if (await acknowledgePopUp.isVisible({ timeout: 2000 }))
+        await acknowledgePopUp.click();
       await this.page.click('button:has-text("Import wallet")');
       await this.page.fill(
         'input[placeholder="Enter password"]',

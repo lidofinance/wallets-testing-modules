@@ -58,7 +58,7 @@ test.describe('Ethereum', () => {
     await browserService.connectWallet();
   });
 
-  test(`Coinbase connect`, async () => {
+  test.only(`Coinbase connect`, async () => {
     await browserService.setup(COINBASE_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
