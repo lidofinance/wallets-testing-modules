@@ -159,7 +159,7 @@ export class OkxPage implements WalletPage {
       const connectBtn = page.locator('span:has-text("Connect")');
       await connectBtn.waitFor({
         state: 'visible',
-        timeout: 5000,
+        timeout: 180000,
       });
       await page.waitForTimeout(10000);
       await connectBtn.click();
