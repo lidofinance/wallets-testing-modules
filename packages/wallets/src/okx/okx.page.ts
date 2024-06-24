@@ -147,7 +147,10 @@ export class OkxPage implements WalletPage {
   async connectWallet(page: Page) {
     await test.step('Connect wallet', async () => {
       console.log(`${await page.title()}`);
-
+      await test.info().attach(`${test.info().title}.jpg`, {
+        body: await page.screenshot({ fullPage: true }),
+        contentType: 'image/jpg',
+      });
       const connectBtn = page.locator('span:has-text("Connect")');
       await connectBtn.waitFor({
         state: 'visible',
