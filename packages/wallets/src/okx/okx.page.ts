@@ -28,19 +28,30 @@ export class OkxPage implements WalletPage {
     await test.step('Setup', async () => {
       await this.navigate();
       if (!this.page) throw "Page isn't ready";
-      const firstTime =
-        (await this.page.locator("button:has-text('Import wallet')").count()) >
-        0;
-      if (firstTime) await this.firstTimeSetup();
+      try {
+        await this.page.waitForURL('**/initialize', { timeout: 5000 });
+        const firstTime =
+          (await this.page
+            .locator("button:has-text('Import wallet')")
+            .count()) > 0;
+        if (firstTime) await this.firstTimeSetup();
+      } catch {
+        console.error('Import is not necessary');
+      }
     });
   }
 
   async unlock() {
     await test.step('Unlock', async () => {
       if (!this.page) throw "Page isn't ready";
-      if ((await this.page.locator('id=password').count()) > 0) {
-        await this.page.fill('id=password', this.config.PASSWORD);
-        await this.page.click('text=Unlock');
+      try {
+        await this.page.waitForURL('**unlock', { timeout: 5000 });
+        if ((await this.page.locator('id=password').count()) > 0) {
+          await this.page.fill('id=password', this.config.PASSWORD);
+          await this.page.click('text=Unlock');
+        }
+      } catch {
+        console.error('Login is not needed');
       }
     });
   }
