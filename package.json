@@ -44,7 +44,7 @@
     "branches": [
       "main",
       {
-        "name": "add-extra-wait-after-change-wallet",
+        "name": "develop",
         "channel": "alpha",
         "prerelease": "alpha"
       }
