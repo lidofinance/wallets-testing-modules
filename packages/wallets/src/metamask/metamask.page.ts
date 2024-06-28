@@ -42,6 +42,7 @@ export class MetamaskPage implements WalletPage {
         .waitFor({ state: 'visible' });
       await this.unlock();
       if (await this.networkDisplay.isVisible()) {
+        console.log('da visible');
         await this.closePopover();
       }
     });
@@ -253,11 +254,8 @@ export class MetamaskPage implements WalletPage {
     await test.step('Import key', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.navigate();
-      // Remove me when MM to be more stable
-      do {
-        await this.page.reload();
-        await this.closePopover();
-      } while (!(await this.page.getByTestId('account-menu-icon').isVisible()));
+      await this.closePopover();
+
       await this.page.click('data-testid=account-menu-icon');
       await this.page.click('text=Add account or hardware wallet');
       await this.page.click('text=Import account');
