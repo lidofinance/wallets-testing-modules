@@ -1,6 +1,6 @@
 import { WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
-import expect from 'expect';
+import { expect } from '@playwright/test';
 import { test, BrowserContext, Page, Locator } from '@playwright/test';
 
 export class MetamaskPage implements WalletPage {
@@ -114,9 +114,42 @@ export class MetamaskPage implements WalletPage {
       if (await this.page.getByText('Not right now').isVisible())
         await this.page.click('text=Not right now');
 
-      const gotItBtn = await this.page.getByText('Got it');
+      const gotItBtn = this.page.getByText('Got it');
       if (await gotItBtn.first().isVisible()) await gotItBtn.first().click();
+
+      // reject all tx in queue.
+      const txQueueText = this.page.locator(
+        "xpath=//div[text()='requests waiting to be acknowledged']/preceding-sibling::div",
+      );
+      if (await this.isTxInQueue()) {
+        // if "requests waiting to be acknowledge" displayed that's mean there is >1 tx in queue
+        if (await txQueueText.isVisible()) {
+          const locatorText = await this.page
+            .locator(
+              "xpath=//div[text()='requests waiting to be acknowledged']/preceding-sibling::div",
+            )
+            .textContent();
+          const txQueueCount = parseFloat(
+            locatorText.replace('1 of', '').trim(),
+          );
+
+          for (let counter = 0; counter < txQueueCount; counter++) {
+            await this.rejectTx(this.page);
+          }
+          // "requests waiting to be acknowledge" not displayed - reject only 1 time
+        } else await this.rejectTx(this.page);
+      }
     });
+  }
+
+  async isTxInQueue() {
+    try {
+      const rejectTxBtn = this.page.getByTestId('page-container-footer-cancel');
+      await rejectTxBtn.waitFor({ state: 'visible', timeout: 1000 });
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
   async firstTimeSetup() {
@@ -342,7 +375,7 @@ export class MetamaskPage implements WalletPage {
 
   async rejectTx(page: Page) {
     await test.step('Reject TX', async () => {
-      await page.click('text=Reject');
+      await page.getByTestId('page-container-footer-cancel').click();
     });
   }
 
