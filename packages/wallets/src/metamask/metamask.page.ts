@@ -378,11 +378,6 @@ export class MetamaskPage implements WalletPage {
       await page.getByTestId('page-container-footer-cancel').click();
     });
   }
-  async rejectTx1(page: Page) {
-    await test.step('Reject TX1', async () => {
-      await page.getByTestId('page-container-footer-cancel').click();
-    });
-  }
 
   async approveTokenTx(page: Page) {
     await test.step('Approve token tx', async () => {
