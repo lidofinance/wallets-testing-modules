@@ -117,39 +117,38 @@ export class MetamaskPage implements WalletPage {
       const gotItBtn = this.page.getByText('Got it');
       if (await gotItBtn.first().isVisible()) await gotItBtn.first().click();
 
-      // reject all tx in queue.
-      const txQueueText = this.page.locator(
-        "xpath=//div[text()='requests waiting to be acknowledged']/preceding-sibling::div",
-      );
-      if (await this.isTxInQueue()) {
-        // if "requests waiting to be acknowledge" displayed that's mean there is >1 tx in queue
-        if (await txQueueText.isVisible()) {
-          const locatorText = await this.page
-            .locator(
-              "xpath=//div[text()='requests waiting to be acknowledged']/preceding-sibling::div",
-            )
-            .textContent();
-          const txQueueCount = parseFloat(
-            locatorText.replace('1 of', '').trim(),
-          );
-
-          for (let counter = 0; counter < txQueueCount; counter++) {
-            await this.rejectTx(this.page);
-          }
-          // "requests waiting to be acknowledge" not displayed - reject only 1 time
-        } else await this.rejectTx(this.page);
-      }
+      // reject all tx in queue if exist
+      await this.rejectAllTxInQueue();
     });
   }
 
-  async isTxInQueue() {
+  async rejectAllTxInQueue() {
+    //Is there is any tx in queue.
     try {
       const rejectTxBtn = this.page.getByTestId('page-container-footer-cancel');
       await rejectTxBtn.waitFor({ state: 'visible', timeout: 1000 });
-      return true;
     } catch (error) {
-      return false;
+      //No tx in queue
+      return;
     }
+    //rejectTxBtn visible - there is any tx in queue
+    const txQueueText = this.page.locator(
+      "xpath=//div[text()='requests waiting to be acknowledged']/preceding-sibling::div",
+    );
+    // if "requests waiting to be acknowledge" displayed that's mean there is >1 tx in queue
+    if (await txQueueText.isVisible()) {
+      const locatorText = await this.page
+        .locator(
+          "xpath=//div[text()='requests waiting to be acknowledged']/preceding-sibling::div",
+        )
+        .textContent();
+      let txQueueCount = parseFloat(locatorText.replace('1 of', '').trim());
+
+      for (; txQueueCount > 0; txQueueCount--) {
+        await this.rejectTx(this.page);
+      }
+      // "requests waiting to be acknowledge" not displayed - reject only 1 time
+    } else await this.rejectTx(this.page);
   }
 
   async firstTimeSetup() {
