@@ -74,8 +74,13 @@ export class Coin98 implements WalletPage {
   async connectWallet(page: Page) {
     await test.step('Connect wallet', async () => {
       await this.unlock(page);
-      await page.getByText('Select all').click();
-      await page.click('button:has-text("Confirm")');
+      const selectAllBtn = page.getByText('Select all');
+      // for polygon network there is no account selection preview
+      if (await selectAllBtn.isVisible()) {
+        await selectAllBtn.click();
+        await page.click('button:has-text("Confirm")');
+      }
+
       await page.click('button:has-text("Connect")');
     });
   }
