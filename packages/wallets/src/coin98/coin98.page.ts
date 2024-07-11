@@ -19,6 +19,7 @@ export class Coin98 implements WalletPage {
       );
       await this.page.reload();
       await this.page.waitForTimeout(1000);
+      await this.closePopover(this.page);
     });
   }
 
@@ -73,8 +74,20 @@ export class Coin98 implements WalletPage {
   async connectWallet(page: Page) {
     await test.step('Connect wallet', async () => {
       await this.unlock(page);
+      await page.getByText('Select all').click();
+      await page.click('button:has-text("Confirm")');
       await page.click('button:has-text("Connect")');
     });
+  }
+  async closePopover(popUpPage: Page) {
+    //popUpPage param required since noisy pop-up can appear in confirmation pages
+    try {
+      const popoverContent = popUpPage.locator('button:has-text("Try now")');
+      await popoverContent.waitFor({ state: 'visible', timeout: 2000 });
+      await popoverContent.click();
+    } catch (error) {
+      return;
+    }
   }
 
   async unlock(page: Page) {
@@ -83,6 +96,7 @@ export class Coin98 implements WalletPage {
       if ((await page.locator('input[name="password"]').count()) > 0) {
         await page.fill('input[name=password]', this.config.PASSWORD);
         await page.click('text=Unlock Wallet');
+        await this.closePopover(page);
       }
     });
   }
