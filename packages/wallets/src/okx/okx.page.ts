@@ -95,11 +95,11 @@ export class OkxPage implements WalletPage {
       }
       await this.page.getByRole('button', { name: 'Confirm' }).click();
       await this.page
-        .locator('input[placeholder="Enter at least 8 characters"]')
+        .getByTestId('okd-input')
         .nth(0)
         .fill(this.config.PASSWORD);
       await this.page
-        .locator('input[placeholder="Enter at least 8 characters"]')
+        .getByTestId('okd-input')
         .nth(1)
         .fill(this.config.PASSWORD);
       await this.page.waitForTimeout(2000);
