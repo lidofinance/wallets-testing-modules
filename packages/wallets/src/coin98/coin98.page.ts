@@ -13,7 +13,7 @@ export class Coin98 implements WalletPage {
 
   async navigate() {
     await test.step('Navigate to Coin98', async () => {
-      this.page = await this.browserContext.newPage();
+      this.page = this.browserContext.pages()[0];
       await this.page.goto(
         this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
       );
@@ -26,7 +26,7 @@ export class Coin98 implements WalletPage {
   async setup(network: string) {
     await test.step('Setup', async () => {
       await this.navigate();
-      if (!this.page) throw "Page isn't ready";
+      this.page = this.browserContext.pages()[0];
       const firstTime = await this.page.waitForSelector('text=Get Started');
       if (firstTime) await this.firstTimeSetup(network);
     });
