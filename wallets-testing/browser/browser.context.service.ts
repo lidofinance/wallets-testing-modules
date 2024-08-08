@@ -71,6 +71,7 @@ export class BrowserContextService {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async setExtensionVars(walletName: string, extensionStartPath: string) {
     if (walletName === 'bitget') {
       const page = await this.browserContext.newPage();
