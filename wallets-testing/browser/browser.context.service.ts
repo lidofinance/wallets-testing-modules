@@ -114,7 +114,7 @@ export class BrowserContextService {
   async closePages() {
     if (!this.browserContext) return;
     await this.browserContext.newPage();
-    const pages = this.browserContext.pages().slice(1);
+    const pages = this.browserContext.pages().slice(0, -1);
     for (const page of pages) {
       await page.close();
     }
