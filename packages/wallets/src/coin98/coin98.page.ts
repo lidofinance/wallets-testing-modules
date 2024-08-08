@@ -13,12 +13,11 @@ export class Coin98 implements WalletPage {
 
   async navigate() {
     await test.step('Navigate to Coin98', async () => {
-      this.page = await this.browserContext.newPage();
+      this.page = this.browserContext.pages()[0];
       await this.page.goto(
         this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
       );
       await this.page.reload();
-      await this.page.waitForTimeout(1000);
       await this.closePopover(this.page);
     });
   }
@@ -26,7 +25,7 @@ export class Coin98 implements WalletPage {
   async setup(network: string) {
     await test.step('Setup', async () => {
       await this.navigate();
-      if (!this.page) throw "Page isn't ready";
+      this.page = this.browserContext.pages()[0];
       const firstTime = await this.page.waitForSelector('text=Get Started');
       if (firstTime) await this.firstTimeSetup(network);
     });
@@ -74,13 +73,12 @@ export class Coin98 implements WalletPage {
   async connectWallet(page: Page) {
     await test.step('Connect wallet', async () => {
       await this.unlock(page);
-      const selectAllBtn = page.getByText('Select all');
+      const selectAllBtn = page.getByText('Select all', { exact: true });
       // for polygon network there is no account selection preview
       if (await selectAllBtn.isVisible()) {
         await selectAllBtn.click();
-        await page.click('button:has-text("Confirm")');
       }
-
+      await page.click('button:has-text("Confirm")');
       await page.click('button:has-text("Connect")');
     });
   }
