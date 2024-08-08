@@ -71,6 +71,7 @@ export class BrowserContextService {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async setExtensionVars(walletName: string, extensionStartPath: string) {
     if (walletName === 'bitget') {
       const page = await this.browserContext.newPage();
@@ -100,12 +101,7 @@ export class BrowserContextService {
             background = await this.browserContext.waitForEvent(
               'serviceworker',
             );
-          const extensionId = background.url().split('/')[2];
-          this.extensionPage = await this.browserContext.newPage();
-          await this.extensionPage.goto(
-            `chrome-extension://${extensionId}${extensionStartPath}`,
-          );
-          this.extensionId = extensionId;
+          this.extensionId = background.url().split('/')[2];
         }
       }
     }
