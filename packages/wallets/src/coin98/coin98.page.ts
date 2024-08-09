@@ -129,7 +129,6 @@ export class Coin98 implements WalletPage {
   async waitForAutomaticallyOpenedWalletPageAfterInstallation() {
     if ((await this.browserContext.pages().length) === 1) {
       await this.browserContext.waitForEvent('page');
-      console.log(await this.browserContext.pages().length);
     }
     this.page = await this.browserContext.pages()[1];
   }
