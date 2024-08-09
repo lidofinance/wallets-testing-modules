@@ -13,7 +13,6 @@ export class Coin98 implements WalletPage {
 
   async navigate() {
     await test.step('Navigate to Coin98', async () => {
-      this.page = this.browserContext.pages()[0];
       await this.page.goto(
         this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
       );
@@ -24,8 +23,8 @@ export class Coin98 implements WalletPage {
 
   async setup(network: string) {
     await test.step('Setup', async () => {
+      await this.waitForAutomaticallyOpenedWalletPageAfterInstallation();
       await this.navigate();
-      this.page = this.browserContext.pages()[0];
       const firstTime = await this.page.waitForSelector('text=Get Started');
       if (firstTime) await this.firstTimeSetup(network);
     });
@@ -78,7 +77,9 @@ export class Coin98 implements WalletPage {
       if (await selectAllBtn.isVisible()) {
         await selectAllBtn.click();
       }
-      await page.click('button:has-text("Confirm")');
+      if (await page.locator('button:has-text("Confirm")').isVisible()) {
+        await page.click('button:has-text("Confirm")');
+      }
       await page.click('button:has-text("Connect")');
     });
   }
@@ -121,4 +122,15 @@ export class Coin98 implements WalletPage {
 
   // eslint-disable-next-line
   async addNetwork(networkName: string, networkUrl: string, chainId: number, tokenSymbol: string) {}
+
+  // We need this function cause Coin98 wallet open the extension page after installation
+  // and close other opened wallet pages (include page with we work so here was test crash)
+  // We wait for that action and after it we continue testing
+  async waitForAutomaticallyOpenedWalletPageAfterInstallation() {
+    if ((await this.browserContext.pages().length) === 1) {
+      await this.browserContext.waitForEvent('page');
+      console.log(await this.browserContext.pages().length);
+    }
+    this.page = await this.browserContext.pages()[1];
+  }
 }
