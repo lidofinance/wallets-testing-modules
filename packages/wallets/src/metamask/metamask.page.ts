@@ -324,7 +324,7 @@ export class MetamaskPage implements WalletPage {
   async getTokenBalance(tokenName: string) {
     await this.navigate();
     const tokenTab = await this.page
-      .getByTestId('home__asset-tab')
+      .getByTestId('account-overview__asset-tab')
       .locator('text=Tokens');
     await tokenTab.click();
     //Cannot find locator by exact text since need to find row by text "stETH"/"ETH" but "stETH" contains "ETH"
