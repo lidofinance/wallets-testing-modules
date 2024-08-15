@@ -1,15 +1,30 @@
 import { WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import { expect } from '@playwright/test';
-import { test, BrowserContext, Page, Locator } from '@playwright/test';
+import { test, BrowserContext, Page } from '@playwright/test';
+import { MainPage, LoginPage, SettingsPage } from './pages';
+import {
+  OnboardingElement,
+  OperationActions,
+  Header,
+  NetworkList,
+  OptionsMenu,
+  PopoverElements,
+  AccountMenu,
+} from './pages/elements';
 
 export class MetamaskPage implements WalletPage {
   page: Page | undefined;
-  networkDisplay: Locator;
-  networkDisplayDialog: Locator;
-  networkDisplayCloseBtn: Locator;
-  networkItemBtn: Locator;
-  networkItemText: Locator;
+
+  header: Header;
+  mainPage: MainPage;
+  settingsPage: SettingsPage;
+  loginPage: LoginPage;
+  networkList: NetworkList;
+  optionsMenu: OptionsMenu;
+  operationActions: OperationActions;
+  popoverElements: PopoverElements;
+  accountMenu: AccountMenu;
 
   constructor(
     private browserContext: BrowserContext,
@@ -18,200 +33,117 @@ export class MetamaskPage implements WalletPage {
   ) {}
 
   async initLocators() {
-    this.networkDisplay = this.page.getByTestId('network-display');
-    this.networkDisplayDialog = this.page.locator('[role = "dialog"]');
-    this.networkDisplayCloseBtn = this.networkDisplayDialog
-      .locator('[aria-label="Close"]')
-      .first();
-
-    this.networkItemBtn =
-      this.networkDisplayDialog.locator('div[role="button"]');
-    this.networkItemText = this.networkItemBtn.locator('p');
+    this.page = await this.browserContext.newPage();
+    this.header = new Header(this.page);
+    this.mainPage = new MainPage(this.page, this.extensionUrl, this.config);
+    this.settingsPage = new SettingsPage(
+      this.page,
+      this.extensionUrl,
+      this.config,
+    );
+    this.loginPage = new LoginPage(this.page, this.config);
+    this.networkList = new NetworkList(this.page);
+    this.optionsMenu = new OptionsMenu(this.page);
+    this.operationActions = new OperationActions(this.page);
+    this.popoverElements = new PopoverElements(this.page);
+    this.accountMenu = new AccountMenu(this.page);
   }
 
   async navigate() {
     await test.step('Navigate to metamask', async () => {
-      this.page = await this.browserContext.newPage();
       await this.initLocators();
-      await this.page.goto(
-        this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
-        { waitUntil: 'load' },
-      );
-      await this.page
-        .locator('button[data-testid="app-header-logo"]')
-        .waitFor({ state: 'visible' });
-      await this.unlock();
-      if (await this.networkDisplay.isVisible()) {
+      await this.mainPage.openWidgetPage();
+      await this.header.appHeaderLogo.waitFor({ state: 'visible' });
+      await this.loginPage.unlock();
+      if (await this.header.networkListButton.isVisible()) {
         await this.closePopover();
       }
     });
-  }
-
-  async goToActivity() {
-    await this.page.locator('button:has-text("Activity")').click();
   }
 
   async setup() {
     await test.step('Setup', async () => {
       // added explicit route to #onboarding due to unexpected first time route from /home.html to /onboarding -> page is close
       await this.navigate();
-      if (!this.page) throw "Page isn't ready";
-      if (!(await this.networkDisplay.isVisible())) {
+      if (!(await this.header.networkListButton.isVisible())) {
         await this.firstTimeSetup();
+        await this.settingsPage.setupNetworkChangingSetting();
       }
     });
-  }
-
-  async unlock() {
-    await test.step('Unlock', async () => {
-      if (!this.page) throw "Page isn't ready";
-      if ((await this.page.locator('id=password').count()) > 0) {
-        await this.page.fill('id=password', this.config.PASSWORD);
-        await this.page.click('text=Unlock');
-        await this.page.waitForURL('**/home.html#');
-        await this.closePopover();
-      }
-    });
-  }
-
-  async importTokens(token: string) {
-    await test.step('Import token', async () => {
-      await this.navigate();
-      if (!this.page) throw "Page isn't ready";
-      await this.page.click("text='import tokens'");
-      await this.page.click('text=Custom token');
-      await this.page.type('id=custom-address', token);
-    });
-  }
-
-  async isPopoverVisible() {
-    try {
-      const popoverContent = this.page.getByTestId('popover-close');
-      await popoverContent.waitFor({ state: 'visible', timeout: 1000 });
-      return true;
-    } catch (error) {
-      return false;
-    }
   }
 
   async closePopover() {
     await test.step('Close popover if it exists', async () => {
       if (!this.page) throw "Page isn't ready";
 
-      if (await this.isPopoverVisible()) {
-        await this.page.getByTestId('popover-close').click();
-      }
-      if (
-        await this.page
-          .locator('button:has-text("Manage in settings")')
-          .isVisible()
-      ) {
-        await this.page
-          .locator('button:has-text("Manage in settings")')
-          .click();
-      }
+      if (await this.popoverElements.isPopoverVisible())
+        await this.popoverElements.popoverCloseButton.click();
 
-      if (await this.page.getByText('Not right now').isVisible())
-        await this.page.click('text=Not right now');
+      if (await this.popoverElements.manageInSettingButton.isVisible())
+        await this.popoverElements.manageInSettingButton.click();
 
-      const gotItBtn = this.page.getByText('Got it');
-      if (await gotItBtn.first().isVisible()) await gotItBtn.first().click();
+      if (await this.popoverElements.notRightNowButton.isVisible())
+        await this.popoverElements.notRightNowButton.click();
+
+      if (await this.popoverElements.gotItButton.first().isVisible())
+        await this.popoverElements.gotItButton.first().click();
+
+      if (await this.popoverElements.noThanksButton.isVisible())
+        await this.popoverElements.noThanksButton.click();
 
       // reject all tx in queue if exist
-      await this.rejectAllTxInQueue();
+      await this.operationActions.rejectAllTxInQueue();
     });
-  }
-
-  async rejectAllTxInQueue() {
-    //Is there is any tx in queue.
-    try {
-      const rejectTxBtn = this.page.getByTestId('page-container-footer-cancel');
-      await rejectTxBtn.waitFor({ state: 'visible', timeout: 1000 });
-    } catch (error) {
-      //No tx in queue
-      return;
-    }
-
-    const rejectTxsBtn = this.page.locator(
-      'div[class="page-container__footer-secondary"]',
-    );
-    if (await rejectTxsBtn.isVisible()) {
-      await rejectTxsBtn.click();
-      await this.page.locator('button:has-text("Reject all")').click();
-    } else await this.rejectTx(this.page);
   }
 
   async firstTimeSetup() {
     await test.step('First time setup', async () => {
-      if (!this.page) throw "Page isn't ready";
-
-      const checkbox = this.page.getByTestId('onboarding-terms-checkbox');
-      while (!(await this.page.locator('.check-box__checked').isVisible())) {
-        console.log('Checkbox is not checked');
-        await checkbox.click();
-      }
-      await this.page.click('data-testid=onboarding-import-wallet');
-      await this.page.click('data-testid=metametrics-i-agree');
-      const inputs = this.page.locator(
-        '.import-srp__srp-word >> input[type=password]',
-      );
-      const seedWords = this.config.SECRET_PHRASE.split(' ');
-      for (let i = 0; i < seedWords.length; i++) {
-        await inputs.nth(i).fill(seedWords[i]);
-      }
-      await this.page.click('data-testid=import-srp-confirm');
-      await this.page.fill(
-        'data-testid=create-password-new',
-        this.config.PASSWORD,
-      );
-      await this.page.fill(
-        'data-testid=create-password-confirm',
-        this.config.PASSWORD,
-      );
-      await this.page.click('data-testid=create-password-terms');
-      await this.page.click('data-testid=create-password-import');
-      await this.page.getByTestId('onboarding-complete-done').click();
-      await this.page.getByTestId('pin-extension-next').click();
-      await this.page.getByTestId('pin-extension-done').click();
+      const onboardingPage = new OnboardingElement(this.page);
+      await onboardingPage.confirmTermsOfOnboarding();
+      await onboardingPage.importWalletButton.click();
+      await onboardingPage.metricAgreeButton.click();
+      await onboardingPage.fillSecretPhrase(this.config.SECRET_PHRASE);
+      await onboardingPage.secretPhraseImportButton.click();
+      await onboardingPage.createPassword(this.config.PASSWORD);
+      await onboardingPage.completeButton.click();
+      await onboardingPage.pinExtensionNextButton.click();
+      await onboardingPage.pinExtensionDoneButton.click();
       await this.page.waitForURL('**/home.html#');
       await this.closePopover();
     });
   }
+
   async changeNetwork(networkName: string) {
     await test.step(`Change Metamask network to ${networkName}`, async () => {
-      if (!this.page) throw "Page isn't ready";
       await this.navigate();
-      await this.page.click('data-testid=network-display');
-      await this.page.locator('section').getByText(networkName).click();
-
+      await this.header.networkListButton.click();
+      await this.networkList.clickToNetwork(networkName);
       //Linea network require additional confirmation
       if (networkName === 'Linea Mainnet') {
         await this.closePopover();
       }
-
       await this.page.close();
     });
   }
 
   async switchNetwork(networkName = 'Linea Mainnet') {
     await this.navigate();
-    await this.page.getByTestId('network-display').click();
-    await this.page.getByText(networkName).click();
-    await this.page.getByText('Got it').click();
+    await this.header.networkListButton.click();
+    await this.networkList.clickToNetwork(networkName);
+    await this.popoverElements.gotItButton.click();
     await this.page.close();
   }
 
   async setupNetwork(standConfig: Record<string, any>) {
-    const networkDisplayText = await this.networkDisplay.textContent();
+    const currentNetwork = await this.header.getCurrentNetworkName();
 
-    if (!networkDisplayText.includes(standConfig.chainName)) {
-      await this.networkDisplay.click();
-
-      const networkListText = await this.getNetworkListText();
+    if (!currentNetwork.includes(standConfig.chainName)) {
+      await this.header.networkListButton.click();
+      const networkListText = await this.networkList.getNetworkListText();
       if (networkListText.includes(standConfig.chainName)) {
-        await this.networkItemBtn.getByText(standConfig.chainName).click();
+        await this.networkList.clickToNetworkItemButton(standConfig.chainName);
       } else {
-        await this.networkDisplayCloseBtn.click();
+        await this.networkList.networkDisplayCloseBtn.click();
         await this.addNetwork(
           standConfig.chainName,
           standConfig.rpcUrl,
@@ -223,15 +155,6 @@ export class MetamaskPage implements WalletPage {
     }
   }
 
-  async getNetworkListText() {
-    const networkList = await this.networkItemText.all();
-    return Promise.all(
-      networkList.map(async (networkType) => {
-        return await networkType.textContent();
-      }),
-    );
-  }
-
   async addNetwork(
     networkName: string,
     networkUrl: string,
@@ -240,34 +163,18 @@ export class MetamaskPage implements WalletPage {
     blockExplorer = '',
   ) {
     await test.step('Add network', async () => {
-      await this.page.click('data-testid=account-options-menu-button');
-      await this.page.click('text=Settings');
-      await this.page.click("text='Networks'");
-      await this.page.click('text=Add a network');
-      await this.page.click("a :has-text('Add a network manually')");
-      await this.page.fill(
-        ".form-field :has-text('Network Name') >> input",
-        networkName,
-      );
-      await this.page.fill(
-        ".form-field :has-text('New RPC URL') >> input",
-        networkUrl,
-      );
-      await this.page.fill(
-        ".form-field :has-text('Chain ID') >> input",
-        String(chainId),
-      );
-      await this.page.fill(
-        '[data-testid="network-form-ticker-input"]',
-        tokenSymbol,
-      );
+      await this.settingsPage.openSettings();
+      await this.settingsPage.networksTabButton.click();
+      await this.settingsPage.addNetworkButton.click();
+      await this.settingsPage.addNetworkManuallyButton.click();
+      await this.settingsPage.networkNameInput.fill(networkName);
+      await this.settingsPage.networkRpcUrlInput.fill(networkUrl);
+      await this.settingsPage.networkChainIdInput.fill(String(chainId));
+      await this.settingsPage.networkTickerInput.fill(tokenSymbol);
       if (blockExplorer != '')
-        await this.page.fill(
-          ".form-field :has-text('Block explorer URL') >> input",
-          blockExplorer,
-        );
-      await this.page.click('text=Save');
-      await this.page.click('text=Switch to ');
+        await this.settingsPage.networkExplorerUrlInput.fill(blockExplorer);
+      await this.settingsPage.saveNewTokenButton.click();
+      await this.popoverElements.switchToButton.click();
     });
   }
 
@@ -279,20 +186,21 @@ export class MetamaskPage implements WalletPage {
       do {
         await this.page.reload();
         await this.closePopover();
-      } while (!(await this.page.getByTestId('account-menu-icon').isVisible()));
-      await this.page.click('data-testid=account-menu-icon');
-      await this.page.click('text=Add account or hardware wallet');
-      await this.page.click('text=Import account');
-      await this.page.fill('id=private-key-box', key);
-      await this.page.click("text='Import'");
+      } while (!(await this.header.accountMenuButton.isVisible()));
+      await this.header.accountMenuButton.click();
+      await this.accountMenu.addAccountOrHardwareWalletButton.click();
+      await this.accountMenu.importAccountButton.click();
+      await this.accountMenu.privateKeyInput.fill(key);
+      await this.accountMenu.importAccountConfirmButton.click();
     });
   }
 
   async connectWallet(page: Page) {
     await test.step('Connect wallet', async () => {
+      const operationPage = new OperationActions(page);
       await page.click('text=Next');
-      await page.click('data-testid=page-container-footer-next');
-      await page.close();
+      await operationPage.nextButton.click();
+      await operationPage.page.close();
     });
   }
 
@@ -306,38 +214,37 @@ export class MetamaskPage implements WalletPage {
 
   async confirmAddTokenToWallet(confirmPage: Page) {
     await test.step('Confirm add token to wallet', async () => {
-      await confirmPage.locator('button:has-text("Add token")').click();
+      const operationPage = new OperationActions(confirmPage);
+      await operationPage.addTokenButton.click();
     });
   }
+
   async openLastTxInEthplorer(txIndex = 0) {
     if (!this.page) throw "Page isn't ready";
     await this.navigate();
-    await this.goToActivity();
-    await this.page.getByTestId('activity-list-item').nth(txIndex).click();
-    const [, etherscanPage] = await Promise.all([
-      await this.page.locator('text=View on block explorer').click(),
-      await this.page.context().waitForEvent('page', { timeout: 120000 }),
+    await this.mainPage.openActivityTab();
+    await this.mainPage.activityList.nth(txIndex).click();
+    const [etherscanPage] = await Promise.all([
+      this.page.context().waitForEvent('page', { timeout: 10000 }),
+      this.mainPage.transactionExplorerButton.click(),
     ]);
     return etherscanPage;
   }
 
   async getTokenBalance(tokenName: string) {
     await this.navigate();
-    const tokenTab = await this.page
-      .getByTestId('account-overview__asset-tab')
-      .locator('text=Tokens');
-    await tokenTab.click();
+    await this.mainPage.openTokensTab();
     //Cannot find locator by exact text since need to find row by text "stETH"/"ETH" but "stETH" contains "ETH"
-    const elements = await this.page.$$(
-      'data-testid=multichain-token-list-item-value',
-    );
+    const tokensValue = await this.mainPage.tokensListItemValues.all();
     let tokenBalance = NaN;
-    for (const element of elements) {
-      await element.waitForElementState('visible');
-      const textContent = await element.textContent();
-      const letterTextContent = textContent.match(/[a-zA-Z]+/g);
-      if (letterTextContent.toString().trim() === tokenName) {
-        tokenBalance = parseFloat(await element.textContent());
+    for (const value of tokensValue) {
+      await value.waitFor({ state: 'visible' });
+      const tokenNameFromValue = (await value.textContent())
+        .match(/[a-zA-Z]+/g)
+        .toString()
+        .trim();
+      if (tokenNameFromValue === tokenName) {
+        tokenBalance = parseFloat(await value.textContent());
         break;
       }
     }
@@ -346,80 +253,55 @@ export class MetamaskPage implements WalletPage {
 
   async confirmTx(page: Page, setAggressiveGas?: boolean) {
     await test.step('Confirm TX', async () => {
-      if (setAggressiveGas) {
-        await page.click('button[data-testid="edit-gas-fee-icon"]');
-        await page.mouse.move(1, 1);
-        await page.click('button[data-testid="edit-gas-fee-item-high"]');
-      }
-      await page.getByTestId('page-container-footer-next').click();
+      const operationPage = new OperationActions(page);
+      await operationPage.confirmTransaction(setAggressiveGas);
     });
   }
 
   async signTx(page: Page) {
     await test.step('Sign TX', async () => {
-      await page.getByTestId('signature-request-scroll-button').click();
-      await page.getByTestId('page-container-footer-next').click();
+      const operationPage = new OperationActions(page);
+      await operationPage.signTransaction();
     });
   }
 
   async rejectTx(page: Page) {
     await test.step('Reject TX', async () => {
-      await page.getByTestId('page-container-footer-cancel').click();
+      const operationPage = new OperationActions(page);
+      await operationPage.cancelTransaction();
     });
   }
 
   async approveTokenTx(page: Page) {
     await test.step('Approve token tx', async () => {
-      await this.useDefaultToApprove(page);
-      await page.click('text=Next');
-      await page.waitForTimeout(2000);
-      await page.click('text=Approve');
-    });
-  }
-
-  async useDefaultToApprove(page: Page) {
-    await test.step('Click "Use default" button in case if it exist', async () => {
-      if (!page) throw "Page isn't ready";
-      const useDefaultButton =
-        (await page.locator('text=Use default').count()) > 0;
-      if (useDefaultButton) await page.click('text=Use default');
+      const operationPage = new OperationActions(page);
+      await operationPage.confirmTransactionOfTokenApproval();
     });
   }
 
   async assertReceiptAddress(page: Page, expectedAddress: string) {
     await test.step('Assert receiptAddress/Contract', async () => {
-      const recipient = page.locator(
-        '.sender-to-recipient__party--recipient-with-address',
-      );
-      while (!(await recipient.isEnabled())) {
-        await this.page.waitForTimeout(500);
-      }
-      await recipient.click();
-      const recipientAddress = await page
-        .locator('input[id="address"]')
-        .getAttribute('value');
-      await page.click('button[aria-label="Close"]');
+      const operationAction = new OperationActions(page);
+      const recipientAddress = await operationAction.assertReceiptAddress();
       expect(recipientAddress).toBe(expectedAddress);
     });
   }
+
   async getWalletAddress() {
     await this.navigate();
-    await this.page.getByTestId('account-options-menu-button').click();
-    await this.page.getByTestId('account-list-menu-details').click();
-    const address = await this.page
-      .locator("button[data-testid='address-copy-button-text']")
-      .textContent();
+    await this.header.optionsMenuButton.click();
+    await this.optionsMenu.menuAccountDetailsButton.click();
+    const address =
+      await this.popoverElements.accountDetailCopyAddressButton.textContent();
     await this.page.close();
     return address;
   }
 
   async changeWalletAddress(addressName: string) {
     await this.navigate();
-    await this.page.click('data-testid=account-menu-icon');
-    await this.page.click(`section:has-text("${addressName}")`);
-    const accountNumber = this.page.locator(
-      `button[data-testid="account-menu-icon"]:has-text("${addressName}")`,
-    );
+    await this.header.accountMenuButton.click();
+    await this.accountMenu.clickToAddress(addressName);
+    const accountNumber = this.header.accountMenuButton.getByText(addressName);
     await accountNumber.waitFor({ state: 'visible', timeout: 2000 });
     await this.page.waitForTimeout(2000);
     await this.page.close();
