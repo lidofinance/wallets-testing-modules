@@ -42,6 +42,7 @@
   },
   "release": {
     "branches": [
+      "main",
       {
         "name": "refactor-mm-page-objects",
         "channel": "alpha",
