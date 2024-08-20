@@ -105,8 +105,10 @@ export class OkxPage implements WalletPage {
       await this.page.waitForTimeout(2000);
       await this.page.getByRole('button', { name: 'Confirm' }).click();
 
-      // Wait until extension to be loaded after installation
+      // Dive into wallet main page after installation
       await this.page.click("button:has-text('Start your Web3 journey')");
+      // Wait until extension to be loaded after installation with ETH value display.
+      // ETH value displayed with ETH symbol
       await this.page.waitForSelector('text=ETH', { state: 'visible' });
       //
     });
