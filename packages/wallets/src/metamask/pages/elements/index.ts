@@ -1,5 +1,5 @@
-export * from './onboarding.element';
-export * from './operationActions.element';
+export * from '../onboarding.page';
+export * from '../walletOperations.page';
 export * from './header.element';
 export * from './networkList.element';
 export * from './optionsMenu.element';

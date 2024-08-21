@@ -4,7 +4,7 @@ import { WalletConfig } from '../../wallets.constants';
 export class MainPage {
   page: Page;
   activityTabButton: Locator;
-  nftsTabButton: Locator;
+  nftTabButton: Locator;
   tokensTabButton: Locator;
   activityList: Locator;
   transactionExplorerButton: Locator;
@@ -17,23 +17,27 @@ export class MainPage {
     public config: WalletConfig,
   ) {
     this.page = page;
+
+    // Activity tab locators
     this.activityTabButton = this.page
       .getByTestId('account-overview__activity-tab')
       .getByRole('button');
-    this.nftsTabButton = this.page
-      .getByTestId('account-overview__nfts-tab')
-      .getByRole('button');
-    this.tokensTabButton = this.page
-      .getByTestId('account-overview__asset-tab')
-      .getByRole('button');
     this.activityList = this.page.getByTestId('activity-list-item');
 
-    // Explorer button of tx
+    // Explorer button of the opened tx
     this.transactionExplorerButton = this.page.getByText(
       'View on block explorer',
     );
 
-    // Tokens tab locator
+    // NFT tab locators
+    this.nftTabButton = this.page
+      .getByTestId('account-overview__nfts-tab')
+      .getByRole('button');
+
+    // Tokens tab locators
+    this.tokensTabButton = this.page
+      .getByTestId('account-overview__asset-tab')
+      .getByRole('button');
     this.tokensListItemValues = this.page.getByTestId(
       'multichain-token-list-item-value',
     );
@@ -51,11 +55,23 @@ export class MainPage {
     await this.activityTabButton.click();
   }
 
-  async openNftsTab() {
-    await this.nftsTabButton.click();
+  async openNftTab() {
+    await this.nftTabButton.click();
   }
 
   async openTokensTab() {
     await this.tokensTabButton.click();
+  }
+
+  async openTxInfo(txIndex: number) {
+    await this.activityList.nth(txIndex).click();
+  }
+
+  async openTransactionEthplorerPage() {
+    const [etherscanPage] = await Promise.all([
+      this.page.context().waitForEvent('page', { timeout: 10000 }),
+      this.transactionExplorerButton.click(),
+    ]);
+    return etherscanPage;
   }
 }

@@ -1,6 +1,6 @@
 import { Locator, Page, test } from '@playwright/test';
 
-export class OperationActions {
+export class WalletOperationPage {
   page: Page;
   nextButton: Locator;
   cancelButton: Locator;
@@ -39,15 +39,14 @@ export class OperationActions {
 
   async rejectAllTxInQueue() {
     //Is there is any tx in queue.
-    try {
-      await this.cancelButton.waitFor({
+    await this.cancelButton
+      .waitFor({
         state: 'visible',
         timeout: 1000,
+      })
+      .catch(() => {
+        return;
       });
-    } catch (error) {
-      //No tx in queue
-      return;
-    }
 
     if (await this.rejectAllTxsButton.isVisible()) {
       await this.rejectAllTxsButton.click();

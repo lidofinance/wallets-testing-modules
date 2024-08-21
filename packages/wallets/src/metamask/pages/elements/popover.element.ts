@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { Locator, Page, test } from '@playwright/test';
 
 export class PopoverElements {
   page: Page;
@@ -23,6 +23,26 @@ export class PopoverElements {
     this.accountDetailCopyAddressButton = this.page.getByTestId(
       'address-copy-button-text',
     );
+  }
+
+  async closePopover() {
+    await test.step('Close popover if it exists', async () => {
+      if (!this.page) throw "Page isn't ready";
+
+      if (await this.isPopoverVisible()) await this.popoverCloseButton.click();
+
+      if (await this.manageInSettingButton.isVisible())
+        await this.manageInSettingButton.click();
+
+      if (await this.notRightNowButton.isVisible())
+        await this.notRightNowButton.click();
+
+      if (await this.gotItButton.first().isVisible())
+        await this.gotItButton.first().click();
+
+      if (await this.noThanksButton.isVisible())
+        await this.noThanksButton.click();
+    });
   }
 
   async isPopoverVisible() {

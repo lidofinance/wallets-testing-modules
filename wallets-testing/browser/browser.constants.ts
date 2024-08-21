@@ -1,6 +1,6 @@
 import {
   Coin98,
-  MetamaskPage,
+  MetamaskApp,
   TrustWalletPage,
   ExodusPage,
   CoinbasePage,
@@ -14,7 +14,7 @@ import {
 } from '@lidofinance/wallets-testing-widgets';
 
 export const WALLET_PAGES = {
-  metamask: MetamaskPage,
+  metamask: MetamaskApp,
   coin98: Coin98,
   trust: TrustWalletPage,
   exodus: ExodusPage,

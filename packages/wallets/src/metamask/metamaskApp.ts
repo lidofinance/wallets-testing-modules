@@ -4,8 +4,8 @@ import { expect } from '@playwright/test';
 import { test, BrowserContext, Page } from '@playwright/test';
 import { MainPage, LoginPage, SettingsPage } from './pages';
 import {
-  OnboardingElement,
-  OperationActions,
+  OnboardingPage,
+  WalletOperationPage,
   Header,
   NetworkList,
   OptionsMenu,
@@ -13,16 +13,16 @@ import {
   AccountMenu,
 } from './pages/elements';
 
-export class MetamaskPage implements WalletPage {
+export class MetamaskApp implements WalletPage {
   page: Page | undefined;
-
   header: Header;
   mainPage: MainPage;
   settingsPage: SettingsPage;
   loginPage: LoginPage;
+  walletOperation: WalletOperationPage;
+  onboardingPage: OnboardingPage;
   networkList: NetworkList;
   optionsMenu: OptionsMenu;
-  operationActions: OperationActions;
   popoverElements: PopoverElements;
   accountMenu: AccountMenu;
 
@@ -42,9 +42,10 @@ export class MetamaskPage implements WalletPage {
       this.config,
     );
     this.loginPage = new LoginPage(this.page, this.config);
+    this.walletOperation = new WalletOperationPage(this.page);
+    this.onboardingPage = new OnboardingPage(this.page, this.config);
     this.networkList = new NetworkList(this.page);
     this.optionsMenu = new OptionsMenu(this.page);
-    this.operationActions = new OperationActions(this.page);
     this.popoverElements = new PopoverElements(this.page);
     this.accountMenu = new AccountMenu(this.page);
   }
@@ -56,7 +57,8 @@ export class MetamaskPage implements WalletPage {
       await this.header.appHeaderLogo.waitFor({ state: 'visible' });
       await this.loginPage.unlock();
       if (await this.header.networkListButton.isVisible()) {
-        await this.closePopover();
+        await this.popoverElements.closePopover();
+        await this.walletOperation.rejectAllTxInQueue(); // reject all tx in queue if exist
       }
     });
   }
@@ -66,50 +68,11 @@ export class MetamaskPage implements WalletPage {
       // added explicit route to #onboarding due to unexpected first time route from /home.html to /onboarding -> page is close
       await this.navigate();
       if (!(await this.header.networkListButton.isVisible())) {
-        await this.firstTimeSetup();
-        await this.settingsPage.setupNetworkChangingSetting();
+        await this.onboardingPage.firstTimeSetup();
+        await this.popoverElements.closePopover();
+        await this.walletOperation.rejectAllTxInQueue(); // reject all tx in queue if exist
+        await this.settingsPage.setupNetworkChangingSetting(); // need to make it possible to change the wallet network
       }
-    });
-  }
-
-  async closePopover() {
-    await test.step('Close popover if it exists', async () => {
-      if (!this.page) throw "Page isn't ready";
-
-      if (await this.popoverElements.isPopoverVisible())
-        await this.popoverElements.popoverCloseButton.click();
-
-      if (await this.popoverElements.manageInSettingButton.isVisible())
-        await this.popoverElements.manageInSettingButton.click();
-
-      if (await this.popoverElements.notRightNowButton.isVisible())
-        await this.popoverElements.notRightNowButton.click();
-
-      if (await this.popoverElements.gotItButton.first().isVisible())
-        await this.popoverElements.gotItButton.first().click();
-
-      if (await this.popoverElements.noThanksButton.isVisible())
-        await this.popoverElements.noThanksButton.click();
-
-      // reject all tx in queue if exist
-      await this.operationActions.rejectAllTxInQueue();
-    });
-  }
-
-  async firstTimeSetup() {
-    await test.step('First time setup', async () => {
-      const onboardingPage = new OnboardingElement(this.page);
-      await onboardingPage.confirmTermsOfOnboarding();
-      await onboardingPage.importWalletButton.click();
-      await onboardingPage.metricAgreeButton.click();
-      await onboardingPage.fillSecretPhrase(this.config.SECRET_PHRASE);
-      await onboardingPage.secretPhraseImportButton.click();
-      await onboardingPage.createPassword(this.config.PASSWORD);
-      await onboardingPage.completeButton.click();
-      await onboardingPage.pinExtensionNextButton.click();
-      await onboardingPage.pinExtensionDoneButton.click();
-      await this.page.waitForURL('**/home.html#');
-      await this.closePopover();
     });
   }
 
@@ -118,9 +81,8 @@ export class MetamaskPage implements WalletPage {
       await this.navigate();
       await this.header.networkListButton.click();
       await this.networkList.clickToNetwork(networkName);
-      //Linea network require additional confirmation
       if (networkName === 'Linea Mainnet') {
-        await this.closePopover();
+        await this.popoverElements.closePopover(); //Linea network require additional confirmation
       }
       await this.page.close();
     });
@@ -136,22 +98,22 @@ export class MetamaskPage implements WalletPage {
 
   async setupNetwork(standConfig: Record<string, any>) {
     const currentNetwork = await this.header.getCurrentNetworkName();
-
-    if (!currentNetwork.includes(standConfig.chainName)) {
-      await this.header.networkListButton.click();
-      const networkListText = await this.networkList.getNetworkListText();
-      if (networkListText.includes(standConfig.chainName)) {
-        await this.networkList.clickToNetworkItemButton(standConfig.chainName);
-      } else {
-        await this.networkList.networkDisplayCloseBtn.click();
-        await this.addNetwork(
-          standConfig.chainName,
-          standConfig.rpcUrl,
-          standConfig.chainId,
-          standConfig.tokenSymbol,
-          standConfig.scan,
-        );
-      }
+    if (currentNetwork.includes(standConfig.chainName)) {
+      return;
+    }
+    await this.header.networkListButton.click();
+    const networkListText = await this.networkList.getNetworkListText();
+    if (networkListText.includes(standConfig.chainName)) {
+      await this.networkList.clickToNetworkItemButton(standConfig.chainName);
+    } else {
+      await this.networkList.networkDisplayCloseBtn.click();
+      await this.addNetwork(
+        standConfig.chainName,
+        standConfig.rpcUrl,
+        standConfig.chainId,
+        standConfig.tokenSymbol,
+        standConfig.scan,
+      );
     }
   }
 
@@ -165,41 +127,37 @@ export class MetamaskPage implements WalletPage {
     await test.step('Add network', async () => {
       await this.settingsPage.openSettings();
       await this.settingsPage.networksTabButton.click();
-      await this.settingsPage.addNetworkButton.click();
-      await this.settingsPage.addNetworkManuallyButton.click();
-      await this.settingsPage.networkNameInput.fill(networkName);
-      await this.settingsPage.networkRpcUrlInput.fill(networkUrl);
-      await this.settingsPage.networkChainIdInput.fill(String(chainId));
-      await this.settingsPage.networkTickerInput.fill(tokenSymbol);
-      if (blockExplorer != '')
-        await this.settingsPage.networkExplorerUrlInput.fill(blockExplorer);
-      await this.settingsPage.saveNewTokenButton.click();
+      await this.settingsPage.addNetworkManually(
+        networkName,
+        networkUrl,
+        chainId,
+        tokenSymbol,
+        blockExplorer,
+      );
       await this.popoverElements.switchToButton.click();
     });
   }
 
   async importKey(key: string) {
     await test.step('Import key', async () => {
-      if (!this.page) throw "Page isn't ready";
       await this.navigate();
+
       // Remove me when MM to be more stable
       do {
         await this.page.reload();
-        await this.closePopover();
+        await this.popoverElements.closePopover();
       } while (!(await this.header.accountMenuButton.isVisible()));
+
       await this.header.accountMenuButton.click();
-      await this.accountMenu.addAccountOrHardwareWalletButton.click();
-      await this.accountMenu.importAccountButton.click();
-      await this.accountMenu.privateKeyInput.fill(key);
-      await this.accountMenu.importAccountConfirmButton.click();
+      await this.accountMenu.addAccountWithKey(key);
     });
   }
 
   async connectWallet(page: Page) {
     await test.step('Connect wallet', async () => {
-      const operationPage = new OperationActions(page);
-      await page.click('text=Next');
-      await operationPage.nextButton.click();
+      const operationPage = new WalletOperationPage(page);
+      await operationPage.nextButton.click(); // "Next" button for account select
+      await operationPage.nextButton.click(); // "Confirm" button to give permission
       await operationPage.page.close();
     });
   }
@@ -214,21 +172,15 @@ export class MetamaskPage implements WalletPage {
 
   async confirmAddTokenToWallet(confirmPage: Page) {
     await test.step('Confirm add token to wallet', async () => {
-      const operationPage = new OperationActions(confirmPage);
-      await operationPage.addTokenButton.click();
+      await new WalletOperationPage(confirmPage).addTokenButton.click();
     });
   }
 
   async openLastTxInEthplorer(txIndex = 0) {
-    if (!this.page) throw "Page isn't ready";
     await this.navigate();
     await this.mainPage.openActivityTab();
-    await this.mainPage.activityList.nth(txIndex).click();
-    const [etherscanPage] = await Promise.all([
-      this.page.context().waitForEvent('page', { timeout: 10000 }),
-      this.mainPage.transactionExplorerButton.click(),
-    ]);
-    return etherscanPage;
+    await this.mainPage.openTxInfo(txIndex);
+    return this.mainPage.openTransactionEthplorerPage();
   }
 
   async getTokenBalance(tokenName: string) {
@@ -253,36 +205,33 @@ export class MetamaskPage implements WalletPage {
 
   async confirmTx(page: Page, setAggressiveGas?: boolean) {
     await test.step('Confirm TX', async () => {
-      const operationPage = new OperationActions(page);
-      await operationPage.confirmTransaction(setAggressiveGas);
+      await new WalletOperationPage(page).confirmTransaction(setAggressiveGas);
     });
   }
 
   async signTx(page: Page) {
     await test.step('Sign TX', async () => {
-      const operationPage = new OperationActions(page);
-      await operationPage.signTransaction();
+      await new WalletOperationPage(page).signTransaction();
     });
   }
 
   async rejectTx(page: Page) {
     await test.step('Reject TX', async () => {
-      const operationPage = new OperationActions(page);
-      await operationPage.cancelTransaction();
+      await new WalletOperationPage(page).cancelTransaction();
     });
   }
 
   async approveTokenTx(page: Page) {
     await test.step('Approve token tx', async () => {
-      const operationPage = new OperationActions(page);
-      await operationPage.confirmTransactionOfTokenApproval();
+      await new WalletOperationPage(page).confirmTransactionOfTokenApproval();
     });
   }
 
   async assertReceiptAddress(page: Page, expectedAddress: string) {
     await test.step('Assert receiptAddress/Contract', async () => {
-      const operationAction = new OperationActions(page);
-      const recipientAddress = await operationAction.assertReceiptAddress();
+      const recipientAddress = await new WalletOperationPage(
+        page,
+      ).assertReceiptAddress();
       expect(recipientAddress).toBe(expectedAddress);
     });
   }

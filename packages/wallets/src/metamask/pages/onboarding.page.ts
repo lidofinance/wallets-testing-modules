@@ -1,6 +1,7 @@
-import { Locator, Page } from '@playwright/test';
+import { Locator, Page, test } from '@playwright/test';
+import { WalletConfig } from '../../wallets.constants';
 
-export class OnboardingElement {
+export class OnboardingPage {
   page: Page;
   termsCheckboxButton: Locator;
   importWalletButton: Locator;
@@ -15,7 +16,7 @@ export class OnboardingElement {
   pinExtensionNextButton: Locator;
   pinExtensionDoneButton: Locator;
 
-  constructor(page: Page) {
+  constructor(page: Page, public config: WalletConfig) {
     this.page = page;
     this.termsCheckboxButton = this.page.getByTestId(
       'onboarding-terms-checkbox',
@@ -35,6 +36,21 @@ export class OnboardingElement {
     this.completeButton = this.page.getByTestId('onboarding-complete-done');
     this.pinExtensionNextButton = this.page.getByTestId('pin-extension-next');
     this.pinExtensionDoneButton = this.page.getByTestId('pin-extension-done');
+  }
+
+  async firstTimeSetup() {
+    await test.step('First time setup', async () => {
+      await this.confirmTermsOfOnboarding();
+      await this.importWalletButton.click();
+      await this.metricAgreeButton.click();
+      await this.fillSecretPhrase(this.config.SECRET_PHRASE);
+      await this.secretPhraseImportButton.click();
+      await this.createPassword(this.config.PASSWORD);
+      await this.completeButton.click();
+      await this.pinExtensionNextButton.click();
+      await this.pinExtensionDoneButton.click();
+      await this.page.waitForURL('**/home.html#');
+    });
   }
 
   async confirmTermsOfOnboarding() {

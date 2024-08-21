@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { Locator, Page, test } from '@playwright/test';
 
 export class AccountMenu {
   page: Page;
@@ -25,5 +25,14 @@ export class AccountMenu {
 
   async clickToAddress(addressName: string) {
     await this.accountListModal.getByText(addressName).click();
+  }
+
+  async addAccountWithKey(key: string) {
+    await test.step('Import key to add account', async () => {
+      await this.addAccountOrHardwareWalletButton.click();
+      await this.importAccountButton.click();
+      await this.privateKeyInput.fill(key);
+      await this.importAccountConfirmButton.click();
+    });
   }
 }

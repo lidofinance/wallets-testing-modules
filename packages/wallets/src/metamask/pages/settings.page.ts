@@ -74,4 +74,28 @@ export class SettingsPage {
       await this.selectNetworksForEachSiteToggle.click();
     });
   }
+
+  async addNetworkManually(
+    networkName: string,
+    networkUrl: string,
+    chainId: number,
+    tokenSymbol: string,
+    blockExplorer = '',
+  ) {
+    await test.step('Open the form to add network manually', async () => {
+      await this.addNetworkButton.click();
+      await this.addNetworkManuallyButton.click();
+    });
+    await test.step('Fill the network fields', async () => {
+      await this.networkNameInput.fill(networkName);
+      await this.networkRpcUrlInput.fill(networkUrl);
+      await this.networkChainIdInput.fill(String(chainId));
+      await this.networkTickerInput.fill(tokenSymbol);
+      if (blockExplorer != '')
+        await this.networkExplorerUrlInput.fill(blockExplorer);
+    });
+    await test.step('Save the new network', async () => {
+      await this.saveNewTokenButton.click();
+    });
+  }
 }
