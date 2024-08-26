@@ -43,14 +43,14 @@ export class WalletOperationPage {
 
   async rejectAllTxInQueue() {
     //Is there is any tx in queue.
-    await this.rejectButton
-      .waitFor({
+    try {
+      await this.rejectButton.waitFor({
         state: 'visible',
         timeout: 1000,
-      })
-      .catch(() => {
-        return;
       });
+    } catch (er) {
+      return;
+    }
 
     if (await this.rejectAllTxsButton.isVisible()) {
       await this.rejectAllTxsButton.click();
