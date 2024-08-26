@@ -357,14 +357,19 @@ export class MetamaskPage implements WalletPage {
 
   async signTx(page: Page) {
     await test.step('Sign TX', async () => {
-      await page.getByTestId('signature-request-scroll-button').click();
-      await page.getByTestId('page-container-footer-next').click();
+      await page.getByTestId('confirm-footer-button').click();
     });
   }
 
   async rejectTx(page: Page) {
     await test.step('Reject TX', async () => {
       await page.getByTestId('page-container-footer-cancel').click();
+    });
+  }
+
+  async cancelSignTx(page: Page) {
+    await test.step('Cancel sign TX', async () => {
+      await page.getByTestId('confirm-footer-cancel-button').click();
     });
   }
 
