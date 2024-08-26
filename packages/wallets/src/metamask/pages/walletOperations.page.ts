@@ -3,6 +3,8 @@ import { Locator, Page, test } from '@playwright/test';
 export class WalletOperationPage {
   page: Page;
   nextButton: Locator;
+  confirmSignButton: Locator;
+  rejectButton: Locator;
   cancelButton: Locator;
   addTokenButton: Locator;
   editGasFeeButton: Locator;
@@ -17,7 +19,9 @@ export class WalletOperationPage {
   constructor(page: Page) {
     this.page = page;
     this.nextButton = this.page.getByTestId('page-container-footer-next');
-    this.cancelButton = this.page.getByTestId('page-container-footer-cancel');
+    this.confirmSignButton = this.page.getByTestId('confirm-footer-button');
+    this.rejectButton = this.page.getByTestId('page-container-footer-cancel');
+    this.cancelButton = this.page.getByTestId('confirm-footer-cancel-button');
     this.addTokenButton = this.page.locator('button:has-text("Add token")');
     this.editGasFeeButton = this.page.getByTestId('edit-gas-fee-icon');
     this.setHighGasFeeButton = this.page.getByTestId('edit-gas-fee-item-high');
@@ -39,7 +43,7 @@ export class WalletOperationPage {
 
   async rejectAllTxInQueue() {
     //Is there is any tx in queue.
-    await this.cancelButton
+    await this.rejectButton
       .waitFor({
         state: 'visible',
         timeout: 1000,
@@ -52,17 +56,20 @@ export class WalletOperationPage {
       await this.rejectAllTxsButton.click();
       await this.confirmRejectAllTxsButton.click();
     } else {
-      await this.cancelButton.click();
+      await this.rejectButton.click();
     }
   }
 
-  async cancelTransaction() {
+  async rejectTransaction() {
+    await this.rejectButton.click();
+  }
+
+  async cancelSignTransaction() {
     await this.cancelButton.click();
   }
 
   async signTransaction() {
-    await this.scrollRequestSignatureBlockButton.click();
-    await this.nextButton.click();
+    await this.confirmSignButton.click();
   }
 
   async confirmTransactionOfTokenApproval() {

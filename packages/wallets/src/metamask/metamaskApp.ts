@@ -215,9 +215,15 @@ export class MetamaskApp implements WalletPage {
     });
   }
 
+  async cancelSignTx(page: Page) {
+    await test.step('Cancel Sign TX', async () => {
+      await new WalletOperationPage(page).cancelSignTransaction();
+    });
+  }
+
   async rejectTx(page: Page) {
     await test.step('Reject TX', async () => {
-      await new WalletOperationPage(page).cancelTransaction();
+      await new WalletOperationPage(page).rejectTransaction();
     });
   }
 
