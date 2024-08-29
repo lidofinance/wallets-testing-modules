@@ -61,10 +61,13 @@ export class SettingsPage {
   }
 
   async openSettings() {
-    await this.page.goto(
-      this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH + '#settings',
-      { waitUntil: 'load' },
-    );
+    await test.step('Open wallet setting page', async () => {
+      await this.page.goto(
+        this.extensionUrl +
+          this.config.COMMON.EXTENSION_START_PATH +
+          '#settings',
+      );
+    });
   }
 
   async setupNetworkChangingSetting() {

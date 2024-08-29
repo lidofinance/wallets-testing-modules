@@ -24,7 +24,9 @@ export class AccountMenu {
   }
 
   async clickToAddress(addressName: string) {
-    await this.accountListModal.getByText(addressName).click();
+    await test.step(`Click to "${addressName}" account`, async () => {
+      await this.accountListModal.getByText(addressName).click();
+    });
   }
 
   async addAccountWithKey(key: string) {

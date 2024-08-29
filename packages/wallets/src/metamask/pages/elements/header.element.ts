@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { Locator, Page, test } from '@playwright/test';
 
 export class Header {
   page: Page;
@@ -20,6 +20,8 @@ export class Header {
   }
 
   async getCurrentNetworkName() {
-    return await this.networkListButton.textContent();
+    return await test.step('Get current network', async () => {
+      return await this.networkListButton.textContent();
+    });
   }
 }

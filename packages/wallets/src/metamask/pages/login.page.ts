@@ -13,9 +13,8 @@ export class LoginPage {
   }
 
   async unlock() {
-    await test.step('Unlock', async () => {
-      if (!this.page) throw "Page isn't ready";
-      if ((await this.passwordInput.count()) > 0) {
+    await test.step('Unlock wallet', async () => {
+      if (await this.passwordInput.isVisible()) {
         await this.passwordInput.fill(this.config.PASSWORD);
         await this.unlockButton.click();
         await this.page.waitForURL('**/home.html#');

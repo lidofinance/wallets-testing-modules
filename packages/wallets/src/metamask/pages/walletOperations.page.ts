@@ -74,9 +74,9 @@ export class WalletOperationPage {
 
   async confirmTransactionOfTokenApproval() {
     await test.step('Click "Use default" button in case if it exist', async () => {
-      const useDefaultButton =
-        (await this.page.locator('text=Use default').count()) > 0;
-      if (useDefaultButton) await this.page.click('text=Use default');
+      // todo: im not sure this step is needed now
+      if (await this.page.locator('text=Use default').isVisible())
+        await this.page.click('text=Use default');
     });
     await this.nextButton.click(); // click to the Next button
     await this.page.waitForTimeout(2000);

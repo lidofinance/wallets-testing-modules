@@ -39,7 +39,7 @@ export class OnboardingPage {
   }
 
   async firstTimeSetup() {
-    await test.step('First time setup', async () => {
+    await test.step('First time wallet setup', async () => {
       await this.confirmTermsOfOnboarding();
       await this.importWalletButton.click();
       await this.metricAgreeButton.click();
@@ -54,23 +54,31 @@ export class OnboardingPage {
   }
 
   async confirmTermsOfOnboarding() {
-    while (!(await this.page.locator('.check-box__checked').isVisible())) {
-      console.log('Checkbox is not checked');
-      await this.termsCheckboxButton.click();
-    }
+    await test.step('Confirm terms before onboarding', async () => {
+      while (!(await this.page.locator('.check-box__checked').isVisible())) {
+        console.error(
+          `confirmTermsOfOnboarding function: Checkbox is not checked (checkbox enable state = ${await this.termsCheckboxButton.isEnabled()})`,
+        );
+        await this.termsCheckboxButton.click();
+      }
+    });
   }
 
   async fillSecretPhrase(secretPhrase: string) {
-    const seedWords = secretPhrase.split(' ');
-    for (let i = 0; i < seedWords.length; i++) {
-      await this.secretPhraseInputs.nth(i).fill(seedWords[i]);
-    }
+    await test.step('Fill onboarding secret phrase field', async () => {
+      const seedWords = secretPhrase.split(' ');
+      for (let i = 0; i < seedWords.length; i++) {
+        await this.secretPhraseInputs.nth(i).fill(seedWords[i]);
+      }
+    });
   }
 
   async createPassword(password: string) {
-    await this.createPasswordInput.fill(password);
-    await this.confirmPasswordInput.fill(password);
-    await this.createPasswordTerms.click();
-    await this.createPasswordImport.click();
+    await test.step('Fill onboarding password fields', async () => {
+      await this.createPasswordInput.fill(password);
+      await this.confirmPasswordInput.fill(password);
+      await this.createPasswordTerms.click();
+      await this.createPasswordImport.click();
+    });
   }
 }

@@ -2,7 +2,7 @@ import { WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import { expect } from '@playwright/test';
 import { test, BrowserContext, Page } from '@playwright/test';
-import { MainPage, LoginPage, SettingsPage } from './pages';
+import { HomePage, LoginPage, SettingsPage } from './pages';
 import {
   OnboardingPage,
   WalletOperationPage,
@@ -16,7 +16,7 @@ import {
 export class MetamaskApp implements WalletPage {
   page: Page | undefined;
   header: Header;
-  mainPage: MainPage;
+  homePage: HomePage;
   settingsPage: SettingsPage;
   loginPage: LoginPage;
   walletOperation: WalletOperationPage;
@@ -35,7 +35,7 @@ export class MetamaskApp implements WalletPage {
   async initLocators() {
     this.page = await this.browserContext.newPage();
     this.header = new Header(this.page);
-    this.mainPage = new MainPage(this.page, this.extensionUrl, this.config);
+    this.homePage = new HomePage(this.page, this.extensionUrl, this.config);
     this.settingsPage = new SettingsPage(
       this.page,
       this.extensionUrl,
@@ -51,9 +51,9 @@ export class MetamaskApp implements WalletPage {
   }
 
   async navigate() {
-    await test.step('Navigate to metamask', async () => {
+    await test.step('Navigate to metamask Home page', async () => {
       await this.initLocators();
-      await this.mainPage.openWidgetPage();
+      await this.homePage.openWidgetPage();
       await this.header.appHeaderLogo.waitFor({ state: 'visible' });
       await this.loginPage.unlock();
       if (await this.header.networkListButton.isVisible()) {
@@ -89,32 +89,36 @@ export class MetamaskApp implements WalletPage {
   }
 
   async switchNetwork(networkName = 'Linea Mainnet') {
-    await this.navigate();
-    await this.header.networkListButton.click();
-    await this.networkList.clickToNetwork(networkName);
-    await this.popoverElements.gotItButton.click();
-    await this.page.close();
+    await test.step(`Switch network to "${networkName}"`, async () => {
+      await this.navigate();
+      await this.header.networkListButton.click();
+      await this.networkList.clickToNetwork(networkName);
+      await this.popoverElements.gotItButton.click();
+      await this.page.close();
+    });
   }
 
   async setupNetwork(standConfig: Record<string, any>) {
-    const currentNetwork = await this.header.getCurrentNetworkName();
-    if (currentNetwork.includes(standConfig.chainName)) {
-      return;
-    }
-    await this.header.networkListButton.click();
-    const networkListText = await this.networkList.getNetworkListText();
-    if (networkListText.includes(standConfig.chainName)) {
-      await this.networkList.clickToNetworkItemButton(standConfig.chainName);
-    } else {
-      await this.networkList.networkDisplayCloseBtn.click();
-      await this.addNetwork(
-        standConfig.chainName,
-        standConfig.rpcUrl,
-        standConfig.chainId,
-        standConfig.tokenSymbol,
-        standConfig.scan,
-      );
-    }
+    await test.step(`Setup "${standConfig.chainName}" Network`, async () => {
+      const currentNetwork = await this.header.getCurrentNetworkName();
+      if (currentNetwork.includes(standConfig.chainName)) {
+        return;
+      }
+      await this.header.networkListButton.click();
+      const networkListText = await this.networkList.getNetworkListText();
+      if (networkListText.includes(standConfig.chainName)) {
+        await this.networkList.clickToNetworkItemButton(standConfig.chainName);
+      } else {
+        await this.networkList.networkDisplayCloseBtn.click();
+        await this.addNetwork(
+          standConfig.chainName,
+          standConfig.rpcUrl,
+          standConfig.chainId,
+          standConfig.tokenSymbol,
+          standConfig.scan,
+        );
+      }
+    });
   }
 
   async addNetwork(
@@ -124,7 +128,7 @@ export class MetamaskApp implements WalletPage {
     tokenSymbol: string,
     blockExplorer = '',
   ) {
-    await test.step('Add network', async () => {
+    await test.step(`Add new network "${networkName}"`, async () => {
       await this.settingsPage.openSettings();
       await this.settingsPage.networksTabButton.click();
       await this.settingsPage.addNetworkManually(
@@ -154,7 +158,7 @@ export class MetamaskApp implements WalletPage {
   }
 
   async connectWallet(page: Page) {
-    await test.step('Connect wallet', async () => {
+    await test.step('Connect Metamask wallet', async () => {
       const operationPage = new WalletOperationPage(page);
       await operationPage.nextButton.click(); // "Next" button for account select
       await operationPage.nextButton.click(); // "Confirm" button to give permission
@@ -177,30 +181,34 @@ export class MetamaskApp implements WalletPage {
   }
 
   async openLastTxInEthplorer(txIndex = 0) {
-    await this.navigate();
-    await this.mainPage.openActivityTab();
-    await this.mainPage.openTxInfo(txIndex);
-    return this.mainPage.openTransactionEthplorerPage();
+    return await test.step('Open transaction in Ethplorer', async () => {
+      await this.navigate();
+      await this.homePage.openActivityTab();
+      await this.homePage.openTxInfo(txIndex);
+      return this.homePage.openTransactionEthplorerPage();
+    });
   }
 
   async getTokenBalance(tokenName: string) {
-    await this.navigate();
-    await this.mainPage.openTokensTab();
-    //Cannot find locator by exact text since need to find row by text "stETH"/"ETH" but "stETH" contains "ETH"
-    const tokensValue = await this.mainPage.tokensListItemValues.all();
-    let tokenBalance = NaN;
-    for (const value of tokensValue) {
-      await value.waitFor({ state: 'visible' });
-      const tokenNameFromValue = (await value.textContent())
-        .match(/[a-zA-Z]+/g)
-        .toString()
-        .trim();
-      if (tokenNameFromValue === tokenName) {
-        tokenBalance = parseFloat(await value.textContent());
-        break;
+    return await test.step(`Get ${tokenName} token balance`, async () => {
+      await this.navigate();
+      await this.homePage.openTokensTab();
+      //Cannot find locator by exact text since need to find row by text "stETH"/"ETH" but "stETH" contains "ETH"
+      const tokensValue = await this.homePage.tokensListItemValues.all();
+      let tokenBalance = NaN;
+      for (const value of tokensValue) {
+        await value.waitFor({ state: 'visible' });
+        const tokenNameFromValue = (await value.textContent())
+          .match(/[a-zA-Z]+/g)
+          .toString()
+          .trim();
+        if (tokenNameFromValue === tokenName) {
+          tokenBalance = parseFloat(await value.textContent());
+          break;
+        }
       }
-    }
-    return tokenBalance;
+      return tokenBalance;
+    });
   }
 
   async confirmTx(page: Page, setAggressiveGas?: boolean) {
@@ -228,7 +236,7 @@ export class MetamaskApp implements WalletPage {
   }
 
   async approveTokenTx(page: Page) {
-    await test.step('Approve token tx', async () => {
+    await test.step('Approve token TX', async () => {
       await new WalletOperationPage(page).confirmTransactionOfTokenApproval();
     });
   }
@@ -243,22 +251,27 @@ export class MetamaskApp implements WalletPage {
   }
 
   async getWalletAddress() {
-    await this.navigate();
-    await this.header.optionsMenuButton.click();
-    await this.optionsMenu.menuAccountDetailsButton.click();
-    const address =
-      await this.popoverElements.accountDetailCopyAddressButton.textContent();
-    await this.page.close();
-    return address;
+    return await test.step('Get current wallet address', async () => {
+      await this.navigate();
+      await this.header.optionsMenuButton.click();
+      await this.optionsMenu.menuAccountDetailsButton.click();
+      const address =
+        await this.popoverElements.accountDetailCopyAddressButton.textContent();
+      await this.page.close();
+      return address;
+    });
   }
 
   async changeWalletAddress(addressName: string) {
-    await this.navigate();
-    await this.header.accountMenuButton.click();
-    await this.accountMenu.clickToAddress(addressName);
-    const accountNumber = this.header.accountMenuButton.getByText(addressName);
-    await accountNumber.waitFor({ state: 'visible', timeout: 2000 });
-    await this.page.waitForTimeout(2000);
-    await this.page.close();
+    await test.step('Change wallet address', async () => {
+      await this.navigate();
+      await this.header.accountMenuButton.click();
+      await this.accountMenu.clickToAddress(addressName);
+      const accountNumber =
+        this.header.accountMenuButton.getByText(addressName);
+      await accountNumber.waitFor({ state: 'visible', timeout: 2000 });
+      await this.page.waitForTimeout(2000);
+      await this.page.close();
+    });
   }
 }

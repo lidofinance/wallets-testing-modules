@@ -1,7 +1,7 @@
-import { Locator, Page } from '@playwright/test';
+import { Locator, Page, test } from '@playwright/test';
 import { WalletConfig } from '../../wallets.constants';
 
-export class MainPage {
+export class HomePage {
   page: Page;
   activityTabButton: Locator;
   nftTabButton: Locator;
@@ -47,31 +47,40 @@ export class MainPage {
   async openWidgetPage() {
     await this.page.goto(
       this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
-      { waitUntil: 'load' },
     );
   }
 
   async openActivityTab() {
-    await this.activityTabButton.click();
+    await test.step('Open wallet Activity tab', async () => {
+      await this.activityTabButton.click();
+    });
   }
 
   async openNftTab() {
-    await this.nftTabButton.click();
+    await test.step('Open wallet NFT tab', async () => {
+      await this.nftTabButton.click();
+    });
   }
 
   async openTokensTab() {
-    await this.tokensTabButton.click();
+    await test.step('Open wallet Tokens tab', async () => {
+      await this.tokensTabButton.click();
+    });
   }
 
   async openTxInfo(txIndex: number) {
-    await this.activityList.nth(txIndex).click();
+    await test.step('Open transaction info modal', async () => {
+      await this.activityList.nth(txIndex).click();
+    });
   }
 
   async openTransactionEthplorerPage() {
-    const [etherscanPage] = await Promise.all([
-      this.page.context().waitForEvent('page', { timeout: 10000 }),
-      this.transactionExplorerButton.click(),
-    ]);
-    return etherscanPage;
+    return await test.step('Open transaction ethplorer page', async () => {
+      const [etherscanPage] = await Promise.all([
+        this.page.context().waitForEvent('page', { timeout: 10000 }),
+        this.transactionExplorerButton.click(),
+      ]);
+      return etherscanPage;
+    });
   }
 }

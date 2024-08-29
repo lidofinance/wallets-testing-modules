@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { Locator, Page, test } from '@playwright/test';
 
 export class NetworkList {
   page: Page;
@@ -19,19 +19,25 @@ export class NetworkList {
   }
 
   async clickToNetwork(networkName: string) {
-    await this.networkDisplayDialog.getByText(networkName).click();
+    await test.step(`Click to "${networkName}" network`, async () => {
+      await this.networkDisplayDialog.getByText(networkName).click();
+    });
   }
 
   async getNetworkListText() {
-    const networkList = await this.networkItemText.all();
-    return Promise.all(
-      networkList.map(async (networkType) => {
-        return await networkType.textContent();
-      }),
-    );
+    return await test.step('Get network list', async () => {
+      const networkList = await this.networkItemText.all();
+      return Promise.all(
+        networkList.map(async (networkType) => {
+          return await networkType.textContent();
+        }),
+      );
+    });
   }
 
   async clickToNetworkItemButton(chainName: string) {
-    await this.networkItemBtn.getByText(chainName).click();
+    await test.step(`Click to "${chainName}" network item button`, async () => {
+      await this.networkItemBtn.getByText(chainName).click();
+    });
   }
 }
