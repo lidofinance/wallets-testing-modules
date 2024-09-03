@@ -1,2 +1,2 @@
 export * from './metamask.constants';
-export * from './metamaskApp';
+export * from './metamask.page';

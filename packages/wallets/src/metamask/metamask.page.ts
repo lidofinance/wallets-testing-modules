@@ -13,7 +13,7 @@ import {
   AccountMenu,
 } from './pages/elements';
 
-export class MetamaskApp implements WalletPage {
+export class MetamaskPage implements WalletPage {
   page: Page | undefined;
   header: Header;
   homePage: HomePage;
