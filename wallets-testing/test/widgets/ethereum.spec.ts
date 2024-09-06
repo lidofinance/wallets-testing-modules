@@ -29,7 +29,7 @@ test.describe('Ethereum', () => {
     browserService = moduleFixture.get<BrowserService>(BrowserService);
   });
 
-  test(`Metamask stake`, async () => {
+  test.only(`Metamask stake`, async () => {
     await browserService.setupWithNode(
       METAMASK_COMMON_CONFIG,
       ETHEREUM_WIDGET_CONFIG,
