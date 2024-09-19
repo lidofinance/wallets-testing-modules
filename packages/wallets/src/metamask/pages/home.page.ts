@@ -80,6 +80,7 @@ export class HomePage {
         this.page.context().waitForEvent('page', { timeout: 10000 }),
         this.transactionExplorerButton.click(),
       ]);
+      await this.page.close();
       return etherscanPage;
     });
   }
