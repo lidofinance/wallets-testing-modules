@@ -40,6 +40,11 @@ test.describe('Ethereum', () => {
     await browserService.stake();
   });
 
+  test.only(`Metamask stake`, async () => {
+    await browserService.setup(METAMASK_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
+    await browserService.connectWallet();
+  });
+
   test(`Coin98 connect`, async () => {
     await browserService.setup(COIN98_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();

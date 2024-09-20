@@ -33,6 +33,10 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
+      - name: Start monitoring memory usage
+        run: |
+          nohup sh -c "vmstat 1 > vmstat.log &" &
+
       - name: Run wallets tests
         run: xvfb-run --auto-servernum -- yarn test:widgets
         working-directory: wallets-testing
@@ -48,6 +52,12 @@ jobs:
           name: playwright-report
           path: wallets-testing/playwright-report/
           retention-days: 30
+
+      - uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: memory-usage-log
+          path: vmstat.log
 
       - name: Set embeds
         if: ${{ always() }}
