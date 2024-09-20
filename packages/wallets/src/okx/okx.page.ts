@@ -112,7 +112,7 @@ export class OkxPage implements WalletPage {
       // ETH value displayed with ETH symbol
       await this.page.waitForSelector('text=ETH', { state: 'visible' });
       //Looks like after installation and load extension mainPage there we should to wait a bit for extension make sure to be installed in some memory
-      await this.page.waitForTimeout(10000);
+      await this.page.waitForTimeout(5000);
     });
   }
 
