@@ -94,6 +94,7 @@ export class OkxPage implements WalletPage {
         }
       }
       await this.page.getByRole('button', { name: 'Confirm' }).click();
+      await this.page.getByRole('button', { name: 'Next' }).click();
       await this.page
         .getByTestId('okd-input')
         .nth(0)
@@ -104,9 +105,13 @@ export class OkxPage implements WalletPage {
         .fill(this.config.PASSWORD);
       await this.page.waitForTimeout(2000);
       await this.page.getByRole('button', { name: 'Confirm' }).click();
-      await this.page.waitForSelector(
-        "button:has-text('Start your Web3 journey')",
-      );
+
+      // Dive into wallet main page after installation
+      await this.page.click("button:has-text('Start your Web3 journey')");
+      // Wait until extension to be loaded after installation with ETH value display.
+      // ETH value displayed with ETH symbol
+      await this.page.waitForSelector('text=ETH', { state: 'visible' });
+      //Looks like after installation and load extension mainPage there we should to wait a bit for extension make sure to be installed in some memory
       await this.page.waitForTimeout(2000);
     });
   }
