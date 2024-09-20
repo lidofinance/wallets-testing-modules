@@ -2,6 +2,7 @@ import { WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import expect from 'expect';
 import { test, BrowserContext, Page } from '@playwright/test';
+import { timeout } from 'rxjs';
 
 export class OkxPage implements WalletPage {
   page: Page | undefined;
