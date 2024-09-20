@@ -114,12 +114,10 @@ export class BrowserContextService {
   async closePages() {
     if (!this.browserContext) return;
     await this.browserContext.newPage();
-    await Promise.all([
-      this.browserContext
-        .pages()
-        .slice(0, -1)
-        .map((page) => page.close()),
-    ]);
+    const pages = this.browserContext.pages().slice(0, -1);
+    for (const page of pages) {
+      await page.close();
+    }
   }
 
   async clearStaleBrowserContexts() {

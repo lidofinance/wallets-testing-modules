@@ -120,16 +120,13 @@ export class BrowserService {
   }
 
   async connectWallet(): Promise<string> {
-    try {
-      const widgetPage = new WIDGET_PAGES[this.widgetConfig.name](
-        await this.browserContextService.browserContext.newPage(),
-        this.stakeConfig || {},
-      );
-      await widgetPage.navigate();
-      await widgetPage.connectWallet(this.walletPage);
-    } finally {
-      await this.browserContextService.closePages();
-    }
+    const widgetPage = new WIDGET_PAGES[this.widgetConfig.name](
+      await this.browserContextService.browserContext.newPage(),
+      this.stakeConfig || {},
+    );
+    await widgetPage.navigate();
+    await widgetPage.connectWallet(this.walletPage);
+    await this.browserContextService.closePages();
     return `Success. Wallet ${this.walletPage.config.COMMON.WALLET_NAME} successfully connected`;
   }
 
