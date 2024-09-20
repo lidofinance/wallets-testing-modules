@@ -44,7 +44,7 @@
     "branches": [
       "main",
       {
-        "name": "refactor-mm-page-objects",
+        "name": "develop",
         "channel": "alpha",
         "prerelease": "alpha"
       }
