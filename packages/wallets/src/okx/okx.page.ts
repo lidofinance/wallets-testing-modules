@@ -94,6 +94,7 @@ export class OkxPage implements WalletPage {
         }
       }
       await this.page.getByRole('button', { name: 'Confirm' }).click();
+      await this.page.getByRole('button', { name: 'Next' }).click();
       await this.page
         .getByTestId('okd-input')
         .nth(0)
