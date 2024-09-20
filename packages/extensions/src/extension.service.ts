@@ -62,12 +62,6 @@ export class ExtensionService {
     }
   }
 
-  //     await axios.get(url, { responseType: 'stream' }).then(async (response) => {
-  //     const zip = unzipper.Extract({ path: extensionDir });
-  //     response.data.pipe(zip);
-  //     return await once(zip, 'close'); // Убедитесь, что вы ждете завершения обработки
-  // });
-
   async downloadFromUrl(url: string) {
     this.logger.debug(`Download extension from ${url}`);
     const extensionDir = await fs.mkdtemp(os.tmpdir() + path.sep);

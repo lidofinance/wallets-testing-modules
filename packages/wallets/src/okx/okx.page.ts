@@ -2,7 +2,6 @@ import { WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import expect from 'expect';
 import { test, BrowserContext, Page } from '@playwright/test';
-import { timeout } from 'rxjs';
 
 export class OkxPage implements WalletPage {
   page: Page | undefined;
@@ -113,7 +112,7 @@ export class OkxPage implements WalletPage {
       // ETH value displayed with ETH symbol
       await this.page.waitForSelector('text=ETH', { state: 'visible' });
       //Looks like after installation and load extension mainPage there we should to wait a bit for extension make sure to be installed in some memory
-      await this.page.waitForTimeout(2000);
+      await this.page.waitForTimeout(10000);
     });
   }
 
@@ -165,9 +164,7 @@ export class OkxPage implements WalletPage {
   //+
   async connectWallet(page: Page) {
     await test.step('Connect wallet', async () => {
-      const connectBtn = page.locator('button:has-text("Connect")');
-      await connectBtn.waitFor({ state: 'visible', timeout: 2000 });
-      await connectBtn.click();
+      await page.waitForSelector('button:has-text("Connect")');
       await page.waitForTimeout(10000);
       await page.getByRole('button', { name: 'Connect' }).click();
       await page.close();
