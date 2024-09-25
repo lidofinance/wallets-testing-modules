@@ -33,7 +33,7 @@ export class AccountMenu {
 
   async clickToAddress(address: string) {
     await test.step(`Click to account by "${address}"`, async () => {
-      const addressStart = address.slice(0, 6);
+      const addressStart = address.slice(0, 7);
       const addressEnd = address.slice(-5);
 
       await this.accountListModal

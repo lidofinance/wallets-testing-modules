@@ -268,7 +268,7 @@ export class MetamaskPage implements WalletPage {
       await this.header.accountMenuButton.click();
       const listOfAddress = await this.accountMenu.getListOfAddress();
 
-      const addressStart = address.slice(0, 6);
+      const addressStart = address.slice(0, 7);
       const addressEnd = address.slice(-5);
 
       const isExist = listOfAddress.some(
