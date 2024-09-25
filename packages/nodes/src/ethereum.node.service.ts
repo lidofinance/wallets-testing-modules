@@ -111,6 +111,16 @@ export class EthereumNodeService {
     return balanceAfter.div(decimals);
   }
 
+  async setErc20ETHBalance(account: Account, balance: number) {
+    if (this.state === undefined) throw 'Node not ready';
+
+    const hexAmount = utils.hexValue(utils.parseEther(balance.toString()));
+    await this.state.node.provider.request({
+      method: 'evm_setAccountBalance',
+      params: [account.address, hexAmount],
+    });
+  }
+
   async mockRoute(url: string, contextOrPage: BrowserContext | Page) {
     await contextOrPage.route(url, async (route) => {
       if (this.state === undefined) return;
