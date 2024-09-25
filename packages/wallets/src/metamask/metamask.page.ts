@@ -270,6 +270,7 @@ export class MetamaskPage implements WalletPage {
 
       const addressStart = address.slice(0, 7).toLowerCase();
       const addressEnd = address.slice(-5).toLowerCase();
+
       const isExist = listOfAddress.some(
         (listAddress) =>
           listAddress.toLowerCase().startsWith(addressStart) &&
