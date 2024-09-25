@@ -268,13 +268,12 @@ export class MetamaskPage implements WalletPage {
       await this.header.accountMenuButton.click();
       const listOfAddress = await this.accountMenu.getListOfAddress();
 
-      const addressStart = address.slice(0, 7);
-      const addressEnd = address.slice(-5);
-
+      const addressStart = address.slice(0, 7).toLowerCase();
+      const addressEnd = address.slice(-5).toLowerCase();
       const isExist = listOfAddress.some(
         (listAddress) =>
-          listAddress.startsWith(addressStart) &&
-          listAddress.endsWith(addressEnd),
+          listAddress.toLowerCase().startsWith(addressStart) &&
+          listAddress.toLowerCase().endsWith(addressEnd),
       );
       await this.page.close();
       return isExist;
