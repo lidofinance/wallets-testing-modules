@@ -39,6 +39,7 @@ export class EthereumNodeService {
         );
       }
     }
+
     const node = ganache.server({
       chainId: this.options.chainId || 0x1,
       fork: { url: this.options.rpcUrl },
