@@ -37,13 +37,6 @@ export class EthereumNodeService {
       logging: { quiet: true },
       miner: { blockTime: 2 },
       wallet: {
-        accounts: [
-          {
-            address: '0xb063b5bdfc54d55ce045e5af3d4f34e35ba23413',
-            secretKey:
-              '0x70331156a9df0fd2e70953edea8c55b871fc05cf0843fd3cbaef9b09924b4781',
-          },
-        ],
         defaultBalance: this.options.defaultBalance || 1000,
       },
     });
