@@ -36,7 +36,16 @@ export class EthereumNodeService {
       fork: { url: this.options.rpcUrl },
       logging: { quiet: true },
       miner: { blockTime: 2 },
-      wallet: { defaultBalance: this.options.defaultBalance || 1000 },
+      wallet: {
+        accounts: [
+          {
+            address: '0xb063b5bdfc54d55ce045e5af3d4f34e35ba23413',
+            secretKey:
+              '0x70331156a9df0fd2e70953edea8c55b871fc05cf0843fd3cbaef9b09924b4781',
+          },
+        ],
+        defaultBalance: this.options.defaultBalance || 1000,
+      },
     });
     await node.listen(this.options.port || 7545);
     const nodeUrl = `http://127.0.0.1:${this.options.port || 7545}`;
@@ -109,16 +118,6 @@ export class EthereumNodeService {
     });
     const balanceAfter = await contract.balanceOf(account.address);
     return balanceAfter.div(decimals);
-  }
-
-  async setErc20ETHBalance(account: Account, balance: number) {
-    if (this.state === undefined) throw 'Node not ready';
-
-    const hexAmount = utils.hexValue(utils.parseEther(balance.toString()));
-    await this.state.node.provider.request({
-      method: 'evm_setAccountBalance',
-      params: [account.address, hexAmount],
-    });
   }
 
   async mockRoute(url: string, contextOrPage: BrowserContext | Page) {
