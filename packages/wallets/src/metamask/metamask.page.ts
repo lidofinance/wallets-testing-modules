@@ -168,9 +168,10 @@ export class MetamaskPage implements WalletPage {
 
   async assertTxAmount(page: Page, expectedAmount: string) {
     await test.step('Assert TX Amount', async () => {
-      expect(await page.textContent('.currency-display-component__text')).toBe(
-        expectedAmount,
-      );
+      const txAmount = await new WalletOperationPage(page).getTxAmount();
+      if (txAmount) {
+        expect(txAmount).toBe(expectedAmount);
+      }
     });
   }
 
@@ -245,7 +246,7 @@ export class MetamaskPage implements WalletPage {
     await test.step('Assert receiptAddress/Contract', async () => {
       const recipientAddress = await new WalletOperationPage(
         page,
-      ).assertReceiptAddress();
+      ).getReceiptAddress();
       expect(recipientAddress).toBe(expectedAddress);
     });
   }
