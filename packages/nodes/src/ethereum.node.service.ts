@@ -50,6 +50,7 @@ export class EthereumNodeService {
         defaultBalance: this.options.defaultBalance || 1000,
       },
     });
+
     await node.listen(this.options.port || 7545);
     const nodeUrl = `http://127.0.0.1:${this.options.port || 7545}`;
     const initialAccounts = await node.provider.getInitialAccounts();
