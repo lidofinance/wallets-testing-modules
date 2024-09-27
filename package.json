@@ -44,7 +44,7 @@
     "branches": [
       "main",
       {
-        "name": "fix-mm-tx",
+        "name": "develop",
         "channel": "alpha",
         "prerelease": "alpha"
       }
