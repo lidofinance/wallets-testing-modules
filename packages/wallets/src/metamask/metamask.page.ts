@@ -282,7 +282,7 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
-  async changeWalletAddress(address: string) {
+  async changeWalletAddressByAddress(address: string) {
     await test.step('Change wallet account by address', async () => {
       await this.navigate();
       await this.header.accountMenuButton.click();
@@ -290,7 +290,7 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
-  async changeWalletAccount(accountName: string) {
+  async changeWalletAccountByName(accountName: string) {
     await test.step('Change wallet account', async () => {
       await this.navigate();
       await this.header.accountMenuButton.click();
