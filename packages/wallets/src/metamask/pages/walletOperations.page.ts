@@ -4,13 +4,13 @@ export class WalletOperationPage {
   page: Page;
   nextButton: Locator;
   confirmButton: Locator;
-  approvalRejectButton: Locator;
+  approvalCancelButton: Locator;
   cancelButton: Locator;
   addTokenButton: Locator;
   editGasFeeButton: Locator;
   setHighGasFeeButton: Locator;
   scrollRequestSignatureBlockButton: Locator;
-  rejectAllTxsButton: Locator;
+  cancelAllTxsButton: Locator;
   confirmRejectAllTxsButton: Locator;
   recipientButton: Locator;
   recipientAddress: Locator;
@@ -22,7 +22,7 @@ export class WalletOperationPage {
     this.page = page;
     this.nextButton = this.page.getByTestId('page-container-footer-next');
     this.confirmButton = this.page.getByTestId('confirm-footer-button');
-    this.approvalRejectButton = this.page.getByTestId(
+    this.approvalCancelButton = this.page.getByTestId(
       'page-container-footer-cancel',
     );
     this.cancelButton = this.page.getByTestId('confirm-footer-cancel-button');
@@ -32,7 +32,7 @@ export class WalletOperationPage {
     this.scrollRequestSignatureBlockButton = this.page.getByTestId(
       'signature-request-scroll-button',
     );
-    this.rejectAllTxsButton = this.page.getByTestId('confirm-nav__reject-all');
+    this.cancelAllTxsButton = this.page.getByTestId('confirm-nav__reject-all');
     this.confirmRejectAllTxsButton = this.page.locator(
       'button:has-text("Reject all")',
     );
@@ -47,7 +47,7 @@ export class WalletOperationPage {
     );
   }
 
-  async rejectAllTxInQueue() {
+  async cancelAllTxInQueue() {
     //Is there is any tx in queue.
     try {
       await this.cancelButton.waitFor({
@@ -58,8 +58,8 @@ export class WalletOperationPage {
       return;
     }
 
-    if (await this.rejectAllTxsButton.isVisible()) {
-      await this.rejectAllTxsButton.click();
+    if (await this.cancelAllTxsButton.isVisible()) {
+      await this.cancelAllTxsButton.click();
     } else {
       await this.cancelButton.click();
     }
@@ -69,7 +69,7 @@ export class WalletOperationPage {
     try {
       await this.cancelButton.click();
     } catch {
-      await this.approvalRejectButton.click();
+      await this.approvalCancelButton.click();
     }
   }
 
