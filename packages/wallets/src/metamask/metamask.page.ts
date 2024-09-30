@@ -58,7 +58,7 @@ export class MetamaskPage implements WalletPage {
       await this.loginPage.unlock();
       if (await this.header.networkListButton.isVisible()) {
         await this.popoverElements.closePopover();
-        await this.walletOperation.rejectAllTxInQueue(); // reject all tx in queue if exist
+        await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
       }
     });
   }
@@ -70,7 +70,7 @@ export class MetamaskPage implements WalletPage {
       if (!(await this.header.networkListButton.isVisible())) {
         await this.onboardingPage.firstTimeSetup();
         await this.popoverElements.closePopover();
-        await this.walletOperation.rejectAllTxInQueue(); // reject all tx in queue if exist
+        await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
         await this.settingsPage.setupNetworkChangingSetting(); // need to make it possible to change the wallet network
       }
     });
@@ -218,21 +218,9 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
-  async signTx(page: Page) {
-    await test.step('Sign TX', async () => {
-      await new WalletOperationPage(page).signTransaction();
-    });
-  }
-
-  async cancelSignTx(page: Page) {
-    await test.step('Cancel Sign TX', async () => {
-      await new WalletOperationPage(page).cancelSignTransaction();
-    });
-  }
-
-  async rejectTx(page: Page) {
+  async cancelTx(page: Page) {
     await test.step('Reject TX', async () => {
-      await new WalletOperationPage(page).rejectTransaction();
+      await new WalletOperationPage(page).cancelTransaction();
     });
   }
 
