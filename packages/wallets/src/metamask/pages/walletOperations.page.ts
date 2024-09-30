@@ -4,7 +4,7 @@ export class WalletOperationPage {
   page: Page;
   nextButton: Locator;
   confirmButton: Locator;
-  rejectButton: Locator;
+  approvalRejectButton: Locator;
   cancelButton: Locator;
   addTokenButton: Locator;
   editGasFeeButton: Locator;
@@ -22,7 +22,9 @@ export class WalletOperationPage {
     this.page = page;
     this.nextButton = this.page.getByTestId('page-container-footer-next');
     this.confirmButton = this.page.getByTestId('confirm-footer-button');
-    this.rejectButton = this.page.getByTestId('page-container-footer-cancel');
+    this.approvalRejectButton = this.page.getByTestId(
+      'page-container-footer-cancel',
+    );
     this.cancelButton = this.page.getByTestId('confirm-footer-cancel-button');
     this.addTokenButton = this.page.locator('button:has-text("Add token")');
     this.editGasFeeButton = this.page.getByTestId('edit-gas-fee-icon');
@@ -30,9 +32,7 @@ export class WalletOperationPage {
     this.scrollRequestSignatureBlockButton = this.page.getByTestId(
       'signature-request-scroll-button',
     );
-    this.rejectAllTxsButton = this.page.locator(
-      'div[class="page-container__footer-secondary"]',
-    );
+    this.rejectAllTxsButton = this.page.getByTestId('confirm-nav__reject-all');
     this.confirmRejectAllTxsButton = this.page.locator(
       'button:has-text("Reject all")',
     );
@@ -50,7 +50,7 @@ export class WalletOperationPage {
   async rejectAllTxInQueue() {
     //Is there is any tx in queue.
     try {
-      await this.rejectButton.waitFor({
+      await this.cancelButton.waitFor({
         state: 'visible',
         timeout: 1000,
       });
@@ -60,22 +60,17 @@ export class WalletOperationPage {
 
     if (await this.rejectAllTxsButton.isVisible()) {
       await this.rejectAllTxsButton.click();
-      await this.confirmRejectAllTxsButton.click();
     } else {
-      await this.rejectButton.click();
+      await this.cancelButton.click();
     }
   }
 
-  async rejectTransaction() {
-    await this.rejectButton.click();
-  }
-
-  async cancelSignTransaction() {
-    await this.cancelButton.click();
-  }
-
-  async signTransaction() {
-    await this.confirmButton.click();
+  async cancelTransaction() {
+    try {
+      await this.cancelButton.click();
+    } catch {
+      await this.approvalRejectButton.click();
+    }
   }
 
   async confirmTransactionOfTokenApproval() {
