@@ -251,13 +251,40 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
-  async changeWalletAddress(addressName: string) {
-    await test.step('Change wallet address', async () => {
+  async isWalletAddressExist(address: string) {
+    return await test.step(`Checking to wallet address ${address} is exist`, async () => {
       await this.navigate();
       await this.header.accountMenuButton.click();
-      await this.accountMenu.clickToAddress(addressName);
+      const listOfAddress = await this.accountMenu.getListOfAddress();
+
+      const addressStart = address.slice(0, 7).toLowerCase();
+      const addressEnd = address.slice(-5).toLowerCase();
+
+      const isExist = listOfAddress.some(
+        (listAddress) =>
+          listAddress.toLowerCase().startsWith(addressStart) &&
+          listAddress.toLowerCase().endsWith(addressEnd),
+      );
+      await this.page.close();
+      return isExist;
+    });
+  }
+
+  async changeWalletAddressByAddress(address: string) {
+    await test.step('Change wallet account by address', async () => {
+      await this.navigate();
+      await this.header.accountMenuButton.click();
+      await this.accountMenu.clickToAddress(address);
+    });
+  }
+
+  async changeWalletAccountByName(accountName: string) {
+    await test.step('Change wallet account', async () => {
+      await this.navigate();
+      await this.header.accountMenuButton.click();
+      await this.accountMenu.clickToAccount(accountName);
       const accountNumber =
-        this.header.accountMenuButton.getByText(addressName);
+        this.header.accountMenuButton.getByText(accountName);
       await accountNumber.waitFor({ state: 'visible', timeout: 2000 });
       await this.page.waitForTimeout(2000);
       await this.page.close();

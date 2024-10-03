@@ -7,6 +7,7 @@ export class AccountMenu {
   importAccountButton: Locator;
   privateKeyInput: Locator;
   importAccountConfirmButton: Locator;
+  accountListAddress: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -21,11 +22,33 @@ export class AccountMenu {
     this.importAccountConfirmButton = this.page.getByTestId(
       'import-account-confirm-button',
     );
+    this.accountListAddress = this.page.getByTestId('account-list-address');
   }
 
-  async clickToAddress(addressName: string) {
-    await test.step(`Click to "${addressName}" account`, async () => {
-      await this.accountListModal.getByText(addressName).click();
+  async clickToAccount(accountName: string) {
+    await test.step(`Click to "${accountName}" account`, async () => {
+      await this.accountListModal.getByText(accountName).click();
+    });
+  }
+
+  async clickToAddress(address: string) {
+    await test.step(`Click to account by "${address}"`, async () => {
+      const addressStart = address.slice(0, 7);
+      const addressEnd = address.slice(-5);
+
+      await this.accountListModal
+        .getByText(`${addressStart}...${addressEnd}`)
+        .click();
+    });
+  }
+
+  async getListOfAddress() {
+    return test.step('Get all exists accounts', async () => {
+      const listOfAddressText = [];
+      for (const address of await this.accountListAddress.all()) {
+        listOfAddressText.push(await address.textContent());
+      }
+      return listOfAddressText;
     });
   }
 

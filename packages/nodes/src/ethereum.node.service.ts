@@ -31,13 +31,26 @@ export class EthereumNodeService {
 
   async startNode() {
     if (this.state !== undefined) return;
+
+    if (this.options.accounts) {
+      for (const account of this.options.accounts) {
+        account.balance = utils.hexValue(
+          utils.parseEther(account.balance.toString()),
+        );
+      }
+    }
+
     const node = ganache.server({
       chainId: this.options.chainId || 0x1,
       fork: { url: this.options.rpcUrl },
       logging: { quiet: true },
       miner: { blockTime: 2 },
-      wallet: { defaultBalance: this.options.defaultBalance || 1000 },
+      wallet: {
+        accounts: this.options.accounts,
+        defaultBalance: this.options.defaultBalance || 1000,
+      },
     });
+
     await node.listen(this.options.port || 7545);
     const nodeUrl = `http://127.0.0.1:${this.options.port || 7545}`;
     const initialAccounts = await node.provider.getInitialAccounts();

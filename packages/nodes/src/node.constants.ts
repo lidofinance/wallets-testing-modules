@@ -7,6 +7,12 @@ export type EthereumNodeServiceOptions = {
   port?: number;
   chainId?: number;
   defaultBalance?: number;
+  accounts?: OptionsAccount[];
+};
+
+type OptionsAccount = {
+  secretKey: string;
+  balance: number | string;
 };
 
 export type Account = {
