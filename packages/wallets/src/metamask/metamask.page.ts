@@ -65,7 +65,7 @@ export class MetamaskPage implements WalletPage {
 
   async setup() {
     await test.step('Setup', async () => {
-      // added explicit route to #onboarding due to unexpected first time route from /home.html to /onboarding -> page is close
+      // added explicit route to #onboarding due to unexpected first time route from /home.html to /onboarding --> page is close
       await this.navigate();
       if (!(await this.header.networkListButton.isVisible())) {
         await this.onboardingPage.firstTimeSetup();
