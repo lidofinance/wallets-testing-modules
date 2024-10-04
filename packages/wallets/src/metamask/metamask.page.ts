@@ -104,20 +104,13 @@ export class MetamaskPage implements WalletPage {
       if (currentNetwork.includes(standConfig.chainName)) {
         return;
       }
-      await this.header.networkListButton.click();
-      const networkListText = await this.networkList.getNetworkListText();
-      if (networkListText.includes(standConfig.chainName)) {
-        await this.networkList.clickToNetworkItemButton(standConfig.chainName);
-      } else {
-        await this.networkList.networkDisplayCloseBtn.click();
-        await this.addNetwork(
-          standConfig.chainName,
-          standConfig.rpcUrl,
-          standConfig.chainId,
-          standConfig.tokenSymbol,
-          standConfig.scan,
-        );
-      }
+      await this.addNetwork(
+        standConfig.chainName,
+        standConfig.rpcUrl,
+        standConfig.chainId,
+        standConfig.tokenSymbol,
+        standConfig.scan,
+      );
     });
   }
 
@@ -127,19 +120,47 @@ export class MetamaskPage implements WalletPage {
     chainId: number,
     tokenSymbol: string,
     blockExplorer = '',
+    isClosePage = false,
   ) {
     await test.step(`Add new network "${networkName}"`, async () => {
-      await this.settingsPage.openSettings();
-      await this.settingsPage.networksTabButton.click();
-      await this.settingsPage.addNetworkManually(
-        networkName,
-        networkUrl,
-        chainId,
-        tokenSymbol,
-        blockExplorer,
-      );
-      await this.popoverElements.switchToButton.click();
+      await this.navigate();
+      await this.header.networkListButton.click();
+      const networkListText = await this.networkList.getNetworkListText();
+      if (networkListText.includes(networkName)) {
+        await this.networkList.clickToNetworkItemButton(networkName);
+      } else {
+        await this.networkList.networkDisplayCloseBtn.click();
+        await this.settingsPage.openSettings();
+        await this.settingsPage.networksTabButton.click();
+        await this.settingsPage.addNetworkManually(
+          networkName,
+          networkUrl,
+          chainId,
+          tokenSymbol,
+          blockExplorer,
+        );
+        await this.popoverElements.switchToButton.click();
+      }
     });
+    if (isClosePage) await this.page.close();
+  }
+
+  async addPopularNetwork(networkName: string) {
+    await this.navigate();
+    await this.header.networkListButton.click();
+    const networkListText = await this.networkList.getNetworkListText();
+    if (networkListText.includes(networkName)) {
+      await this.networkList.clickToNetworkItemButton(networkName);
+    } else {
+      await test.step(`Add popular network "${networkName}"`, async () => {
+        await this.networkList.networkDisplayCloseBtn.click();
+        await this.settingsPage.openSettings();
+        await this.settingsPage.networksTabButton.click();
+        await this.settingsPage.addPopularNetwork(networkName);
+        await this.popoverElements.switchToButton.click();
+      });
+    }
+    await this.page.close();
   }
 
   async importKey(key: string) {

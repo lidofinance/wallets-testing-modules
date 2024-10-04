@@ -44,7 +44,7 @@
     "branches": [
       "main",
       {
-        "name": "develop",
+        "name": "add-network-to-wallet",
         "channel": "alpha",
         "prerelease": "alpha"
       }
