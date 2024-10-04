@@ -44,9 +44,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "add-network-to-wallet",
+        "channel": "alpha-mock",
+        "prerelease": "alpha-mock"
       }
     ]
   }

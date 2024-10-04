@@ -1,5 +1,6 @@
 import { Locator, Page, test } from '@playwright/test';
 import { WalletConfig } from '../../wallets.constants';
+import { PopoverElements } from './elements';
 
 export class SettingsPage {
   page: Page;
@@ -99,6 +100,20 @@ export class SettingsPage {
     });
     await test.step('Save the new network', async () => {
       await this.saveNewTokenButton.click();
+    });
+  }
+
+  async addPopularNetwork(networkName: string) {
+    await test.step('Open the page to add network', async () => {
+      await this.addNetworkButton.click();
+    });
+    await test.step(`Add the "${networkName}" network`, async () => {
+      await this.page
+        .locator(`h6:has-text("${networkName}")`)
+        .locator('../../..')
+        .locator('button:has-text("Add")')
+        .click();
+      await new PopoverElements(this.page).approveAddNetworkButton.click();
     });
   }
 }
