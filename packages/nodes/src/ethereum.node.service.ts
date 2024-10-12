@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import * as ganache from 'ganache';
 import { Server } from 'ganache';
 import {
@@ -26,6 +27,7 @@ export class EthereumNodeService {
         accounts: Account[];
       }
     | undefined;
+  private readonly logger = new Logger(EthereumNodeService.name);
 
   constructor(@Inject(OPTIONS) private options: EthereumNodeServiceOptions) {}
 
@@ -39,7 +41,8 @@ export class EthereumNodeService {
         );
       }
     }
-
+    this.logger.debug('Starting a fork node...');
+    this.logger.debug(`Starting options \n${this.options}`);
     const node = ganache.server({
       chainId: this.options.chainId || 0x1,
       fork: { url: this.options.rpcUrl },

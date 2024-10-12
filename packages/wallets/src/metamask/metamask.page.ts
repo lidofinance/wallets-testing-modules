@@ -252,7 +252,7 @@ export class MetamaskPage implements WalletPage {
   }
 
   async isWalletAddressExist(address: string) {
-    return await test.step(`Checking to wallet address ${address} is exist`, async () => {
+    return await test.step(`Checking to the wallet address ${address} is exist`, async () => {
       await this.navigate();
       await this.header.accountMenuButton.click();
       const listOfAddress = await this.accountMenu.getListOfAddress();
