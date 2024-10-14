@@ -45,8 +45,8 @@
       "main",
       {
         "name": "feat/return-wallet-fork",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "channel": "alpha-mock-sp",
+        "prerelease": "alpha-mock-sp"
       }
     ]
   }
