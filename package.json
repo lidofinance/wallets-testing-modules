@@ -44,7 +44,7 @@
     "branches": [
       "main",
       {
-        "name": "feat/return-wallet-fork",
+        "name": "feat/return-wallet-fork-new",
         "channel": "alpha",
         "prerelease": "alpha"
       }
