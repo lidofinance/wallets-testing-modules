@@ -251,6 +251,14 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
+  async changeWalletAddressByAddress(address: string) {
+    await test.step('Change wallet account by address', async () => {
+      await this.navigate();
+      await this.header.accountMenuButton.click();
+      await this.accountMenu.clickToAddress(address);
+    });
+  }
+
   async isWalletAddressExist(address: string) {
     return await test.step(`Checking to the wallet address ${address} is exist`, async () => {
       await this.navigate();
@@ -267,14 +275,6 @@ export class MetamaskPage implements WalletPage {
       );
       await this.page.close();
       return isExist;
-    });
-  }
-
-  async changeWalletAddressByAddress(address: string) {
-    await test.step('Change wallet account by address', async () => {
-      await this.navigate();
-      await this.header.accountMenuButton.click();
-      await this.accountMenu.clickToAddress(address);
     });
   }
 
