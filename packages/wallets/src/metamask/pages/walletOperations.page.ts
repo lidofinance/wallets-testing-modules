@@ -48,21 +48,23 @@ export class WalletOperationPage {
   }
 
   async cancelAllTxInQueue() {
-    //Is there is any tx in queue.
-    try {
-      await this.cancelButton.waitFor({
-        state: 'visible',
-        timeout: 1000,
-      });
-    } catch (er) {
-      return;
-    }
+    test.step('Cancel all tx in queue', async () => {
+      //Is there is any tx in queue.
+      try {
+        await this.cancelButton.waitFor({
+          state: 'visible',
+          timeout: 1000,
+        });
+      } catch (er) {
+        return;
+      }
 
-    if (await this.cancelAllTxsButton.isVisible()) {
-      await this.cancelAllTxsButton.click();
-    } else {
-      await this.cancelButton.click();
-    }
+      if (await this.cancelAllTxsButton.isVisible()) {
+        await this.cancelAllTxsButton.click();
+      } else {
+        await this.cancelButton.click();
+      }
+    });
   }
 
   async cancelTransaction() {

@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import * as ganache from 'ganache';
 import { Server } from 'ganache';
 import {
@@ -26,18 +27,32 @@ export class EthereumNodeService {
         accounts: Account[];
       }
     | undefined;
+  private readonly logger = new Logger(EthereumNodeService.name);
 
   constructor(@Inject(OPTIONS) private options: EthereumNodeServiceOptions) {}
 
   async startNode() {
     if (this.state !== undefined) return;
+
+    if (this.options.accounts) {
+      for (const account of this.options.accounts) {
+        account.balance = utils.hexValue(
+          utils.parseEther(account.balance.toString()),
+        );
+      }
+    }
+    this.logger.debug('Starting a fork node...');
     const node = ganache.server({
       chainId: this.options.chainId || 0x1,
       fork: { url: this.options.rpcUrl },
       logging: { quiet: true },
       miner: { blockTime: 2 },
-      wallet: { defaultBalance: this.options.defaultBalance || 1000 },
+      wallet: {
+        accounts: this.options.accounts,
+        defaultBalance: this.options.defaultBalance || 1000,
+      },
     });
+
     await node.listen(this.options.port || 7545);
     const nodeUrl = `http://127.0.0.1:${this.options.port || 7545}`;
     const initialAccounts = await node.provider.getInitialAccounts();
