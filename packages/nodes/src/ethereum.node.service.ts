@@ -42,7 +42,6 @@ export class EthereumNodeService {
       }
     }
     this.logger.debug('Starting a fork node...');
-    this.logger.debug(`Starting options \n${this.options}`);
     const node = ganache.server({
       chainId: this.options.chainId || 0x1,
       fork: { url: this.options.rpcUrl },

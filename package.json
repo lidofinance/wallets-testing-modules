@@ -44,9 +44,9 @@
     "branches": [
       "main",
       {
-        "name": "feat/return-wallet-fork",
-        "channel": "alpha-mock-sp",
-        "prerelease": "alpha-mock-sp"
+        "name": "develop",
+        "channel": "alpha",
+        "prerelease": "alpha"
       }
     ]
   }
