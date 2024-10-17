@@ -37,7 +37,10 @@ export interface WalletPage {
     chainId: number,
     tokenSymbol: string,
     blockExplorer?: string,
+    isClosePage?: boolean,
   ): Promise<void>;
+
+  addPopularNetwork?(networkName: string): Promise<void>;
 
   changeNetwork?(networkName: string): Promise<void>;
 
