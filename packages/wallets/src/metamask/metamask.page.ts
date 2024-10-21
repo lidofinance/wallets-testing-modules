@@ -251,7 +251,7 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
-  async changeWalletAddressByAddress(address: string) {
+  async changeWalletAccountByAddress(address: string) {
     await test.step('Change wallet account by address', async () => {
       await this.navigate();
       await this.header.accountMenuButton.click();

@@ -48,6 +48,24 @@ export class EthereumNodeService {
       logging: { quiet: true },
       miner: { blockTime: 2 },
       wallet: {
+        /**
+         * If you would like to use specific account, you can pass it for `account` option.
+         *
+         * Example:
+         *
+         * ```ts
+         * new EthereumNodeService(
+         *  chainId: this.widgetConfig.chainId,
+         *  rpcUrl: WIDGET_CONFIG.STAND_CONFIG.rpcUrl,
+         *  defaultBalance: 100,
+         *  accounts: [{
+         *    account: '<secret_key>',
+         *    balance: 50
+         *  }]
+         *
+         * )
+         * ```
+         */
         accounts: this.options.accounts,
         defaultBalance: this.options.defaultBalance || 1000,
       },
