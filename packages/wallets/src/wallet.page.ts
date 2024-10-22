@@ -41,5 +41,7 @@ export interface WalletPage {
 
   changeNetwork?(networkName: string): Promise<void>;
 
-  changeWalletAddress?(addressName: string): Promise<void>;
+  changeWalletAccountByName?(accountName: string): Promise<void>;
+  changeWalletAccountByAddress?(address: string): Promise<void>;
+  isWalletAddressExist?(address: string): Promise<boolean>;
 }
