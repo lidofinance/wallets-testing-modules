@@ -4,7 +4,6 @@ import { WalletConfig } from '../../wallets.constants';
 export class SettingsPage {
   page: Page;
   tabBarMenu: Locator;
-  networksTabButton: Locator;
   experimentalTabButton: Locator;
 
   selectNetworksForEachSiteToggleState: Locator;
@@ -17,9 +16,6 @@ export class SettingsPage {
   ) {
     this.page = page;
     this.tabBarMenu = this.page.locator('.tab-bar');
-    this.networksTabButton = this.tabBarMenu
-      .getByRole('button')
-      .getByText('Networks');
     this.experimentalTabButton = this.tabBarMenu
       .getByRole('button')
       .getByText('Experimental');
