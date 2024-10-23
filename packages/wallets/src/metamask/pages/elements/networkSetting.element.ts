@@ -12,7 +12,12 @@ export class NetworkSetting {
   addUrlButton: Locator;
   networkChainIdInput: Locator;
   networkTickerInput: Locator;
+
+  networkExplorerDropDown: Locator;
+  addBlockExplorerButton: Locator;
+  addExplorerUrlButton: Locator;
   networkExplorerUrlInput: Locator;
+
   saveNewTokenButton: Locator;
   editNetworkButton: Locator;
 
@@ -35,9 +40,19 @@ export class NetworkSetting {
     this.networkTickerInput = this.page.getByTestId(
       'network-form-ticker-input',
     );
-    this.networkExplorerUrlInput = this.page.getByTestId(
-      'network-form-block-explorer-url',
+
+    this.networkExplorerDropDown = this.page.getByTestId(
+      'test-explorer-drop-down',
     );
+    this.addBlockExplorerButton = this.dialogSection
+      .getByRole('button')
+      .getByText('Add a block explorer URL');
+    this.addExplorerUrlButton = this.dialogSection
+      .getByRole('button')
+      .getByText('Add URL');
+
+    this.networkExplorerUrlInput = this.page.getByTestId('explorer-url-input');
+
     this.saveNewTokenButton = this.page.getByText('Save');
     this.editNetworkButton = this.page.getByTestId(
       'network-list-item-options-edit',
@@ -48,7 +63,7 @@ export class NetworkSetting {
     return this.networkListButton.click();
   }
 
-  async addRpcForExistNetwork(networkUrl, chainId) {
+  async addRpcForExistNetwork(networkUrl, blockExplorer, chainId) {
     await test.step('Add rpc url for exist network', async () => {
       await this.dialogSection
         .getByTestId(
@@ -62,6 +77,13 @@ export class NetworkSetting {
       await this.addRpcButton.click();
       await this.networkRpcUrlInput.fill(networkUrl);
       await this.addUrlButton.click();
+
+      if (blockExplorer != '') {
+        await this.networkExplorerDropDown.click();
+        await this.addBlockExplorerButton.click();
+        await this.networkExplorerUrlInput.fill(blockExplorer);
+        await this.addExplorerUrlButton.click();
+      }
     });
 
     await test.step('Save the new rpc url', async () => {
@@ -90,8 +112,12 @@ export class NetworkSetting {
 
       await this.networkChainIdInput.fill(String(chainId));
       await this.networkTickerInput.fill(tokenSymbol);
-      if (blockExplorer != '')
+      if (blockExplorer != '') {
+        await this.networkExplorerDropDown.click();
+        await this.addBlockExplorerButton.click();
         await this.networkExplorerUrlInput.fill(blockExplorer);
+        await this.addExplorerUrlButton.click();
+      }
     });
 
     await test.step('Save the new network', async () => {
@@ -111,7 +137,7 @@ export class NetworkSetting {
     });
 
     if (await this.dialogSection.getByText(networkName).isVisible()) {
-      await this.addRpcForExistNetwork(networkUrl, chainId);
+      await this.addRpcForExistNetwork(networkUrl, blockExplorer, chainId);
     } else {
       await this.addCustomNetwork(
         networkName,
