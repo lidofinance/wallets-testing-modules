@@ -44,7 +44,7 @@
     "branches": [
       "main",
       {
-        "name": "develop",
+        "name": "fix/new-network-setting",
         "channel": "alpha",
         "prerelease": "alpha"
       }
