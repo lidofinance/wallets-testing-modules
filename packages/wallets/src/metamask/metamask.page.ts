@@ -91,9 +91,7 @@ export class MetamaskPage implements WalletPage {
   async switchNetwork(networkName = 'Linea Mainnet') {
     await test.step(`Switch network to "${networkName}"`, async () => {
       await this.navigate();
-      await this.header.networkListButton.click();
-      await this.networkList.clickToNetwork(networkName);
-      await this.popoverElements.gotItButton.click();
+      await this.header.networkSetting.switchNetwork(networkName);
       await this.page.close();
     });
   }

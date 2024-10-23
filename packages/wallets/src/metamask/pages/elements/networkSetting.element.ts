@@ -148,4 +148,9 @@ export class NetworkSetting {
       );
     }
   }
+
+  async switchNetwork(networkName: string) {
+    await this.networkListButton.click();
+    await this.dialogSection.getByText(networkName).click();
+  }
 }
