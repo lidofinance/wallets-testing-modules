@@ -91,9 +91,7 @@ export class MetamaskPage implements WalletPage {
   async switchNetwork(networkName = 'Linea Mainnet') {
     await test.step(`Switch network to "${networkName}"`, async () => {
       await this.navigate();
-      await this.header.networkListButton.click();
-      await this.networkList.clickToNetwork(networkName);
-      await this.popoverElements.gotItButton.click();
+      await this.header.networkSetting.switchNetwork(networkName);
       await this.page.close();
     });
   }
@@ -129,16 +127,13 @@ export class MetamaskPage implements WalletPage {
     blockExplorer = '',
   ) {
     await test.step(`Add new network "${networkName}"`, async () => {
-      await this.settingsPage.openSettings();
-      await this.settingsPage.networksTabButton.click();
-      await this.settingsPage.addNetworkManually(
+      await this.header.networkSetting.addNetworkManually(
         networkName,
         networkUrl,
         chainId,
         tokenSymbol,
         blockExplorer,
       );
-      await this.popoverElements.switchToButton.click();
     });
   }
 
