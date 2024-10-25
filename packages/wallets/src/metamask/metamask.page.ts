@@ -98,6 +98,7 @@ export class MetamaskPage implements WalletPage {
 
   async setupNetwork(standConfig: Record<string, any>) {
     await test.step(`Setup "${standConfig.chainName}" Network`, async () => {
+      await this.header.networkSetting.networkListButton.click();
       if (
         await this.header.networkSetting.isNetworkExist(
           standConfig.chainName,
