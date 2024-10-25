@@ -40,7 +40,6 @@ export class NetworkSetting {
     this.networkTickerInput = this.page.getByTestId(
       'network-form-ticker-input',
     );
-
     this.networkExplorerDropDown = this.page.getByTestId(
       'test-explorer-drop-down',
     );
@@ -50,9 +49,7 @@ export class NetworkSetting {
     this.addExplorerUrlButton = this.dialogSection
       .getByRole('button')
       .getByText('Add URL');
-
     this.networkExplorerUrlInput = this.page.getByTestId('explorer-url-input');
-
     this.saveNewTokenButton = this.page.getByText('Save');
     this.editNetworkButton = this.page.getByTestId(
       'network-list-item-options-edit',
