@@ -59,6 +59,27 @@ export class NetworkSetting {
     );
   }
 
+  async isNetworkExist(
+    networkName: string,
+    rpcUrl: string,
+    chainId: number,
+  ): Promise<boolean> {
+    const existNetworkByName = this.dialogSection.getByTestId(networkName);
+
+    if (await existNetworkByName.isHidden()) {
+      return false;
+    }
+
+    const elements = this.page.getByTestId(
+      `network-rpc-name-button-0x${chainId.toString(16)}`,
+    );
+
+    const rpcUrlsFound = await elements.filter({ hasText: rpcUrl }).count();
+
+    if (rpcUrlsFound == 0) return false;
+    return true;
+  }
+
   async openNetworkSettings() {
     return this.networkListButton.click();
   }
