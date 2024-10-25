@@ -98,13 +98,14 @@ export class MetamaskPage implements WalletPage {
 
   async setupNetwork(standConfig: Record<string, any>) {
     await test.step(`Setup "${standConfig.chainName}" Network`, async () => {
-      const currentNetwork = await this.header.getCurrentNetworkName();
-      if (currentNetwork.includes(standConfig.chainName)) {
-        return;
-      }
-      await this.header.networkListButton.click();
-      const networkListText = await this.networkList.getNetworkListText();
-      if (networkListText.includes(standConfig.chainName)) {
+      await this.header.networkSetting.networkListButton.click();
+      if (
+        await this.header.networkSetting.isNetworkExist(
+          standConfig.chainName,
+          standConfig.rpcUrl,
+          standConfig.chainId,
+        )
+      ) {
         await this.networkList.clickToNetworkItemButton(standConfig.chainName);
       } else {
         await this.networkList.networkDisplayCloseBtn.click();
