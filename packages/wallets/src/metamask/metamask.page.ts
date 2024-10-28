@@ -133,6 +133,7 @@ export class MetamaskPage implements WalletPage {
     isClosePage = false,
   ) {
     await test.step(`Add new network "${networkName}"`, async () => {
+      await this.navigate();
       await this.networkList.addNetworkManually(
         networkName,
         networkUrl,
@@ -140,8 +141,8 @@ export class MetamaskPage implements WalletPage {
         tokenSymbol,
         blockExplorer,
       );
+      if (isClosePage) await this.page.close();
     });
-    if (isClosePage) await this.page.close();
   }
 
   async addPopularNetwork(networkName: string) {
@@ -154,7 +155,6 @@ export class MetamaskPage implements WalletPage {
       await test.step(`Add popular network "${networkName}"`, async () => {
         await this.networkList.networkDisplayCloseBtn.click();
         await this.networkList.addPopularNetwork(networkName);
-        await this.popoverElements.switchToButton.click();
       });
     }
     await this.page.close();

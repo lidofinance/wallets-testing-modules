@@ -122,7 +122,19 @@ export class NetworkList {
         .locator('../../..')
         .locator('button:has-text("Add")')
         .click();
+      // Without awaiting the button is not clickable
+      await this.page.waitForTimeout(500);
       await new PopoverElements(this.page).approveAddNetworkButton.click();
+      await this.dialogSection.waitFor({ state: 'hidden' });
+      // Need to wait while the network to be added to the wallet
+      try {
+        await this.page
+          .getByText('Connecting to')
+          .waitFor({ state: 'visible', timeout: 5000 });
+        await this.page.getByText('Connecting to').waitFor({ state: 'hidden' });
+      } catch {
+        console.error('Connecting network was without loader');
+      }
     });
   }
 }
