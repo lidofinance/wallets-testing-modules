@@ -91,9 +91,7 @@ export class MetamaskPage implements WalletPage {
   async switchNetwork(networkName = 'Linea Mainnet') {
     await test.step(`Switch network to "${networkName}"`, async () => {
       await this.navigate();
-      await this.header.networkListButton.click();
-      await this.networkList.clickToNetwork(networkName);
-      await this.popoverElements.gotItButton.click();
+      await this.networkList.switchNetwork(networkName);
       await this.page.close();
     });
   }
@@ -104,13 +102,25 @@ export class MetamaskPage implements WalletPage {
       if (currentNetwork.includes(standConfig.chainName)) {
         return;
       }
-      await this.addNetwork(
-        standConfig.chainName,
-        standConfig.rpcUrl,
-        standConfig.chainId,
-        standConfig.tokenSymbol,
-        standConfig.scan,
-      );
+      await this.header.networkListButton.click();
+      if (
+        await this.networkList.isNetworkExist(
+          standConfig.chainName,
+          standConfig.rpcUrl,
+          standConfig.chainId,
+        )
+      ) {
+        await this.networkList.clickToNetworkItemButton(standConfig.chainName);
+      } else {
+        await this.networkList.networkDisplayCloseBtn.click();
+        await this.addNetwork(
+          standConfig.chainName,
+          standConfig.rpcUrl,
+          standConfig.chainId,
+          standConfig.tokenSymbol,
+          standConfig.scan,
+        );
+      }
     });
   }
 
@@ -123,24 +133,13 @@ export class MetamaskPage implements WalletPage {
     isClosePage = false,
   ) {
     await test.step(`Add new network "${networkName}"`, async () => {
-      await this.navigate();
-      await this.header.networkListButton.click();
-      const networkListText = await this.networkList.getNetworkListText();
-      if (networkListText.includes(networkName)) {
-        await this.networkList.clickToNetworkItemButton(networkName);
-      } else {
-        await this.networkList.networkDisplayCloseBtn.click();
-        await this.settingsPage.openSettings();
-        await this.settingsPage.networksTabButton.click();
-        await this.settingsPage.addNetworkManually(
-          networkName,
-          networkUrl,
-          chainId,
-          tokenSymbol,
-          blockExplorer,
-        );
-        await this.popoverElements.switchToButton.click();
-      }
+      await this.networkList.addNetworkManually(
+        networkName,
+        networkUrl,
+        chainId,
+        tokenSymbol,
+        blockExplorer,
+      );
     });
     if (isClosePage) await this.page.close();
   }
@@ -154,9 +153,7 @@ export class MetamaskPage implements WalletPage {
     } else {
       await test.step(`Add popular network "${networkName}"`, async () => {
         await this.networkList.networkDisplayCloseBtn.click();
-        await this.settingsPage.openSettings();
-        await this.settingsPage.networksTabButton.click();
-        await this.settingsPage.addPopularNetwork(networkName);
+        await this.networkList.addPopularNetwork(networkName);
         await this.popoverElements.switchToButton.click();
       });
     }
@@ -272,13 +269,40 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
-  async changeWalletAddress(addressName: string) {
-    await test.step('Change wallet address', async () => {
+  async changeWalletAccountByAddress(address: string) {
+    await test.step('Change wallet account by address', async () => {
       await this.navigate();
       await this.header.accountMenuButton.click();
-      await this.accountMenu.clickToAddress(addressName);
+      await this.accountMenu.clickToAddress(address);
+    });
+  }
+
+  async isWalletAddressExist(address: string) {
+    return await test.step(`Checking to the wallet address ${address} is exist`, async () => {
+      await this.navigate();
+      await this.header.accountMenuButton.click();
+      const listOfAddress = await this.accountMenu.getListOfAddress();
+
+      const addressStart = address.slice(0, 7).toLowerCase();
+      const addressEnd = address.slice(-5).toLowerCase();
+
+      const isExist = listOfAddress.some(
+        (listAddress) =>
+          listAddress.toLowerCase().startsWith(addressStart) &&
+          listAddress.toLowerCase().endsWith(addressEnd),
+      );
+      await this.page.close();
+      return isExist;
+    });
+  }
+
+  async changeWalletAccountByName(accountName: string) {
+    await test.step('Change wallet account', async () => {
+      await this.navigate();
+      await this.header.accountMenuButton.click();
+      await this.accountMenu.clickToAccount(accountName);
       const accountNumber =
-        this.header.accountMenuButton.getByText(addressName);
+        this.header.accountMenuButton.getByText(accountName);
       await accountNumber.waitFor({ state: 'visible', timeout: 2000 });
       await this.page.waitForTimeout(2000);
       await this.page.close();

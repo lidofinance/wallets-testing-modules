@@ -88,10 +88,9 @@ export class EthereumPage implements WidgetPage {
           .getByTestId('stakeCardSection')
           .getByTestId('ethAvailableToStake'),
       );
-      await this.page.fill(
-        'input[type=text]',
-        String(this.stakeConfig.stakeAmount),
-      );
+      await this.page
+        .getByTestId('stakeInput')
+        .fill(String(this.stakeConfig.stakeAmount));
       await this.page.waitForSelector(
         'button[data-testid="stakeSubmitBtn"]:not([disabled])',
         { timeout: 15000 },
