@@ -42,7 +42,8 @@ test.describe('Polygon', () => {
     await browserService.stake();
   });
 
-  test(`Coin98 connect`, async () => {
+  //skipped since of broken connection to polygon widget
+  test.skip(`Coin98 connect`, async () => {
     await browserService.setup(COIN98_COMMON_CONFIG, POLYGON_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
