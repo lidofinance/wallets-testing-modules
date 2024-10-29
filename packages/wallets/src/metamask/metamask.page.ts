@@ -7,7 +7,6 @@ import {
   OnboardingPage,
   WalletOperationPage,
   Header,
-  NetworkList,
   OptionsMenu,
   PopoverElements,
   AccountMenu,
@@ -21,7 +20,6 @@ export class MetamaskPage implements WalletPage {
   loginPage: LoginPage;
   walletOperation: WalletOperationPage;
   onboardingPage: OnboardingPage;
-  networkList: NetworkList;
   optionsMenu: OptionsMenu;
   popoverElements: PopoverElements;
   accountMenu: AccountMenu;
@@ -44,7 +42,6 @@ export class MetamaskPage implements WalletPage {
     this.loginPage = new LoginPage(this.page, this.config);
     this.walletOperation = new WalletOperationPage(this.page);
     this.onboardingPage = new OnboardingPage(this.page, this.config);
-    this.networkList = new NetworkList(this.page);
     this.optionsMenu = new OptionsMenu(this.page);
     this.popoverElements = new PopoverElements(this.page);
     this.accountMenu = new AccountMenu(this.page);
@@ -80,7 +77,7 @@ export class MetamaskPage implements WalletPage {
     await test.step(`Change Metamask network to ${networkName}`, async () => {
       await this.navigate();
       await this.header.networkListButton.click();
-      await this.networkList.clickToNetwork(networkName);
+      await this.header.networkList.clickToNetwork(networkName);
       if (networkName === 'Linea Mainnet') {
         await this.popoverElements.closePopover(); //Linea network require additional confirmation
       }
@@ -91,24 +88,26 @@ export class MetamaskPage implements WalletPage {
   async switchNetwork(networkName = 'Linea Mainnet') {
     await test.step(`Switch network to "${networkName}"`, async () => {
       await this.navigate();
-      await this.header.networkSetting.switchNetwork(networkName);
+      await this.header.networkList.switchNetwork(networkName);
       await this.page.close();
     });
   }
 
   async setupNetwork(standConfig: Record<string, any>) {
     await test.step(`Setup "${standConfig.chainName}" Network`, async () => {
-      await this.header.networkSetting.networkListButton.click();
+      await this.header.networkListButton.click();
       if (
-        await this.header.networkSetting.isNetworkExist(
+        await this.header.networkList.isNetworkExist(
           standConfig.chainName,
           standConfig.rpcUrl,
           standConfig.chainId,
         )
       ) {
-        await this.networkList.clickToNetworkItemButton(standConfig.chainName);
+        await this.header.networkList.clickToNetworkItemButton(
+          standConfig.chainName,
+        );
       } else {
-        await this.networkList.networkDisplayCloseBtn.click();
+        await this.header.networkList.networkDisplayCloseBtn.click();
         await this.addNetwork(
           standConfig.chainName,
           standConfig.rpcUrl,
@@ -126,16 +125,34 @@ export class MetamaskPage implements WalletPage {
     chainId: number,
     tokenSymbol: string,
     blockExplorer = '',
+    isClosePage = false,
   ) {
     await test.step(`Add new network "${networkName}"`, async () => {
-      await this.header.networkSetting.addNetworkManually(
+      await this.navigate();
+      await this.header.networkList.addNetworkManually(
         networkName,
         networkUrl,
         chainId,
         tokenSymbol,
         blockExplorer,
       );
+      if (isClosePage) await this.page.close();
     });
+  }
+
+  async addPopularNetwork(networkName: string) {
+    await this.navigate();
+    await this.header.networkListButton.click();
+    const networkListText = await this.header.networkList.getNetworkListText();
+    if (networkListText.includes(networkName)) {
+      await this.header.networkList.clickToNetworkItemButton(networkName);
+    } else {
+      await test.step(`Add popular network "${networkName}"`, async () => {
+        await this.header.networkList.networkDisplayCloseBtn.click();
+        await this.header.networkList.addPopularNetwork(networkName);
+      });
+    }
+    await this.page.close();
   }
 
   async importKey(key: string) {
