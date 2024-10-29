@@ -1,5 +1,4 @@
 import { Locator, Page, test } from '@playwright/test';
-import { PopoverElements } from './popover.element';
 import { NetworkSetting } from './networkSetting.element';
 
 export class NetworkList {
@@ -13,6 +12,7 @@ export class NetworkList {
   networkItemBtn: Locator;
   networkItemText: Locator;
   editNetworkButton: Locator;
+  approveAddNetworkButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -30,6 +30,9 @@ export class NetworkList {
     this.networkItemText = this.networkItemBtn.locator('p');
     this.editNetworkButton = this.page.getByTestId(
       'network-list-item-options-edit',
+    );
+    this.approveAddNetworkButton = this.page.getByTestId(
+      'confirmation-submit-button',
     );
   }
 
@@ -82,7 +85,9 @@ export class NetworkList {
       `network-rpc-name-button-0x${chainId.toString(16)}`,
     );
     const rpcUrlsFound = await elements.filter({ hasText: rpcUrl }).count();
-    return rpcUrlsFound != 0;
+
+    if (rpcUrlsFound == 0) return false;
+    return true;
   }
 
   async addNetworkManually(
@@ -125,7 +130,7 @@ export class NetworkList {
         .click();
       // Without awaiting the button is not clickable
       await this.page.waitForTimeout(500);
-      await new PopoverElements(this.page).approveAddNetworkButton.click();
+      await this.approveAddNetworkButton.click();
       await this.dialogSection.waitFor({ state: 'hidden' });
       // Need to wait while the network to be added to the wallet
       try {
