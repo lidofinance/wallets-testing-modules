@@ -1,5 +1,4 @@
 import { Locator, Page, test } from '@playwright/test';
-import { Header } from './header.element';
 import { PopoverElements } from './popover.element';
 import { NetworkSetting } from './networkSetting.element';
 
@@ -7,6 +6,7 @@ export class NetworkList {
   page: Page;
   networkSetting: NetworkSetting;
 
+  networkListButton: Locator;
   dialogSection: Locator;
   addCustomNetworkButton: Locator;
   networkDisplayCloseBtn: Locator;
@@ -18,6 +18,7 @@ export class NetworkList {
     this.page = page;
     this.networkSetting = new NetworkSetting(this.page);
 
+    this.networkListButton = this.page.getByTestId('network-display');
     this.dialogSection = this.page.getByRole('dialog');
     this.addCustomNetworkButton = this.dialogSection
       .getByRole('button')
@@ -39,7 +40,7 @@ export class NetworkList {
   }
 
   async switchNetwork(networkName: string) {
-    await new Header(this.page).networkListButton.click();
+    await this.networkListButton.click();
     await this.dialogSection.getByText(networkName).click();
   }
 
@@ -92,7 +93,7 @@ export class NetworkList {
     blockExplorer = '',
   ) {
     await test.step('Open the form to add network manually', async () => {
-      await new Header(this.page).networkListButton.click();
+      await this.networkListButton.click();
     });
 
     if (await this.dialogSection.getByText(networkName).isVisible()) {
@@ -114,7 +115,7 @@ export class NetworkList {
 
   async addPopularNetwork(networkName: string) {
     await test.step(`Open the form to add the popular network (${networkName})`, async () => {
-      await new Header(this.page).networkListButton.click();
+      await this.networkListButton.click();
     });
     await test.step(`Add the "${networkName}" network`, async () => {
       await this.dialogSection
