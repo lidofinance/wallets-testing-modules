@@ -44,7 +44,7 @@
     "branches": [
       "main",
       {
-        "name": "develop",
+        "name": "update-mm",
         "channel": "alpha",
         "prerelease": "alpha"
       }
