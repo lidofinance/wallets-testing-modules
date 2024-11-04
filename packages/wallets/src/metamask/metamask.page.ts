@@ -156,8 +156,7 @@ export class MetamaskPage implements WalletPage {
   async connectWallet(page: Page) {
     await test.step('Connect Metamask wallet', async () => {
       const operationPage = new WalletOperationPage(page);
-      await operationPage.nextButton.click(); // "Next" button for account select
-      await operationPage.nextButton.click(); // "Confirm" button to give permission
+      await operationPage.connectBtn.click(); // "Confirm" button to give permission
       await operationPage.page.close();
     });
   }

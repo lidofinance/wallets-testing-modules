@@ -3,6 +3,7 @@ import { Locator, Page, test } from '@playwright/test';
 export class WalletOperationPage {
   page: Page;
   nextButton: Locator;
+  connectBtn: Locator;
   confirmButton: Locator;
   approvalCancelButton: Locator;
   cancelButton: Locator;
@@ -21,6 +22,7 @@ export class WalletOperationPage {
   constructor(page: Page) {
     this.page = page;
     this.nextButton = this.page.getByTestId('page-container-footer-next');
+    this.connectBtn = this.page.getByTestId('confirm-btn');
     this.confirmButton = this.page.getByTestId('confirm-footer-button');
     this.approvalCancelButton = this.page.getByTestId(
       'page-container-footer-cancel',
