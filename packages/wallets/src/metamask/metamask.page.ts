@@ -11,6 +11,7 @@ import {
   PopoverElements,
   AccountMenu,
 } from './pages/elements';
+import { getAddress } from 'viem';
 
 export class MetamaskPage implements WalletPage {
   page: Page | undefined;
@@ -173,8 +174,7 @@ export class MetamaskPage implements WalletPage {
   async connectWallet(page: Page) {
     await test.step('Connect Metamask wallet', async () => {
       const operationPage = new WalletOperationPage(page);
-      await operationPage.nextButton.click(); // "Next" button for account select
-      await operationPage.nextButton.click(); // "Confirm" button to give permission
+      await operationPage.connectBtn.click(); // "Confirm" button to give permission
       await operationPage.page.close();
     });
   }
@@ -258,9 +258,9 @@ export class MetamaskPage implements WalletPage {
       await this.header.optionsMenuButton.click();
       await this.optionsMenu.menuAccountDetailsButton.click();
       const address =
-        await this.popoverElements.accountDetailCopyAddressButton.textContent();
+        await this.popoverElements.accountDetailAddressLabel.textContent();
       await this.page.close();
-      return address;
+      return getAddress(address);
     });
   }
 

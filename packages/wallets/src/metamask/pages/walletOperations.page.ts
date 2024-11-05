@@ -2,7 +2,7 @@ import { Locator, Page, test } from '@playwright/test';
 
 export class WalletOperationPage {
   page: Page;
-  nextButton: Locator;
+  connectBtn: Locator;
   confirmButton: Locator;
   approvalCancelButton: Locator;
   cancelButton: Locator;
@@ -20,7 +20,7 @@ export class WalletOperationPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.nextButton = this.page.getByTestId('page-container-footer-next');
+    this.connectBtn = this.page.getByTestId('confirm-btn');
     this.confirmButton = this.page.getByTestId('confirm-footer-button');
     this.approvalCancelButton = this.page.getByTestId(
       'page-container-footer-cancel',
@@ -81,9 +81,7 @@ export class WalletOperationPage {
       if (await this.page.locator('text=Use default').isVisible())
         await this.page.click('text=Use default');
     });
-    await this.nextButton.click(); // click to the Next button
-    await this.page.waitForTimeout(2000);
-    await this.nextButton.click(); // click to the Approve button
+    await this.confirmButton.click();
   }
 
   async confirmTransaction(setAggressiveGas?: boolean) {
