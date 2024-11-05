@@ -8,7 +8,7 @@ export class PopoverElements {
   gotItButton: Locator;
   noThanksButton: Locator;
   switchToButton: Locator;
-  accountDetailCopyAddressButton: Locator;
+  accountDetailAddressLabel: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -20,8 +20,8 @@ export class PopoverElements {
     this.noThanksButton = this.page.getByText('No thanks');
     this.gotItButton = this.page.getByText('Got it');
     this.switchToButton = this.page.getByText('Switch to ');
-    this.accountDetailCopyAddressButton = this.page.getByTestId(
-      'address-copy-button-text',
+    this.accountDetailAddressLabel = this.page.locator(
+      '//div[@data-testid="address-copy-button-text"]/preceding-sibling::p',
     );
   }
 

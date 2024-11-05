@@ -240,11 +240,8 @@ export class MetamaskPage implements WalletPage {
       await this.navigate();
       await this.header.optionsMenuButton.click();
       await this.optionsMenu.menuAccountDetailsButton.click();
-      const address = await this.page
-        .locator(
-          '//div[@data-testid="address-copy-button-text"]/preceding-sibling::p',
-        )
-        .textContent();
+      const address =
+        await this.popoverElements.accountDetailAddressLabel.textContent();
       await this.page.close();
       return getAddress(address);
     });
