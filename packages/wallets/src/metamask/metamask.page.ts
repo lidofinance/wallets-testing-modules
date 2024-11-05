@@ -12,6 +12,7 @@ import {
   PopoverElements,
   AccountMenu,
 } from './pages/elements';
+import { getAddress } from 'viem';
 
 export class MetamaskPage implements WalletPage {
   page: Page | undefined;
@@ -239,10 +240,13 @@ export class MetamaskPage implements WalletPage {
       await this.navigate();
       await this.header.optionsMenuButton.click();
       await this.optionsMenu.menuAccountDetailsButton.click();
-      const address =
-        await this.popoverElements.accountDetailCopyAddressButton.textContent();
+      const address = await this.page
+        .locator(
+          '//div[@data-testid="address-copy-button-text"]/preceding-sibling::p',
+        )
+        .textContent();
       await this.page.close();
-      return address;
+      return getAddress(address);
     });
   }
 
