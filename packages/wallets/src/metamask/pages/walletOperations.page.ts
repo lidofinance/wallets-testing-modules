@@ -81,9 +81,7 @@ export class WalletOperationPage {
       if (await this.page.locator('text=Use default').isVisible())
         await this.page.click('text=Use default');
     });
-    await this.confirmButton.click(); // click to the Next button
-    await this.page.waitForTimeout(2000);
-    await this.confirmButton.click(); // click to the Approve button
+    await this.confirmButton.click();
   }
 
   async confirmTransaction(setAggressiveGas?: boolean) {
