@@ -6,7 +6,7 @@ export class SettingsPage {
   tabBarMenu: Locator;
   experimentalTabButton: Locator;
 
-  inputNetworksForEachSiteToggleInput: Locator;
+  inputNetworksForEachSiteToggle: Locator;
   selectNetworksForEachSiteToggle: Locator;
 
   constructor(
@@ -21,11 +21,11 @@ export class SettingsPage {
       .getByText('Experimental');
 
     // Experimental page locators
-    this.inputNetworksForEachSiteToggleInput = this.page
+    this.inputNetworksForEachSiteToggle = this.page
       .getByTestId('experimental-setting-toggle-request-queue')
       .locator('input');
     this.selectNetworksForEachSiteToggle =
-      this.inputNetworksForEachSiteToggleInput.locator('..');
+      this.inputNetworksForEachSiteToggle.locator('..');
   }
 
   async openSettings() {
@@ -43,7 +43,7 @@ export class SettingsPage {
       await this.openSettings();
       await this.experimentalTabButton.click();
       const toggleState =
-        await this.inputNetworksForEachSiteToggleInput.getAttribute('value');
+        await this.inputNetworksForEachSiteToggle.getAttribute('value');
 
       if (toggleState === 'true') {
         await test.step('Turn off the toggle of the setting network changing', async () => {
