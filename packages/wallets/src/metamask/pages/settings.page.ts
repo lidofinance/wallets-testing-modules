@@ -6,7 +6,7 @@ export class SettingsPage {
   tabBarMenu: Locator;
   experimentalTabButton: Locator;
 
-  selectNetworksForEachSiteToggleState: Locator;
+  inputNetworksForEachSiteToggleInput: Locator;
   selectNetworksForEachSiteToggle: Locator;
 
   constructor(
@@ -21,13 +21,11 @@ export class SettingsPage {
       .getByText('Experimental');
 
     // Experimental page locators
-    this.selectNetworksForEachSiteToggleState = this.page
+    this.inputNetworksForEachSiteToggleInput = this.page
       .getByTestId('experimental-setting-toggle-request-queue')
-      .locator('label');
-    this.selectNetworksForEachSiteToggle = this.page
-      .getByTestId('experimental-setting-toggle-request-queue')
-      .locator('input')
-      .locator('..');
+      .locator('input');
+    this.selectNetworksForEachSiteToggle =
+      this.inputNetworksForEachSiteToggleInput.locator('..');
   }
 
   async openSettings() {
@@ -41,10 +39,17 @@ export class SettingsPage {
   }
 
   async setupNetworkChangingSetting() {
-    await test.step('Turn off the toggle of the setting network changing', async () => {
+    await test.step('Check toggle state', async () => {
       await this.openSettings();
       await this.experimentalTabButton.click();
-      await this.selectNetworksForEachSiteToggle.click();
+      const toggleState =
+        await this.inputNetworksForEachSiteToggleInput.getAttribute('value');
+
+      if (toggleState === 'true') {
+        await test.step('Turn off the toggle of the setting network changing', async () => {
+          await this.selectNetworksForEachSiteToggle.click();
+        });
+      }
     });
   }
 }
