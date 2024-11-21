@@ -69,8 +69,8 @@ export class MetamaskPage implements WalletPage {
         await this.onboardingPage.firstTimeSetup();
         await this.popoverElements.closePopover();
         await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
-        await this.settingsPage.setupNetworkChangingSetting(); // need to make it possible to change the wallet network
       }
+      await this.settingsPage.setupNetworkChangingSetting(); // need to make it possible to change the wallet network
     });
   }
 
