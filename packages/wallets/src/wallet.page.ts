@@ -40,8 +40,6 @@ export interface WalletPage {
     isClosePage?: boolean,
   ): Promise<void>;
 
-  addPopularNetwork?(networkName: string): Promise<void>;
-
   changeNetwork?(networkName: string): Promise<void>;
 
   changeWalletAccountByName?(accountName: string): Promise<void>;

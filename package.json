@@ -44,8 +44,8 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
+        "name": "okx-wallet",
+        "channel": "okx-alpha",
         "prerelease": "alpha"
       }
     ]

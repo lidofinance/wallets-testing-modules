@@ -12,6 +12,7 @@ import {
   AccountMenu,
 } from './pages/elements';
 import { getAddress } from 'viem';
+import { isNetworkPopular } from './services/service';
 
 export class MetamaskPage implements WalletPage {
   page: Page | undefined;
@@ -130,30 +131,19 @@ export class MetamaskPage implements WalletPage {
   ) {
     await test.step(`Add new network "${networkName}"`, async () => {
       await this.navigate();
-      await this.header.networkList.addNetworkManually(
-        networkName,
-        networkUrl,
-        chainId,
-        tokenSymbol,
-        blockExplorer,
-      );
+      if (await isNetworkPopular(networkName)) {
+        await this.header.networkList.addPopularNetwork(networkName);
+      } else {
+        await this.header.networkList.addNetworkManually(
+          networkName,
+          networkUrl,
+          chainId,
+          tokenSymbol,
+          blockExplorer,
+        );
+      }
       if (isClosePage) await this.page.close();
     });
-  }
-
-  async addPopularNetwork(networkName: string) {
-    await this.navigate();
-    await this.header.networkListButton.click();
-    const networkListText = await this.header.networkList.getNetworkListText();
-    if (networkListText.includes(networkName)) {
-      await this.header.networkList.clickToNetworkItemButton(networkName);
-    } else {
-      await test.step(`Add popular network "${networkName}"`, async () => {
-        await this.header.networkList.networkDisplayCloseBtn.click();
-        await this.header.networkList.addPopularNetwork(networkName);
-      });
-    }
-    await this.page.close();
   }
 
   async importKey(key: string) {
@@ -221,6 +211,7 @@ export class MetamaskPage implements WalletPage {
           break;
         }
       }
+      await this.page.close();
       return tokenBalance;
     });
   }
