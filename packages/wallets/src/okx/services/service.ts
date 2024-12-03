@@ -26,12 +26,10 @@ export async function checkNetworkName(networkName: string) {
 }
 
 export async function closeUnnecessaryPages(browserContext: BrowserContext) {
-  await Promise.all(
-    browserContext
-      .pages()
-      .slice(1)
-      .map((page) => page.close()),
-  );
+  const pages = browserContext.pages().slice(1);
+  for (const page of pages) {
+    await page.close();
+  }
 }
 
 /** Before AddNetwork() we check the network is included in wallet or not*/

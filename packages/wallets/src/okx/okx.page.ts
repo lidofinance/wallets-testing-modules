@@ -86,16 +86,13 @@ export class OkxPage implements WalletPage {
     await test.step(`Setup "${standConfig.chainName}" Network`, async () => {
       await this.navigate();
       await this.homePage.networkListButton.click();
-      if (!(await this.networkListPage.isNetworkExist(standConfig.chainName))) {
-        await this.page.close();
-        await this.addNetwork(
-          standConfig.chainName,
-          standConfig.rpcUrl,
-          standConfig.chainId,
-          standConfig.tokenSymbol,
-          standConfig.scan,
-        );
-      }
+      await this.addNetwork(
+        standConfig.chainName,
+        standConfig.rpcUrl,
+        standConfig.chainId,
+        standConfig.tokenSymbol,
+        standConfig.scan,
+      );
     });
   }
 

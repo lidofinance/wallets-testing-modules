@@ -48,7 +48,6 @@ export class NetworkList {
         );
       });
 
-    await this.page.close();
     return isNetworkFoundInPopularList || isNetworkFoundInUserList;
   }
 
