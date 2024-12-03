@@ -255,7 +255,7 @@ export class OkxPage implements WalletPage {
   // todo for mainnet
   async openLastTxInEthplorer(txIndex = 0) {
     console.error(
-      'OKX wallet does not display the transaction history for testnet',
+      `OKX wallet does not display the transaction history for testnet (param ${txIndex})`,
     );
     return null;
   }
