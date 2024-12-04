@@ -85,7 +85,9 @@ export class NetworkList {
           await this.page
             .getByText('Connecting to')
             .waitFor({ state: 'hidden' });
-        } catch {}
+        } catch {
+          console.log('No need to await loading after changing network');
+        }
         return;
       }
     });
