@@ -6,7 +6,7 @@ export async function isNetworkPopular(networkName: string) {
     'Polygon Mainnet',
     'Base Mainnet',
     'Binance Smart Chain',
-    'Linea Mainnet',
+    'Linea',
   ];
 
   return MMPopularNetworks.includes(networkName);

@@ -2,8 +2,6 @@ import { BrowserContext } from '@playwright/test';
 
 export async function checkNetworkName(networkName: string) {
   switch (networkName) {
-    case 'Linea Mainnet':
-      return 'Linea';
     case 'zkSync Era Mainnet':
       return 'zkSync Era';
     case 'OP Mainnet':
