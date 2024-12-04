@@ -186,9 +186,11 @@ export class OkxPage implements WalletPage {
       await test.step('Sync the dApp network with wallet', async () => {
         await this.navigate();
         await this.homePage.networkListButton.click();
-        const currentNetwork = await this.networkListPage.getWalletNetwork();
+        let currentNetwork = await this.networkListPage.getWalletNetwork();
         if (currentNetwork === 'All networks') {
-          await this.switchNetwork('Ethereum');
+          // switch network for wallet
+          await this.networkListPage.selectNetwork('Ethereum');
+          currentNetwork = 'Ethereum';
         }
         await this.goto();
         // switch network for connected dApp
@@ -196,8 +198,8 @@ export class OkxPage implements WalletPage {
           await this.homePage.isWalletConnected(this.browserContext.pages())
         ) {
           await this.homePage.switchNetworkWithConnectedWallet(currentNetwork);
-          await this.page.close();
         }
+        await this.page.close();
       });
     });
   }
