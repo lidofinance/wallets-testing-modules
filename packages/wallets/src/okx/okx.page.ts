@@ -1,7 +1,6 @@
 import { WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
-import expect from 'expect';
-import { test, BrowserContext, Page } from '@playwright/test';
+import { test, BrowserContext, Page, expect } from '@playwright/test';
 import {
   AccountList,
   HomePage,
@@ -162,7 +161,6 @@ export class OkxPage implements WalletPage {
     });
   }
 
-  // todo we have identical functions (switchNetwork() and changeNetwork())
   async changeNetwork(networkName: string) {
     await this.switchNetwork(await checkNetworkName(networkName));
   }
@@ -189,6 +187,9 @@ export class OkxPage implements WalletPage {
         await this.navigate();
         await this.homePage.networkListButton.click();
         const currentNetwork = await this.networkListPage.getWalletNetwork();
+        if (currentNetwork === 'All networks') {
+          await this.switchNetwork('Ethereum');
+        }
         await this.goto();
         // switch network for connected dApp
         if (
@@ -252,7 +253,7 @@ export class OkxPage implements WalletPage {
     });
   }
 
-  // todo for mainnet
+  // need realize for mainnet
   async openLastTxInEthplorer(txIndex = 0) {
     console.error(
       `OKX wallet does not display the transaction history for testnet (param ${txIndex})`,
