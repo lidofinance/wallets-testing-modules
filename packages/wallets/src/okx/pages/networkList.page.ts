@@ -52,7 +52,7 @@ export class NetworkList {
   }
 
   async selectNetwork(networkName: string) {
-    await test.step('Check popular network list', async () => {
+    return await test.step('Check network list', async () => {
       await this.popularNetworkTabButton.click();
       if (
         (await this.popularNetworkList
@@ -62,10 +62,11 @@ export class NetworkList {
         await this.popularNetworkList
           .getByText(networkName, { exact: true })
           .click();
+        // wait some time to network setup
+        await this.page.waitForTimeout(2000);
+        return;
       }
-    });
 
-    await test.step('Check user network list', async () => {
       await this.userNetworkTabButton.click();
       if (
         (await this.userNetworkList
@@ -76,6 +77,16 @@ export class NetworkList {
           .getByText(networkName, { exact: true })
           .first()
           .click();
+        // wait some time to network setup
+        try {
+          await this.page
+            .getByText('Connecting to')
+            .waitFor({ state: 'visible' });
+          await this.page
+            .getByText('Connecting to')
+            .waitFor({ state: 'hidden' });
+        } catch {}
+        return;
       }
     });
   }

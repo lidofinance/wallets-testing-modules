@@ -186,6 +186,8 @@ export class OkxPage implements WalletPage {
       await test.step('Sync the dApp network with wallet', async () => {
         await this.navigate();
         await this.homePage.networkListButton.click();
+
+        // todo if test run from wtm repository, the network is not installed on setup step, and here we have "All networks"
         let currentNetwork = await this.networkListPage.getWalletNetwork();
         if (currentNetwork === 'All networks') {
           // switch network for wallet

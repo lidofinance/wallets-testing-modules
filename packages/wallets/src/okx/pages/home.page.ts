@@ -39,8 +39,14 @@ export class HomePage {
           isButtonDisplayed = true;
         }, 10000);
 
-        // need to open the dApp for display dApp connected network in the wallet
-        if (page.url().includes('stake')) {
+        // need to open the dApp for display the dApp connected network in the wallet
+        // todo: need to refactor to support any stand
+        if (
+          page.url().includes('stake') || // if stand is the widget (develop/staging/prod)
+          page.url().includes('branch-preview') || // if stand is the widget preview stand
+          page.url().includes('reef-knot') || //if stand is the reef-knot stand
+          page.url().includes('localhost') // if stand is the localhost
+        ) {
           // Wait for connected dApp to be displayed
           while (!isButtonDisplayed) {
             try {
