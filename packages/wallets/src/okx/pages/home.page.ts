@@ -3,6 +3,7 @@ import { Locator, Page, test } from '@playwright/test';
 export class HomePage {
   page: Page;
   accountListButton: Locator;
+  copyAddressButton: Locator;
   settingButton: Locator;
   networkListButton: Locator;
   manageCryptoButton: Locator;
@@ -10,6 +11,10 @@ export class HomePage {
   constructor(page: Page) {
     this.page = page;
     this.accountListButton = this.page.locator('image[alt="wallet-avatar"]');
+    this.copyAddressButton = this.page
+      .getByTestId('okd-select-reference-value-box')
+      .locator('../../div')
+      .first();
     this.settingButton = this.page
       .getByTestId('okd-select-reference-value-box')
       .locator('div')
@@ -81,5 +86,14 @@ export class HomePage {
       .click();
     // need wait some time to correct network install
     await this.page.waitForTimeout(2000);
+  }
+
+  async getWalletAddress() {
+    await this.copyAddressButton.click();
+    return await this.page
+      .locator('span:has-text("address copied")')
+      .locator('../span')
+      .nth(1)
+      .textContent();
   }
 }

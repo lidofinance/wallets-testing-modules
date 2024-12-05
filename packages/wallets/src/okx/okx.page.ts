@@ -83,8 +83,6 @@ export class OkxPage implements WalletPage {
   /** Checks the is installed the needed network and add new network to wallet (if needed) */
   async setupNetwork(standConfig: Record<string, any>) {
     await test.step(`Setup "${standConfig.chainName}" Network`, async () => {
-      await this.navigate();
-      await this.homePage.networkListButton.click();
       await this.addNetwork(
         standConfig.chainName,
         standConfig.rpcUrl,
@@ -182,6 +180,12 @@ export class OkxPage implements WalletPage {
         timeout: 10000,
       });
       await operationPage.connectButton.click();
+      // need wait the page to be closed after the extension is connected
+      await new Promise<void>((resolve) => {
+        operationPage.page.on('close', () => {
+          resolve();
+        });
+      });
 
       await test.step('Sync the dApp network with wallet', async () => {
         await this.navigate();
@@ -254,6 +258,16 @@ export class OkxPage implements WalletPage {
   async confirmAddTokenToWallet(confirmPage: Page) {
     await test.step('Confirm add token to wallet', async () => {
       await new WalletOperations(confirmPage).confirmTxButton.click();
+    });
+  }
+
+  /** Get wallet address from wallet extension*/
+  async getWalletAddress() {
+    return await test.step('Get current wallet address', async () => {
+      await this.navigate();
+      const address = await this.homePage.getWalletAddress();
+      await this.page.close();
+      return address;
     });
   }
 

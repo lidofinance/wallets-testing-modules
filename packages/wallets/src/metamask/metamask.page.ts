@@ -207,7 +207,10 @@ export class MetamaskPage implements WalletPage {
           .toString()
           .trim();
         if (tokenNameFromValue === tokenName) {
-          tokenBalance = parseFloat(await value.textContent());
+          await value.click();
+          tokenBalance = parseFloat(
+            await this.homePage.tokensListItemValues.textContent(),
+          );
           break;
         }
       }
