@@ -18,7 +18,6 @@ export class MetamaskPage implements WalletPage {
   page: Page | undefined;
   header: Header;
   homePage: HomePage;
-  settingsPage: SettingsPage;
   loginPage: LoginPage;
   walletOperation: WalletOperationPage;
   onboardingPage: OnboardingPage;
@@ -36,11 +35,6 @@ export class MetamaskPage implements WalletPage {
     this.page = await this.browserContext.newPage();
     this.header = new Header(this.page);
     this.homePage = new HomePage(this.page, this.extensionUrl, this.config);
-    this.settingsPage = new SettingsPage(
-      this.page,
-      this.extensionUrl,
-      this.config,
-    );
     this.loginPage = new LoginPage(this.page, this.config);
     this.walletOperation = new WalletOperationPage(this.page);
     this.onboardingPage = new OnboardingPage(this.page, this.config);
@@ -71,7 +65,11 @@ export class MetamaskPage implements WalletPage {
         await this.popoverElements.closePopover();
         await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
       }
-      await this.settingsPage.setupNetworkChangingSetting(); // need to make it possible to change the wallet network
+      await new SettingsPage(
+        await this.browserContext.newPage(),
+        this.extensionUrl,
+        this.config,
+      ).setupNetworkChangingSetting(); // need to make it possible to change the wallet network
     });
   }
 
