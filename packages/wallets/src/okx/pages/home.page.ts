@@ -10,7 +10,7 @@ export class HomePage {
 
   constructor(page: Page) {
     this.page = page;
-    this.accountListButton = this.page.locator('image[alt="wallet-avatar"]');
+    this.accountListButton = this.page.locator('img[alt="wallet-avatar"]');
     this.copyAddressButton = this.page
       .getByTestId('okd-select-reference-value-box')
       .locator('../../div')
