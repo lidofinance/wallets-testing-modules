@@ -152,9 +152,7 @@ export class OkxPage implements WalletPage {
       await this.networkListPage.selectNetwork(networkName);
 
       // switch network for connected dApp
-      if (await this.homePage.isWalletConnected(this.browserContext.pages())) {
-        await this.homePage.switchNetworkWithConnectedWallet(networkName);
-      }
+      await this.homePage.switchNetworkForDApp(networkName);
       await this.page.close();
     });
   }
@@ -185,27 +183,6 @@ export class OkxPage implements WalletPage {
         operationPage.page.on('close', () => {
           resolve();
         });
-      });
-
-      await test.step('Sync the dApp network with wallet', async () => {
-        await this.navigate();
-        await this.homePage.networkListButton.click();
-
-        // todo if test run from wtm repository, the network is not installed on setup step, and here we have "All networks"
-        let currentNetwork = await this.networkListPage.getWalletNetwork();
-        if (currentNetwork === 'All networks') {
-          // switch network for wallet
-          await this.networkListPage.selectNetwork('Ethereum');
-          currentNetwork = 'Ethereum';
-        }
-        await this.goto();
-        // switch network for connected dApp
-        if (
-          await this.homePage.isWalletConnected(this.browserContext.pages())
-        ) {
-          await this.homePage.switchNetworkWithConnectedWallet(currentNetwork);
-        }
-        await this.page.close();
       });
     });
   }
