@@ -1,26 +1,36 @@
 import { BrowserContext } from '@playwright/test';
 
-export async function checkNetworkName(networkName: string) {
-  switch (networkName) {
-    case 'zkSync Era Mainnet':
-      return 'zkSync Era';
-    case 'OP Mainnet':
-      return 'Optimism';
-    case 'Polygon Mainnet':
-      return 'Polygon';
-    case 'Base Mainnet':
-      return 'Base';
-    case 'Binance Smart Chain':
-      return 'BNB Chain';
-    case 'Mantle Mainnet':
-      return 'Mantle';
-    case 'Scroll Mainnet':
-      return 'Scroll';
-    case 'Mode':
-      return 'Mode Network';
-    default:
-      return networkName;
+const incorrectNetworkNames = new Map<string, string>([
+  ['zkSync Era Mainnet', 'zkSync Era'],
+  ['OP Mainnet', 'Optimism'],
+  ['Polygon Mainnet', 'Polygon'],
+  ['Base Mainnet', 'Base'],
+  ['Binance Smart Chain', 'BNB Chain'],
+  ['Mantle Mainnet', 'Mantle'],
+  ['Scroll Mainnet', 'Scroll'],
+  ['Mode', 'Mode Network'],
+]);
+
+const OkxIncludedNetwork = [
+  'Linea',
+  'zkSync Era',
+  'Polygon',
+  'Base',
+  'BNB Chain',
+  'Mantle',
+  'Scroll',
+  'Mode Network',
+  'Zircuit',
+];
+
+/** Check network name and return correct name suited for OKX Wallet*/
+export function checkNetworkName(networkName: string) {
+  for (const [incorrectName, correctName] of incorrectNetworkNames.entries()) {
+    if (networkName === incorrectName) {
+      return correctName;
+    }
   }
+  return networkName;
 }
 
 export async function closeUnnecessaryPages(browserContext: BrowserContext) {
@@ -33,16 +43,5 @@ export async function closeUnnecessaryPages(browserContext: BrowserContext) {
 /** Before AddNetwork() we check the network is included in wallet or not*/
 export async function isNeedAddNetwork(network: string) {
   const networkName = await checkNetworkName(network);
-  const OkxIncludedNetwork = [
-    'Linea',
-    'zkSync Era',
-    'Polygon',
-    'Base',
-    'BNB Chain',
-    'Mantle',
-    'Scroll',
-    'Mode Network',
-    'Zircuit',
-  ];
   return !OkxIncludedNetwork.includes(networkName);
 }
