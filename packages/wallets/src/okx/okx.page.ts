@@ -143,8 +143,9 @@ export class OkxPage implements WalletPage {
    * - switch in wallet extension
    * - switch in the connected dApp (switch in the extension doesn't switch the dApp network, but we do it to sync states)
    * */
-  async switchNetwork(networkName: string) {
+  async changeNetwork(networkName: string) {
     await test.step(`Switch network to "${networkName}"`, async () => {
+      networkName = await checkNetworkName(networkName);
       await this.navigate();
 
       // switch network for wallet
@@ -155,10 +156,6 @@ export class OkxPage implements WalletPage {
       await this.homePage.switchNetworkForDApp(networkName);
       await this.page.close();
     });
-  }
-
-  async changeNetwork(networkName: string) {
-    await this.switchNetwork(await checkNetworkName(networkName));
   }
 
   /** To add new wallet address using wallet `privateKey` */
