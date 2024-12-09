@@ -119,28 +119,40 @@ export class NetworkList {
   }
 
   async addPopularNetwork(networkName: string) {
-    await test.step(`Open the form to add the popular network (${networkName})`, async () => {
-      await this.networkListButton.click();
-    });
-    await test.step(`Add the "${networkName}" network`, async () => {
-      await this.dialogSection
-        .getByText(networkName)
-        .locator('../../..')
-        .locator('button:has-text("Add")')
-        .click();
-      // Without awaiting the button is not clickable
-      await this.page.waitForTimeout(500);
-      await this.approveAddNetworkButton.click();
-      await this.dialogSection.waitFor({ state: 'hidden' });
-      // Need to wait while the network to be added to the wallet
-      try {
-        await this.page
-          .getByText('Connecting to')
-          .waitFor({ state: 'visible', timeout: 5000 });
-        await this.page.getByText('Connecting to').waitFor({ state: 'hidden' });
-      } catch {
-        console.error('Connecting network was without loader');
-      }
-    });
+    await this.networkListButton.click();
+    const networkListText = await this.getNetworkListText();
+    if (networkListText.includes(networkName)) {
+      await this.clickToNetworkItemButton(networkName);
+    } else {
+      await test.step(`Add popular network "${networkName}"`, async () => {
+        await this.networkDisplayCloseBtn.click();
+        await test.step(`Open the form to add the popular network (${networkName})`, async () => {
+          await this.networkListButton.click();
+        });
+        await test.step(`Add the "${networkName}" network`, async () => {
+          await this.dialogSection
+            .getByText(networkName)
+            .locator('../../..')
+            .locator('button:has-text("Add")')
+            .click();
+          // Without awaiting the button is not clickable
+          await this.page.waitForTimeout(500);
+          await this.approveAddNetworkButton.click();
+          await this.dialogSection.waitFor({ state: 'hidden' });
+          // Need to wait while the network to be added to the wallet
+          try {
+            await this.page
+              .getByText('Connecting to')
+              .waitFor({ state: 'visible', timeout: 5000 });
+            await this.page
+              .getByText('Connecting to')
+              .waitFor({ state: 'hidden' });
+          } catch {
+            console.error('Connecting network was without loader');
+          }
+        });
+      });
+    }
+    await this.page.close();
   }
 }
