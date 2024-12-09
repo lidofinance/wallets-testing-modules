@@ -45,8 +45,8 @@
       "main",
       {
         "name": "okx-wallet",
-        "channel": "okx-alpha",
-        "prerelease": "alpha"
+        "channel": "alpha",
+        "prerelease": "alpha-okx"
       }
     ]
   }
