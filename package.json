@@ -44,7 +44,7 @@
     "branches": [
       "main",
       {
-        "name": "develop",
+        "name": "feat/add_cancel_tx",
         "channel": "alpha",
         "prerelease": "alpha"
       }

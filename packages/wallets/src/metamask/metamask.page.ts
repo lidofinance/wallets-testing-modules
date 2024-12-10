@@ -61,6 +61,23 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
+  async cancelAllTxInQueue() {
+    await test.step('Force close all transactions', async () => {
+      await test.step('Close all extension pages', async () => {
+        const pages = await this.browserContext.pages();
+        await Promise.all([
+          pages.map((page) => {
+            if (page.url().startsWith('chrome-extension://')) page.close();
+          }),
+        ]);
+      });
+      await this.homePage.openWidgetPage();
+      await this.header.appHeaderLogo.waitFor({ state: 'visible' });
+      await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
+      await this.page.close();
+    });
+  }
+
   async setup() {
     await test.step('Setup', async () => {
       // added explicit route to #onboarding due to unexpected first time route from /home.html to /onboarding ---> page is close
