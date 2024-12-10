@@ -45,8 +45,8 @@
       "main",
       {
         "name": "feat/add_cancel_tx",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "channel": "alpha-mock",
+        "prerelease": "alpha-mock"
       }
     ]
   }
