@@ -53,7 +53,7 @@ export class OnboardingPage {
       });
 
       // Dive into wallet main page after installation
-      await this.startJourneyButton.click();
+      await this.startJourneyButton.click({ timeout: 90000 });
       // Wait until extension to be loaded after installation with ETH value display.
       // ETH value displayed with ETH symbol
       await this.page.waitForSelector('text=ETH', { state: 'visible' });
