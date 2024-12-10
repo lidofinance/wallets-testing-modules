@@ -71,6 +71,7 @@ export class MetamaskPage implements WalletPage {
           }),
         ]);
       });
+      await this.initLocators();
       await this.homePage.openWidgetPage();
       await this.header.appHeaderLogo.waitFor({ state: 'visible' });
       await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
