@@ -44,7 +44,7 @@ export class HomePage {
     this.importTokenButton = this.page.getByText('import tokens');
   }
 
-  async openWidgetPage() {
+  async openExtensionPage() {
     await this.page.goto(
       this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
     );

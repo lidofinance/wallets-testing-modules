@@ -17,6 +17,8 @@ export interface WalletPage {
 
   cancelTx?(page: Page): Promise<void>;
 
+  cancelAllTxInQueue?(): Promise<void>;
+
   approveTokenTx?(page: Page): Promise<void>;
 
   openLastTxInEthplorer?(txIndex?: number): Promise<Page>;
