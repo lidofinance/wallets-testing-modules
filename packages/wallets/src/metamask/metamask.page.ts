@@ -51,7 +51,7 @@ export class MetamaskPage implements WalletPage {
   async navigate() {
     await test.step('Navigate to metamask Home page', async () => {
       await this.initLocators();
-      await this.homePage.openWidgetPage();
+      await this.homePage.openExtensionPage();
       await this.header.appHeaderLogo.waitFor({ state: 'visible' });
       await this.loginPage.unlock();
       if (await this.header.networkListButton.isVisible()) {
@@ -64,15 +64,16 @@ export class MetamaskPage implements WalletPage {
   async cancelAllTxInQueue() {
     await test.step('Force close all transactions', async () => {
       await test.step('Close all extension pages', async () => {
-        const pages = await this.browserContext.pages();
+        const pages = this.browserContext.pages();
         await Promise.all([
           pages.map((page) => {
-            if (page.url().startsWith('chrome-extension://')) page.close();
+            if (page.url().includes(this.config.COMMON.STORE_EXTENSION_ID))
+              page.close();
           }),
         ]);
       });
       await this.initLocators();
-      await this.homePage.openWidgetPage();
+      await this.homePage.openExtensionPage();
       await this.header.appHeaderLogo.waitFor({ state: 'visible' });
       await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
       await this.page.close();
