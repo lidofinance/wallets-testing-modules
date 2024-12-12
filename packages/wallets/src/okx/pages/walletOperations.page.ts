@@ -56,7 +56,13 @@ export class WalletOperations {
         } else {
           break;
         }
-        await cancelButton.click();
+        try {
+          await cancelButton.click();
+          // need wait for the extension is close the transaction
+          await this.page.waitForTimeout(2000);
+        } catch {
+          console.log('cancel button is disappeared');
+        }
       }
     });
   }
