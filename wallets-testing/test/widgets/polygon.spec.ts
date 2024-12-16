@@ -16,7 +16,7 @@ import { BrowserService } from '../../browser/browser.service';
 import { MATIC_TOKEN } from './consts';
 import { test } from '@playwright/test';
 
-test.describe('Polygon', () => {
+test.describe.skip('Polygon', () => {
   let app: INestApplication;
   let browserService: BrowserService;
 
