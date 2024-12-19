@@ -45,6 +45,7 @@ export class WalletOperations {
   async cancelAllTxInQueue() {
     await test.step('Cancel all tx in queue', async () => {
       try {
+        // Try to wait for the extension opens the transaction page with these urls (/evm-dapp, /dapp-entry)
         await this.page.waitForURL(/.*((\/evm-dapp)|(\/dapp-entry))+/, {
           timeout: 5000,
         });
