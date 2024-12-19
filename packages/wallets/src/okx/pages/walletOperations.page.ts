@@ -44,25 +44,36 @@ export class WalletOperations {
 
   async cancelAllTxInQueue() {
     await test.step('Cancel all tx in queue', async () => {
-      const needToCancelTx =
-        (await this.cancelTxButton.isVisible()) ||
-        (await this.rejectTxButton.isVisible());
-      while (needToCancelTx) {
-        let cancelButton: Locator;
-        if (await this.cancelTxButton.isVisible()) {
-          cancelButton = this.cancelTxButton;
-        } else if (await this.rejectTxButton.isVisible()) {
-          cancelButton = this.rejectTxButton;
-        } else {
-          break;
+      try {
+        await this.page.waitForURL(/.*((\/evm-dapp)|(\/dapp-entry))+/, {
+          timeout: 5000,
+        });
+        const needToCancelTx = true;
+
+        while (needToCancelTx) {
+          await this.page
+            .locator('button :text-matches("Cancel|Reject")')
+            .waitFor({ state: 'visible', timeout: 3000 });
+
+          let cancelButton: Locator;
+          if (await this.cancelTxButton.isVisible()) {
+            cancelButton = this.cancelTxButton;
+          } else if (await this.rejectTxButton.isVisible()) {
+            cancelButton = this.rejectTxButton;
+          } else {
+            break;
+          }
+
+          try {
+            await cancelButton.click();
+            // need wait for the extension is close the transaction
+            await this.page.waitForTimeout(2000);
+          } catch {
+            console.log('Сancel button is disappeared');
+          }
         }
-        try {
-          await cancelButton.click();
-          // need wait for the extension is close the transaction
-          await this.page.waitForTimeout(2000);
-        } catch {
-          console.log('cancel button is disappeared');
-        }
+      } catch {
+        console.log('No operations to reject');
       }
     });
   }

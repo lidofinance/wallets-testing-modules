@@ -22,6 +22,7 @@ export class LoginPage {
         await this.passwordInput.waitFor({ state: 'visible', timeout: 2000 });
         await this.passwordInput.fill(this.config.PASSWORD);
         await this.submitButton.click();
+        await this.submitButton.waitFor({ state: 'hidden' });
       } catch {
         console.log('The Wallet unlocking is not needed');
       }
