@@ -49,7 +49,6 @@ export class WalletOperations {
           timeout: 5000,
         });
         const needToCancelTx = true;
-
         while (needToCancelTx) {
           await this.page
             .locator('button :text-matches("Cancel|Reject")')
