@@ -12,7 +12,7 @@ import {
   AccountMenu,
 } from './pages/elements';
 import { getAddress } from 'viem';
-import { isNetworkPopular } from './services/service';
+import { isPopularNetwork } from './helper';
 
 export class MetamaskPage implements WalletPage {
   page: Page | undefined;
@@ -121,7 +121,7 @@ export class MetamaskPage implements WalletPage {
   ) {
     await test.step(`Add new network "${networkName}"`, async () => {
       await this.navigate();
-      if (await isNetworkPopular(networkName)) {
+      if (await isPopularNetwork(networkName)) {
         await this.header.networkList.addPopularNetwork(networkName);
       } else {
         await this.header.networkList.addNetworkManually(

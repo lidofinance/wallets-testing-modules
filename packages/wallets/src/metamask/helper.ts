@@ -8,6 +8,6 @@ const MMPopularNetworks = [
   'Linea',
 ];
 
-export async function isNetworkPopular(networkName: string) {
+export async function isPopularNetwork(networkName: string) {
   return MMPopularNetworks.includes(networkName);
 }

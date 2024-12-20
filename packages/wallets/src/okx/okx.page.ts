@@ -11,10 +11,10 @@ import {
   WalletOperations,
 } from './pages';
 import {
-  checkNetworkName,
+  getCorrectNetworkName,
   closeUnnecessaryPages,
   isNeedAddNetwork,
-} from './services/service';
+} from './helper';
 
 export class OkxPage implements WalletPage {
   page: Page | undefined;
@@ -95,10 +95,12 @@ export class OkxPage implements WalletPage {
   }
 
   async importTokens(token: string) {
-    await this.navigate();
-    await this.homePage.manageCryptoButton.click();
-    await this.manageCryptoPage.importToken(token);
-    await this.page.close();
+    await test.step('Import token', async () => {
+      await this.navigate();
+      await this.homePage.manageCryptoButton.click();
+      await this.manageCryptoPage.importToken(token);
+      await this.page.close();
+    });
   }
 
   /** Get token balance from wallet extension using `tokenName` */
@@ -126,7 +128,7 @@ export class OkxPage implements WalletPage {
     await this.homePage.networkListButton.click();
     if (
       !(await this.networkListPage.isNetworkExist(
-        await checkNetworkName(networkName),
+        getCorrectNetworkName(networkName),
       ))
     ) {
       await this.networkListPage.addCustomNetwork(
@@ -146,7 +148,7 @@ export class OkxPage implements WalletPage {
    * */
   async changeNetwork(networkName: string) {
     await test.step(`Switch network to "${networkName}"`, async () => {
-      networkName = await checkNetworkName(networkName);
+      networkName = await getCorrectNetworkName(networkName);
       await this.navigate();
 
       // switch network for wallet

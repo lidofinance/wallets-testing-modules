@@ -24,7 +24,7 @@ const OkxIncludedNetwork = [
 ];
 
 /** Check network name and return correct name suited for OKX Wallet*/
-export function checkNetworkName(networkName: string) {
+export function getCorrectNetworkName(networkName: string) {
   for (const [incorrectName, correctName] of incorrectNetworkNames.entries()) {
     if (networkName === incorrectName) {
       return correctName;
@@ -42,6 +42,6 @@ export async function closeUnnecessaryPages(browserContext: BrowserContext) {
 
 /** Before AddNetwork() we check the network is included in wallet or not*/
 export async function isNeedAddNetwork(network: string) {
-  const networkName = await checkNetworkName(network);
+  const networkName = await getCorrectNetworkName(network);
   return !OkxIncludedNetwork.includes(networkName);
 }
