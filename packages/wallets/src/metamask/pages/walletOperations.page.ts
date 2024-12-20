@@ -90,6 +90,7 @@ export class WalletOperationPage {
       await this.page.mouse.move(1, 1);
       await this.setHighGasFeeButton.click();
     }
+    await this.confirmButton.waitFor({ state: 'visible', timeout: 30000 });
     await this.confirmButton.click();
   }
 

@@ -12,12 +12,12 @@ import {
   AccountMenu,
 } from './pages/elements';
 import { getAddress } from 'viem';
+import { isPopularNetwork } from './helper';
 
 export class MetamaskPage implements WalletPage {
   page: Page | undefined;
   header: Header;
   homePage: HomePage;
-  settingsPage: SettingsPage;
   loginPage: LoginPage;
   walletOperation: WalletOperationPage;
   onboardingPage: OnboardingPage;
@@ -35,11 +35,6 @@ export class MetamaskPage implements WalletPage {
     this.page = await this.browserContext.newPage();
     this.header = new Header(this.page);
     this.homePage = new HomePage(this.page, this.extensionUrl, this.config);
-    this.settingsPage = new SettingsPage(
-      this.page,
-      this.extensionUrl,
-      this.config,
-    );
     this.loginPage = new LoginPage(this.page, this.config);
     this.walletOperation = new WalletOperationPage(this.page);
     this.onboardingPage = new OnboardingPage(this.page, this.config);
@@ -70,7 +65,11 @@ export class MetamaskPage implements WalletPage {
         await this.popoverElements.closePopover();
         await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
       }
-      await this.settingsPage.setupNetworkChangingSetting(); // need to make it possible to change the wallet network
+      await new SettingsPage(
+        await this.browserContext.newPage(),
+        this.extensionUrl,
+        this.config,
+      ).setupNetworkChangingSetting(); // need to make it possible to change the wallet network
     });
   }
 
@@ -79,17 +78,9 @@ export class MetamaskPage implements WalletPage {
       await this.navigate();
       await this.header.networkListButton.click();
       await this.header.networkList.clickToNetwork(networkName);
-      if (networkName === 'Linea Mainnet') {
+      if (networkName === 'Linea') {
         await this.popoverElements.closePopover(); //Linea network require additional confirmation
       }
-      await this.page.close();
-    });
-  }
-
-  async switchNetwork(networkName = 'Linea Mainnet') {
-    await test.step(`Switch network to "${networkName}"`, async () => {
-      await this.navigate();
-      await this.header.networkList.switchNetwork(networkName);
       await this.page.close();
     });
   }
@@ -130,30 +121,19 @@ export class MetamaskPage implements WalletPage {
   ) {
     await test.step(`Add new network "${networkName}"`, async () => {
       await this.navigate();
-      await this.header.networkList.addNetworkManually(
-        networkName,
-        networkUrl,
-        chainId,
-        tokenSymbol,
-        blockExplorer,
-      );
+      if (await isPopularNetwork(networkName)) {
+        await this.header.networkList.addPopularNetwork(networkName);
+      } else {
+        await this.header.networkList.addNetworkManually(
+          networkName,
+          networkUrl,
+          chainId,
+          tokenSymbol,
+          blockExplorer,
+        );
+      }
       if (isClosePage) await this.page.close();
     });
-  }
-
-  async addPopularNetwork(networkName: string) {
-    await this.navigate();
-    await this.header.networkListButton.click();
-    const networkListText = await this.header.networkList.getNetworkListText();
-    if (networkListText.includes(networkName)) {
-      await this.header.networkList.clickToNetworkItemButton(networkName);
-    } else {
-      await test.step(`Add popular network "${networkName}"`, async () => {
-        await this.header.networkList.networkDisplayCloseBtn.click();
-        await this.header.networkList.addPopularNetwork(networkName);
-      });
-    }
-    await this.page.close();
   }
 
   async importKey(key: string) {
@@ -217,10 +197,14 @@ export class MetamaskPage implements WalletPage {
           .toString()
           .trim();
         if (tokenNameFromValue === tokenName) {
-          tokenBalance = parseFloat(await value.textContent());
+          await value.click();
+          tokenBalance = parseFloat(
+            await this.homePage.tokensListItemValues.textContent(),
+          );
           break;
         }
       }
+      await this.page.close();
       return tokenBalance;
     });
   }
