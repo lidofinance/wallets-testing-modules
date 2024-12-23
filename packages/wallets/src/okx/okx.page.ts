@@ -238,7 +238,7 @@ export class OkxPage implements WalletPage {
     });
   }
 
-  /** Get wallet address from wallet extension*/
+  /** The `getWalletAddress()` function returns **the lower case** address */
   async getWalletAddress() {
     return await test.step('Get current wallet address', async () => {
       await this.navigate();

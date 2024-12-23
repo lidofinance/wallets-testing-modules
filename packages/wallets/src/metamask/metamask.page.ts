@@ -236,6 +236,7 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
+  /** The `getWalletAddress()` function returns **the lower case** address */
   async getWalletAddress() {
     return await test.step('Get current wallet address', async () => {
       await this.navigate();
