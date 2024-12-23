@@ -244,7 +244,7 @@ export class OkxPage implements WalletPage {
       await this.navigate();
       const address = await this.homePage.getWalletAddress();
       await this.page.close();
-      return address;
+      return address.toLowerCase();
     });
   }
 

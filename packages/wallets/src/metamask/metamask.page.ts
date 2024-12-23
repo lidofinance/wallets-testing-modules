@@ -244,7 +244,7 @@ export class MetamaskPage implements WalletPage {
       const address =
         await this.popoverElements.accountDetailAddressLabel.textContent();
       await this.page.close();
-      return getAddress(address);
+      return getAddress(address).toLowerCase();
     });
   }
 
