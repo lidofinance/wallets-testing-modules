@@ -31,7 +31,7 @@ jobs:
         run: yarn build
 
       - name: Install Playwright Browsers
-        run: yarn playwright install chromium --with-deps
+        run: npx playwright install chromium --with-deps
 
       - name: Run wallets tests
         run: xvfb-run --auto-servernum -- yarn test:widgets
