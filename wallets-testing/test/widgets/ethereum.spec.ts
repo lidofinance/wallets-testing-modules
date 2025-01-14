@@ -63,8 +63,7 @@ test.describe('Ethereum', () => {
     await browserService.connectWallet();
   });
 
-  // todo remove .only
-  test.only(`Ctrl connect`, async () => {
+  test(`Ctrl connect`, async () => {
     await browserService.setup(CTRL_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });

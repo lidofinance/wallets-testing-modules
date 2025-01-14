@@ -37,14 +37,12 @@ export class CtrlPage implements WalletPage {
   /** Navigate to home page of OXK Wallet extension:
    *  - open the wallet extension
    *  - unlock extension (if needed)
-   *  - cancel awaited transactions (if needed)
    */
   async navigate() {
     await test.step('Navigate to Ctrl', async () => {
       await this.initLocators();
       await this.goto();
       await this.loginPage.unlock();
-      // await this.walletOperations.cancelAllTxInQueue();
     });
   }
 
