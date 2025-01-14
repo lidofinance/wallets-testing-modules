@@ -59,8 +59,7 @@ export class OnboardingPage {
 
   async firstTimeSetup() {
     await test.step('First time set up', async () => {
-      // Need to wait some time for button enabling
-      await this.page.waitForTimeout(1000);
+      await this.page.waitForTimeout(1000); // Need to wait some time for button enabling
       await this.alreadyHaveWalletBtn.click({ force: true });
 
       await test.step('Import wallet with recovery phrase', async () => {
@@ -71,6 +70,7 @@ export class OnboardingPage {
         }
         await this.nextBtn.click();
         await this.importBtn.waitFor({ state: 'visible', timeout: 60000 });
+        await this.page.waitForTimeout(1000); // Need to wait some time for button enabling
         await this.importBtn.click();
         await this.nextBtn.click();
       });
@@ -82,6 +82,7 @@ export class OnboardingPage {
       await this.closeTourBtn.waitFor({ state: 'visible', timeout: 2000 });
       await this.closeTourBtn.click();
       await this.notNowBtn.waitFor({ state: 'visible', timeout: 2000 });
+      await this.page.waitForTimeout(1000); // Need to wait some time for button enabling
       await this.notNowBtn.click({ force: true });
     });
   }
