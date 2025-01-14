@@ -1,11 +1,11 @@
 import { CommonWalletConfig } from '../wallets.constants';
 
-export const XDEFI_COMMON_CONFIG: CommonWalletConfig = {
-  WALLET_NAME: 'xdefi',
-  CONNECTED_WALLET_NAME: 'XDEFI',
+export const CTRL_COMMON_CONFIG: CommonWalletConfig = {
+  WALLET_NAME: 'ctrl',
+  CONNECTED_WALLET_NAME: 'Ctrl',
   RPC_URL_PATTERN: 'https://mainnet.infura.io/v3/**',
   STORE_EXTENSION_ID: 'hmeobnfnfcmdkdcmlblgagmfpfboieaf',
-  CONNECT_BUTTON_NAME: 'XDEFI',
+  CONNECT_BUTTON_NAME: 'Ctrl',
   SIMPLE_CONNECT: false,
-  EXTENSION_START_PATH: '/app.html',
+  EXTENSION_START_PATH: '/popup.html',
 };

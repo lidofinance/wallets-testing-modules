@@ -5,6 +5,6 @@ export * from './metamask';
 export * from './trustwallet';
 export * from './coinbase';
 export * from './exodus';
-export * from './xdefi';
 export * from './okx';
 export * from './bitget';
+export * from './ctrl';
