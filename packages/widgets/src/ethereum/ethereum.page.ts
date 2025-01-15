@@ -54,6 +54,7 @@ export class EthereumPage implements WidgetPage {
 
       if (!(await this.termsCheckbox.isChecked()))
         await this.termsCheckbox.click({ force: true });
+      await this.page.waitForTimeout(1000);
 
       const walletButton = this.page
         .getByRole('button')
@@ -61,15 +62,12 @@ export class EthereumPage implements WidgetPage {
           exact: true,
         });
 
-      if (
-        (await walletButton.isEnabled({ timeout: 1000 })) &&
-        walletPage.config.COMMON.SIMPLE_CONNECT
-      ) {
+      if (walletPage.config.COMMON.SIMPLE_CONNECT) {
         await walletButton.click();
       } else {
         const [connectWalletPage] = await Promise.all([
           this.page.context().waitForEvent('page', { timeout: 5000 }),
-          walletButton.dblclick(),
+          walletButton.click(),
         ]);
         await walletPage.connectWallet(connectWalletPage);
       }
