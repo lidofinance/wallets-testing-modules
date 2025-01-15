@@ -50,7 +50,7 @@ export class EthereumPage implements WidgetPage {
             if (!(await this.page.isChecked('input[type=checkbox]')))
               await this.page.click('input[type=checkbox]', { force: true });
             if (walletPage.config.COMMON.SIMPLE_CONNECT) {
-              await this.page.click(
+              await this.page.dblclick(
                 `button[type=button] :text('${walletPage.config.COMMON.CONNECT_BUTTON_NAME}')`,
               );
             } else {
