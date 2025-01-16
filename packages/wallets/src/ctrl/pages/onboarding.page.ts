@@ -1,4 +1,4 @@
-import { BrowserContext, Locator, Page, test } from '@playwright/test';
+import { Locator, Page, test, expect } from '@playwright/test';
 import { WalletConfig } from '../../wallets.constants';
 
 export class OnboardingPage {
@@ -15,7 +15,6 @@ export class OnboardingPage {
 
   constructor(
     page: Page,
-    private browserContext: BrowserContext,
     private extensionUrl: string,
     public config: WalletConfig,
   ) {
@@ -37,29 +36,12 @@ export class OnboardingPage {
     this.confirmPasswordBtn = this.page.getByTestId('button');
   }
 
-  async isNeedToGoThroughOnboarding() {
-    return await test.step('Open the onboarding page', async () => {
-      // Need to open onboarding page cause the extension does not redirect from home url automatically
-      await this.page.goto(
-        this.extensionUrl + '/tabs/onboarding.html#onboarding',
-      );
-
-      const btn = this.page.getByTestId('i-already-have-a-wallet-btn');
-      try {
-        await btn.waitFor({
-          state: 'visible',
-          timeout: 5000,
-        });
-      } catch {
-        console.log('Onboarding process is not needed');
-      }
-      return btn.isVisible();
-    });
-  }
-
   async firstTimeSetup() {
+    if (await this.isWalletSetup()) return;
+
     await test.step('First time set up', async () => {
-      await this.page.waitForTimeout(1000); // Need to wait some time for button enabling
+      // Without additional awaiting the extension breaks the next step and redirects a user back
+      await this.page.waitForTimeout(2000);
       await this.alreadyHaveWalletBtn.click({ force: true });
 
       await test.step('Import wallet with recovery phrase', async () => {
@@ -70,29 +52,49 @@ export class OnboardingPage {
         }
         await this.nextBtn.click();
         await this.importBtn.waitFor({ state: 'visible', timeout: 60000 });
-        await this.page.waitForTimeout(1000); // Need to wait some time for button enabling
+        await expect(this.importBtn).toBeEnabled({ timeout: 2000 });
         await this.importBtn.click();
         await this.nextBtn.click();
+      });
+
+      await this.page.goto(
+        this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+      );
+
+      await test.step('Close wallet tour', async () => {
+        await this.closeTourBtn.waitFor({ state: 'visible', timeout: 2000 });
+        await this.closeTourBtn.click();
+        await this.notNowBtn.waitFor({ state: 'visible', timeout: 2000 });
+        await this.page.waitForTimeout(1000); // Need to wait some time for button enabling
+        await this.notNowBtn.click({ force: true });
+      });
+
+      await test.step('Create wallet password', async () => {
+        await this.createPasswordBtn.click();
+        await this.passwordInput.nth(0).fill(this.config.PASSWORD);
+        await this.passwordInput.nth(1).fill(this.config.PASSWORD);
+        await this.confirmPasswordBtn.click();
       });
     });
   }
 
-  async closeWalletTour() {
-    await test.step('Close wallet tour', async () => {
-      await this.closeTourBtn.waitFor({ state: 'visible', timeout: 2000 });
-      await this.closeTourBtn.click();
-      await this.notNowBtn.waitFor({ state: 'visible', timeout: 2000 });
-      await this.page.waitForTimeout(1000); // Need to wait some time for button enabling
-      await this.notNowBtn.click({ force: true });
+  async isWalletSetup() {
+    await test.step('Open the onboarding page', async () => {
+      // Need to open onboarding page cause the extension does not redirect from home url automatically
+      await this.page.goto(
+        this.extensionUrl + '/tabs/onboarding.html#onboarding',
+      );
     });
-  }
-
-  async createWalletPassword() {
-    await test.step('Create wallet password', async () => {
-      await this.createPasswordBtn.click();
-      await this.passwordInput.nth(0).fill(this.config.PASSWORD);
-      await this.passwordInput.nth(1).fill(this.config.PASSWORD);
-      await this.confirmPasswordBtn.click();
+    return await test.step('Check the wallet is set up', async () => {
+      try {
+        await this.alreadyHaveWalletBtn.waitFor({
+          state: 'visible',
+          timeout: 5000,
+        });
+      } catch {
+        console.log('Ctrl wallet: Onboarding process is not needed');
+      }
+      return !(await this.alreadyHaveWalletBtn.isVisible());
     });
   }
 }

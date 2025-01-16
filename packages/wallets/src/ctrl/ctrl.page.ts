@@ -2,7 +2,6 @@ import { WalletPage } from '../wallet.page';
 import { test, BrowserContext, Page } from '@playwright/test';
 import { WalletConfig } from '../wallets.constants';
 import { LoginPage, OnboardingPage, WalletOperations } from './pages';
-import { closeUnnecessaryPages } from './helper';
 
 export class CtrlPage implements WalletPage {
   page: Page | undefined;
@@ -20,7 +19,6 @@ export class CtrlPage implements WalletPage {
     this.page = await this.browserContext.newPage();
     this.onboardingPage = new OnboardingPage(
       this.page,
-      this.browserContext,
       this.extensionUrl,
       this.config,
     );
@@ -49,19 +47,13 @@ export class CtrlPage implements WalletPage {
   async setup() {
     await test.step('Setup', async () => {
       await this.initLocators();
-      if (await this.onboardingPage.isNeedToGoThroughOnboarding()) {
-        await this.onboardingPage.firstTimeSetup();
-        await this.goto();
-        await this.onboardingPage.closeWalletTour();
-        await this.onboardingPage.createWalletPassword();
-      }
-      await closeUnnecessaryPages(this.browserContext);
+      await this.onboardingPage.firstTimeSetup();
     });
   }
 
   /** Click `Connect` button */
   async connectWallet(page: Page) {
-    await test.step('Connect OKX wallet', async () => {
+    await test.step('Connect Ctrl wallet', async () => {
       const operationPage = new WalletOperations(page);
       await operationPage.connectBtn.waitFor({
         state: 'visible',

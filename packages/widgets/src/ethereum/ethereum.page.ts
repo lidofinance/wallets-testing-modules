@@ -54,7 +54,6 @@ export class EthereumPage implements WidgetPage {
 
       if (!(await this.termsCheckbox.isChecked()))
         await this.termsCheckbox.click({ force: true });
-      await this.page.waitForTimeout(1000);
 
       const walletButton = this.page
         .getByRole('button')
