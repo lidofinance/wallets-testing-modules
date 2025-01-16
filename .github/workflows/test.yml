@@ -31,7 +31,7 @@ jobs:
         run: yarn build
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: yarn playwright install chromium --with-deps
 
       - name: Run wallets tests
         run: xvfb-run --auto-servernum -- yarn test:widgets
@@ -42,12 +42,12 @@ jobs:
           WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
           NODE_OPTIONS: --max-old-space-size=4096
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: playwright-report
           path: wallets-testing/playwright-report/
-          retention-days: 30
+          retention-days: 7
 
       - name: Set embeds
         if: ${{ always() }}

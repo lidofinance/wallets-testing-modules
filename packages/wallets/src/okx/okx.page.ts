@@ -65,7 +65,7 @@ export class OkxPage implements WalletPage {
     });
   }
 
-  /** Checks the wallet is set correctly and starts ot wallet setup as the first time (if needed) */
+  /** Checks the wallet is set correctly and starts the wallet setup as the first time (if needed) */
   async setup() {
     await test.step('Setup', async () => {
       await this.navigate();

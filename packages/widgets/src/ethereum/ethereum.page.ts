@@ -9,9 +9,15 @@ import { test, Page, Locator } from '@playwright/test';
 export class EthereumPage implements WidgetPage {
   private readonly logger = new Logger(EthereumPage.name);
   page: Page;
+  connectBtn: Locator;
+  stakeSubmitBtn: Locator;
+  termsCheckbox: Locator;
 
   constructor(page: Page, private stakeConfig: StakeConfig) {
     this.page = page;
+    this.connectBtn = this.page.getByTestId('connectBtn');
+    this.stakeSubmitBtn = this.page.getByTestId('stakeSubmitBtn');
+    this.termsCheckbox = this.page.locator('input[type=checkbox]');
   }
 
   async navigate() {
@@ -37,43 +43,43 @@ export class EthereumPage implements WidgetPage {
   }
 
   async connectWallet(walletPage: WalletPage) {
-    await test.step(
-      'Connect wallet ' + walletPage.config.COMMON.WALLET_NAME,
-      async () => {
-        await this.page.waitForTimeout(2000);
-        const isConnected =
-          (await this.page.getByTestId('connectBtn').count()) === 0;
-        if (!isConnected) {
-          await this.page.getByTestId('connectBtn').first().click();
-          await this.page.waitForTimeout(2000);
-          if ((await this.page.getByTestId('stakeSubmitBtn').count()) === 0) {
-            if (!(await this.page.isChecked('input[type=checkbox]')))
-              await this.page.click('input[type=checkbox]', { force: true });
-            if (walletPage.config.COMMON.SIMPLE_CONNECT) {
-              await this.page.click(
-                `button[type=button] :text('${walletPage.config.COMMON.CONNECT_BUTTON_NAME}')`,
-              );
-            } else {
-              const [connectWalletPage] = await Promise.all([
-                this.page.context().waitForEvent('page', { timeout: 5000 }),
-                this.page.click(
-                  `button[type=button] :text('${walletPage.config.COMMON.CONNECT_BUTTON_NAME}')`,
-                ),
-              ]);
-              await walletPage.connectWallet(connectWalletPage);
-            }
-            expect(
-              await this.page.waitForSelector('data-testid=stakeSubmitBtn'),
-            ).not.toBeNaN();
-            await this.page.locator('data-testid=accountSectionHeader').click();
-            expect(
-              await this.page.textContent('div[data-testid="providerName"]'),
-            ).toContain(walletPage.config.COMMON.CONNECTED_WALLET_NAME);
-            await this.page.locator('div[role="dialog"] button').nth(0).click();
-          }
-        }
-      },
-    );
+    await test.step(`Connect wallet ${walletPage.config.COMMON.WALLET_NAME}`, async () => {
+      await this.page.waitForTimeout(2000);
+      // If wallet connected -> return
+      if ((await this.connectBtn.count()) === 0) return;
+      await this.connectBtn.first().click();
+      await this.page.waitForTimeout(2000);
+      // If Stake submit button is displayed -> return
+      if ((await this.stakeSubmitBtn.count()) > 0) return;
+
+      if (!(await this.termsCheckbox.isChecked()))
+        await this.termsCheckbox.click({ force: true });
+
+      const walletButton = this.page
+        .getByRole('button')
+        .getByText(walletPage.config.COMMON.CONNECT_BUTTON_NAME, {
+          exact: true,
+        });
+
+      if (walletPage.config.COMMON.SIMPLE_CONNECT) {
+        await walletButton.click();
+      } else {
+        const [connectWalletPage] = await Promise.all([
+          this.page.context().waitForEvent('page', { timeout: 5000 }),
+          walletButton.click(),
+        ]);
+        await walletPage.connectWallet(connectWalletPage);
+      }
+
+      expect(
+        await this.page.waitForSelector('data-testid=stakeSubmitBtn'),
+      ).not.toBeNaN();
+      await this.page.locator('data-testid=accountSectionHeader').click();
+      expect(
+        await this.page.textContent('div[data-testid="providerName"]'),
+      ).toContain(walletPage.config.COMMON.CONNECTED_WALLET_NAME);
+      await this.page.locator('div[role="dialog"] button').nth(0).click();
+    });
   }
 
   async doStaking(walletPage: WalletPage) {

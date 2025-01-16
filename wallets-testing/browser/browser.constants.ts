@@ -4,9 +4,9 @@ import {
   TrustWalletPage,
   ExodusPage,
   CoinbasePage,
-  XdefiPage,
   OkxPage,
   BitgetPage,
+  CtrlPage,
 } from '@lidofinance/wallets-testing-wallets';
 import { EthereumPage } from '@lidofinance/wallets-testing-widgets';
 
@@ -16,9 +16,9 @@ export const WALLET_PAGES = {
   trust: TrustWalletPage,
   exodus: ExodusPage,
   coinbase: CoinbasePage,
-  xdefi: XdefiPage,
   okx: OkxPage,
   bitget: BitgetPage,
+  ctrl: CtrlPage,
 };
 
 export const WIDGET_PAGES = {
