@@ -4,10 +4,7 @@
   "description": "Common modules for testing wallets",
   "private": true,
   "workspaces": [
-    "packages/wallets",
-    "packages/extensions",
-    "packages/widgets",
-    "packages/nodes",
+    "packages/**",
     "wallets-testing"
   ],
   "sideEffects": false,
