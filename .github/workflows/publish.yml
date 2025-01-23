@@ -3,7 +3,7 @@ name: publish
 on:
   push:
     branches:
-      - feat/add-discord-report
+      - main
 
 permissions:
   contents: write
