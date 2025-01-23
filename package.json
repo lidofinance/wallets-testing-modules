@@ -44,7 +44,7 @@
     "branches": [
       "main",
       {
-        "name": "develop",
+        "name": "feat/add-discord-report",
         "channel": "alpha",
         "prerelease": "alpha"
       }
