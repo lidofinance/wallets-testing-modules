@@ -42,8 +42,8 @@
       "main",
       {
         "name": "feat/add-discord-report",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "channel": "alpha-ver",
+        "prerelease": "alpha-ver"
       }
     ]
   }
