@@ -64,9 +64,6 @@ export class OnboardingPage {
       await test.step('Close wallet tour', async () => {
         await this.closeTourBtn.waitFor({ state: 'visible', timeout: 2000 });
         await this.closeTourBtn.click();
-        await this.notNowBtn.waitFor({ state: 'visible', timeout: 2000 });
-        await this.page.waitForTimeout(1000); // Need to wait some time for button enabling
-        await this.notNowBtn.click({ force: true });
       });
 
       await test.step('Create wallet password', async () => {
