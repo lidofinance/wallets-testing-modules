@@ -14,3 +14,11 @@ export interface WalletConfig {
   COMMON: CommonWalletConfig;
   EXTENSION_PATH?: string;
 }
+
+export interface NetworkConfig {
+  chainName: string;
+  rpcUrl: string;
+  chainId: number;
+  tokenSymbol: string;
+  scan?: string;
+}

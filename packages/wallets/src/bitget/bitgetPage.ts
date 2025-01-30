@@ -78,27 +78,31 @@ export class BitgetPage implements WalletPage {
     });
   }
 
-  // eslint-disable-next-line
-    async addNetwork(networkName: string, networkUrl: string, chainId: number, tokenSymbol: string) {}
+  async addNetwork() {
+    throw new Error('Method not implemented.');
+  }
 
-  // eslint-disable-next-line
-  async importKey(key: string) {}
+  async importKey() {
+    throw new Error('Method not implemented.');
+  }
 
-  // eslint-disable-next-line
-  async assertTxAmount(page: Page, expectedAmount: string) {}
+  async assertTxAmount() {
+    throw new Error('Method not implemented.');
+  }
 
-  // eslint-disable-next-line
-  async confirmTx(page: Page) {}
+  async confirmTx() {
+    throw new Error('Method not implemented.');
+  }
 
-  // eslint-disable-next-line
-  async signTx(page: Page) {}
+  async signTx() {
+    throw new Error('Method not implemented.');
+  }
 
-  // eslint-disable-next-line
-  async approveTokenTx(page: Page) {}
+  async approveTokenTx() {
+    throw new Error('Method not implemented.');
+  }
 
-  // eslint-disable-next-line
-  async useDefaultToApprove(page: Page) {}
-
-  // eslint-disable-next-line
-  async assertReceiptAddress(page: Page, expectedAddress: string) {}
+  async assertReceiptAddress() {
+    throw new Error('Method not implemented.');
+  }
 }

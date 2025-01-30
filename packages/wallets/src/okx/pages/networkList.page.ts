@@ -1,4 +1,5 @@
 import { Locator, Page, test } from '@playwright/test';
+import { NetworkConfig } from '../../wallets.constants';
 
 export class NetworkList {
   page: Page;
@@ -93,34 +94,30 @@ export class NetworkList {
     });
   }
 
-  async addCustomNetwork(
-    networkName: string,
-    networkUrl: string,
-    chainId: number,
-    tokenSymbol: string,
-    scan: string,
-  ) {
+  async addCustomNetwork(networkConfig: NetworkConfig) {
     await test.step('Add network', async () => {
       await this.userNetworkTabButton.click();
       await this.addCustomNetworkButton.click();
-      await this.createNetworkInputs.nth(0).fill(networkName);
-      await this.createNetworkInputs.nth(1).fill(networkUrl);
+      await this.createNetworkInputs.nth(0).fill(networkConfig.chainName);
+      await this.createNetworkInputs.nth(1).fill(networkConfig.rpcUrl);
       await this.createNetworkInputs.nth(1).blur();
       // wait for autofill by wallet
       const chainIdInputValue = await this.createNetworkInputs
         .nth(2)
         .getAttribute('value', { timeout: 2000 });
-      if (chainIdInputValue !== String(chainId)) {
-        await this.createNetworkInputs.nth(2).fill(String(chainId));
+      if (chainIdInputValue !== String(networkConfig.chainId)) {
+        await this.createNetworkInputs
+          .nth(2)
+          .fill(String(networkConfig.chainId));
       }
       // wait for autofill by wallet
       const tokenSymbolInputValue = await this.createNetworkInputs
         .nth(3)
         .getAttribute('value', { timeout: 2000 });
-      if (tokenSymbolInputValue !== tokenSymbol) {
-        await this.createNetworkInputs.nth(3).fill(tokenSymbol);
+      if (tokenSymbolInputValue !== networkConfig.tokenSymbol) {
+        await this.createNetworkInputs.nth(3).fill(networkConfig.tokenSymbol);
       }
-      await this.createNetworkInputs.nth(4).fill(scan);
+      await this.createNetworkInputs.nth(4).fill(networkConfig.scan);
       while (!(await this.saveNetworkButton.isEnabled())) {
         // wait for Save button to be enabled
         await this.page.waitForTimeout(1000);
@@ -129,14 +126,5 @@ export class NetworkList {
       // need to wait some time to correct install the network
       await this.page.waitForTimeout(2000);
     });
-  }
-
-  async getWalletNetwork() {
-    return await this.page
-      .locator('.okds-success-circle-fill')
-      .locator('../..')
-      .locator('div')
-      .nth(2)
-      .textContent();
   }
 }

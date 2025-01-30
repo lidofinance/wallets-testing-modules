@@ -1,4 +1,4 @@
-import { WalletConfig } from '../wallets.constants';
+import { NetworkConfig, WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import expect from 'expect';
 import { test, BrowserContext, Page } from '@playwright/test';
@@ -78,12 +78,7 @@ export class TrustWalletPage implements WalletPage {
     });
   }
 
-  async addNetwork(
-    networkName: string,
-    networkUrl: string,
-    chainId: number,
-    tokenSymbol: string,
-  ) {
+  async addNetwork(networkConfig: NetworkConfig) {
     await test.step('Add network', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.navigate();
@@ -91,10 +86,22 @@ export class TrustWalletPage implements WalletPage {
       await this.page.click('text=Network');
       await this.page.click('text=Add a network');
       await this.page.click('button:has-text("Add custom network")');
-      await this.page.fill('input[placeholder="Network name"]', networkName);
-      await this.page.fill('input[placeholder="RPC URL"]', networkUrl);
-      await this.page.fill('input[placeholder="Chain ID"]', String(chainId));
-      await this.page.fill('input[placeholder="Token symbol"]', tokenSymbol);
+      await this.page.fill(
+        'input[placeholder="Network name"]',
+        networkConfig.chainName,
+      );
+      await this.page.fill(
+        'input[placeholder="RPC URL"]',
+        networkConfig.rpcUrl,
+      );
+      await this.page.fill(
+        'input[placeholder="Chain ID"]',
+        String(networkConfig.chainId),
+      );
+      await this.page.fill(
+        'input[placeholder="Token symbol"]',
+        networkConfig.tokenSymbol,
+      );
       await this.page.click('button:has-text("Add custom network")');
       await this.navigate();
     });
@@ -105,10 +112,9 @@ export class TrustWalletPage implements WalletPage {
       await this.navigate();
       if (!this.page) throw "Page isn't ready";
       await this.page.click('id="manage-tokens-button"');
-      await this.page.type(
-        'input[placeholder="Token name or contract address"]',
-        token,
-      );
+      await this.page
+        .locator('input[placeholder="Token name or contract address"]')
+        .fill(token);
     });
   }
 
@@ -133,12 +139,15 @@ export class TrustWalletPage implements WalletPage {
     });
   }
 
-  // eslint-disable-next-line
-  async signTx(page: Page) {}
+  async signTx() {
+    throw new Error('Method not implemented.');
+  }
 
-  // eslint-disable-next-line
-  async assertReceiptAddress(page: Page, expectedAddress: string) {}
+  async assertReceiptAddress() {
+    throw new Error('Method not implemented.');
+  }
 
-  // eslint-disable-next-line
-  async importKey(key: string) {}
+  async importKey() {
+    throw new Error('Method not implemented.');
+  }
 }

@@ -84,22 +84,23 @@ export class ExodusPage implements WalletPage {
     });
   }
 
-  // eslint-disable-next-line
-  async signTx(page: Page) {}
+  async signTx() {
+    throw new Error('Method not implemented.');
+  }
 
-  // eslint-disable-next-line
-  async importKey(key: string) {}
+  async importKey() {
+    throw new Error('Method not implemented.');
+  }
 
-  async addNetwork(
-    networkName: string, // eslint-disable-line
-    networkUrl: string, // eslint-disable-line
-    chainId: number, // eslint-disable-line
-    tokenSymbol: string, // eslint-disable-line
-  ) {} // eslint-disable-line
+  async addNetwork() {
+    throw new Error('Method not implemented.');
+  }
 
-  // eslint-disable-next-line
-  async assertTxAmount(page: Page, expectedAmount: string) {}
+  async assertTxAmount() {
+    throw new Error('Method not implemented.');
+  }
 
-  // eslint-disable-next-line
-  async assertReceiptAddress(page: Page, expectedAddress: string) {}
+  async assertReceiptAddress() {
+    throw new Error('Method not implemented.');
+  }
 }

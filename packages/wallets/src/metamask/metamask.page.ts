@@ -1,4 +1,4 @@
-import { WalletConfig } from '../wallets.constants';
+import { NetworkConfig, WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import { expect } from '@playwright/test';
 import { test, BrowserContext, Page } from '@playwright/test';
@@ -100,37 +100,27 @@ export class MetamaskPage implements WalletPage {
         );
       } else {
         await this.header.networkList.networkDisplayCloseBtn.click();
-        await this.addNetwork(
-          standConfig.chainName,
-          standConfig.rpcUrl,
-          standConfig.chainId,
-          standConfig.tokenSymbol,
-          standConfig.scan,
-        );
+        await this.addNetwork({
+          chainName: standConfig.chainName,
+          rpcUrl: standConfig.rpcUrl,
+          chainId: standConfig.chainId,
+          tokenSymbol: standConfig.tokenSymbol,
+          scan: standConfig.scan,
+        });
       }
     });
   }
 
-  async addNetwork(
-    networkName: string,
-    networkUrl: string,
-    chainId: number,
-    tokenSymbol: string,
-    blockExplorer = '',
-    isClosePage = false,
-  ) {
-    await test.step(`Add new network "${networkName}"`, async () => {
+  async addNetwork(networkConfig: NetworkConfig, isClosePage = false) {
+    networkConfig.scan = !networkConfig.scan ? '' : networkConfig.scan;
+    await test.step(`Add new network "${networkConfig.chainName}"`, async () => {
       await this.navigate();
-      if (await isPopularNetwork(networkName)) {
-        await this.header.networkList.addPopularNetwork(networkName);
-      } else {
-        await this.header.networkList.addNetworkManually(
-          networkName,
-          networkUrl,
-          chainId,
-          tokenSymbol,
-          blockExplorer,
+      if (await isPopularNetwork(networkConfig.chainName)) {
+        await this.header.networkList.addPopularNetwork(
+          networkConfig.chainName,
         );
+      } else {
+        await this.header.networkList.addNetworkManually(networkConfig);
       }
       if (isClosePage) await this.page.close();
     });
