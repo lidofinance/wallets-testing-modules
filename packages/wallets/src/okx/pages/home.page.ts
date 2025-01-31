@@ -38,9 +38,7 @@ export class HomePage {
 
   async switchNetworkForDApp(networkName: string) {
     await test.step('Open "DApps connection" page', async () => {
-      while (await this.page.getByText('DApps connection').isVisible()) {
-        await this.settingButton.hover();
-      }
+      await this.settingButton.hover();
       await this.page.getByText('DApps connection').click();
     });
 
