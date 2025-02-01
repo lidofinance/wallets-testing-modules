@@ -81,9 +81,9 @@ class DiscordReporter implements Reporter {
           'Content-Type': 'application/json',
         },
       });
-      console.log('Webhook успешно отправлен:', response.status);
+      console.log('Discord message successfully sended:', response.status);
     } catch (error: any) {
-      console.error('Ошибка при отправке вебхука:', error?.message);
+      console.error('Error while discord message sended:', error?.message);
     }
   }
 
