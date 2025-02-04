@@ -44,9 +44,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "improve-network-config",
+        "channel": "alpha-netconf",
+        "prerelease": "alpha-netconf"
       }
     ]
   }
