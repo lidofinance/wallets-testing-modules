@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "fix/report-init",
-        "channel": "alpha-report-init",
-        "prerelease": "alpha-report-init"
+        "name": "develop",
+        "channel": "alpha",
+        "prerelease": "alpha"
       }
     ]
   }
