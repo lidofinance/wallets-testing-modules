@@ -2,7 +2,7 @@
 
 `@lidofinance/discord-reporter` is a custom Playwright reporter that sends test run results directly to a Discord channel via a webhook. It collects statistics on passed, failed, and skipped tests, formats the results in a Discord embed message, and sends it when the test suite has finished executing.
 
-# Features
+## Features
 - **Test Result Statistics**: Automatically counts passed, failed, and skipped tests.
 - **Custom Discord Embed**: Formats test results (including run duration and a link to the GitHub run if available) as a Discord embed.
 - **Self reporting for scripts**: Easy to using as a report function for simple script.
