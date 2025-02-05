@@ -9,7 +9,6 @@
 - **Easy Integration**: Simply add the reporter to your Playwright configuration to enable notifications in your Discord channel.
 - **CI Integration**: Supports linking to GitHub Actions runs when executed in a CI environment.
 
-
 ## Install
 
 ```bash
