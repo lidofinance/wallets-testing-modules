@@ -100,13 +100,7 @@ export class MetamaskPage implements WalletPage {
         );
       } else {
         await this.header.networkList.networkDisplayCloseBtn.click();
-        await this.addNetwork({
-          chainName: networkConfig.chainName,
-          rpcUrl: networkConfig.rpcUrl,
-          chainId: networkConfig.chainId,
-          tokenSymbol: networkConfig.tokenSymbol,
-          scan: networkConfig.scan,
-        });
+        await this.addNetwork(networkConfig);
       }
     });
   }
