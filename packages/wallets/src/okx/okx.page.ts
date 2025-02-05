@@ -169,7 +169,7 @@ export class OkxPage implements WalletPage {
     await this.page.close();
   }
 
-  /** Click `Confirm` button on the transaction `page` */
+  /** Click `Connect` button on the transaction `page` */
   async connectWallet(page: Page) {
     await test.step('Connect OKX wallet', async () => {
       const operationPage = new WalletOperations(page);
