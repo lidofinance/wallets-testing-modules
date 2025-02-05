@@ -69,9 +69,11 @@ class DiscordReporter implements Reporter {
 
     const webhook = process.env.DISCORD_WEBHOOK_URL;
     if (!webhook) {
-      throw new Error(
+      console.error(
         'DISCORD_WEBHOOK_URL is not defined in environment variables',
       );
+      this.enabled = false;
+      return;
     }
     this.webhookUrl = webhook;
   }
