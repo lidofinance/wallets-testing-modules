@@ -16,9 +16,148 @@ export interface WalletConfig {
 }
 
 export interface NetworkConfig {
-  chainName: string;
-  rpcUrl: string;
   chainId: number;
+  chainName: string;
   tokenSymbol: string;
+  rpcUrl: string;
   scan?: string;
 }
+
+type MainnetNetworks =
+  | 'ETHEREUM'
+  | 'OPTIMISM'
+  | 'SONEIUM'
+  | 'ZKSYNC'
+  | 'ARBITRUM'
+  | 'POLYGON'
+  | 'BASE'
+  | 'BNB'
+  | 'LINEA'
+  | 'MANTLE'
+  | 'SCROLL'
+  | 'MODE'
+  | 'ZIRCUIT';
+
+export type TestnetNetworks =
+  | 'ETHEREUM_HOLESKY'
+  | 'ETHEREUM_SEPOLIA'
+  | 'OP_SEPOLIA'
+  | 'SONEIUM_MINATO';
+
+export const NETWORKS_CONFIG: {
+  Mainnet: Record<MainnetNetworks, NetworkConfig>;
+  Testnet: Record<TestnetNetworks, NetworkConfig>;
+} = {
+  Mainnet: {
+    ETHEREUM: {
+      chainId: 1,
+      chainName: 'Ethereum Mainnet',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://rpc.ankr.com/eth',
+      scan: 'https://etherscan.io/',
+    },
+    OPTIMISM: {
+      chainId: 10,
+      chainName: 'OP Mainnet',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://rpc.ankr.com/optimism',
+    },
+    SONEIUM: {
+      chainId: 1868,
+      chainName: 'Soneium',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://rpc.soneium.org/',
+      scan: 'https://soneium-minato.blockscout.com/',
+    },
+    ZKSYNC: {
+      chainId: 324,
+      chainName: 'zkSync Era Mainnet',
+      tokenSymbol: 'ETH',
+      rpcUrl: null,
+    },
+    ARBITRUM: {
+      chainId: 42161,
+      chainName: 'Arbitrum One',
+      tokenSymbol: 'ETH',
+      rpcUrl: null,
+    },
+    POLYGON: {
+      chainId: 137,
+      chainName: 'Polygon Mainnet',
+      tokenSymbol: 'ETH',
+      rpcUrl: null,
+    },
+    BASE: {
+      chainId: 8453,
+      chainName: 'Base Mainnet',
+      tokenSymbol: 'ETH',
+      rpcUrl: null,
+    },
+    BNB: {
+      chainId: 56,
+      chainName: 'Binance Smart Chain',
+      tokenSymbol: 'ETH',
+      rpcUrl: null,
+    },
+    LINEA: {
+      chainId: 59144,
+      chainName: 'Linea',
+      tokenSymbol: 'ETH',
+      rpcUrl: null,
+    },
+    MANTLE: {
+      chainId: 5000,
+      chainName: 'Mantle Mainnet',
+      tokenSymbol: 'MNT',
+      rpcUrl: 'https://rpc-moon.mantle.xyz/v1/NTQ3ODk1ZDdiOWRmODIyM2FiM2Y5YTVh',
+    },
+    SCROLL: {
+      chainId: 534352,
+      chainName: 'Scroll Mainnet',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://rpc.scroll.io',
+    },
+    MODE: {
+      chainId: 34443,
+      chainName: 'Mode',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://mainnet.mode.network',
+    },
+    ZIRCUIT: {
+      chainId: 48900,
+      chainName: 'Zircuit',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://zircuit1-mainnet.p2pify.com',
+    },
+  },
+  Testnet: {
+    ETHEREUM_HOLESKY: {
+      chainId: 17000,
+      chainName: 'Ethereum Holesky',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://holesky.drpc.org',
+      scan: 'https://holesky.etherscan.io/',
+    },
+    ETHEREUM_SEPOLIA: {
+      chainId: 11155111,
+      chainName: 'Ethereum Sepolia',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://sepolia.drpc.org',
+      scan: 'https://sepolia.etherscan.io/',
+    },
+    OP_SEPOLIA: {
+      chainId: 11155420,
+      chainName: 'OP Sepolia',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://sepolia.optimism.io',
+      scan: 'https://sepolia-optimism.etherscan.io/',
+    },
+    SONEIUM_MINATO: {
+      chainId: 1946,
+      chainName: 'Soneium Testnet Minato',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://rpc.minato.soneium.org/',
+      scan: 'https://soneium-minato.blockscout.com/',
+    },
+  },
+};
