@@ -61,7 +61,10 @@ class DiscordReporter implements Reporter {
   private skippedTestCount = 0;
 
   constructor(options: ReporterOptions) {
-    this.enabled = options.enabled?.toLowerCase() === 'true';
+    this.enabled = options.enabled
+      ? options.enabled.toLowerCase() === 'true'
+      : true;
+
     if (!this.enabled) return;
 
     const webhook = process.env.DISCORD_WEBHOOK_URL;
