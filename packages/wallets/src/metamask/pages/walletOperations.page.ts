@@ -14,6 +14,7 @@ export class WalletOperationPage {
   confirmRejectAllTxsButton: Locator;
   recipientButton: Locator;
   recipientAddress: Locator;
+  popover: Locator;
   popoverCloseButton: Locator;
   txDetailBlock: Locator;
   txDetailAmount: Locator;
@@ -40,7 +41,10 @@ export class WalletOperationPage {
       .getByTestId('transaction-details-recipient-row')
       .locator('.name');
     this.recipientAddress = this.page.locator('input[id="address"]');
-    this.popoverCloseButton = this.page.locator('button[aria-label="Close"]');
+    this.popover = this.page.locator('section[role="dialog"]');
+    this.popoverCloseButton = this.popover.locator(
+      'button[aria-label="Close"]',
+    );
     this.txDetailBlock = this.page.getByTestId('simulation-details-layout');
     this.txDetailAmount = this.txDetailBlock.getByTestId(
       'simulation-details-amount-pill',
