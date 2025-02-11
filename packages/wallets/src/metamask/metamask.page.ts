@@ -2,7 +2,7 @@ import { NetworkConfig, WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import { expect } from '@playwright/test';
 import { test, BrowserContext, Page } from '@playwright/test';
-import { HomePage, LoginPage, SettingsPage } from './pages';
+import { HomePage, LoginPage } from './pages';
 import {
   OnboardingPage,
   WalletOperationPage,
@@ -101,7 +101,6 @@ export class MetamaskPage implements WalletPage {
   }
 
   async addNetwork(networkConfig: NetworkConfig, isClosePage = false) {
-    networkConfig.scan = !networkConfig.scan ? '' : networkConfig.scan;
     await test.step(`Add new network "${networkConfig.chainName}"`, async () => {
       await this.navigate();
       if (await isPopularNetwork(networkConfig.chainName)) {

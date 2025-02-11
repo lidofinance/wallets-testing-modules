@@ -61,6 +61,7 @@ export class BrowserService {
       rpcUrl: this.ethereumNodeService.state.nodeUrl,
       chainId: this.widgetConfig.chainId,
       tokenSymbol: this.widgetConfig.tokenSymbol,
+      scan: '',
     });
     await this.browserContextService.closePages();
   }
@@ -100,6 +101,7 @@ export class BrowserService {
         rpcUrl: this.widgetConfig.nodeUrl,
         chainId: this.widgetConfig.chainId,
         tokenSymbol: this.widgetConfig.tokenSymbol,
+        scan: '',
       });
     await this.browserContextService.closePages();
   }
