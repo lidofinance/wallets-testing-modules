@@ -1,4 +1,5 @@
 import { Locator, Page, test } from '@playwright/test';
+import { NetworkConfig } from '../../../wallets.constants';
 
 export class NetworkSetting {
   page: Page;
@@ -66,37 +67,29 @@ export class NetworkSetting {
     });
   }
 
-  async addCustomNetwork(
-    networkName: string,
-    networkUrl: string,
-    chainId: number,
-    tokenSymbol: string,
-    blockExplorer = '',
-  ) {
+  async addCustomNetwork(networkConfig: NetworkConfig) {
     await test.step('Fill the network fields', async () => {
       await test.step('Fill the network name', async () => {
-        await this.networkNameInput.fill(networkName);
+        await this.networkNameInput.fill(networkConfig.chainName);
       });
       await test.step('Fill the network rpc', async () => {
         await this.addRpcDropDown.click();
         await this.addRpcButton.click();
-        await this.networkRpcUrlInput.fill(networkUrl);
+        await this.networkRpcUrlInput.fill(networkConfig.rpcUrl);
         await this.addUrlButton.click();
       });
       await test.step('Fill the network chainId', async () => {
-        await this.networkChainIdInput.fill(String(chainId));
+        await this.networkChainIdInput.fill(String(networkConfig.chainId));
       });
       await test.step('Fill the network token symbol', async () => {
-        await this.networkTickerInput.fill(tokenSymbol);
+        await this.networkTickerInput.fill(networkConfig.tokenSymbol);
       });
-      if (blockExplorer != '') {
-        await test.step('Fill the network explorer url', async () => {
-          await this.networkExplorerDropDown.click();
-          await this.addBlockExplorerButton.click();
-          await this.networkExplorerUrlInput.fill(blockExplorer);
-          await this.addExplorerUrlButton.click();
-        });
-      }
+      await test.step('Fill the network explorer url', async () => {
+        await this.networkExplorerDropDown.click();
+        await this.addBlockExplorerButton.click();
+        await this.networkExplorerUrlInput.fill(networkConfig.scan);
+        await this.addExplorerUrlButton.click();
+      });
     });
 
     await test.step('Save the new network', async () => {

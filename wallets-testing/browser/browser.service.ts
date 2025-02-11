@@ -56,12 +56,13 @@ export class BrowserService {
       );
     }
     await this.walletPage.importKey(this.account.secretKey);
-    await this.walletPage.addNetwork(
-      this.widgetConfig.chainName,
-      this.ethereumNodeService.state.nodeUrl,
-      this.widgetConfig.chainId,
-      this.widgetConfig.tokenSymbol,
-    );
+    await this.walletPage.addNetwork({
+      chainName: this.widgetConfig.chainName,
+      rpcUrl: this.ethereumNodeService.state.nodeUrl,
+      chainId: this.widgetConfig.chainId,
+      tokenSymbol: this.widgetConfig.tokenSymbol,
+      scan: '',
+    });
     await this.browserContextService.closePages();
   }
 
@@ -95,12 +96,13 @@ export class BrowserService {
     await this.browserContextService.closePages();
     await this.walletPage.setup(this.widgetConfig.networkName);
     if (!this.widgetConfig.isDefaultNetwork)
-      await this.walletPage.addNetwork(
-        this.widgetConfig.chainName,
-        this.widgetConfig.nodeUrl,
-        this.widgetConfig.chainId,
-        this.widgetConfig.tokenSymbol,
-      );
+      await this.walletPage.addNetwork({
+        chainName: this.widgetConfig.chainName,
+        rpcUrl: this.widgetConfig.nodeUrl,
+        chainId: this.widgetConfig.chainId,
+        tokenSymbol: this.widgetConfig.tokenSymbol,
+        scan: '',
+      });
     await this.browserContextService.closePages();
   }
 

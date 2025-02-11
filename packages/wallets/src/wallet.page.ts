@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { WalletConfig } from './wallets.constants';
+import { NetworkConfig, WalletConfig } from './wallets.constants';
 
 export interface WalletPage {
   page: Page | undefined;
@@ -32,11 +32,7 @@ export interface WalletPage {
   setupNetwork?(standConfig: Record<string, any>): Promise<void>;
 
   addNetwork(
-    networkName: string,
-    networkUrl: string,
-    chainId: number,
-    tokenSymbol: string,
-    blockExplorer?: string,
+    networkConfig: NetworkConfig,
     isClosePage?: boolean,
   ): Promise<void>;
 

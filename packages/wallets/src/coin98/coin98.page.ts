@@ -105,8 +105,9 @@ export class Coin98 implements WalletPage {
     });
   }
 
-  // eslint-disable-next-line
-  async assertTxAmount(page: Page, expectedAmount: string) {}
+  async assertTxAmount() {
+    throw new Error('Method not implemented.');
+  }
 
   async confirmTx(page: Page) {
     await test.step('Confirm TX', async () => {
@@ -114,20 +115,23 @@ export class Coin98 implements WalletPage {
     });
   }
 
-  // eslint-disable-next-line
-  async signTx(page: Page) {}
+  async signTx() {
+    throw new Error('Method not implemented.');
+  }
 
-  // eslint-disable-next-line
-  async assertReceiptAddress(page: Page, expectedAmount: string) {}
+  async assertReceiptAddress() {
+    throw new Error('Method not implemented.');
+  }
 
-  // eslint-disable-next-line
-  async addNetwork(networkName: string, networkUrl: string, chainId: number, tokenSymbol: string) {}
+  async addNetwork() {
+    throw new Error('Method not implemented.');
+  }
 
   // We need this function cause Coin98 wallet open the extension page after installation
-  // and close other opened wallet pages (include page with we work so here was test crash)
-  // We wait for that action and after it we continue testing
+  // and close other opened wallet pages (include page with we work so here was the test crash)
+  // We wait for that action and after that we continue testing
   async waitForAutomaticallyOpenedWalletPageAfterInstallation() {
-    if ((await this.browserContext.pages().length) === 1) {
+    if (this.browserContext.pages().length === 1) {
       await this.browserContext.waitForEvent('page');
     }
     this.page = await this.browserContext.pages()[1];
