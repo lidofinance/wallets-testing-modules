@@ -44,9 +44,9 @@
     "branches": [
       "main",
       {
-        "name": "improve-network-config",
-        "channel": "alpha-netconf",
-        "prerelease": "alpha-netconf"
+        "name": "fix-multiply-network-import",
+        "channel": "alpha-multupl-network",
+        "prerelease": "alpha-multupl-network"
       }
     ]
   }
