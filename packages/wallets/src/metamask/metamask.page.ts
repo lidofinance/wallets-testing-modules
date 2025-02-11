@@ -1,6 +1,7 @@
 import { NetworkConfig, WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import { expect } from '@playwright/test';
+import { Logger } from '@nestjs/common';
 import { test, BrowserContext, Page } from '@playwright/test';
 import { HomePage, LoginPage, SettingsPage } from './pages';
 import {
@@ -24,6 +25,7 @@ export class MetamaskPage implements WalletPage {
   optionsMenu: OptionsMenu;
   popoverElements: PopoverElements;
   accountMenu: AccountMenu;
+  private readonly logger = new Logger(MetamaskPage.name);
 
   constructor(
     private browserContext: BrowserContext,
@@ -64,12 +66,12 @@ export class MetamaskPage implements WalletPage {
         await this.onboardingPage.firstTimeSetup();
         await this.popoverElements.closePopover();
         await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
+        await new SettingsPage(
+          await this.browserContext.newPage(),
+          this.extensionUrl,
+          this.config,
+        ).setupNetworkChangingSetting(); // need to make it possible to change the wallet network// reject all tx in queue if exist
       }
-      await new SettingsPage(
-        await this.browserContext.newPage(),
-        this.extensionUrl,
-        this.config,
-      ).setupNetworkChangingSetting(); // need to make it possible to change the wallet network
     });
   }
 
@@ -95,10 +97,12 @@ export class MetamaskPage implements WalletPage {
           networkConfig.chainId,
         )
       ) {
+        this.logger.debug(`Network "${networkConfig.chainName}" exist`);
         await this.header.networkList.clickToNetworkItemButton(
           networkConfig.chainName,
         );
       } else {
+        this.logger.debug(`Network "${networkConfig.chainName}" doesn't exist`);
         await this.header.networkList.networkDisplayCloseBtn.click();
         await this.addNetwork(networkConfig);
       }
