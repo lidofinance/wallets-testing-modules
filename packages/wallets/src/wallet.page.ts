@@ -29,7 +29,7 @@ export interface WalletPage {
 
   getWalletAddress?(): Promise<string>;
 
-  setupNetwork?(standConfig: Record<string, any>): Promise<void>;
+  setupNetwork?(networkConfig: NetworkConfig): Promise<void>;
 
   addNetwork(
     networkConfig: NetworkConfig,
