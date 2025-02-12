@@ -38,7 +38,14 @@ export class HomePage {
 
   async switchNetworkForDApp(networkName: string) {
     await test.step('Open "DApps connection" page', async () => {
-      await this.settingButton.hover();
+      // Sometimes the OKX wallet displays the notification and cover the setting button
+      let attempts = 10;
+      while (attempts > 0) {
+        await this.settingButton.hover();
+        if (await this.page.getByText('DApps connection').isVisible()) break;
+        attempts--;
+        await this.page.waitForTimeout(2000);
+      }
       await this.page.getByText('DApps connection').click();
     });
 
