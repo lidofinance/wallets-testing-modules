@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
   CommonWalletConfig,
-  METAMASK_COMMON_CONFIG,
   WalletConfig,
   WalletPage,
 } from '@lidofinance/wallets-testing-wallets';

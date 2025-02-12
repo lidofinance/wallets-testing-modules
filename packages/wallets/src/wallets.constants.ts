@@ -5,6 +5,7 @@ export interface CommonWalletConfig {
   STORE_EXTENSION_ID: string;
   CONNECT_BUTTON_NAME: string;
   SIMPLE_CONNECT: boolean;
+  // optional stable link for test
   LATEST_STABLE_DOWNLOAD_LINK?: string;
   EXTENSION_START_PATH: string;
 }
