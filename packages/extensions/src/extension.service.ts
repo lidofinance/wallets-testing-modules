@@ -19,11 +19,9 @@ export class ExtensionService {
 
   async getExtensionDirFromId(
     id: string,
-    downloadUrl?: string,
+    latestStableDownloadUrl?: string,
   ): Promise<string> {
-    downloadUrl
-      ? await this.downloadFromUrl(id, downloadUrl)
-      : await this.downloadFromStore(id);
+    await this.downloadExtension(id, latestStableDownloadUrl);
 
     return this.idToExtension[id];
   }
@@ -60,49 +58,47 @@ export class ExtensionService {
     }
   }
 
-  async downloadFromUrl(id: string, url: string) {
+  async downloadExtension(id: string, downloadUrl?: string) {
     await this.createBaseExtensionDir();
     if (await this.isExtensionByIdEmpty(id)) {
-      this.logger.debug(`Download extension from ${url}`);
       const extensionDir = await this.createExtensionDirById(id);
-      await axios.get(url, { responseType: 'stream' }).then((response) => {
-        const zip = unzipper.Extract({ path: extensionDir });
-        response.data.pipe(zip);
-        return once(zip, 'close');
-      });
+      downloadUrl
+        ? await this.downloadFromUrl(id, downloadUrl, extensionDir)
+        : await this.downloadFromStore(id, extensionDir);
+
       if (this.idToExtension[id] !== undefined) {
         this.staleExtensionDirs.push(this.idToExtension[id]);
       }
       this.idToExtension[id] = extensionDir;
     }
-    //extension files exist - just return dir
     this.idToExtension[id] = `${this.extensionDirBasePath}/${id}`;
   }
 
-  async downloadFromStore(id: string) {
-    await this.createBaseExtensionDir();
-    if (await this.isExtensionByIdEmpty(id)) {
-      this.logger.debug(`Download extension ${id} from chrome store`);
-      const extensionDir = await this.createExtensionDirById(id);
-      const browser = await chromium.launch();
-      const chromeVersion = browser.version();
-      await browser.close();
-      const url = `https://clients2.google.com/service/update2/crx?response=redirect&prodversion=${chromeVersion}&x=id%3D${id}%26installsource%3Dondemand%26uc&nacl_arch=x86-64&acceptformat=crx2,crx3`;
-      await axios
-        .get(url, { responseType: 'arraybuffer' })
-        .then((response) => this.arrayBufferToStream(response.data))
-        .then((response) => {
-          const zip = unzipper.Extract({ path: extensionDir });
-          response.pipe(zip);
-          return once(zip, 'close');
-        });
-      if (this.idToExtension[id] !== undefined) {
-        this.staleExtensionDirs.push(this.idToExtension[id]);
-      }
-      this.idToExtension[id] = extensionDir;
-    }
-    //extension files exist - just return dir
-    this.idToExtension[id] = `${this.extensionDirBasePath}/${id}`;
+  // Download from url return zip -> unzip
+  async downloadFromUrl(id: string, url: string, extensionDir: string) {
+    this.logger.debug(`Download extension ${id} from ${url}`);
+    await axios.get(url, { responseType: 'stream' }).then((response) => {
+      const zip = unzipper.Extract({ path: extensionDir });
+      response.data.pipe(zip);
+      return once(zip, 'close');
+    });
+  }
+
+  // Download from chrome store return crx -> zip -> unzip
+  async downloadFromStore(id: string, extensionDir: string) {
+    this.logger.debug(`Download extension ${id} from chrome store`);
+    const browser = await chromium.launch();
+    const chromeVersion = browser.version();
+    await browser.close();
+    const url = `https://clients2.google.com/service/update2/crx?response=redirect&prodversion=${chromeVersion}&x=id%3D${id}%26installsource%3Dondemand%26uc&nacl_arch=x86-64&acceptformat=crx2,crx3`;
+    await axios
+      .get(url, { responseType: 'arraybuffer' })
+      .then((response) => this.arrayBufferToStream(response.data))
+      .then((response) => {
+        const zip = unzipper.Extract({ path: extensionDir });
+        response.pipe(zip);
+        return once(zip, 'close');
+      });
   }
 
   private arrayBufferToStream(arraybuffer: ArrayBuffer) {
