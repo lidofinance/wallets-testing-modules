@@ -1,5 +1,6 @@
 import { Locator, Page, test } from '@playwright/test';
 import { NetworkSetting } from './networkSetting.element';
+import { NetworkConfig } from '../../../wallets.constants';
 
 export class NetworkList {
   page: Page;
@@ -42,11 +43,6 @@ export class NetworkList {
     });
   }
 
-  async switchNetwork(networkName: string) {
-    await this.networkListButton.click();
-    await this.dialogSection.getByText(networkName).click();
-  }
-
   async getNetworkListText() {
     return await test.step('Get network list', async () => {
       const networkList = await this.networkItemText.all();
@@ -86,35 +82,27 @@ export class NetworkList {
     );
     const rpcUrlsFound = await elements.filter({ hasText: rpcUrl }).count();
 
-    if (rpcUrlsFound == 0) return false;
-    return true;
+    return rpcUrlsFound != 0;
   }
 
-  async addNetworkManually(
-    networkName: string,
-    networkUrl: string,
-    chainId: number,
-    tokenSymbol: string,
-    blockExplorer = '',
-  ) {
+  async addNetworkManually(networkConfig: NetworkConfig) {
     await test.step('Open the form to add network manually', async () => {
       await this.networkListButton.click();
     });
 
-    if (await this.dialogSection.getByText(networkName).isVisible()) {
-      await this.openModalNetworkEdit(chainId);
-      await this.networkSetting.addRpcForNetwork(networkUrl, blockExplorer);
+    if (
+      await this.dialogSection.getByText(networkConfig.chainName).isVisible()
+    ) {
+      await this.openModalNetworkEdit(networkConfig.chainId);
+      await this.networkSetting.addRpcForNetwork(
+        networkConfig.rpcUrl,
+        networkConfig.scan,
+      );
     } else {
       await test.step('Add custom network', async () => {
         await this.addCustomNetworkButton.click();
       });
-      await this.networkSetting.addCustomNetwork(
-        networkName,
-        networkUrl,
-        chainId,
-        tokenSymbol,
-        blockExplorer,
-      );
+      await this.networkSetting.addCustomNetwork(networkConfig);
     }
   }
 

@@ -1,4 +1,4 @@
-import { WalletConfig } from '../wallets.constants';
+import { NetworkConfig, WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import expect from 'expect';
 import { test, BrowserContext, Page } from '@playwright/test';
@@ -60,40 +60,22 @@ export class TrustWalletPage implements WalletPage {
   }
 
   /** Add new network in the wallet*/
-  async addNetwork(
-    networkName: string,
-    networkUrl: string,
-    chainId: number,
-    tokenSymbol: string,
-    scan?: string,
-  ) {
-    await test.step(`Add ${networkName} network`, async () => {
+  async addNetwork(networkConfig: NetworkConfig) {
+    await test.step(`Add ${networkConfig.chainName} network`, async () => {
       await this.navigate();
       await this.settingsPage.openSetting();
-      await this.settingsPage.addNetwork(
-        networkName,
-        networkUrl,
-        chainId,
-        tokenSymbol,
-        scan,
-      );
+      await this.settingsPage.addNetwork(networkConfig);
       await this.navigate();
     });
   }
 
-  async setupNetwork(standConfig: Record<string, any>) {
-    await test.step(`Setup "${standConfig.chainName}" Network`, async () => {
+  async setupNetwork(networkConfig: NetworkConfig) {
+    await test.step(`Setup "${networkConfig.chainName}" Network`, async () => {
       await this.navigate();
-      if (await this.homePage.isNetworkExists(standConfig.chainName)) {
-        await this.homePage.changeNetwork(standConfig.chainName);
+      if (await this.homePage.isNetworkExists(networkConfig.chainName)) {
+        await this.homePage.changeNetwork(networkConfig.chainName);
       } else {
-        await this.addNetwork(
-          standConfig.chainName,
-          standConfig.reserveRpcUrl,
-          standConfig.chainId,
-          standConfig.tokenSymbol,
-          standConfig.scan,
-        );
+        await this.addNetwork(networkConfig);
       }
     });
   }

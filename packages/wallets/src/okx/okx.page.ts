@@ -1,4 +1,4 @@
-import { WalletConfig } from '../wallets.constants';
+import { NetworkConfig, WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import { test, BrowserContext, Page, expect } from '@playwright/test';
 import {
@@ -82,15 +82,9 @@ export class OkxPage implements WalletPage {
   }
 
   /** Checks the is installed the needed network and add new network to wallet (if needed) */
-  async setupNetwork(standConfig: Record<string, any>) {
-    await test.step(`Setup "${standConfig.chainName}" Network`, async () => {
-      await this.addNetwork(
-        standConfig.chainName,
-        standConfig.rpcUrl,
-        standConfig.chainId,
-        standConfig.tokenSymbol,
-        standConfig.scan,
-      );
+  async setupNetwork(networkConfig: NetworkConfig) {
+    await test.step(`Setup "${networkConfig.chainName}" Network`, async () => {
+      await this.addNetwork(networkConfig);
     });
   }
 
@@ -114,30 +108,18 @@ export class OkxPage implements WalletPage {
   }
 
   /** Add new network to wallet */
-  async addNetwork(
-    networkName: string,
-    networkUrl: string,
-    chainId: number,
-    tokenSymbol: string,
-    blockExplorer?: string,
-  ) {
-    if (!(await isNeedAddNetwork(networkName))) {
+  async addNetwork(networkConfig: NetworkConfig) {
+    if (!(await isNeedAddNetwork(networkConfig.chainName))) {
       return;
     }
     await this.navigate();
     await this.homePage.networkListButton.click();
     if (
       !(await this.networkListPage.isNetworkExist(
-        getCorrectNetworkName(networkName),
+        getCorrectNetworkName(networkConfig.chainName),
       ))
     ) {
-      await this.networkListPage.addCustomNetwork(
-        networkName,
-        networkUrl,
-        chainId,
-        tokenSymbol,
-        blockExplorer,
-      );
+      await this.networkListPage.addCustomNetwork(networkConfig);
     }
     await this.page.close();
   }
@@ -148,7 +130,7 @@ export class OkxPage implements WalletPage {
    * */
   async changeNetwork(networkName: string) {
     await test.step(`Switch network to "${networkName}"`, async () => {
-      networkName = await getCorrectNetworkName(networkName);
+      networkName = getCorrectNetworkName(networkName);
       await this.navigate();
 
       // switch network for wallet

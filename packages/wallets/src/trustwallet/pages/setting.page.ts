@@ -1,4 +1,5 @@
 import { Locator, Page, test } from '@playwright/test';
+import { NetworkConfig } from '../../wallets.constants';
 
 export class SettingPage {
   page: Page;
@@ -37,23 +38,17 @@ export class SettingPage {
     });
   }
 
-  async addNetwork(
-    networkName: string,
-    networkUrl: string,
-    chainId: number,
-    tokenSymbol: string,
-    scan?: string,
-  ) {
+  async addNetwork(networkConfig: NetworkConfig) {
     await test.step('Add network', async () => {
       await this.networkMenuBtn.click();
       await this.addCustomNetworkBtn.click();
 
       await test.step('Fill network inputs', async () => {
-        await this.networkNameInput.fill(networkName);
-        await this.rpcUrlInput.fill(networkUrl);
-        await this.chainIdInput.fill(String(chainId));
-        await this.tokenSymbolInput.fill(tokenSymbol);
-        if (scan) await this.scanInput.fill(scan);
+        await this.networkNameInput.fill(networkConfig.chainName);
+        await this.rpcUrlInput.fill(networkConfig.rpcUrl);
+        await this.chainIdInput.fill(String(networkConfig.chainId));
+        await this.tokenSymbolInput.fill(networkConfig.tokenSymbol);
+        await this.scanInput.fill(networkConfig.scan);
       });
 
       await this.saveCustomNetworkBtn.click();

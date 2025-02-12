@@ -1,4 +1,4 @@
-import { WalletConfig } from '../wallets.constants';
+import { NetworkConfig, WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import expect from 'expect';
 import { test, BrowserContext, Page } from '@playwright/test';
@@ -70,12 +70,7 @@ export class CoinbasePage implements WalletPage {
     });
   }
 
-  async addNetwork(
-    networkName: string,
-    networkUrl: string,
-    chainId: number,
-    tokenSymbol: string,
-  ) {
+  async addNetwork(networkConfig: NetworkConfig) {
     await test.step('Add network', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.navigate();
@@ -85,12 +80,21 @@ export class CoinbasePage implements WalletPage {
         this.page.context().waitForEvent('page', { timeout: 5000 }),
         await this.page.click('button[data-testid="add-custom-network"]'),
       ]);
-      await addNetworkPage.fill('input[name="chainName"]', networkName);
-      await addNetworkPage.fill('input[name="rpcUrls[0]"]', networkUrl);
-      await addNetworkPage.fill('input[name="chainId"]', String(chainId));
+      await addNetworkPage.fill(
+        'input[name="chainName"]',
+        networkConfig.chainName,
+      );
+      await addNetworkPage.fill(
+        'input[name="rpcUrls[0]"]',
+        networkConfig.rpcUrl,
+      );
+      await addNetworkPage.fill(
+        'input[name="chainId"]',
+        String(networkConfig.chainId),
+      );
       await addNetworkPage.fill(
         'input[name="nativeCurrency.symbol"]',
-        tokenSymbol,
+        networkConfig.tokenSymbol,
       );
       await addNetworkPage.click('text=Save');
     });
@@ -126,13 +130,15 @@ export class CoinbasePage implements WalletPage {
     });
   }
 
-  // eslint-disable-next-line
-  async signTx(page: Page) {}
-
-  // eslint-disable-next-line
-  async assertReceiptAddress(page: Page, expectedAddress: string) {
+  async signTx() {
+    throw new Error('Method not implemented.');
   }
 
-  // eslint-disable-next-line
-  async importKey(key: string) {}
+  async assertReceiptAddress() {
+    throw new Error('Method not implemented.');
+  }
+
+  async importKey() {
+    throw new Error('Method not implemented.');
+  }
 }

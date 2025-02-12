@@ -1,8 +1,8 @@
-import { WalletConfig } from '../wallets.constants';
+import { NetworkConfig, WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import { expect } from '@playwright/test';
 import { test, BrowserContext, Page } from '@playwright/test';
-import { HomePage, LoginPage, SettingsPage } from './pages';
+import { HomePage, LoginPage } from './pages';
 import {
   OnboardingPage,
   WalletOperationPage,
@@ -65,11 +65,6 @@ export class MetamaskPage implements WalletPage {
         await this.popoverElements.closePopover();
         await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
       }
-      await new SettingsPage(
-        await this.browserContext.newPage(),
-        this.extensionUrl,
-        this.config,
-      ).setupNetworkChangingSetting(); // need to make it possible to change the wallet network
     });
   }
 
@@ -85,52 +80,35 @@ export class MetamaskPage implements WalletPage {
     });
   }
 
-  async setupNetwork(standConfig: Record<string, any>) {
-    await test.step(`Setup "${standConfig.chainName}" Network`, async () => {
+  async setupNetwork(networkConfig: NetworkConfig) {
+    await test.step(`Setup "${networkConfig.chainName}" Network`, async () => {
       await this.header.networkListButton.click();
       if (
         await this.header.networkList.isNetworkExist(
-          standConfig.chainName,
-          standConfig.rpcUrl,
-          standConfig.chainId,
+          networkConfig.chainName,
+          networkConfig.rpcUrl,
+          networkConfig.chainId,
         )
       ) {
         await this.header.networkList.clickToNetworkItemButton(
-          standConfig.chainName,
+          networkConfig.chainName,
         );
       } else {
         await this.header.networkList.networkDisplayCloseBtn.click();
-        await this.addNetwork(
-          standConfig.chainName,
-          standConfig.rpcUrl,
-          standConfig.chainId,
-          standConfig.tokenSymbol,
-          standConfig.scan,
-        );
+        await this.addNetwork(networkConfig);
       }
     });
   }
 
-  async addNetwork(
-    networkName: string,
-    networkUrl: string,
-    chainId: number,
-    tokenSymbol: string,
-    blockExplorer = '',
-    isClosePage = false,
-  ) {
-    await test.step(`Add new network "${networkName}"`, async () => {
+  async addNetwork(networkConfig: NetworkConfig, isClosePage = false) {
+    await test.step(`Add new network "${networkConfig.chainName}"`, async () => {
       await this.navigate();
-      if (await isPopularNetwork(networkName)) {
-        await this.header.networkList.addPopularNetwork(networkName);
-      } else {
-        await this.header.networkList.addNetworkManually(
-          networkName,
-          networkUrl,
-          chainId,
-          tokenSymbol,
-          blockExplorer,
+      if (await isPopularNetwork(networkConfig.chainName)) {
+        await this.header.networkList.addPopularNetwork(
+          networkConfig.chainName,
         );
+      } else {
+        await this.header.networkList.addNetworkManually(networkConfig);
       }
       if (isClosePage) await this.page.close();
     });
