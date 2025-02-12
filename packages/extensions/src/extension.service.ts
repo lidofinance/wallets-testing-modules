@@ -1,5 +1,4 @@
 import * as fs from 'fs/promises';
-import * as os from 'os';
 import * as path from 'path';
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
@@ -14,18 +13,18 @@ import { Readable } from 'node:stream';
 export class ExtensionService {
   staleExtensionDirs: string[] = [];
   extensionDirBasePath = path.join(__dirname, 'extension');
-  urlToExtension: Record<string, string> = {};
   idToExtension: Record<string, string> = {};
   private readonly logger = new Logger(ExtensionService.name);
   private versions: Map<string, string> = new Map();
 
-  async getExtensionDirFromUrl(url: string): Promise<string> {
-    await this.downloadFromUrl(url);
-    return this.urlToExtension[url];
-  }
+  async getExtensionDirFromId(
+    id: string,
+    downloadUrl?: string,
+  ): Promise<string> {
+    downloadUrl
+      ? await this.downloadFromUrl(id, downloadUrl)
+      : await this.downloadFromStore(id);
 
-  async getExtensionDirFromId(id: string): Promise<string> {
-    await this.downloadFromStore(id);
     return this.idToExtension[id];
   }
 
@@ -53,7 +52,6 @@ export class ExtensionService {
   }
 
   async isExtensionByIdEmpty(id: string) {
-    console.log(`${this.extensionDirBasePath}/${id}`);
     try {
       const files = await fs.readdir(`${this.extensionDirBasePath}/${id}`);
       return files.length < 0;
@@ -62,18 +60,23 @@ export class ExtensionService {
     }
   }
 
-  async downloadFromUrl(url: string) {
-    this.logger.debug(`Download extension from ${url}`);
-    const extensionDir = await fs.mkdtemp(os.tmpdir() + path.sep);
-    await axios.get(url, { responseType: 'stream' }).then((response) => {
-      const zip = unzipper.Extract({ path: extensionDir });
-      response.data.pipe(zip);
-      return once(zip, 'close');
-    });
-    if (this.urlToExtension[url] !== undefined) {
-      this.staleExtensionDirs.push(this.urlToExtension[url]);
+  async downloadFromUrl(id: string, url: string) {
+    await this.createBaseExtensionDir();
+    if (await this.isExtensionByIdEmpty(id)) {
+      this.logger.debug(`Download extension from ${url}`);
+      const extensionDir = await this.createExtensionDirById(id);
+      await axios.get(url, { responseType: 'stream' }).then((response) => {
+        const zip = unzipper.Extract({ path: extensionDir });
+        response.data.pipe(zip);
+        return once(zip, 'close');
+      });
+      if (this.idToExtension[id] !== undefined) {
+        this.staleExtensionDirs.push(this.idToExtension[id]);
+      }
+      this.idToExtension[id] = extensionDir;
     }
-    this.urlToExtension[url] = extensionDir;
+    //extension files exist - just return dir
+    this.idToExtension[id] = `${this.extensionDirBasePath}/${id}`;
   }
 
   async downloadFromStore(id: string) {

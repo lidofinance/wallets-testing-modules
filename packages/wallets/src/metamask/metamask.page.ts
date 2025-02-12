@@ -2,7 +2,7 @@ import { NetworkConfig, WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import { expect } from '@playwright/test';
 import { test, BrowserContext, Page } from '@playwright/test';
-import { HomePage, LoginPage } from './pages';
+import { HomePage, LoginPage, SettingsPage } from './pages';
 import {
   OnboardingPage,
   WalletOperationPage,
@@ -64,6 +64,11 @@ export class MetamaskPage implements WalletPage {
         await this.onboardingPage.firstTimeSetup();
         await this.popoverElements.closePopover();
         await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
+        await new SettingsPage(
+          await this.browserContext.newPage(),
+          this.extensionUrl,
+          this.config,
+        ).setupNetworkChangingSetting(); // need to make it possible to change the wallet network
       }
     });
   }
