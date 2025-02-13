@@ -181,7 +181,7 @@ export class OkxPage implements WalletPage {
 
   /** Cancel transaction */
   async cancelTx(page: Page) {
-    await test.step('Confirm TX', async () => {
+    await test.step('Cancel TX', async () => {
       await new WalletOperations(page).cancelTxButton.click();
     });
   }

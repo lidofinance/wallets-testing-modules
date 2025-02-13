@@ -1,8 +1,13 @@
 import { NetworkConfig, WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
-import expect from 'expect';
-import { test, BrowserContext, Page } from '@playwright/test';
-import { OnboardingPage, SettingPage, HomePage } from './pages';
+import { test, BrowserContext, Page, expect } from '@playwright/test';
+import {
+  OnboardingPage,
+  SettingPage,
+  HomePage,
+  WalletOperations,
+  LoginPage,
+} from './pages';
 import { closeUnnecessaryPages } from '../okx/helper';
 
 export class TrustWalletPage implements WalletPage {
@@ -10,6 +15,7 @@ export class TrustWalletPage implements WalletPage {
   onboardingPage: OnboardingPage;
   settingsPage: SettingPage;
   homePage: HomePage;
+  loginPage: LoginPage;
 
   constructor(
     private browserContext: BrowserContext,
@@ -21,8 +27,10 @@ export class TrustWalletPage implements WalletPage {
     this.onboardingPage = new OnboardingPage(this.page, this.config);
     this.settingsPage = new SettingPage(this.page);
     this.homePage = new HomePage(this.page);
+    this.loginPage = new LoginPage(this.page, this.config);
   }
 
+  /** Navigate to home page of Trust Wallet extension */
   async navigate() {
     await test.step('Navigate to Trust wallet', async () => {
       this.page = await this.browserContext.newPage();
@@ -31,32 +39,21 @@ export class TrustWalletPage implements WalletPage {
         this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
       );
       await this.page.waitForTimeout(1000);
-      await this.unlock();
+      await this.loginPage.unlock();
     });
   }
 
+  /** Checks the wallet is set correctly and starts the wallet setup as the first time (if needed) */
   async setup() {
     await test.step('Setup', async () => {
       // added explicit route to /onboarding due to unexpected first time route from /home.html to /onboarding - page is close
       this.page = await this.browserContext.newPage();
+      await this.initLocators();
       await this.page.goto(this.extensionUrl + '/home.html#/');
-      await this.unlock();
-      await new OnboardingPage(this.page, this.config).firstTimeSetup();
+      await this.loginPage.unlock();
+      await this.onboardingPage.firstTimeSetup();
     });
     await closeUnnecessaryPages(this.browserContext);
-  }
-
-  async unlock() {
-    await test.step('Unlock', async () => {
-      const passwordInput = this.page.locator('input[type=password]');
-      try {
-        await passwordInput.waitFor({ state: 'visible', timeout: 2000 });
-        await passwordInput.fill(this.config.PASSWORD);
-        await this.page.locator('button:has-text("Unlock")').click();
-      } catch {
-        console.log('Wallet unlocking is not needed');
-      }
-    });
   }
 
   /** Add new network in the wallet*/
@@ -69,6 +66,7 @@ export class TrustWalletPage implements WalletPage {
     });
   }
 
+  /** Checks the is installed the needed network and add new network to wallet (if needed) */
   async setupNetwork(networkConfig: NetworkConfig) {
     await test.step(`Setup "${networkConfig.chainName}" Network`, async () => {
       await this.navigate();
@@ -99,33 +97,52 @@ export class TrustWalletPage implements WalletPage {
     });
   }
 
+  /** Click `Connect` button on the transaction `page` */
   async connectWallet(page: Page) {
     await test.step('Connect wallet', async () => {
-      await page.waitForTimeout(1000);
-      await page.click('button:has-text("Connect")');
+      const txPage = new WalletOperations(page);
+      await expect(txPage.connectBtn).toBeEnabled();
+      await txPage.connectBtn.click();
     });
   }
 
+  /** Get the `amount` from transaction and comply with the `expectedAmount` */
   async assertTxAmount(page: Page, expectedAmount: string) {
     await test.step('Assert TX Amount', async () => {
-      expect(await page.textContent('.currency-display-component__text')).toBe(
+      const txPage = new WalletOperations(page);
+      expect(parseFloat(await txPage.txAmountValue.textContent())).toBe(
         expectedAmount,
       );
     });
   }
 
+  /** Confirm transaction */
   async confirmTx(page: Page) {
     await test.step('Confirm TX', async () => {
-      await page.click('text=Confirm');
+      const txPage = new WalletOperations(page);
+      await expect(txPage.confirmBtn).toBeEnabled();
+      await txPage.confirmBtn.click();
     });
   }
 
-  // eslint-disable-next-line
-  async signTx(page: Page) {}
+  /** Reject transaction */
+  async cancelTx(page: Page) {
+    await test.step('Cancel TX', async () => {
+      const txPage = new WalletOperations(page);
+      await expect(txPage.rejectBtn).toBeEnabled();
+      await txPage.rejectBtn.click();
+    });
+  }
 
-  // eslint-disable-next-line
-  async assertReceiptAddress(page: Page, expectedAddress: string) {}
+  /** Get the `address` from transaction and comply with the `expectedAddress` */
+  async assertReceiptAddress(page: Page, expectedAddress: string) {
+    await test.step('Assert receiptAddress/Contract', async () => {
+      await new WalletOperations(page).viewDetailsBtn.click();
+      await page.getByText(expectedAddress).isVisible();
+    });
+  }
 
-  // eslint-disable-next-line
-  async importKey(key: string) {}
+  async importKey() {
+    throw new Error('Method not implemented.');
+  }
 }
