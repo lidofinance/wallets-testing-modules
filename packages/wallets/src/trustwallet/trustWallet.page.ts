@@ -30,7 +30,11 @@ export class TrustWalletPage implements WalletPage {
     this.loginPage = new LoginPage(this.page, this.config);
   }
 
-  /** Navigate to home page of Trust Wallet extension */
+  /** Navigate to home page of Trust Wallet extension
+   *  - open the wallet extension
+   *  - unlock extension (if needed)
+   *  - close popovers (if needed)
+   *  - cancel awaited transactions (if needed) */
   async navigate() {
     await test.step('Navigate to Trust wallet', async () => {
       this.page = await this.browserContext.newPage();
@@ -40,6 +44,8 @@ export class TrustWalletPage implements WalletPage {
       );
       await this.page.waitForTimeout(1000);
       await this.loginPage.unlock();
+      await this.homePage.rejectTxInQueue();
+      await this.homePage.closePopover();
     });
   }
 
@@ -50,7 +56,6 @@ export class TrustWalletPage implements WalletPage {
       this.page = await this.browserContext.newPage();
       await this.initLocators();
       await this.page.goto(this.extensionUrl + '/home.html#/onboarding');
-      await this.loginPage.unlock();
       await this.onboardingPage.firstTimeSetup();
     });
     await closeUnnecessaryPages(this.browserContext);
@@ -101,8 +106,8 @@ export class TrustWalletPage implements WalletPage {
   async connectWallet(page: Page) {
     await test.step('Connect wallet', async () => {
       const txPage = new WalletOperations(page);
-      await expect(txPage.connectBtn).toBeEnabled();
-      await txPage.connectBtn.click();
+      await txPage.confirmHighRiskAndConnectWallet();
+      if (await txPage.connectBtn.isVisible()) await txPage.connectBtn.click();
     });
   }
 
@@ -131,6 +136,15 @@ export class TrustWalletPage implements WalletPage {
       const txPage = new WalletOperations(page);
       await expect(txPage.rejectBtn).toBeEnabled();
       await txPage.rejectBtn.click();
+    });
+  }
+
+  /** Confirm token approval transaction */
+  async approveTokenTx(page: Page) {
+    await test.step('Approve token TX', async () => {
+      const txPage = new WalletOperations(page);
+      await expect(txPage.confirmBtn).toBeEnabled();
+      await txPage.confirmBtn.click();
     });
   }
 

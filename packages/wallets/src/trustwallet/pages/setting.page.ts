@@ -2,7 +2,6 @@ import { Locator, Page, test } from '@playwright/test';
 import { NetworkConfig } from '../../wallets.constants';
 
 export class SettingPage {
-  page: Page;
   settingBtn: Locator;
   networkMenuBtn: Locator;
   addCustomNetworkBtn: Locator;
@@ -13,8 +12,7 @@ export class SettingPage {
   scanInput: Locator;
   saveCustomNetworkBtn: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public page: Page) {
     this.settingBtn = this.page.getByTestId('navigation-item-settings');
     this.networkMenuBtn = this.page.getByText('Network');
     this.addCustomNetworkBtn = this.page.getByTestId(

@@ -2,7 +2,6 @@ import { Locator, Page, test } from '@playwright/test';
 import { WalletConfig } from '../../wallets.constants';
 
 export class OnboardingPage {
-  page: Page;
   importWalletBtn: Locator;
   newPasswordInput: Locator;
   confirmNewPasswordInput: Locator;
@@ -12,8 +11,7 @@ export class OnboardingPage {
   seedPhraseInputs: Locator;
   noThanksBtn: Locator;
 
-  constructor(page: Page, public config: WalletConfig) {
-    this.page = page;
+  constructor(public page: Page, public config: WalletConfig) {
     this.importWalletBtn = this.page.getByText('Import or recover wallet');
     this.newPasswordInput = this.page.locator(
       'xpath=//p[contains(text(), "New password")]//following-sibling::div//input',
@@ -31,16 +29,13 @@ export class OnboardingPage {
   }
 
   async firstTimeSetup() {
-    try {
-      await this.page.waitForSelector(
-        'text="Welcome to the Trust Wallet Extension"',
-      );
-      if ((await this.importWalletBtn.count()) === 0) return;
-    } catch {
-      console.log('Onboarding process is not needed');
-    }
+    await this.page.waitForSelector(
+      'text="Welcome to the Trust Wallet Extension"',
+    );
+
     await test.step('First time setup', async () => {
       await this.importWalletBtn.click();
+      if (!(await this.newPasswordInput.isVisible())) return;
 
       await test.step('Setup wallet password', async () => {
         await this.newPasswordInput.fill(this.config.PASSWORD);

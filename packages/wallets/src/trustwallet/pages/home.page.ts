@@ -1,14 +1,21 @@
 import { Locator, Page, test } from '@playwright/test';
 
 export class HomePage {
-  page: Page;
   networkListBtn: Locator;
   networkRow: Locator;
+  closePopoverBtn: Locator;
+  rejectTxBtn: Locator;
+  homeBtn: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public page: Page) {
     this.networkListBtn = this.page.getByTestId('network-select-button');
     this.networkRow = this.page.getByTestId('network-row');
+    this.closePopoverBtn = this.page.getByTestId('close-modal-button');
+    this.rejectTxBtn = this.page
+      .getByTestId('reject-button')
+      .or(this.page.getByText('Reject'))
+      .nth(0);
+    this.homeBtn = this.page.getByTestId('navigation-item-home');
   }
 
   async changeNetwork(networkName: string) {
@@ -26,5 +33,27 @@ export class HomePage {
       await this.networkListBtn.click();
       return isNetworkExists;
     });
+  }
+
+  async closePopover() {
+    await test.step('Close popover', async () => {
+      while (await this.closePopoverBtn.isVisible()) {
+        await this.closePopoverBtn.click();
+        await this.page.waitForTimeout(500);
+      }
+    });
+  }
+
+  async rejectTxInQueue() {
+    try {
+      await this.homeBtn.waitFor({ state: 'visible', timeout: 5000 });
+    } catch {
+      await test.step('Reject tx after wallet unlocking', async () => {
+        while (await this.rejectTxBtn.isVisible()) {
+          await this.rejectTxBtn.click();
+          await this.page.waitForTimeout(500);
+        }
+      });
+    }
   }
 }

@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "trust-wallet-methods",
+        "channel": "alpha-trust-wallet",
+        "prerelease": "alpha-trust-wallet"
       }
     ]
   }
