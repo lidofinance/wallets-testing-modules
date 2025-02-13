@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "add-downloadExtension-concrete-url",
-        "channel": "alpha-downloadExtens",
-        "prerelease": "alpha-downloadExtens"
+        "name": "develop",
+        "channel": "alpha",
+        "prerelease": "alpha"
       }
     ]
   }
