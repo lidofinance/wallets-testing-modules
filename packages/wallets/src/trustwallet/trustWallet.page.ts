@@ -49,7 +49,7 @@ export class TrustWalletPage implements WalletPage {
       // added explicit route to /onboarding due to unexpected first time route from /home.html to /onboarding - page is close
       this.page = await this.browserContext.newPage();
       await this.initLocators();
-      await this.page.goto(this.extensionUrl + '/home.html#/');
+      await this.page.goto(this.extensionUrl + '/home.html#/onboarding');
       await this.loginPage.unlock();
       await this.onboardingPage.firstTimeSetup();
     });

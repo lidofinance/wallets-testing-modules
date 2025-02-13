@@ -33,14 +33,12 @@ export class OnboardingPage {
   async firstTimeSetup() {
     try {
       await this.page.waitForSelector(
-        'div:has-text("Welcome to the Trust Wallet Extension")',
+        'text="Welcome to the Trust Wallet Extension"',
       );
+      if ((await this.importWalletBtn.count()) === 0) return;
     } catch {
       console.log('Onboarding process is not needed');
     }
-
-    if ((await this.importWalletBtn.count()) === 0) return;
-
     await test.step('First time setup', async () => {
       await this.importWalletBtn.click();
 

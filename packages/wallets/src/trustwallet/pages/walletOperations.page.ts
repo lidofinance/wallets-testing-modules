@@ -14,7 +14,7 @@ export class WalletOperations {
     this.confirmBtn = this.page
       .getByTestId('confirm-button')
       .or(this.page.getByText('Confirm'));
-    this.rejectBtn = this.rejectBtn
+    this.rejectBtn = this.page
       .getByTestId('reject-button')
       .or(this.page.getByText('Reject'));
     this.viewDetailsBtn = this.page.getByTestId('view-details-button');
