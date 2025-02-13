@@ -37,4 +37,19 @@ export class SettingsPage {
       );
     });
   }
+
+  async setupNetworkChangingSetting() {
+    await test.step('Check toggle state', async () => {
+      await this.openSettings();
+      await this.experimentalTabButton.click();
+      const toggleState =
+        await this.inputNetworksForEachSiteToggle.getAttribute('value');
+
+      if (toggleState === 'true') {
+        await test.step('Turn off the toggle of the setting network changing', async () => {
+          await this.selectNetworksForEachSiteToggle.click();
+        });
+      }
+    });
+  }
 }
