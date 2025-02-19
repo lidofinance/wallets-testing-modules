@@ -136,7 +136,7 @@ export class NetworkList {
               .getByText('Connecting to')
               .waitFor({ state: 'hidden' });
           } catch {
-            console.error('Connecting network was without loader');
+            console.log('[INFO] Connecting network was without loader');
           }
         });
       });

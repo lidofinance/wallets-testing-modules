@@ -24,7 +24,7 @@ export class LoginPage {
         await this.submitButton.click();
         await this.submitButton.waitFor({ state: 'hidden' });
       } catch {
-        console.log('The Wallet unlocking is not needed');
+        console.log('[INFO] The Wallet unlocking is not needed');
       }
     });
   }

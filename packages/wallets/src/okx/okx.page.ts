@@ -75,7 +75,7 @@ export class OkxPage implements WalletPage {
         });
         await this.onboardingPage.firstTimeSetup();
       } catch {
-        console.error('Import is not necessary');
+        console.log('[INFO] Import is not necessary');
       }
       await closeUnnecessaryPages(this.browserContext);
     });
@@ -247,8 +247,8 @@ export class OkxPage implements WalletPage {
 
   // need realize for mainnet
   async openLastTxInEthplorer(txIndex = 0) {
-    console.error(
-      `OKX wallet does not display the transaction history for testnet (param ${txIndex})`,
+    console.log(
+      `[INFO] OKX wallet does not display the transaction history for testnet (param ${txIndex})`,
     );
     return null;
   }

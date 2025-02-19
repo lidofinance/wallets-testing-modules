@@ -69,11 +69,11 @@ export class WalletOperations {
             // need wait for the extension is close the transaction
             await this.page.waitForTimeout(2000);
           } catch {
-            console.log('Сancel button is disappeared');
+            console.log('[INFO] Cancel button is disappeared');
           }
         }
       } catch {
-        console.log('No operations to reject');
+        console.log('[INFO] No operations to reject');
       }
     });
   }

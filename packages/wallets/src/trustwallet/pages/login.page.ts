@@ -20,7 +20,7 @@ export class LoginPage {
         await this.page.locator('button:has-text("Unlock")').click();
         await this.passwordInput.waitFor({ state: 'hidden', timeout: 30000 });
       } catch {
-        console.log('Wallet unlocking is not needed');
+        console.log('[INFO] Wallet unlocking is not needed');
       }
     });
   }
