@@ -44,6 +44,7 @@ export class HomePage {
         await this.settingButton.hover();
         if (await this.page.getByText('DApps connection').isVisible()) break;
         attempts--;
+        await this.settingButton.blur();
         await this.page.waitForTimeout(2000);
       }
       await this.page.getByText('DApps connection').click();
