@@ -16,6 +16,7 @@ export class TrustWalletPage implements WalletPage {
   settingsPage: SettingPage;
   homePage: HomePage;
   loginPage: LoginPage;
+  walletOperations: WalletOperations;
 
   constructor(
     private browserContext: BrowserContext,
@@ -28,6 +29,7 @@ export class TrustWalletPage implements WalletPage {
     this.settingsPage = new SettingPage(this.page);
     this.homePage = new HomePage(this.page);
     this.loginPage = new LoginPage(this.page, this.config);
+    this.walletOperations = new WalletOperations(this.page);
   }
 
   /** Navigate to home page of Trust Wallet extension
@@ -42,8 +44,8 @@ export class TrustWalletPage implements WalletPage {
       await this.page.goto(
         this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
       );
-      await this.page.waitForTimeout(1000);
       await this.loginPage.unlock();
+      await this.walletOperations.confirmHighRisk();
       await this.homePage.rejectTxInQueue();
       await this.homePage.closePopover();
     });
@@ -106,8 +108,12 @@ export class TrustWalletPage implements WalletPage {
   async connectWallet(page: Page) {
     await test.step('Connect wallet', async () => {
       const txPage = new WalletOperations(page);
-      await txPage.confirmHighRiskAndConnectWallet();
-      if (await txPage.connectBtn.isVisible()) await txPage.connectBtn.click();
+      await txPage.confirmHighRisk();
+      if (await txPage.connectBtn.isVisible()) {
+        await txPage.connectBtn.click();
+      } else {
+        await txPage.confirmHighRisk();
+      }
     });
   }
 

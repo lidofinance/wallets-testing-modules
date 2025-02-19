@@ -37,7 +37,7 @@ export class WalletOperations {
     this.checkbox = this.page.locator('[type="checkbox"]');
   }
 
-  async confirmHighRiskAndConnectWallet() {
+  async confirmHighRisk() {
     try {
       await this.page
         .getByText('This URL is marked as high risk')

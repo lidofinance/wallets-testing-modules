@@ -15,9 +15,10 @@ export class LoginPage {
   async unlock() {
     await test.step('Unlock', async () => {
       try {
-        await this.passwordInput.waitFor({ state: 'visible', timeout: 2000 });
+        await this.passwordInput.waitFor({ state: 'visible', timeout: 5000 });
         await this.passwordInput.fill(this.config.PASSWORD);
         await this.page.locator('button:has-text("Unlock")').click();
+        await this.passwordInput.waitFor({ state: 'hidden', timeout: 30000 });
       } catch {
         console.log('Wallet unlocking is not needed');
       }
