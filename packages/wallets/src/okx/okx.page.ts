@@ -138,7 +138,10 @@ export class OkxPage implements WalletPage {
       await this.networkListPage.selectNetwork(networkName);
 
       // switch network for connected dApp
-      await this.homePage.switchNetworkForDApp(networkName);
+      await this.homePage.switchNetworkForDApp(
+        this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+        networkName,
+      );
       await this.page.close();
     });
   }
