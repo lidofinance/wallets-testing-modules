@@ -82,15 +82,9 @@ export class OkxPage implements WalletPage {
   }
 
   /** Checks the is installed the needed network and add new network to wallet (if needed) */
-  async setupNetwork(standConfig: Record<string, any>) {
-    await test.step(`Setup "${standConfig.chainName}" Network`, async () => {
-      await this.addNetwork({
-        chainName: standConfig.chainName,
-        rpcUrl: standConfig.rpcUrl,
-        chainId: standConfig.chainId,
-        tokenSymbol: standConfig.tokenSymbol,
-        scan: standConfig.scan,
-      });
+  async setupNetwork(networkConfig: NetworkConfig) {
+    await test.step(`Setup "${networkConfig.chainName}" Network`, async () => {
+      await this.addNetwork(networkConfig);
     });
   }
 
@@ -157,7 +151,7 @@ export class OkxPage implements WalletPage {
     await this.page.close();
   }
 
-  /** Click `Confirm` button on the transaction `page` */
+  /** Click `Connect` button on the transaction `page` */
   async connectWallet(page: Page) {
     await test.step('Connect OKX wallet', async () => {
       const operationPage = new WalletOperations(page);

@@ -70,7 +70,7 @@ export class MetamaskPage implements WalletPage {
           await this.browserContext.newPage(),
           this.extensionUrl,
           this.config,
-        ).setupNetworkChangingSetting(); // need to make it possible to change the wallet network// reject all tx in queue if exist
+        ).setupNetworkChangingSetting(); // need to make it possible to change the wallet network
       }
     });
   }
@@ -110,7 +110,6 @@ export class MetamaskPage implements WalletPage {
   }
 
   async addNetwork(networkConfig: NetworkConfig, isClosePage = false) {
-    networkConfig.scan = !networkConfig.scan ? '' : networkConfig.scan;
     await test.step(`Add new network "${networkConfig.chainName}"`, async () => {
       await this.navigate();
       if (await isPopularNetwork(networkConfig.chainName)) {

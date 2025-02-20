@@ -84,14 +84,12 @@ export class NetworkSetting {
       await test.step('Fill the network token symbol', async () => {
         await this.networkTickerInput.fill(networkConfig.tokenSymbol);
       });
-      if (networkConfig.scan) {
-        await test.step('Fill the network explorer url', async () => {
-          await this.networkExplorerDropDown.click();
-          await this.addBlockExplorerButton.click();
-          await this.networkExplorerUrlInput.fill(networkConfig.scan);
-          await this.addExplorerUrlButton.click();
-        });
-      }
+      await test.step('Fill the network explorer url', async () => {
+        await this.networkExplorerDropDown.click();
+        await this.addBlockExplorerButton.click();
+        await this.networkExplorerUrlInput.fill(networkConfig.scan);
+        await this.addExplorerUrlButton.click();
+      });
     });
 
     await test.step('Save the new network', async () => {

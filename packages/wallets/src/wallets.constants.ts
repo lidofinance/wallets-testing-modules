@@ -5,6 +5,8 @@ export interface CommonWalletConfig {
   STORE_EXTENSION_ID: string;
   CONNECT_BUTTON_NAME: string;
   SIMPLE_CONNECT: boolean;
+  // optional stable link for test
+  LATEST_STABLE_DOWNLOAD_LINK?: string;
   EXTENSION_START_PATH: string;
 }
 
@@ -20,7 +22,7 @@ export interface NetworkConfig {
   chainName: string;
   tokenSymbol: string;
   rpcUrl: string;
-  scan?: string;
+  scan: string;
 }
 
 type MainnetNetworks =
@@ -61,6 +63,7 @@ export const NETWORKS_CONFIG: {
       chainName: 'OP Mainnet',
       tokenSymbol: 'ETH',
       rpcUrl: 'https://rpc.ankr.com/optimism',
+      scan: '',
     },
     SONEIUM: {
       chainId: 1868,
@@ -74,60 +77,70 @@ export const NETWORKS_CONFIG: {
       chainName: 'zkSync Era Mainnet',
       tokenSymbol: 'ETH',
       rpcUrl: null,
+      scan: '',
     },
     ARBITRUM: {
       chainId: 42161,
       chainName: 'Arbitrum One',
       tokenSymbol: 'ETH',
       rpcUrl: null,
+      scan: '',
     },
     POLYGON: {
       chainId: 137,
       chainName: 'Polygon Mainnet',
       tokenSymbol: 'ETH',
       rpcUrl: null,
+      scan: '',
     },
     BASE: {
       chainId: 8453,
       chainName: 'Base Mainnet',
       tokenSymbol: 'ETH',
       rpcUrl: null,
+      scan: '',
     },
     BNB: {
       chainId: 56,
       chainName: 'Binance Smart Chain',
       tokenSymbol: 'ETH',
       rpcUrl: null,
+      scan: '',
     },
     LINEA: {
       chainId: 59144,
       chainName: 'Linea',
       tokenSymbol: 'ETH',
       rpcUrl: null,
+      scan: '',
     },
     MANTLE: {
       chainId: 5000,
       chainName: 'Mantle Mainnet',
       tokenSymbol: 'MNT',
       rpcUrl: 'https://rpc-moon.mantle.xyz/v1/NTQ3ODk1ZDdiOWRmODIyM2FiM2Y5YTVh',
+      scan: '',
     },
     SCROLL: {
       chainId: 534352,
       chainName: 'Scroll Mainnet',
       tokenSymbol: 'ETH',
       rpcUrl: 'https://rpc.scroll.io',
+      scan: '',
     },
     MODE: {
       chainId: 34443,
       chainName: 'Mode',
       tokenSymbol: 'ETH',
       rpcUrl: 'https://mainnet.mode.network',
+      scan: '',
     },
     ZIRCUIT: {
       chainId: 48900,
       chainName: 'Zircuit',
       tokenSymbol: 'ETH',
       rpcUrl: 'https://zircuit1-mainnet.p2pify.com',
+      scan: '',
     },
   },
   Testnet: {
