@@ -7,6 +7,10 @@ export const METAMASK_COMMON_CONFIG: CommonWalletConfig = {
   STORE_EXTENSION_ID: 'nkbihfbeogaeaoehlefnkodbefgpgknn',
   CONNECT_BUTTON_NAME: 'MetaMask',
   SIMPLE_CONNECT: false,
+  // MetaMask removed the experimental "Select networks for each site" feature,
+  // which broke the unsupported chain tests flow.
+  // Use this version if you need to handle unsupported chain tests.
+  // https://github.com/MetaMask/metamask-extension/releases/tag/v12.11.0
   LATEST_STABLE_DOWNLOAD_LINK:
     'https://github.com/MetaMask/metamask-extension/releases/download/v12.10.4/metamask-chrome-12.10.4.zip',
   EXTENSION_START_PATH: '/home.html',
