@@ -32,12 +32,15 @@ export class OnboardingPage {
     );
   }
 
-  async firstTimeSetup() {
+  async firstTimeSetup(extensionLink: string) {
     await test.step('First time setup', async () => {
-      await this.importWalletButton.click();
+      // We need to open the seed phrase import page right away
+      // because the wallet closes all tabs and opens the extension after clicking on the seed phrase button on previous pages
+      await this.page.goto(
+        extensionLink + '#/import-with-seed-phrase-and-private-key',
+      );
 
       await test.step('Fill the secret phrase', async () => {
-        await this.seedPhraseSelect.click();
         const seedWords = this.config.SECRET_PHRASE.split(' ');
         for (let i = 0; i < seedWords.length; i++) {
           await this.seedPhraseInputs.nth(i).fill(seedWords[i]);

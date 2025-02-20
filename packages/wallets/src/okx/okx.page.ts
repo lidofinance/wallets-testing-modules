@@ -73,7 +73,9 @@ export class OkxPage implements WalletPage {
         await this.onboardingPage.importWalletButton.waitFor({
           timeout: 3000,
         });
-        await this.onboardingPage.firstTimeSetup();
+        await this.onboardingPage.firstTimeSetup(
+          this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+        );
       } catch {
         console.error('Import is not necessary');
       }
