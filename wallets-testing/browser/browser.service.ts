@@ -81,7 +81,6 @@ export class BrowserService {
     walletConfig.EXTENSION_PATH =
       await this.extensionService.getExtensionDirFromId(
         commonWalletConfig.STORE_EXTENSION_ID,
-        commonWalletConfig.LATEST_STABLE_DOWNLOAD_LINK,
       );
     await this.browserContextService.setup(
       commonWalletConfig.WALLET_NAME,
