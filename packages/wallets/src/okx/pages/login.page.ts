@@ -2,12 +2,10 @@ import { Locator, Page, test } from '@playwright/test';
 import { WalletConfig } from '../../wallets.constants';
 
 export class LoginPage {
-  page: Page;
   passwordInput: Locator;
   submitButton: Locator;
 
-  constructor(page: Page, public config: WalletConfig) {
-    this.page = page;
+  constructor(public page: Page, public config: WalletConfig) {
     this.passwordInput = this.page.locator(
       'input[data-testid="okd-input"][type="password"]',
     );

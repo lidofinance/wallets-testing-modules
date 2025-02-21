@@ -1,7 +1,6 @@
 import { Locator, Page, test } from '@playwright/test';
 
 export class WalletOperations {
-  page: Page;
   connectButton: Locator;
   confirmTxButton: Locator;
   cancelTxButton: Locator;
@@ -10,8 +9,7 @@ export class WalletOperations {
   txAmount: Locator;
   txContract: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public page: Page) {
     this.connectButton = this.page.locator('button:has-text("Connect")');
     this.confirmTxButton = this.page.locator('button:has-text("Confirm")');
     this.cancelTxButton = this.page.locator('button:has-text("Cancel")');

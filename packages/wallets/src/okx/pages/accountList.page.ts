@@ -1,7 +1,6 @@
 import { Locator, Page, test } from '@playwright/test';
 
 export class AccountList {
-  page: Page;
   addWalletButton: Locator;
   editWallet: Locator;
   importSelect: Locator;
@@ -14,8 +13,7 @@ export class AccountList {
   privateKeyTabButton: Locator;
   privateKeyInput: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public page: Page) {
     this.addWalletButton = this.page.locator('button:has-text("Add wallet")');
     this.editWallet = this.page.locator('button:has-text("Edit wallet")');
     this.importSelect = this.page.getByText('Import');
