@@ -89,7 +89,7 @@ export class OnboardingPage {
           timeout: 5000,
         });
       } catch {
-        console.log('Ctrl wallet: Onboarding process is not needed');
+        console.log('[INFO] Ctrl wallet: Onboarding process is not needed');
       }
       return !(await this.alreadyHaveWalletBtn.isVisible());
     });

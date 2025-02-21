@@ -1,7 +1,6 @@
 import { Locator, Page, test } from '@playwright/test';
 
 export class WalletOperations {
-  page: Page;
   connectButton: Locator;
   confirmTxButton: Locator;
   cancelTxButton: Locator;
@@ -10,8 +9,7 @@ export class WalletOperations {
   txAmount: Locator;
   txContract: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public page: Page) {
     this.connectButton = this.page.locator('button:has-text("Connect")');
     this.confirmTxButton = this.page.locator('button:has-text("Confirm")');
     this.cancelTxButton = this.page.locator('button:has-text("Cancel")');
@@ -69,11 +67,11 @@ export class WalletOperations {
             // need wait for the extension is close the transaction
             await this.page.waitForTimeout(2000);
           } catch {
-            console.log('Сancel button is disappeared');
+            console.log('[INFO] Cancel button is disappeared');
           }
         }
       } catch {
-        console.log('No operations to reject');
+        console.log('[INFO] No operations to reject');
       }
     });
   }

@@ -1,15 +1,13 @@
 import { Locator, Page, test } from '@playwright/test';
 
 export class HomePage {
-  page: Page;
   accountListButton: Locator;
   copyAddressButton: Locator;
   settingButton: Locator;
   networkListButton: Locator;
   manageCryptoButton: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public page: Page) {
     this.accountListButton = this.page.locator('img[alt="wallet-avatar"]');
     this.copyAddressButton = this.page
       .getByTestId('okd-select-reference-value-box')
@@ -36,10 +34,9 @@ export class HomePage {
       .textContent();
   }
 
-  async switchNetworkForDApp(networkName: string) {
+  async switchNetworkForDApp(extensionUrl: string, networkName: string) {
     await test.step('Open "DApps connection" page', async () => {
-      await this.settingButton.hover();
-      await this.page.getByText('DApps connection').click();
+      await this.page.goto(extensionUrl + '#/connect-site');
     });
 
     await test.step('Switch network', async () => {

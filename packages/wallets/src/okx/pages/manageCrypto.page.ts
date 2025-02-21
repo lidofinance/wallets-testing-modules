@@ -1,13 +1,11 @@
 import { Locator, Page, test } from '@playwright/test';
 
 export class ManageCryptoPage {
-  page: Page;
   customCryptoButton: Locator;
   tokenAddressInput: Locator;
   confirmButton: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public page: Page) {
     this.customCryptoButton = this.page.locator(
       'button:has-text("Custom crypto")',
     );

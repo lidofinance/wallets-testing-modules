@@ -6,23 +6,21 @@ export class LoginPage {
   submitButton: Locator;
 
   constructor(public page: Page, public config: WalletConfig) {
-    this.passwordInput = this.page.locator(
-      'input[data-testid="okd-input"][type="password"]',
-    );
+    this.passwordInput = this.page.getByTestId('password-field');
     this.submitButton = this.page.locator(
       'button[data-testid="okd-button"][type="submit"]',
     );
   }
 
   async unlock() {
-    await test.step('Unlock wallet', async () => {
+    await test.step('Unlock', async () => {
       try {
-        await this.passwordInput.waitFor({ state: 'visible', timeout: 2000 });
+        await this.passwordInput.waitFor({ state: 'visible', timeout: 5000 });
         await this.passwordInput.fill(this.config.PASSWORD);
-        await this.submitButton.click();
-        await this.submitButton.waitFor({ state: 'hidden' });
+        await this.page.locator('button:has-text("Unlock")').click();
+        await this.passwordInput.waitFor({ state: 'hidden', timeout: 30000 });
       } catch {
-        console.log('[INFO] The Wallet unlocking is not needed');
+        console.log('[INFO] Wallet unlocking is not needed');
       }
     });
   }

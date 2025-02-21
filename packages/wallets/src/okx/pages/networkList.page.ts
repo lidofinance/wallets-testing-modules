@@ -2,7 +2,6 @@ import { Locator, Page, test } from '@playwright/test';
 import { NetworkConfig } from '../../wallets.constants';
 
 export class NetworkList {
-  page: Page;
   popularNetworkList: Locator;
   popularNetworkTabButton: Locator;
   userNetworkList: Locator;
@@ -11,8 +10,7 @@ export class NetworkList {
   createNetworkInputs: Locator;
   saveNetworkButton: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public page: Page) {
     this.popularNetworkTabButton = this.page.locator(
       'div[data-e2e-okd-tabs-pane="0"]',
     );
@@ -87,7 +85,7 @@ export class NetworkList {
             .getByText('Connecting to')
             .waitFor({ state: 'hidden' });
         } catch {
-          console.log('No need to await loading after changing network');
+          console.log('[INFO] No need to await loading after changing network');
         }
         return;
       }

@@ -56,8 +56,8 @@ export class OnboardingPage {
   async confirmTermsOfOnboarding() {
     await test.step('Confirm terms before onboarding', async () => {
       while (!(await this.page.locator('.check-box__checked').isVisible())) {
-        console.error(
-          `confirmTermsOfOnboarding function: Checkbox is not checked (checkbox enable state = ${await this.termsCheckboxButton.isEnabled()})`,
+        console.log(
+          `[INFO] confirmTermsOfOnboarding function: Checkbox is not checked (checkbox enable state = ${await this.termsCheckboxButton.isEnabled()})`,
         );
         await this.termsCheckboxButton.click();
       }
