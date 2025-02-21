@@ -69,7 +69,6 @@ export class TrustWalletPage implements WalletPage {
       await this.navigate();
       await this.settingsPage.openSetting();
       await this.settingsPage.addNetwork(networkConfig);
-      await this.navigate();
     });
   }
 
@@ -77,9 +76,7 @@ export class TrustWalletPage implements WalletPage {
   async setupNetwork(networkConfig: NetworkConfig) {
     await test.step(`Setup "${networkConfig.chainName}" Network`, async () => {
       await this.navigate();
-      if (await this.homePage.isNetworkExists(networkConfig.chainName)) {
-        await this.homePage.changeNetwork(networkConfig.chainName);
-      } else {
+      if (!(await this.homePage.isNetworkExists(networkConfig.chainName))) {
         await this.addNetwork(networkConfig);
       }
     });
