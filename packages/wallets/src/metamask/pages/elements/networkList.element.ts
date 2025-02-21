@@ -77,7 +77,9 @@ export class NetworkList {
       return false;
     }
     // For fork Mainnet we have to verify is forkNode url added to "Ethereum Mainnet" network
-    if (chainId === 1 && rpcUrl.includes('127.0.0.1')) {
+    const isForkMainnet = chainId === 1 && rpcUrl.includes('127.0.0.1');
+
+    if (isForkMainnet) {
       // that locator exists only for added networks
       try {
         // By default no rpc label below network Name
