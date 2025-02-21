@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "fix-multiply-network-import",
-        "channel": "alpha-multupl-network",
-        "prerelease": "alpha-multupl-network"
+        "name": "develop",
+        "channel": "alpha",
+        "prerelease": "alpha"
       }
     ]
   }
