@@ -37,7 +37,11 @@ export class OkxPage implements WalletPage {
     this.page = await this.browserContext.newPage();
     this.homePage = new HomePage(this.page);
     this.loginPage = new LoginPage(this.page, this.config);
-    this.onboardingPage = new OnboardingPage(this.page, this.config);
+    this.onboardingPage = new OnboardingPage(
+      this.page,
+      this.config,
+      this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+    );
     this.networkListPage = new NetworkList(this.page);
     this.manageCryptoPage = new ManageCryptoPage(this.page);
     this.accountList = new AccountList(this.page);
@@ -73,9 +77,7 @@ export class OkxPage implements WalletPage {
         await this.onboardingPage.importWalletButton.waitFor({
           timeout: 3000,
         });
-        await this.onboardingPage.firstTimeSetup(
-          this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
-        );
+        await this.onboardingPage.firstTimeSetup();
       } catch {
         console.error('Import is not necessary');
       }
