@@ -11,8 +11,13 @@ export class OnboardingPage {
   passwordInput: Locator;
   confirmButton: Locator;
   startJourneyButton: Locator;
+  extensionSetupUrl: string;
 
-  constructor(page: Page, public config: WalletConfig) {
+  constructor(
+    page: Page,
+    public config: WalletConfig,
+    extensionHomeUrl: string,
+  ) {
     this.page = page;
     this.importWalletButton = this.page.locator(
       'button:has-text("Import wallet")',
@@ -30,14 +35,17 @@ export class OnboardingPage {
     this.startJourneyButton = this.page.locator(
       "button:has-text('Start your Web3 journey')",
     );
+    this.extensionSetupUrl =
+      extensionHomeUrl + '#/import-with-seed-phrase-and-private-key';
   }
 
   async firstTimeSetup() {
     await test.step('First time setup', async () => {
-      await this.importWalletButton.click();
+      // We need to open the seed phrase import page right away
+      // because the wallet closes all tabs and opens the extension after clicking on the seed phrase button on previous pages
+      await this.page.goto(this.extensionSetupUrl);
 
       await test.step('Fill the secret phrase', async () => {
-        await this.seedPhraseSelect.click();
         const seedWords = this.config.SECRET_PHRASE.split(' ');
         for (let i = 0; i < seedWords.length; i++) {
           await this.seedPhraseInputs.nth(i).fill(seedWords[i]);
