@@ -105,7 +105,7 @@ export class TrustWalletPage implements WalletPage {
 
   /** Click `Connect` button on the transaction `page` */
   async connectWallet(page: Page) {
-    // todo [High risk connection] Need to research before connecting the Trust wallet methods to widget tests
+    // [High risk connection] Need to research before connecting the Trust wallet methods to widget tests
     // https://linear.app/lidofi/issue/QA-3382/high-risk-popup-before-connect-to-trust-wallet
     await test.step('Connect wallet', async () => {
       const txPage = new WalletOperations(page, this.logger);
