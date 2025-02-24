@@ -1,6 +1,5 @@
 import { Locator, Page, test } from '@playwright/test';
 import { NetworkConfig } from '../../../wallets.constants';
-import * as net from 'node:net';
 
 export class NetworkSetting {
   page: Page;
