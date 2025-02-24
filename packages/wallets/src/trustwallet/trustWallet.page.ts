@@ -1,6 +1,7 @@
 import { NetworkConfig, WalletConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import { test, BrowserContext, Page, expect } from '@playwright/test';
+import { Logger } from '@nestjs/common';
 import {
   OnboardingPage,
   SettingPage,
@@ -17,6 +18,7 @@ export class TrustWalletPage implements WalletPage {
   homePage: HomePage;
   loginPage: LoginPage;
   walletOperations: WalletOperations;
+  logger = new Logger('Trust Wallet');
 
   constructor(
     private browserContext: BrowserContext,
@@ -28,8 +30,8 @@ export class TrustWalletPage implements WalletPage {
     this.onboardingPage = new OnboardingPage(this.page, this.config);
     this.settingsPage = new SettingPage(this.page);
     this.homePage = new HomePage(this.page);
-    this.loginPage = new LoginPage(this.page, this.config);
-    this.walletOperations = new WalletOperations(this.page);
+    this.loginPage = new LoginPage(this.page, this.config, this.logger);
+    this.walletOperations = new WalletOperations(this.page, this.logger);
   }
 
   /** Navigate to home page of Trust Wallet extension
@@ -103,8 +105,10 @@ export class TrustWalletPage implements WalletPage {
 
   /** Click `Connect` button on the transaction `page` */
   async connectWallet(page: Page) {
+    // todo [High risk connection] Need to research before connecting the Trust wallet methods to widget tests
+    // https://linear.app/lidofi/issue/QA-3382/high-risk-popup-before-connect-to-trust-wallet
     await test.step('Connect wallet', async () => {
-      const txPage = new WalletOperations(page);
+      const txPage = new WalletOperations(page, this.logger);
       await txPage.confirmHighRisk();
       if (await txPage.connectBtn.isVisible()) {
         await txPage.connectBtn.click();
@@ -117,7 +121,7 @@ export class TrustWalletPage implements WalletPage {
   /** Get the `amount` from transaction and comply with the `expectedAmount` */
   async assertTxAmount(page: Page, expectedAmount: string) {
     await test.step('Assert TX Amount', async () => {
-      const txPage = new WalletOperations(page);
+      const txPage = new WalletOperations(page, this.logger);
       expect(parseFloat(await txPage.txAmountValue.textContent())).toBe(
         expectedAmount,
       );
@@ -127,7 +131,7 @@ export class TrustWalletPage implements WalletPage {
   /** Confirm transaction */
   async confirmTx(page: Page) {
     await test.step('Confirm TX', async () => {
-      const txPage = new WalletOperations(page);
+      const txPage = new WalletOperations(page, this.logger);
       await expect(txPage.confirmBtn).toBeEnabled();
       await txPage.confirmBtn.click();
     });
@@ -136,7 +140,7 @@ export class TrustWalletPage implements WalletPage {
   /** Reject transaction */
   async cancelTx(page: Page) {
     await test.step('Cancel TX', async () => {
-      const txPage = new WalletOperations(page);
+      const txPage = new WalletOperations(page, this.logger);
       await expect(txPage.rejectBtn).toBeEnabled();
       await txPage.rejectBtn.click();
     });
@@ -145,7 +149,7 @@ export class TrustWalletPage implements WalletPage {
   /** Confirm token approval transaction */
   async approveTokenTx(page: Page) {
     await test.step('Approve token TX', async () => {
-      const txPage = new WalletOperations(page);
+      const txPage = new WalletOperations(page, this.logger);
       await expect(txPage.confirmBtn).toBeEnabled();
       await txPage.confirmBtn.click();
     });
@@ -154,7 +158,7 @@ export class TrustWalletPage implements WalletPage {
   /** Get the `address` from transaction and comply with the `expectedAddress` */
   async assertReceiptAddress(page: Page, expectedAddress: string) {
     await test.step('Assert receiptAddress/Contract', async () => {
-      await new WalletOperations(page).viewDetailsBtn.click();
+      await new WalletOperations(page, this.logger).viewDetailsBtn.click();
       await page.getByText(expectedAddress).isVisible();
     });
   }

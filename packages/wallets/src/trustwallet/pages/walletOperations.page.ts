@@ -1,4 +1,5 @@
 import { Locator, Page } from '@playwright/test';
+import { Logger } from '@nestjs/common';
 
 export class WalletOperations {
   page: Page;
@@ -11,7 +12,7 @@ export class WalletOperations {
   continueAnywayBtn: Locator;
   checkbox: Locator;
 
-  constructor(page: Page) {
+  constructor(page: Page, public logger: Logger) {
     this.page = page;
     this.connectBtn = this.page.locator('button:has-text("Connect")');
     this.confirmBtn = this.page
@@ -46,6 +47,7 @@ export class WalletOperations {
       await this.checkbox.nth(0).check(); // I understand I can lose all my tokens
       await this.checkbox.nth(1).check(); // I understand my lost tokens cannot be recovered by Trust
       await this.continueAnywayBtn.click();
+      this.logger.error('High risk notify before wallet connection');
     } catch {
       return;
     }
