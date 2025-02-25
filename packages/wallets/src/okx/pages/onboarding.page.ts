@@ -2,7 +2,6 @@ import { Locator, Page, test } from '@playwright/test';
 import { WalletConfig } from '../../wallets.constants';
 
 export class OnboardingPage {
-  page: Page;
   importWalletButton: Locator;
   seedPhraseSelect: Locator;
   seedPhraseInputs: Locator;
@@ -14,11 +13,10 @@ export class OnboardingPage {
   extensionSetupUrl: string;
 
   constructor(
-    page: Page,
+    public page: Page,
     public config: WalletConfig,
     extensionHomeUrl: string,
   ) {
-    this.page = page;
     this.importWalletButton = this.page.locator(
       'button:has-text("Import wallet")',
     );

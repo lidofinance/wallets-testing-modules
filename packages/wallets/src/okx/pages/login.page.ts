@@ -2,12 +2,10 @@ import { Locator, Page, test } from '@playwright/test';
 import { WalletConfig } from '../../wallets.constants';
 
 export class LoginPage {
-  page: Page;
   passwordInput: Locator;
   submitButton: Locator;
 
-  constructor(page: Page, public config: WalletConfig) {
-    this.page = page;
+  constructor(public page: Page, public config: WalletConfig) {
     this.passwordInput = this.page.locator(
       'input[data-testid="okd-input"][type="password"]',
     );
@@ -24,7 +22,7 @@ export class LoginPage {
         await this.submitButton.click();
         await this.submitButton.waitFor({ state: 'hidden' });
       } catch {
-        console.log('The Wallet unlocking is not needed');
+        console.log('[INFO] The Wallet unlocking is not needed');
       }
     });
   }
