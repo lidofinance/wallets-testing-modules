@@ -30,6 +30,6 @@
   },
   "dependencies": {
     "@playwright/test": "^1.44.1",
-    "axios": "^0.27.2"
+    "axios": "^1.7.9"
   }
 }
