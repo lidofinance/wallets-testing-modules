@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
+  AdditionalWalletPage,
   CommonWalletConfig,
   WalletConfig,
   WalletPage,
@@ -24,6 +25,7 @@ import { BrowserContextService } from './browser.context.service';
 export class BrowserService {
   private readonly logger = new Logger(BrowserService.name);
   private walletPage: WalletPage;
+  private additionalWallet?: AdditionalWalletPage;
   private account: Account;
   private widgetConfig: WidgetConfig;
   private stakeConfig: StakeConfig;
@@ -94,6 +96,15 @@ export class BrowserService {
       extension.url,
       walletConfig,
     );
+    if (commonWalletConfig.ADDITIONAL_WALLET_NAME) {
+      this.additionalWallet = new WALLET_PAGES[
+        commonWalletConfig.ADDITIONAL_WALLET_NAME
+      ](
+        this.browserContextService.browserContext,
+        this.walletPage,
+        this.widgetConfig.chainId,
+      );
+    }
     await this.browserContextService.closePages();
     await this.walletPage.setup(this.widgetConfig.networkName);
     if (!this.widgetConfig.isDefaultNetwork)
@@ -110,7 +121,7 @@ export class BrowserService {
   async stake(): Promise<string> {
     try {
       const widgetPage = new WIDGET_PAGES[this.widgetConfig.name](
-        await this.browserContextService.browserContext.newPage(),
+        this.browserContextService.browserContext.pages()[0],
         this.stakeConfig || {},
       );
       await widgetPage.navigate();
@@ -124,11 +135,12 @@ export class BrowserService {
 
   async connectWallet(): Promise<string> {
     const widgetPage = new WIDGET_PAGES[this.widgetConfig.name](
-      await this.browserContextService.browserContext.newPage(),
+      this.browserContextService.browserContext.pages()[0],
       this.stakeConfig || {},
     );
     await widgetPage.navigate();
-    await widgetPage.connectWallet(this.walletPage);
+    await widgetPage.connectWallet(this.walletPage, this.additionalWallet);
+
     await this.browserContextService.closePages();
     return `Success. Wallet ${this.walletPage.config.COMMON.WALLET_NAME} successfully connected`;
   }
