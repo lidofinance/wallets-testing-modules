@@ -34,16 +34,16 @@ export class SetupPage {
   async firstTimeSetupWallet() {
     return await test.step('Safe wallet setup', async () => {
       await this.page.goto(this.setupUrl);
-      await this.page.waitForTimeout(5000);
       await this.closeExtraPopup();
       await this.agreeCookiesSetting();
       await this.connectWalletExtension();
       try {
-        await this.safeAccount.waitFor({ state: 'visible' });
+        await this.safeAccount.waitFor({ state: 'visible', timeout: 3000 });
       } catch {
         this.logger.error(
           "Used wallet address doesn't have any accounts in Safe",
         );
+        test.fail();
       }
       await this.safeAccount.click();
       return this.page.url();
@@ -55,6 +55,7 @@ export class SetupPage {
       try {
         await this.saveCookiesSettingBtn.waitFor({
           state: 'visible',
+          timeout: 3000,
         });
         await this.saveCookiesSettingBtn.click();
       } catch {
@@ -78,6 +79,13 @@ export class SetupPage {
         this.logger.log('Simple way wallet connection');
       }
       await this.accountCenter.waitFor({ state: 'visible', timeout: 5000 });
+      // remove it
+      await this.accountCenter.click();
+      await this.page.getByTestId('copy-btn-icon').click();
+      console.log(
+        await this.page.evaluate(() => navigator.clipboard.readText()),
+      );
+      //
     });
   }
 

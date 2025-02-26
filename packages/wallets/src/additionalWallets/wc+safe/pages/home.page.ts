@@ -26,14 +26,14 @@ export class HomePage {
 
       await test.step('Approve wallet connection', async () => {
         try {
-          await this.approveBtn.waitFor({ state: 'visible' });
+          await this.approveBtn.waitFor({ state: 'visible', timeout: 5000 });
           await this.approveBtn.click();
         } catch {
           this.logger.log('Connection approve is unnecessary');
         }
       });
 
-      await this.connectedAppIcon.waitFor({ state: 'visible' });
+      await this.connectedAppIcon.waitFor({ state: 'visible', timeout: 3000 });
       await this.page.close();
     });
   }
