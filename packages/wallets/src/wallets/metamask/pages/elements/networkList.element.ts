@@ -76,13 +76,23 @@ export class NetworkList {
     if (await existNetworkByName.isHidden()) {
       return false;
     }
-    // that locator exists only for added networks
-    const elements = this.page.getByTestId(
-      `network-rpc-name-button-0x${chainId.toString(16)}`,
-    );
-    const rpcUrlsFound = await elements.filter({ hasText: rpcUrl }).count();
+    // For fork Mainnet we have to verify is forkNode url added to "Ethereum Mainnet" network
+    const isForkMainnet = chainId === 1 && rpcUrl.includes('127.0.0.1');
 
-    return rpcUrlsFound != 0;
+    if (isForkMainnet) {
+      // that locator exists only for added networks
+      try {
+        // By default no rpc label below network Name
+        const elements = this.page.getByTestId(
+          `network-rpc-name-button-0x${chainId.toString(16)}`,
+        );
+        return rpcUrl.includes(await elements.textContent({ timeout: 1000 }));
+      } catch (Error) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   async addNetworkManually(networkConfig: NetworkConfig) {
@@ -136,7 +146,7 @@ export class NetworkList {
               .getByText('Connecting to')
               .waitFor({ state: 'hidden' });
           } catch {
-            console.error('Connecting network was without loader');
+            console.log('[INFO] Connecting network was without loader');
           }
         });
       });

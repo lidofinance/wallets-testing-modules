@@ -21,7 +21,7 @@ export class LoginPage {
         await this.unlockBtn.click();
         await this.homeBtn.waitFor({ state: 'visible' });
       } catch {
-        console.log('The Wallet unlocking is not needed');
+        console.log('[INFO] The Wallet unlocking is not needed');
       }
     });
   }

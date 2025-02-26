@@ -1,2 +1,2 @@
 export * from './trustwallet.constants';
-export * from './trustWalletPage';
+export * from './trustWallet.page';
