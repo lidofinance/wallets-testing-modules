@@ -43,7 +43,6 @@ export class SetupPage {
         this.logger.error(
           "Used wallet address doesn't have any accounts in Safe",
         );
-        test.fail();
       }
       await this.safeAccount.click();
       return this.page.url();
@@ -79,13 +78,6 @@ export class SetupPage {
         this.logger.log('Simple way wallet connection');
       }
       await this.accountCenter.waitFor({ state: 'visible', timeout: 5000 });
-      // remove it
-      await this.accountCenter.click();
-      await this.page.getByTestId('copy-btn-icon').click();
-      console.log(
-        await this.page.evaluate(() => navigator.clipboard.readText()),
-      );
-      //
     });
   }
 

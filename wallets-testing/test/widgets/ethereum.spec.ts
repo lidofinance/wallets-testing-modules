@@ -79,7 +79,7 @@ test.describe('Ethereum', () => {
     await browserService.connectWallet();
   });
 
-  test.only('WC+Safe connect', async () => {
+  test('WC+Safe connect', async () => {
     await browserService.setup(SAFE_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
