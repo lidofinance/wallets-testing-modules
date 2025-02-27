@@ -1,14 +1,23 @@
+import { WalletPage } from './wallets/wallet.page';
+
 export interface CommonWalletConfig {
   WALLET_NAME: string; // Wallet name for install extension
   CONNECTED_WALLET_NAME: string; // Displayed name of connected wallet
   RPC_URL_PATTERN: string;
   STORE_EXTENSION_ID: string;
   CONNECT_BUTTON_NAME: string; // Button name in the wallet list
-  SIMPLE_CONNECT: boolean;
+  WALLET_TYPE: WalletType;
   LATEST_STABLE_DOWNLOAD_LINK?: string; // Link to stable wallet extension version for test (optional)
   EXTENSION_START_PATH: string; // Start path for wallet setup
   ADDITIONAL_WALLET_NAME?: string; // Wallet name if we use not default wallet
 }
+
+export const Wallets = {
+  EOA: 'EOA',
+  WC: 'WC',
+} as const;
+
+export type WalletType = typeof Wallets.EOA | typeof Wallets.WC;
 
 export interface WalletConfig {
   SECRET_PHRASE: string;

@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
-  AdditionalWalletPage,
   CommonWalletConfig,
+  METAMASK_COMMON_CONFIG,
   WalletConfig,
   WalletPage,
+  WalletType,
 } from '@lidofinance/wallets-testing-wallets';
 import {
   Extension,
@@ -24,8 +25,8 @@ import { BrowserContextService } from './browser.context.service';
 @Injectable()
 export class BrowserService {
   private readonly logger = new Logger(BrowserService.name);
-  private walletPage: WalletPage;
-  private additionalWallet?: AdditionalWalletPage;
+  private walletPage: WalletPage<WalletType>;
+  private additionalWallet: WalletPage<WalletType>;
   private account: Account;
   private widgetConfig: WidgetConfig;
   private stakeConfig: StakeConfig;
@@ -83,6 +84,7 @@ export class BrowserService {
     walletConfig.EXTENSION_PATH =
       await this.extensionService.getExtensionDirFromId(
         commonWalletConfig.STORE_EXTENSION_ID,
+        METAMASK_COMMON_CONFIG.LATEST_STABLE_DOWNLOAD_LINK,
       );
     await this.browserContextService.setup(
       commonWalletConfig.WALLET_NAME,
@@ -90,20 +92,29 @@ export class BrowserService {
       this.widgetConfig.nodeUrl,
     );
     const extension = new Extension(this.browserContextService.extensionId);
-    this.walletPage = new WALLET_PAGES[commonWalletConfig.WALLET_NAME](
-      this.browserContextService.browserContext,
-      extension.url,
-      walletConfig,
-    );
-    if (commonWalletConfig.ADDITIONAL_WALLET_NAME) {
-      this.additionalWallet = new WALLET_PAGES[
-        commonWalletConfig.ADDITIONAL_WALLET_NAME
-      ](
+
+    if (commonWalletConfig.WALLET_TYPE === 'EOA')
+      this.walletPage = new WALLET_PAGES[commonWalletConfig.WALLET_NAME](
+        this.browserContextService.browserContext,
+        extension.url,
+        walletConfig,
+      );
+    else if (commonWalletConfig.WALLET_TYPE === 'WC') {
+      this.walletPage = new WALLET_PAGES[commonWalletConfig.WALLET_NAME](
         this.browserContextService.browserContext,
         this.walletPage,
         this.widgetConfig.chainId,
       );
+
+      this.additionalWallet = new WALLET_PAGES[commonWalletConfig.WALLET_NAME](
+        this.browserContextService.browserContext,
+        extension.url,
+        walletConfig,
+      );
+      // this.walletPage.config.COMMON.ADDITIONAL_WALLET_NAME =
+      //   this.additionalWallet;
     }
+
     await this.browserContextService.closePages();
     await this.walletPage.setup(this.widgetConfig.networkName);
     if (!this.widgetConfig.isDefaultNetwork)
@@ -138,7 +149,7 @@ export class BrowserService {
       this.stakeConfig || {},
     );
     await widgetPage.navigate();
-    await widgetPage.connectWallet(this.walletPage, this.additionalWallet);
+    await widgetPage.connectWallet(this.walletPage);
 
     await this.browserContextService.closePages();
     return `Success. Wallet ${this.walletPage.config.COMMON.WALLET_NAME} successfully connected`;

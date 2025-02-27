@@ -2,7 +2,7 @@ import { WalletConfig } from '../../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import { test, BrowserContext, Page } from '@playwright/test';
 
-export class Coin98 implements WalletPage {
+export class Coin98 implements WalletPage<'EOA'> {
   page: Page | undefined;
 
   constructor(

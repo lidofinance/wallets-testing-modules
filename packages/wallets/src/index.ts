@@ -8,5 +8,5 @@ export * from './wallets/exodus';
 export * from './wallets/okx';
 export * from './wallets/bitget';
 export * from './wallets/ctrl';
-export * from './additionalWallets/additionalWallet.page';
-export * from './additionalWallets/wc+safe';
+export * from './multiSigPage/multiSigPage';
+export * from './multiSigPage/wc+safe';

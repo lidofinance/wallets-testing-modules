@@ -4,8 +4,9 @@ import { WidgetPage } from '../widgets.page';
 import expect from 'expect';
 import { Logger } from '@nestjs/common';
 import {
-  AdditionalWalletPage,
   WalletPage,
+  Wallets,
+  WalletType,
 } from '@lidofinance/wallets-testing-wallets';
 import { test, Page, Locator } from '@playwright/test';
 
@@ -47,14 +48,8 @@ export class EthereumPage implements WidgetPage {
     });
   }
 
-  async connectWallet(
-    walletPage: WalletPage,
-    additionalWallet?: AdditionalWalletPage,
-  ) {
-    await test.step(`Connect wallet ${
-      walletPage.config.COMMON.ADDITIONAL_WALLET_NAME ||
-      walletPage.config.COMMON.WALLET_NAME
-    }`, async () => {
+  async connectWallet<T extends WalletType>(walletPage: WalletPage<T>) {
+    await test.step(`Connect wallet ${walletPage.config.COMMON.WALLET_NAME}`, async () => {
       await this.page.waitForTimeout(2000);
       // If wallet connected -> return
       if ((await this.connectBtn.count()) === 0) return;
@@ -72,24 +67,23 @@ export class EthereumPage implements WidgetPage {
           exact: true,
         });
 
-      if (walletPage.config.COMMON.SIMPLE_CONNECT) {
+      if (walletPage.config.COMMON.WALLET_TYPE === Wallets.WC) {
+        // Step for connection with WalletConnect wallet
         await walletButton.click();
-      } else {
-        const [connectWalletPage] = await Promise.all([
-          this.page.context().waitForEvent('page', { timeout: 5000 }),
-          walletButton.click(),
-        ]);
-        await walletPage.connectWallet(connectWalletPage);
-      }
-
-      // Step for connection with WalletConnect wallet
-      if (additionalWallet) {
         await this.copyWcUrlBtn.waitFor({ state: 'visible', timeout: 10000 });
         await this.copyWcUrlBtn.click();
         const wcUrl = await this.page.evaluate(() =>
           navigator.clipboard.readText(),
         );
-        await additionalWallet.connectWallet(wcUrl);
+        await (walletPage as WalletPage<'WC'>).connectWallet(wcUrl);
+      } else if (walletPage.config.COMMON.WALLET_TYPE === Wallets.EOA) {
+        const [connectWalletPage] = await Promise.all([
+          this.page.context().waitForEvent('page', { timeout: 5000 }),
+          walletButton.click(),
+        ]);
+        await (walletPage as WalletPage<'EOA'>).connectWallet(
+          connectWalletPage,
+        );
       }
     });
 
@@ -105,7 +99,7 @@ export class EthereumPage implements WidgetPage {
     });
   }
 
-  async doStaking(walletPage: WalletPage) {
+  async doStaking<T extends WalletType>(walletPage: WalletPage<T>) {
     await test.step('Do staking', async () => {
       await this.waitForTextContent(
         this.page

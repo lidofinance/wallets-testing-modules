@@ -16,7 +16,7 @@ import {
   isNeedAddNetwork,
 } from './helper';
 
-export class OkxPage implements WalletPage {
+export class OkxPage implements WalletPage<'EOA'> {
   page: Page | undefined;
   homePage: HomePage;
   loginPage: LoginPage;

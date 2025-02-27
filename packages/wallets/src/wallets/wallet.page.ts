@@ -1,9 +1,9 @@
 import { Page } from '@playwright/test';
-import { NetworkConfig, WalletConfig } from '../wallets.constants';
+import { NetworkConfig, WalletConfig, WalletType } from '../wallets.constants';
 
 /** This interface describes the EOA wallets (_like Metamask, OKX, Trust etc._)
  * and lets to manage these wallets with included methods*/
-export interface WalletPage {
+export interface WalletPage<T extends WalletType> {
   page: Page | undefined;
   config: WalletConfig;
 
@@ -11,7 +11,7 @@ export interface WalletPage {
 
   importKey(key: string): Promise<void>;
 
-  connectWallet(page: Page): Promise<void>;
+  connectWallet(param: T extends 'EOA' ? Page : string): Promise<void>;
 
   assertTxAmount(page: Page, expectedAmount: string): Promise<void>;
 

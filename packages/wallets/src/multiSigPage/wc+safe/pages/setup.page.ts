@@ -13,7 +13,7 @@ export class SetupPage {
 
   constructor(
     public page: Page,
-    public metamaskPage: WalletPage,
+    public walletPage: WalletPage<'EOA'>,
     public chainId: number,
   ) {
     this.logger = new Logger('WC+Safe wallet. Setup page');
@@ -70,10 +70,10 @@ export class SetupPage {
         const [connectWalletPage] = await Promise.all([
           this.page.context().waitForEvent('page', { timeout: 5000 }),
           this.page
-            .getByText(this.metamaskPage.config.COMMON.WALLET_NAME)
+            .getByText(this.walletPage.config.COMMON.WALLET_NAME)
             .click(),
         ]);
-        await this.metamaskPage.connectWallet(connectWalletPage);
+        await this.walletPage.connectWallet(connectWalletPage);
       } catch {
         this.logger.log('Simple way wallet connection');
       }

@@ -11,7 +11,7 @@ import {
 } from './pages';
 import { closeUnnecessaryPages } from '../okx/helper';
 
-export class TrustWalletPage implements WalletPage {
+export class TrustWalletPage implements WalletPage<'EOA'> {
   page: Page | undefined;
   onboardingPage: OnboardingPage;
   settingsPage: SettingPage;
