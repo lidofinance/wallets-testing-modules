@@ -14,7 +14,7 @@ import {
 import { getAddress } from 'viem';
 import { isPopularNetwork } from './helper';
 
-export class MetamaskPage implements WalletPage {
+export class MetamaskPage implements WalletPage<'EOA'> {
   page: Page | undefined;
   header: Header;
   homePage: HomePage;

@@ -3,7 +3,7 @@ import { WalletPage } from '../wallet.page';
 import expect from 'expect';
 import { test, BrowserContext, Page } from '@playwright/test';
 
-export class CoinbasePage implements WalletPage {
+export class CoinbasePage implements WalletPage<'EOA'> {
   page: Page | undefined;
 
   constructor(

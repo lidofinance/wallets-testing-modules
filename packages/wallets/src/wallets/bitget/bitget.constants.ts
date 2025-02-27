@@ -6,6 +6,6 @@ export const BITGET_COMMON_CONFIG: CommonWalletConfig = {
   RPC_URL_PATTERN: '',
   STORE_EXTENSION_ID: 'jiidiaalihmmhddjgbnbgdfflelocpak',
   CONNECT_BUTTON_NAME: 'Bitget',
-  SIMPLE_CONNECT: false,
+  WALLET_TYPE: 'EOA',
   EXTENSION_START_PATH: '/welcome.html',
 };

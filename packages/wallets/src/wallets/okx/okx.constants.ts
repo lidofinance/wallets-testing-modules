@@ -1,4 +1,4 @@
-import { CommonWalletConfig } from '../../wallets.constants';
+import { CommonWalletConfig, WalletType } from '../../wallets.constants';
 
 export const OKX_COMMON_CONFIG: CommonWalletConfig = {
   WALLET_NAME: 'okx',
@@ -6,6 +6,6 @@ export const OKX_COMMON_CONFIG: CommonWalletConfig = {
   RPC_URL_PATTERN: '',
   STORE_EXTENSION_ID: 'mcohilncbfahbmgdjkbpemcciiolgcge',
   CONNECT_BUTTON_NAME: 'OKX Wallet',
-  SIMPLE_CONNECT: false,
+  WALLET_TYPE: 'EOA',
   EXTENSION_START_PATH: '/home.html',
 };

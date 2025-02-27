@@ -103,6 +103,7 @@ export class BrowserContextService {
             );
           const extensionId = background.url().split('/')[2];
           this.extensionPage = await this.browserContext.newPage();
+          console.log(extensionId);
           await this.extensionPage.goto(
             `chrome-extension://${extensionId}${extensionStartPath}`,
           );

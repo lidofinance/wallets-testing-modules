@@ -6,6 +6,6 @@ export const EXODUS_COMMON_CONFIG: CommonWalletConfig = {
   RPC_URL_PATTERN: '',
   STORE_EXTENSION_ID: 'aholpfdialjgjfhomihkjbmgjidlcdno',
   CONNECT_BUTTON_NAME: 'Exodus',
-  SIMPLE_CONNECT: false,
+  WALLET_TYPE: 'EOA',
   EXTENSION_START_PATH: '/onboarding.html',
 };

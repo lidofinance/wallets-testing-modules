@@ -6,6 +6,6 @@ export const CTRL_COMMON_CONFIG: CommonWalletConfig = {
   RPC_URL_PATTERN: 'https://mainnet.infura.io/v3/**',
   STORE_EXTENSION_ID: 'hmeobnfnfcmdkdcmlblgagmfpfboieaf',
   CONNECT_BUTTON_NAME: 'Ctrl',
-  SIMPLE_CONNECT: false,
+  WALLET_TYPE: 'EOA',
   EXTENSION_START_PATH: '/popup.html',
 };
