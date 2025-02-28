@@ -1,4 +1,4 @@
-import { CommonWalletConfig } from '../../wallets.constants';
+import { CommonWalletConfig, WalletTypes } from '../../wallets.constants';
 
 export const EXODUS_COMMON_CONFIG: CommonWalletConfig = {
   WALLET_NAME: 'exodus',
@@ -6,6 +6,6 @@ export const EXODUS_COMMON_CONFIG: CommonWalletConfig = {
   RPC_URL_PATTERN: '',
   STORE_EXTENSION_ID: 'aholpfdialjgjfhomihkjbmgjidlcdno',
   CONNECT_BUTTON_NAME: 'Exodus',
-  SIMPLE_CONNECT: false,
+  WALLET_TYPE: WalletTypes.EOA,
   EXTENSION_START_PATH: '/onboarding.html',
 };

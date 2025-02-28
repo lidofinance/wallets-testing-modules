@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 import { Logger } from '@nestjs/common';
 
-export interface AdditionalWalletPage {
+export interface WalletConnectPage {
   page: Page | undefined;
   logger: Logger;
 

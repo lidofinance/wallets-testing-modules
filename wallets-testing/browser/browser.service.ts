@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
-  AdditionalWalletPage,
+  WalletConnectPage,
   CommonWalletConfig,
   WalletConfig,
   WalletPage,
+  WalletTypes,
 } from '@lidofinance/wallets-testing-wallets';
 import {
   Extension,
@@ -25,7 +26,7 @@ import { BrowserContextService } from './browser.context.service';
 export class BrowserService {
   private readonly logger = new Logger(BrowserService.name);
   private walletPage: WalletPage;
-  private additionalWallet?: AdditionalWalletPage;
+  private additionalWallet?: WalletConnectPage;
   private account: Account;
   private widgetConfig: WidgetConfig;
   private stakeConfig: StakeConfig;
@@ -95,7 +96,7 @@ export class BrowserService {
       extension.url,
       walletConfig,
     );
-    if (commonWalletConfig.ADDITIONAL_WALLET_NAME) {
+    if (commonWalletConfig.WALLET_TYPE === WalletTypes.WC) {
       this.additionalWallet = new WALLET_PAGES[
         commonWalletConfig.ADDITIONAL_WALLET_NAME
       ](

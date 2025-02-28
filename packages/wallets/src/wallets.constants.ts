@@ -4,11 +4,18 @@ export interface CommonWalletConfig {
   RPC_URL_PATTERN: string;
   STORE_EXTENSION_ID: string;
   CONNECT_BUTTON_NAME: string; // Button name in the wallet list
-  SIMPLE_CONNECT: boolean;
+  WALLET_TYPE: WalletType;
   LATEST_STABLE_DOWNLOAD_LINK?: string; // Link to stable wallet extension version for test (optional)
   EXTENSION_START_PATH: string; // Start path for wallet setup
   ADDITIONAL_WALLET_NAME?: string; // Wallet name if we use not default wallet
 }
+
+export enum WalletTypes {
+  EOA = 'EOA',
+  WC = 'WC',
+}
+
+export type WalletType = WalletTypes.WC | WalletTypes.EOA;
 
 export interface WalletConfig {
   SECRET_PHRASE: string;

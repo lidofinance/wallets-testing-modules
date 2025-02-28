@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test';
 import {
-  AdditionalWalletPage,
+  WalletConnectPage,
   WalletPage,
 } from '@lidofinance/wallets-testing-wallets';
 
@@ -11,7 +11,7 @@ export interface WidgetPage {
 
   connectWallet(
     walletPage: WalletPage,
-    additionalWallet?: AdditionalWalletPage,
+    additionalWallet?: WalletConnectPage,
   ): Promise<void>;
 
   doStaking(walletPage: WalletPage): Promise<void>;

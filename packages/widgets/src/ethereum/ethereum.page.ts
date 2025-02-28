@@ -4,10 +4,11 @@ import { WidgetPage } from '../widgets.page';
 import expect from 'expect';
 import { Logger } from '@nestjs/common';
 import {
-  AdditionalWalletPage,
+  WalletConnectPage,
   WalletPage,
+  WalletTypes,
 } from '@lidofinance/wallets-testing-wallets';
-import { test, Page, Locator } from '@playwright/test';
+import { Locator, Page, test } from '@playwright/test';
 
 export class EthereumPage implements WidgetPage {
   private readonly logger = new Logger(EthereumPage.name);
@@ -49,7 +50,7 @@ export class EthereumPage implements WidgetPage {
 
   async connectWallet(
     walletPage: WalletPage,
-    additionalWallet?: AdditionalWalletPage,
+    additionalWallet?: WalletConnectPage,
   ) {
     await test.step(`Connect wallet ${
       walletPage.config.COMMON.ADDITIONAL_WALLET_NAME ||
@@ -72,24 +73,23 @@ export class EthereumPage implements WidgetPage {
           exact: true,
         });
 
-      if (walletPage.config.COMMON.SIMPLE_CONNECT) {
-        await walletButton.click();
-      } else {
-        const [connectWalletPage] = await Promise.all([
-          this.page.context().waitForEvent('page', { timeout: 5000 }),
-          walletButton.click(),
-        ]);
-        await walletPage.connectWallet(connectWalletPage);
-      }
-
-      // Step for connection with WalletConnect wallet
-      if (additionalWallet) {
-        await this.copyWcUrlBtn.waitFor({ state: 'visible', timeout: 10000 });
-        await this.copyWcUrlBtn.click();
-        const wcUrl = await this.page.evaluate(() =>
-          navigator.clipboard.readText(),
-        );
-        await additionalWallet.connectWallet(wcUrl);
+      switch (walletPage.config.COMMON.WALLET_TYPE) {
+        case WalletTypes.EOA: {
+          const [connectWalletPage] = await Promise.all([
+            this.page.context().waitForEvent('page', { timeout: 5000 }),
+            walletButton.click(),
+          ]);
+          await walletPage.connectWallet(connectWalletPage);
+          break;
+        }
+        case WalletTypes.WC: {
+          await walletButton.click();
+          await this.copyWcUrlBtn.click();
+          await additionalWallet.connectWallet(
+            await this.page.evaluate(() => navigator.clipboard.readText()),
+          );
+          break;
+        }
       }
     });
 

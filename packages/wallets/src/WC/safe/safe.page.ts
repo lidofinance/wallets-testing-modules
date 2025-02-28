@@ -1,10 +1,10 @@
 import { BrowserContext, Page, test } from '@playwright/test';
-import { AdditionalWalletPage } from '../additionalWallet.page';
+import { WalletConnectPage } from '../walletConnect.page';
 import { Logger } from '@nestjs/common';
 import { HomePage, SetupPage } from './pages';
-import { WalletPage } from '../../wallets/wallet.page';
+import { WalletPage } from '../../EOA/wallet.page';
 
-export class SafePage implements AdditionalWalletPage {
+export class SafePage implements WalletConnectPage {
   page: Page | undefined;
   logger: Logger;
   setupPage: SetupPage;

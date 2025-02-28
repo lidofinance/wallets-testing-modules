@@ -1,6 +1,6 @@
 import { Locator, Page, test } from '@playwright/test';
 import { Logger } from '@nestjs/common';
-import { WalletPage } from '../../../wallets/wallet.page';
+import { WalletPage } from '../../../EOA/wallet.page';
 
 export class SetupPage {
   logger: Logger;

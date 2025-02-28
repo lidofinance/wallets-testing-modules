@@ -1,4 +1,4 @@
-import { CommonWalletConfig } from '../../wallets.constants';
+import { CommonWalletConfig, WalletTypes } from '../../wallets.constants';
 
 export const COINBASE_COMMON_CONFIG: CommonWalletConfig = {
   WALLET_NAME: 'coinbase',
@@ -6,6 +6,6 @@ export const COINBASE_COMMON_CONFIG: CommonWalletConfig = {
   RPC_URL_PATTERN: 'https://mainnet.infura.io/v3/**',
   STORE_EXTENSION_ID: 'hnfanknocfeofbddgcijnmhnfnkdnaad',
   CONNECT_BUTTON_NAME: 'Coinbase',
-  SIMPLE_CONNECT: false,
+  WALLET_TYPE: WalletTypes.EOA,
   EXTENSION_START_PATH: '/index.html',
 };

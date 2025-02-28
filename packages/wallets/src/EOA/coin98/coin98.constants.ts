@@ -1,4 +1,4 @@
-import { CommonWalletConfig } from '../../wallets.constants';
+import { CommonWalletConfig, WalletTypes } from '../../wallets.constants';
 
 export const COIN98_COMMON_CONFIG: CommonWalletConfig = {
   WALLET_NAME: 'coin98',
@@ -6,6 +6,6 @@ export const COIN98_COMMON_CONFIG: CommonWalletConfig = {
   RPC_URL_PATTERN: 'https://mainnet.infura.io/v3/**',
   STORE_EXTENSION_ID: 'aeachknmefphepccionboohckonoeemg',
   CONNECT_BUTTON_NAME: 'Coin98',
-  SIMPLE_CONNECT: false,
+  WALLET_TYPE: WalletTypes.EOA,
   EXTENSION_START_PATH: '/popup.html?expand=true',
 };
