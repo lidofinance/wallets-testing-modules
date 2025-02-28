@@ -47,6 +47,7 @@ export class BrowserContextService {
           `--load-extension=${this.walletConfig.EXTENSION_PATH}`,
           '--js-flags="--max-old-space-size=2048"',
         ],
+        permissions: ['clipboard-read', 'clipboard-write'],
       },
     );
     this.browserContext.on('page', async (page) => {

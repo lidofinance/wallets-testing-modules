@@ -10,6 +10,7 @@ import {
   OKX_COMMON_CONFIG,
   BITGET_COMMON_CONFIG,
   CTRL_COMMON_CONFIG,
+  SAFE_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import { ETHEREUM_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
 import { BrowserModule } from '../../browser/browser.module';
@@ -75,6 +76,11 @@ test.describe('Ethereum', () => {
 
   test(`Bitget connect`, async () => {
     await browserService.setup(BITGET_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
+    await browserService.connectWallet();
+  });
+
+  test('WC+Safe connect', async () => {
+    await browserService.setup(SAFE_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
     await browserService.connectWallet();
   });
 
