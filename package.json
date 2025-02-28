@@ -40,9 +40,9 @@
     "branches": [
       "main",
       {
-        "name": "fix/security-alerts",
-        "channel": "alpha-sec",
-        "prerelease": "alpha-sec"
+        "name": "develop",
+        "channel": "alpha",
+        "prerelease": "alpha"
       }
     ]
   }
