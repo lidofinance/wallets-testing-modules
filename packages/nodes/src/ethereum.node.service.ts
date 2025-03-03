@@ -43,7 +43,7 @@ export class EthereumNodeService {
     }
     this.logger.debug('Starting a fork node...');
     const node = ganache.server({
-      chainId: this.options.chainId || 0x1,
+      chain: { chainId: this.options.chainId || 0x1 },
       fork: { url: this.options.rpcUrl },
       logging: { quiet: true },
       miner: { blockTime: 2 },
