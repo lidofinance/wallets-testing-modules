@@ -13,12 +13,10 @@ export class OnboardingPage {
 
   constructor(public page: Page, public config: WalletConfig) {
     this.importWalletBtn = this.page.getByText('Import or recover wallet');
-    this.newPasswordInput = this.page.locator(
-      'xpath=//p[contains(text(), "New password")]//following-sibling::div//input',
-    );
-    this.confirmNewPasswordInput = this.page.locator(
-      'xpath=//p[contains(text(), "Confirm new password")]//following-sibling::div//input',
-    );
+    this.newPasswordInput = this.page.getByTestId('password-field').nth(0);
+    this.confirmNewPasswordInput = this.page
+      .getByTestId('password-field')
+      .nth(1);
     this.agreementCheckbox = this.page.locator('input[type=checkbox]');
     this.nextBtn = this.page.locator('button:has-text("Next")');
     this.seedPhraseTypeInput = this.page.locator(
