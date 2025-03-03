@@ -4,7 +4,6 @@ import { WalletConfig } from '../../../wallets.constants';
 export class OnboardingPage {
   importWalletBtn: Locator;
   newPasswordInput: Locator;
-  confirmNewPasswordInput: Locator;
   agreementCheckbox: Locator;
   nextBtn: Locator;
   seedPhraseTypeInput: Locator;
@@ -13,10 +12,7 @@ export class OnboardingPage {
 
   constructor(public page: Page, public config: WalletConfig) {
     this.importWalletBtn = this.page.getByText('Import or recover wallet');
-    this.newPasswordInput = this.page.getByTestId('password-field').nth(0);
-    this.confirmNewPasswordInput = this.page
-      .getByTestId('password-field')
-      .nth(1);
+    this.newPasswordInput = this.page.getByTestId('password-field');
     this.agreementCheckbox = this.page.locator('input[type=checkbox]');
     this.nextBtn = this.page.locator('button:has-text("Next")');
     this.seedPhraseTypeInput = this.page.locator(
@@ -33,11 +29,11 @@ export class OnboardingPage {
 
     await test.step('First time setup', async () => {
       await this.importWalletBtn.click();
-      if (!(await this.newPasswordInput.isVisible())) return;
+      if ((await this.newPasswordInput.count()) < 2) return;
 
       await test.step('Setup wallet password', async () => {
-        await this.newPasswordInput.fill(this.config.PASSWORD);
-        await this.confirmNewPasswordInput.fill(this.config.PASSWORD);
+        await this.newPasswordInput.nth(0).fill(this.config.PASSWORD);
+        await this.newPasswordInput.nth(1).fill(this.config.PASSWORD);
         await this.agreementCheckbox.click();
         await this.nextBtn.click();
       });
