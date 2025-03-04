@@ -1,5 +1,9 @@
-import { NetworkConfig, WalletConfig } from '../../wallets.constants';
-import { WalletPage } from '../wallet.page';
+import {
+  NetworkConfig,
+  WalletConfig,
+  WalletTypes,
+} from '../../wallets.constants';
+import { WalletPage } from '../../wallet.page';
 import { expect } from '@playwright/test';
 import { test, BrowserContext, Page } from '@playwright/test';
 import { HomePage, LoginPage, SettingsPage } from './pages';
@@ -13,9 +17,11 @@ import {
 } from './pages/elements';
 import { getAddress } from 'viem';
 import { isPopularNetwork } from './helper';
+import { Logger } from '@nestjs/common';
 
-export class MetamaskPage implements WalletPage {
+export class MetamaskPage implements WalletPage<WalletTypes.EOA> {
   page: Page | undefined;
+  logger = new Logger('MetamaskPage');
   header: Header;
   homePage: HomePage;
   loginPage: LoginPage;

@@ -1,8 +1,5 @@
 import { Page } from '@playwright/test';
-import {
-  WalletConnectPage,
-  WalletPage,
-} from '@lidofinance/wallets-testing-wallets';
+import { WalletPage, WalletTypes } from '@lidofinance/wallets-testing-wallets';
 
 export interface WidgetPage {
   page: Page | undefined;
@@ -10,9 +7,9 @@ export interface WidgetPage {
   navigate(): Promise<void>;
 
   connectWallet(
-    walletPage: WalletPage,
-    additionalWallet?: WalletConnectPage,
+    extensionWallet: WalletPage<WalletTypes.EOA>,
+    wcImplementedWallet?: WalletPage<WalletTypes.WC>,
   ): Promise<void>;
 
-  doStaking(walletPage: WalletPage): Promise<void>;
+  doStaking(walletPage: WalletPage<WalletTypes.EOA>): Promise<void>;
 }

@@ -1,9 +1,11 @@
-import { WalletConfig } from '../../wallets.constants';
-import { WalletPage } from '../wallet.page';
+import { WalletConfig, WalletTypes } from '../../wallets.constants';
+import { WalletPage } from '../../wallet.page';
 import { test, BrowserContext, Page } from '@playwright/test';
+import { Logger } from '@nestjs/common';
 
-export class Coin98 implements WalletPage {
+export class Coin98 implements WalletPage<WalletTypes.EOA> {
   page: Page | undefined;
+  logger = new Logger('Coin98Page');
 
   constructor(
     private browserContext: BrowserContext,
@@ -113,6 +115,10 @@ export class Coin98 implements WalletPage {
     await test.step('Confirm TX', async () => {
       await page.click('button:has-text("Confirm")');
     });
+  }
+
+  async cancelTx() {
+    throw new Error('Method not implemented.');
   }
 
   async signTx() {

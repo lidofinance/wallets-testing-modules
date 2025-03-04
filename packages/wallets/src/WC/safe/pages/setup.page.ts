@@ -1,6 +1,7 @@
 import { Locator, Page, test } from '@playwright/test';
 import { Logger } from '@nestjs/common';
-import { WalletPage } from '../../../EOA/wallet.page';
+import { WalletPage } from '../../../wallet.page';
+import { WalletTypes } from '../../../wallets.constants';
 
 export class SetupPage {
   logger: Logger;
@@ -13,7 +14,7 @@ export class SetupPage {
 
   constructor(
     public page: Page,
-    public metamaskPage: WalletPage,
+    public metamaskPage: WalletPage<WalletTypes.EOA>,
     public chainId: number,
   ) {
     this.logger = new Logger('WC+Safe wallet. Setup page');
@@ -70,7 +71,7 @@ export class SetupPage {
         const [connectWalletPage] = await Promise.all([
           this.page.context().waitForEvent('page', { timeout: 5000 }),
           this.page
-            .getByText(this.metamaskPage.config.COMMON.WALLET_NAME)
+            .getByText(this.metamaskPage.config.COMMON.EXTENSION_WALLET_NAME)
             .click(),
         ]);
         await this.metamaskPage.connectWallet(connectWalletPage);

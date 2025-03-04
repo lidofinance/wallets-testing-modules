@@ -1,10 +1,12 @@
-import { WalletPage } from '../wallet.page';
+import { WalletPage } from '../../wallet.page';
 import { test, BrowserContext, Page } from '@playwright/test';
-import { WalletConfig } from '../../wallets.constants';
+import { WalletConfig, WalletTypes } from '../../wallets.constants';
 import { LoginPage, OnboardingPage, WalletOperations } from './pages';
+import { Logger } from '@nestjs/common';
 
-export class CtrlPage implements WalletPage {
+export class CtrlPage implements WalletPage<WalletTypes.EOA> {
   page: Page | undefined;
+  logger = new Logger('CtrlPage');
   onboardingPage: OnboardingPage;
   loginPage: LoginPage;
 

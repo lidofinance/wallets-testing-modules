@@ -1,8 +1,10 @@
 import { Locator, Page, test, expect } from '@playwright/test';
 import { WalletConfig } from '../../../wallets.constants';
+import { Logger } from '@nestjs/common';
 
 export class OnboardingPage {
   page: Page;
+  logger = new Logger('Ctrl wallet. OnboardingPage');
   alreadyHaveWalletBtn: Locator;
   importRecoveryPhraseBtn: Locator;
   passwordInput: Locator;
@@ -89,7 +91,7 @@ export class OnboardingPage {
           timeout: 5000,
         });
       } catch {
-        console.log('[INFO] Ctrl wallet: Onboarding process is not needed');
+        this.logger.log('Ctrl wallet: Onboarding process is not needed');
       }
       return !(await this.alreadyHaveWalletBtn.isVisible());
     });

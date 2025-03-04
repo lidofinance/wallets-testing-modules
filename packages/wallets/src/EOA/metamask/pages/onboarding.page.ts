@@ -1,8 +1,10 @@
 import { Locator, Page, test } from '@playwright/test';
 import { WalletConfig } from '../../../wallets.constants';
+import { Logger } from '@nestjs/common';
 
 export class OnboardingPage {
   page: Page;
+  logger = new Logger('MetaMask wallet. OnboardingPage');
   termsCheckboxButton: Locator;
   importWalletButton: Locator;
   metricAgreeButton: Locator;
@@ -56,8 +58,8 @@ export class OnboardingPage {
   async confirmTermsOfOnboarding() {
     await test.step('Confirm terms before onboarding', async () => {
       while (!(await this.page.locator('.check-box__checked').isVisible())) {
-        console.log(
-          `[INFO] confirmTermsOfOnboarding function: Checkbox is not checked (checkbox enable state = ${await this.termsCheckboxButton.isEnabled()})`,
+        this.logger.log(
+          `Checkbox is not checked (checkbox enable state = ${await this.termsCheckboxButton.isEnabled()})`,
         );
         await this.termsCheckboxButton.click();
       }

@@ -1,5 +1,9 @@
-import { NetworkConfig, WalletConfig } from '../../wallets.constants';
-import { WalletPage } from '../wallet.page';
+import {
+  NetworkConfig,
+  WalletConfig,
+  WalletTypes,
+} from '../../wallets.constants';
+import { WalletPage } from '../../wallet.page';
 import { test, BrowserContext, Page, expect } from '@playwright/test';
 import { Logger } from '@nestjs/common';
 import {
@@ -11,14 +15,14 @@ import {
 } from './pages';
 import { closeUnnecessaryPages } from '../okx/helper';
 
-export class TrustWalletPage implements WalletPage {
+export class TrustWalletPage implements WalletPage<WalletTypes.EOA> {
   page: Page | undefined;
+  logger = new Logger('Trust Wallet');
   onboardingPage: OnboardingPage;
   settingsPage: SettingPage;
   homePage: HomePage;
   loginPage: LoginPage;
   walletOperations: WalletOperations;
-  logger = new Logger('Trust Wallet');
 
   constructor(
     private browserContext: BrowserContext,

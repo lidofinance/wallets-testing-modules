@@ -1,9 +1,11 @@
 import { Locator, Page, test } from '@playwright/test';
 import { NetworkSetting } from './networkSetting.element';
 import { NetworkConfig } from '../../../../wallets.constants';
+import { Logger } from '@nestjs/common';
 
 export class NetworkList {
   page: Page;
+  logger = new Logger('MetaMask wallet. NetworkList');
   networkSetting: NetworkSetting;
 
   networkListButton: Locator;
@@ -146,7 +148,7 @@ export class NetworkList {
               .getByText('Connecting to')
               .waitFor({ state: 'hidden' });
           } catch {
-            console.log('[INFO] Connecting network was without loader');
+            this.logger.log('Connecting network was without loader');
           }
         });
       });

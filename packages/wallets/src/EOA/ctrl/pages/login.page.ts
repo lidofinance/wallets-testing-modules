@@ -1,8 +1,10 @@
 import { Locator, Page, test } from '@playwright/test';
 import { WalletConfig } from '../../../wallets.constants';
+import { Logger } from '@nestjs/common';
 
 export class LoginPage {
   page: Page;
+  logger = new Logger('Ctrl wallet. LoginPage');
   unlockBtn: Locator;
   passwordInput: Locator;
   homeBtn: Locator;
@@ -21,7 +23,7 @@ export class LoginPage {
         await this.unlockBtn.click();
         await this.homeBtn.waitFor({ state: 'visible' });
       } catch {
-        console.log('[INFO] The Wallet unlocking is not needed');
+        this.logger.log('The Wallet unlocking is not needed');
       }
     });
   }
