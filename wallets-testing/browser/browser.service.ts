@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import {
   WalletConnectPage,
   CommonWalletConfig,
@@ -10,7 +10,7 @@ import {
   Extension,
   ExtensionService,
 } from '@lidofinance/wallets-testing-extensions';
-import { ConfigService } from '../config';
+import { configService } from '../config';
 import {
   Account,
   EthereumNodeService,
@@ -22,7 +22,6 @@ import {
 import { WALLET_PAGES, WIDGET_PAGES } from './browser.constants';
 import { BrowserContextService } from './browser.context.service';
 
-@Injectable()
 export class BrowserService {
   private readonly logger = new Logger(BrowserService.name);
   private walletPage: WalletPage;
@@ -34,7 +33,6 @@ export class BrowserService {
   constructor(
     private extensionService: ExtensionService,
     private browserContextService: BrowserContextService,
-    private configService: ConfigService,
     private ethereumNodeService: EthereumNodeService,
   ) {}
 
@@ -77,8 +75,8 @@ export class BrowserService {
     this.widgetConfig = widgetConfig;
     this.stakeConfig = stakeConfig;
     const walletConfig: WalletConfig = {
-      SECRET_PHRASE: this.configService.get('WALLET_SECRET_PHRASE'),
-      PASSWORD: this.configService.get('WALLET_PASSWORD'),
+      SECRET_PHRASE: configService.get('WALLET_SECRET_PHRASE'),
+      PASSWORD: configService.get('WALLET_PASSWORD'),
       COMMON: commonWalletConfig,
     };
     walletConfig.EXTENSION_PATH =

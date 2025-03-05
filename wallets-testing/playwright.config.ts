@@ -34,7 +34,7 @@ const config: PlaywrightTestConfig = {
         ['html', { open: 'never' }],
         ['list'],
         ['github'],
-        ['./discord-reporter.js', { outputFile: 'embeds.json' }],
+        ['./discord-reporter.ts', { outputFile: 'embeds.json' }],
       ]
     : [['html', { open: 'never' }], ['list']],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { BrowserContext, chromium, Page } from '@playwright/test';
 import * as fs from 'fs/promises';
 import * as os from 'os';
@@ -10,7 +10,6 @@ import {
   Manifest,
 } from '@lidofinance/wallets-testing-extensions';
 
-@Injectable()
 export class BrowserContextService {
   browserContext: BrowserContext = null;
   browserContextPaths: string[] = [];
