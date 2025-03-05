@@ -1,8 +1,10 @@
 import { Locator, Page, test } from '@playwright/test';
 import { WalletPage } from '../../../wallet.page';
 import { WalletTypes } from '../../../wallets.constants';
+import { Logger } from '@nestjs/common';
 
 export class SetupPage {
+  logger = new Logger('WC+Safe wallet. Setup page');
   saveCookiesSettingBtn: Locator;
   connectWalletBtn: Locator;
   accountCenter: Locator;
@@ -38,8 +40,8 @@ export class SetupPage {
       try {
         await this.safeAccount.waitFor({ state: 'visible', timeout: 3000 });
       } catch {
-        console.error(
-          "[INFO] Used wallet address doesn't have any accounts in Safe",
+        this.logger.error(
+          "Used wallet address doesn't have any accounts in Safe",
         );
       }
       await this.safeAccount.click();
@@ -56,7 +58,7 @@ export class SetupPage {
         });
         await this.saveCookiesSettingBtn.click();
       } catch {
-        console.log('[INFO] Cookie settings are already enabled');
+        this.logger.log('Cookie settings are already enabled');
       }
     });
   }
@@ -73,7 +75,7 @@ export class SetupPage {
         ]);
         await this.metamaskPage.connectWallet(connectWalletPage);
       } catch {
-        console.log('[INFO] Simple way wallet connection');
+        this.logger.log('Simple way wallet connection');
       }
       await this.accountCenter.waitFor({ state: 'visible', timeout: 5000 });
     });
@@ -87,8 +89,8 @@ export class SetupPage {
           this.closeSecurityNoticeBtn.click();
         })
         .catch(() => {
-          console.warn(
-            '[INFO] Security Notice is not displayed (maybe need to remove it?)',
+          this.logger.warn(
+            'Security Notice is not displayed (maybe need to remove it?)',
           );
         });
     });

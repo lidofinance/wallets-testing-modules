@@ -1,6 +1,8 @@
 import { Locator, Page, test } from '@playwright/test';
+import { Logger } from '@nestjs/common';
 
 export class HomePage {
+  logger = new Logger('WC+Safe wallet. HomePage');
   wcBtn: Locator;
   wcUrlInput: Locator;
   approveBtn: Locator;
@@ -26,7 +28,7 @@ export class HomePage {
           await this.approveBtn.waitFor({ state: 'visible', timeout: 5000 });
           await this.approveBtn.click();
         } catch {
-          console.log('[INFO] Connection approve is unnecessary');
+          this.logger.log('Connection approve is unnecessary');
         }
       });
 
