@@ -1,10 +1,8 @@
 import { Locator, Page, test } from '@playwright/test';
-import { Logger } from '@nestjs/common';
 import { WalletPage } from '../../../wallet.page';
 import { WalletTypes } from '../../../wallets.constants';
 
 export class SetupPage {
-  logger: Logger;
   saveCookiesSettingBtn: Locator;
   connectWalletBtn: Locator;
   accountCenter: Locator;
@@ -17,7 +15,6 @@ export class SetupPage {
     public metamaskPage: WalletPage<WalletTypes.EOA>,
     public chainId: number,
   ) {
-    this.logger = new Logger('WC+Safe wallet. Setup page');
     this.setupUrl =
       this.chainId === 1
         ? 'https://app.safe.global/welcome/accounts'
@@ -41,8 +38,8 @@ export class SetupPage {
       try {
         await this.safeAccount.waitFor({ state: 'visible', timeout: 3000 });
       } catch {
-        this.logger.error(
-          "Used wallet address doesn't have any accounts in Safe",
+        console.error(
+          "[INFO] Used wallet address doesn't have any accounts in Safe",
         );
       }
       await this.safeAccount.click();
@@ -59,7 +56,7 @@ export class SetupPage {
         });
         await this.saveCookiesSettingBtn.click();
       } catch {
-        this.logger.log('Cookie settings are already enabled');
+        console.log('[INFO] Cookie settings are already enabled');
       }
     });
   }
@@ -76,7 +73,7 @@ export class SetupPage {
         ]);
         await this.metamaskPage.connectWallet(connectWalletPage);
       } catch {
-        this.logger.log('Simple way wallet connection');
+        console.log('[INFO] Simple way wallet connection');
       }
       await this.accountCenter.waitFor({ state: 'visible', timeout: 5000 });
     });
@@ -90,8 +87,8 @@ export class SetupPage {
           this.closeSecurityNoticeBtn.click();
         })
         .catch(() => {
-          this.logger.warn(
-            'Security Notice is not displayed (maybe need to remove it?)',
+          console.warn(
+            '[INFO] Security Notice is not displayed (maybe need to remove it?)',
           );
         });
     });

@@ -2,11 +2,9 @@ import { WalletConfig, WalletTypes } from '../../wallets.constants';
 import { WalletPage } from '../../wallet.page';
 import { test, BrowserContext, Page } from '@playwright/test';
 import { OnboardingPage } from './pages';
-import { Logger } from '@nestjs/common';
 
 export class ExodusPage implements WalletPage<WalletTypes.EOA> {
   page: Page | undefined;
-  logger = new Logger('ExodusPage');
   onboardingPage: OnboardingPage;
 
   constructor(

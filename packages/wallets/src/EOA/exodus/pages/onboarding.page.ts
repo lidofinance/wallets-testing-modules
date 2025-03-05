@@ -2,7 +2,6 @@ import { Locator, Page, test } from '@playwright/test';
 import { WalletConfig } from '../../../wallets.constants';
 
 export class OnboardingPage {
-  page: Page;
   iHaveWalletBtn: Locator;
   restoreWalletBtn: Locator;
   walletPassword: Locator;
@@ -10,8 +9,7 @@ export class OnboardingPage {
   nextButton: Locator;
   finishOnboardingBtn: Locator;
 
-  constructor(page: Page, public config: WalletConfig) {
-    this.page = page;
+  constructor(public page: Page, public config: WalletConfig) {
     this.iHaveWalletBtn = this.page.getByTestId(
       'exodusmovement.exodus:id/button-already-have-a-wallet',
     );

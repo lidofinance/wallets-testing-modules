@@ -1,7 +1,6 @@
 import { Locator, Page, test } from '@playwright/test';
 
 export class PopoverElements {
-  page: Page;
   popoverCloseButton: Locator;
   manageInSettingButton: Locator;
   notRightNowButton: Locator;
@@ -10,8 +9,7 @@ export class PopoverElements {
   switchToButton: Locator;
   accountDetailAddressLabel: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public page: Page) {
     this.popoverCloseButton = this.page.getByTestId('popover-close');
     this.manageInSettingButton = this.page.locator(
       'button:has-text("Manage in settings")',

@@ -1,11 +1,9 @@
 import { WalletConfig, WalletTypes } from '../../wallets.constants';
 import { WalletPage } from '../../wallet.page';
 import { test, BrowserContext, Page } from '@playwright/test';
-import { Logger } from '@nestjs/common';
 
 export class Coin98 implements WalletPage<WalletTypes.EOA> {
   page: Page | undefined;
-  logger = new Logger('Coin98Page');
 
   constructor(
     private browserContext: BrowserContext,

@@ -6,11 +6,9 @@ import {
 import { WalletPage } from '../../wallet.page';
 import expect from 'expect';
 import { test, BrowserContext, Page } from '@playwright/test';
-import { Logger } from '@nestjs/common';
 
 export class CoinbasePage implements WalletPage<WalletTypes.EOA> {
   page: Page | undefined;
-  logger = new Logger('CoinbasePage');
 
   constructor(
     private browserContext: BrowserContext,

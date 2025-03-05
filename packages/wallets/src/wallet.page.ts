@@ -5,7 +5,6 @@ import {
   WalletType,
   WalletTypes,
 } from './wallets.constants';
-import { Logger } from '@nestjs/common';
 
 /** - T -> WalletTypes.EOA describes the EOA wallets (_like Metamask, OKX, Trust etc._)
  * and lets to manage these wallets with included methods
@@ -14,7 +13,6 @@ import { Logger } from '@nestjs/common';
 export interface WalletPage<T extends WalletType> {
   page: Page | undefined;
   config?: WalletConfig;
-  logger: Logger;
 
   setup(network?: string): Promise<void>;
 

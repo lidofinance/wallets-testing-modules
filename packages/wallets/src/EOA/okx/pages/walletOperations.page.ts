@@ -1,8 +1,6 @@
 import { Locator, Page, test } from '@playwright/test';
-import { Logger } from '@nestjs/common';
 
 export class WalletOperations {
-  logger = new Logger('OKX wallet. WalletOperations');
   connectButton: Locator;
   confirmTxButton: Locator;
   cancelTxButton: Locator;
@@ -69,11 +67,11 @@ export class WalletOperations {
             // need wait for the extension is close the transaction
             await this.page.waitForTimeout(2000);
           } catch {
-            this.logger.log('Cancel button is disappeared');
+            console.log('[INFO] Cancel button is disappeared');
           }
         }
       } catch {
-        this.logger.log('No operations to reject');
+        console.log('[INFO] No operations to reject');
       }
     });
   }

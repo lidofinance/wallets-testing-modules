@@ -1,9 +1,7 @@
 import { Locator, Page, test } from '@playwright/test';
 import { WalletConfig } from '../../../wallets.constants';
-import { Logger } from '@nestjs/common';
 
 export class LoginPage {
-  logger = new Logger('OKX wallet. LoginPage');
   passwordInput: Locator;
   submitButton: Locator;
 
@@ -24,7 +22,7 @@ export class LoginPage {
         await this.submitButton.click();
         await this.submitButton.waitFor({ state: 'hidden' });
       } catch {
-        this.logger.log('The Wallet unlocking is not needed');
+        console.log('[INFO] The Wallet unlocking is not needed');
       }
     });
   }

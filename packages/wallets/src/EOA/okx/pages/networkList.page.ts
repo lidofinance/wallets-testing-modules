@@ -1,9 +1,7 @@
 import { Locator, Page, test } from '@playwright/test';
 import { NetworkConfig } from '../../../wallets.constants';
-import { Logger } from '@nestjs/common';
 
 export class NetworkList {
-  logger = new Logger('OKX wallet. NetworkList');
   popularNetworkList: Locator;
   popularNetworkTabButton: Locator;
   userNetworkList: Locator;
@@ -87,7 +85,7 @@ export class NetworkList {
             .getByText('Connecting to')
             .waitFor({ state: 'hidden' });
         } catch {
-          this.logger.log('No need to await loading after changing network');
+          console.log('[INFO] No need to await loading after changing network');
         }
         return;
       }

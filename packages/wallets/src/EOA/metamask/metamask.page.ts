@@ -17,11 +17,9 @@ import {
 } from './pages/elements';
 import { getAddress } from 'viem';
 import { isPopularNetwork } from './helper';
-import { Logger } from '@nestjs/common';
 
 export class MetamaskPage implements WalletPage<WalletTypes.EOA> {
   page: Page | undefined;
-  logger = new Logger('MetamaskPage');
   header: Header;
   homePage: HomePage;
   loginPage: LoginPage;
