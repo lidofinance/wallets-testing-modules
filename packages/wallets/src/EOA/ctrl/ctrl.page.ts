@@ -1,9 +1,9 @@
-import { WalletPage } from '../wallet.page';
+import { WalletPage } from '../../wallet.page';
 import { test, BrowserContext, Page } from '@playwright/test';
-import { WalletConfig } from '../../wallets.constants';
+import { WalletConfig, WalletTypes } from '../../wallets.constants';
 import { LoginPage, OnboardingPage, WalletOperations } from './pages';
 
-export class CtrlPage implements WalletPage {
+export class CtrlPage implements WalletPage<WalletTypes.EOA> {
   page: Page | undefined;
   onboardingPage: OnboardingPage;
   loginPage: LoginPage;

@@ -2,7 +2,6 @@ import { Locator, Page, test, expect } from '@playwright/test';
 import { WalletConfig } from '../../../wallets.constants';
 
 export class OnboardingPage {
-  page: Page;
   alreadyHaveWalletBtn: Locator;
   importRecoveryPhraseBtn: Locator;
   passwordInput: Locator;
@@ -14,11 +13,10 @@ export class OnboardingPage {
   confirmPasswordBtn: Locator;
 
   constructor(
-    page: Page,
+    public page: Page,
     private extensionUrl: string,
     public config: WalletConfig,
   ) {
-    this.page = page;
     this.alreadyHaveWalletBtn = this.page.getByTestId(
       'i-already-have-a-wallet-btn',
     );

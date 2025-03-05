@@ -1,7 +1,6 @@
 import { Locator, Page, test } from '@playwright/test';
 
 export class WalletOperationPage {
-  page: Page;
   connectBtn: Locator;
   confirmButton: Locator;
   approvalCancelButton: Locator;
@@ -19,8 +18,7 @@ export class WalletOperationPage {
   txDetailBlock: Locator;
   txDetailAmount: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public page: Page) {
     this.connectBtn = this.page.getByTestId('confirm-btn');
     this.confirmButton = this.page.getByTestId('confirm-footer-button');
     this.approvalCancelButton = this.page.getByTestId(

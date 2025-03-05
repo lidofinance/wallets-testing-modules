@@ -2,7 +2,6 @@ import { Locator, Page, test } from '@playwright/test';
 import { NetworkConfig } from '../../../../wallets.constants';
 
 export class NetworkSetting {
-  page: Page;
   dialogSection: Locator;
   addRpcDropDown: Locator;
   addRpcButton: Locator;
@@ -19,8 +18,7 @@ export class NetworkSetting {
 
   saveNewTokenButton: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public page: Page) {
     this.dialogSection = page.locator('section[role="dialog"]');
 
     this.networkNameInput = this.page.getByTestId('network-form-network-name');

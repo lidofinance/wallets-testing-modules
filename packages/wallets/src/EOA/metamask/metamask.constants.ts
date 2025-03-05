@@ -2,10 +2,11 @@ import { CommonWalletConfig, WalletTypes } from '../../wallets.constants';
 
 export const METAMASK_COMMON_CONFIG: CommonWalletConfig = {
   WALLET_NAME: 'metamask',
+  EXTENSION_WALLET_NAME: 'metamask',
   CONNECTED_WALLET_NAME: 'MetaMask',
+  CONNECT_BUTTON_NAME: 'MetaMask',
   RPC_URL_PATTERN: 'https://mainnet.infura.io/v3/**',
   STORE_EXTENSION_ID: 'nkbihfbeogaeaoehlefnkodbefgpgknn',
-  CONNECT_BUTTON_NAME: 'MetaMask',
   WALLET_TYPE: WalletTypes.EOA,
   // MetaMask removed the experimental "Select networks for each site" feature,
   // which broke the unsupported chain tests flow.

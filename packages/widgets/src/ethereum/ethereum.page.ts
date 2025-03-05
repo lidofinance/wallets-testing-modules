@@ -3,11 +3,7 @@ import { StakeConfig } from '../widgets.constants';
 import { WidgetPage } from '../widgets.page';
 import expect from 'expect';
 import { Logger } from '@nestjs/common';
-import {
-  WalletConnectPage,
-  WalletPage,
-  WalletTypes,
-} from '@lidofinance/wallets-testing-wallets';
+import { WalletPage, WalletTypes } from '@lidofinance/wallets-testing-wallets';
 import { Locator, Page, test } from '@playwright/test';
 
 export class EthereumPage implements WidgetPage {
@@ -49,13 +45,10 @@ export class EthereumPage implements WidgetPage {
   }
 
   async connectWallet(
-    walletPage: WalletPage,
-    additionalWallet?: WalletConnectPage,
+    extensionWallet: WalletPage<WalletTypes.EOA>,
+    wcImplementedWallet?: WalletPage<WalletTypes.WC>,
   ) {
-    await test.step(`Connect wallet ${
-      walletPage.config.COMMON.ADDITIONAL_WALLET_NAME ||
-      walletPage.config.COMMON.WALLET_NAME
-    }`, async () => {
+    await test.step(`Connect wallet ${extensionWallet.config.COMMON.WALLET_NAME}`, async () => {
       await this.page.waitForTimeout(2000);
       // If wallet connected -> return
       if ((await this.connectBtn.count()) === 0) return;
@@ -69,23 +62,23 @@ export class EthereumPage implements WidgetPage {
 
       const walletButton = this.page
         .getByRole('button')
-        .getByText(walletPage.config.COMMON.CONNECT_BUTTON_NAME, {
+        .getByText(extensionWallet.config.COMMON.CONNECT_BUTTON_NAME, {
           exact: true,
         });
 
-      switch (walletPage.config.COMMON.WALLET_TYPE) {
+      switch (extensionWallet.config.COMMON.WALLET_TYPE) {
         case WalletTypes.EOA: {
           const [connectWalletPage] = await Promise.all([
             this.page.context().waitForEvent('page', { timeout: 5000 }),
             walletButton.click(),
           ]);
-          await walletPage.connectWallet(connectWalletPage);
+          await extensionWallet.connectWallet(connectWalletPage);
           break;
         }
         case WalletTypes.WC: {
           await walletButton.click();
           await this.copyWcUrlBtn.click();
-          await additionalWallet.connectWallet(
+          await wcImplementedWallet.connectWallet(
             await this.page.evaluate(() => navigator.clipboard.readText()),
           );
           break;
@@ -100,12 +93,12 @@ export class EthereumPage implements WidgetPage {
       await this.page.locator('data-testid=accountSectionHeader').click();
       expect(
         await this.page.textContent('div[data-testid="providerName"]'),
-      ).toContain(walletPage.config.COMMON.CONNECTED_WALLET_NAME);
+      ).toContain(extensionWallet.config.COMMON.CONNECTED_WALLET_NAME);
       await this.page.locator('div[role="dialog"] button').nth(0).click();
     });
   }
 
-  async doStaking(walletPage: WalletPage) {
+  async doStaking(walletPage: WalletPage<WalletTypes.EOA>) {
     await test.step('Do staking', async () => {
       await this.waitForTextContent(
         this.page

@@ -80,7 +80,6 @@ class DiscordReporter implements Reporter {
 
   async sendDiscordWebhook(payload: WebhookPayload) {
     try {
-      console.log(JSON.stringify(payload));
       const response = await axios.post(this.webhookUrl, payload, {
         headers: {
           'Content-Type': 'application/json',

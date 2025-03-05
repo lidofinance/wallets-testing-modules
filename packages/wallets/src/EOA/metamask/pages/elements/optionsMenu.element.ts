@@ -1,13 +1,11 @@
 import { Locator, Page } from '@playwright/test';
 
 export class OptionsMenu {
-  page: Page;
   menuTooltip: Locator;
   menuSettingButton: Locator;
   menuAccountDetailsButton: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public page: Page) {
     this.menuTooltip = this.page.getByRole('tooltip');
     this.menuSettingButton = this.menuTooltip.getByText('Settings');
     this.menuAccountDetailsButton = this.menuTooltip.getByTestId(

@@ -1,9 +1,10 @@
 import { Locator, Page, test } from '@playwright/test';
+import { WalletPage } from '../../../wallet.page';
+import { WalletTypes } from '../../../wallets.constants';
 import { Logger } from '@nestjs/common';
-import { WalletPage } from '../../../EOA/wallet.page';
 
 export class SetupPage {
-  logger: Logger;
+  logger = new Logger('WC+Safe wallet. Setup page');
   saveCookiesSettingBtn: Locator;
   connectWalletBtn: Locator;
   accountCenter: Locator;
@@ -13,10 +14,9 @@ export class SetupPage {
 
   constructor(
     public page: Page,
-    public metamaskPage: WalletPage,
+    public metamaskPage: WalletPage<WalletTypes.EOA>,
     public chainId: number,
   ) {
-    this.logger = new Logger('WC+Safe wallet. Setup page');
     this.setupUrl =
       this.chainId === 1
         ? 'https://app.safe.global/welcome/accounts'
@@ -70,7 +70,7 @@ export class SetupPage {
         const [connectWalletPage] = await Promise.all([
           this.page.context().waitForEvent('page', { timeout: 5000 }),
           this.page
-            .getByText(this.metamaskPage.config.COMMON.WALLET_NAME)
+            .getByText(this.metamaskPage.config.COMMON.EXTENSION_WALLET_NAME)
             .click(),
         ]);
         await this.metamaskPage.connectWallet(connectWalletPage);

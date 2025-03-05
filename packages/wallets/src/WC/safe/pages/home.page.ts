@@ -2,14 +2,13 @@ import { Locator, Page, test } from '@playwright/test';
 import { Logger } from '@nestjs/common';
 
 export class HomePage {
-  logger: Logger;
+  logger = new Logger('WC+Safe wallet. HomePage');
   wcBtn: Locator;
   wcUrlInput: Locator;
   approveBtn: Locator;
   connectedAppIcon: Locator;
 
   constructor(public page: Page) {
-    this.logger = new Logger('WC+Safe wallet. Home page');
     this.wcBtn = this.page.locator('[title="WalletConnect"]');
     this.wcUrlInput = this.page.locator('input[placeholder="wc:"]');
     this.approveBtn = this.page.locator('button:has-text("Approve")');

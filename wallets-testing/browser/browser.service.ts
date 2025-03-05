@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
-  WalletConnectPage,
   CommonWalletConfig,
   WalletConfig,
   WalletPage,
@@ -25,8 +24,8 @@ import { BrowserContextService } from './browser.context.service';
 @Injectable()
 export class BrowserService {
   private readonly logger = new Logger(BrowserService.name);
-  private walletPage: WalletPage;
-  private additionalWallet?: WalletConnectPage;
+  private extensionWallet: WalletPage<WalletTypes.EOA>;
+  private wcImplementedWallet?: WalletPage<WalletTypes.WC>;
   private account: Account;
   private widgetConfig: WidgetConfig;
   private stakeConfig: StakeConfig;
@@ -58,8 +57,8 @@ export class BrowserService {
         this.stakeConfig.stakeAmount * 100,
       );
     }
-    await this.walletPage.importKey(this.account.secretKey);
-    await this.walletPage.addNetwork({
+    await this.extensionWallet.importKey(this.account.secretKey);
+    await this.extensionWallet.addNetwork({
       chainName: this.widgetConfig.chainName,
       rpcUrl: this.ethereumNodeService.state.nodeUrl,
       chainId: this.widgetConfig.chainId,
@@ -86,29 +85,26 @@ export class BrowserService {
         commonWalletConfig.STORE_EXTENSION_ID,
       );
     await this.browserContextService.setup(
-      commonWalletConfig.WALLET_NAME,
       walletConfig,
       this.widgetConfig.nodeUrl,
     );
     const extension = new Extension(this.browserContextService.extensionId);
-    this.walletPage = new WALLET_PAGES[commonWalletConfig.WALLET_NAME](
-      this.browserContextService.browserContext,
-      extension.url,
-      walletConfig,
-    );
+    this.extensionWallet = new WALLET_PAGES[
+      commonWalletConfig.EXTENSION_WALLET_NAME
+    ](this.browserContextService.browserContext, extension.url, walletConfig);
     if (commonWalletConfig.WALLET_TYPE === WalletTypes.WC) {
-      this.additionalWallet = new WALLET_PAGES[
-        commonWalletConfig.ADDITIONAL_WALLET_NAME
+      this.wcImplementedWallet = new WALLET_PAGES[
+        commonWalletConfig.WALLET_NAME
       ](
         this.browserContextService.browserContext,
-        this.walletPage,
+        this.extensionWallet,
         this.widgetConfig.chainId,
       );
     }
     await this.browserContextService.closePages();
-    await this.walletPage.setup(this.widgetConfig.networkName);
+    await this.extensionWallet.setup(this.widgetConfig.networkName);
     if (!this.widgetConfig.isDefaultNetwork)
-      await this.walletPage.addNetwork({
+      await this.extensionWallet.addNetwork({
         chainName: this.widgetConfig.chainName,
         rpcUrl: this.widgetConfig.nodeUrl,
         chainId: this.widgetConfig.chainId,
@@ -125,10 +121,10 @@ export class BrowserService {
         this.stakeConfig || {},
       );
       await widgetPage.navigate();
-      await widgetPage.connectWallet(this.walletPage);
-      await widgetPage.doStaking(this.walletPage);
-    } finally {
-      await this.browserContextService.closePages();
+      await widgetPage.connectWallet(this.extensionWallet);
+      await widgetPage.doStaking(this.extensionWallet);
+    } catch {
+      this.logger.log('Stake failed');
     }
     return 'Success';
   }
@@ -139,10 +135,12 @@ export class BrowserService {
       this.stakeConfig || {},
     );
     await widgetPage.navigate();
-    await widgetPage.connectWallet(this.walletPage, this.additionalWallet);
+    await widgetPage.connectWallet(
+      this.extensionWallet,
+      this.wcImplementedWallet,
+    );
 
-    await this.browserContextService.closePages();
-    return `Success. Wallet ${this.walletPage.config.COMMON.WALLET_NAME} successfully connected`;
+    return `Success. Wallet ${this.extensionWallet.config.COMMON.WALLET_NAME} successfully connected`;
   }
 
   async teardown() {

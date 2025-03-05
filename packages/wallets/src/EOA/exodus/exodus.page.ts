@@ -1,9 +1,9 @@
-import { WalletConfig } from '../../wallets.constants';
-import { WalletPage } from '../wallet.page';
+import { WalletConfig, WalletTypes } from '../../wallets.constants';
+import { WalletPage } from '../../wallet.page';
 import { test, BrowserContext, Page } from '@playwright/test';
 import { OnboardingPage } from './pages';
 
-export class ExodusPage implements WalletPage {
+export class ExodusPage implements WalletPage<WalletTypes.EOA> {
   page: Page | undefined;
   onboardingPage: OnboardingPage;
 
@@ -79,6 +79,10 @@ export class ExodusPage implements WalletPage {
   }
 
   async signTx() {
+    throw new Error('Method not implemented.');
+  }
+
+  async cancelTx() {
     throw new Error('Method not implemented.');
   }
 
