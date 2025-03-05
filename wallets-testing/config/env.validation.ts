@@ -1,27 +1,28 @@
-import { plainToClass } from 'class-transformer';
-import { IsString, IsUrl, validateSync } from 'class-validator';
+import { z } from 'zod';
+import * as path from 'path';
+import * as dotenv from 'dotenv';
 
-export class EnvironmentVariables {
-  @IsUrl()
-  RPC_URL: string;
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-  @IsString()
-  WALLET_SECRET_PHRASE: string;
+export const EnvironmentSchema = z.object({
+  RPC_URL: z.string().url({ message: 'RPC_URL must be a valid URL' }),
+  WALLET_SECRET_PHRASE: z
+    .string()
+    .min(1, 'WALLET_SECRET_PHRASE cannot be empty'),
+  WALLET_PASSWORD: z.string().min(1, 'WALLET_PASSWORD cannot be empty'),
+});
 
-  @IsString()
-  WALLET_PASSWORD: string;
-}
+export type EnvironmentVariables = z.infer<typeof EnvironmentSchema>;
 
-export function validate(config: Record<string, unknown>) {
-  const validatedConfig = plainToClass(EnvironmentVariables, config);
+export function validate(
+  config: Record<string, unknown>,
+): EnvironmentVariables {
+  const parsedConfig = EnvironmentSchema.safeParse(config);
 
-  const validatorOptions = { skipMissingProperties: false };
-  const errors = validateSync(validatedConfig, validatorOptions);
-
-  if (errors.length > 0) {
-    console.error(errors.toString());
+  if (!parsedConfig.success) {
+    console.error('Config validation failed:', parsedConfig.error.format());
     process.exit(1);
   }
 
-  return validatedConfig;
+  return parsedConfig.data;
 }

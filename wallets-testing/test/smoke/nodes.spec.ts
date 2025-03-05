@@ -1,23 +1,18 @@
-import { Test } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
 import { EthereumNodeService } from '@lidofinance/wallets-testing-nodes';
 import { MATIC_TOKEN } from './consts';
-import { prepareNodeModule } from '../../commons';
 import { test, expect } from '@playwright/test';
+import { ETHEREUM_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
+import { configService } from '../../config';
 
 test.describe('Ethereum node', () => {
-  let app: INestApplication;
   let ethereumNodeService: EthereumNodeService;
 
   test.beforeEach(async () => {
-    const moduleFixture = await Test.createTestingModule({
-      imports: [prepareNodeModule()],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    ethereumNodeService =
-      moduleFixture.get<EthereumNodeService>(EthereumNodeService);
-    await app.init();
+    ethereumNodeService = new EthereumNodeService({
+      chainId: ETHEREUM_WIDGET_CONFIG.chainId,
+      rpcUrl: configService.get('RPC_URL'),
+      defaultBalance: 1000,
+    });
   });
 
   test('should init', async () => {
