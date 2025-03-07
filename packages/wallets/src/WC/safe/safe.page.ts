@@ -1,7 +1,7 @@
 import { BrowserContext, Page, test } from '@playwright/test';
 import { HomePage, SetupPage } from './pages';
 import { WalletPage } from '../../wallet.page';
-import { WalletTypes } from '../../wallets.constants';
+import { WalletConfig, WalletTypes } from '../../wallets.constants';
 
 export class SafePage implements WalletPage<WalletTypes.WC> {
   type = WalletTypes.WC;
@@ -14,6 +14,7 @@ export class SafePage implements WalletPage<WalletTypes.WC> {
     private browserContext: BrowserContext,
     public extensionPage: WalletPage<WalletTypes.EOA>,
     public chainId: 1 | 17000,
+    public config: WalletConfig,
   ) {}
 
   async initLocators() {

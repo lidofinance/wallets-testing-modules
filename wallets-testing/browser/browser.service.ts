@@ -101,6 +101,7 @@ export class BrowserService {
         this.browserContextService.browserContext,
         this.extensionWallet,
         this.widgetConfig.chainId,
+        walletConfig,
       );
     }
     await this.browserContextService.closePages();
