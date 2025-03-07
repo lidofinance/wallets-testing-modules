@@ -8,5 +8,5 @@ export const COIN98_COMMON_CONFIG: CommonWalletConfig = {
   RPC_URL_PATTERN: 'https://mainnet.infura.io/v3/**',
   STORE_EXTENSION_ID: 'aeachknmefphepccionboohckonoeemg',
   WALLET_TYPE: WalletTypes.EOA,
-  EXTENSION_START_PATH: '/popup.html?expand=true',
+  EXTENSION_START_PATH: '/tabs/extension.html?expand=true',
 };

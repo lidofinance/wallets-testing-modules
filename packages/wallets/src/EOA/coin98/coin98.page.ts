@@ -26,7 +26,7 @@ export class Coin98 implements WalletPage<WalletTypes.EOA> {
     await test.step('Setup', async () => {
       await this.waitForAutomaticallyOpenedWalletPageAfterInstallation();
       await this.navigate();
-      const firstTime = await this.page.waitForSelector('text=Get Started');
+      const firstTime = await this.page.waitForSelector('text=Choose language');
       if (firstTime) await this.firstTimeSetup(network);
     });
   }
@@ -34,16 +34,29 @@ export class Coin98 implements WalletPage<WalletTypes.EOA> {
   async firstTimeSetup(network: string) {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
-      await this.page.click('text=Get Started');
-      await this.page.click('text=Ok');
-      await this.page.waitForSelector('input[type=password]');
-      const inputs = await this.page.locator('input[type=password]');
-      await inputs.nth(0).fill(this.config.PASSWORD);
-      await inputs.nth(1).fill(this.config.PASSWORD);
-      await this.page.click('button:has-text("Setup Password")');
-      await this.page.click('button:has-text("Ok")');
       await this.page.click('button:has-text("Continue")');
-      await this.page.fill('[placeholder="Search"]', network);
+      await this.page.click('button:has-text("Confirm")');
+      await this.page.waitForSelector('input[type=password]');
+      await this.page.waitForTimeout(1000);
+      const inputs = this.page.locator('input[type=password]');
+      for (const char of this.config.PASSWORD) {
+        await inputs.nth(0).press(char);
+        // need some input timeout since first input has validation - requires Digit,letters,special symbols.
+        // If input full value validation is lagy - doesn't mark as filled required specs.
+        await this.page.waitForTimeout(40);
+      }
+      await inputs.nth(1).fill(this.config.PASSWORD);
+      // Coin98 UI bug there is 2 div with pws/confirm btn and etc - that's why [first] && [exact true]
+      await this.page
+        .locator('button:has-text("Confirm")')
+        .first()
+        .click({ force: true });
+      await this.page.click('//div[contains(@class, "frame-check-box")]');
+      await this.page
+        .locator('button:has-text("Continue")')
+        .first()
+        .click({ force: true });
+      await this.page.fill('input[placeholder="Search blockchain"]', network);
       await this.page.getByText(network, { exact: true }).click();
       await this.page.click('button:has-text("Restore")');
       await this.page.fill('input[name="name"]', 'test');
@@ -51,8 +64,11 @@ export class Coin98 implements WalletPage<WalletTypes.EOA> {
         'div[class="relative w-full"] >> div',
         this.config.SECRET_PHRASE.trim(),
       );
-      await this.page.locator('button:has-text("Restore")').click();
-      await this.page.waitForSelector('text=Success!');
+      await this.page
+        .locator('button:has-text("Restore")')
+        .first()
+        .click({ force: true });
+      await this.page.waitForSelector('text=Restore Wallet Successfully');
     });
   }
 
@@ -139,6 +155,6 @@ export class Coin98 implements WalletPage<WalletTypes.EOA> {
     if (this.browserContext.pages().length === 1) {
       await this.browserContext.waitForEvent('page');
     }
-    this.page = await this.browserContext.pages()[1];
+    this.page = this.browserContext.pages()[1];
   }
 }
