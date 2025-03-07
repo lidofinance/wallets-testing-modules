@@ -4,6 +4,7 @@ import { WalletPage } from '../../wallet.page';
 import { WalletTypes } from '../../wallets.constants';
 
 export class SafePage implements WalletPage<WalletTypes.WC> {
+  type = WalletTypes.WC;
   page: Page | undefined;
   setupPage: SetupPage;
   homePage: HomePage;
@@ -11,12 +12,12 @@ export class SafePage implements WalletPage<WalletTypes.WC> {
 
   constructor(
     private browserContext: BrowserContext,
-    public metamaskPage: WalletPage<WalletTypes.EOA>,
+    public extensionPage: WalletPage<WalletTypes.EOA>,
     public chainId: 1 | 17000,
   ) {}
 
   async initLocators() {
-    this.setupPage = new SetupPage(this.page, this.metamaskPage, this.chainId);
+    this.setupPage = new SetupPage(this.page, this.extensionPage, this.chainId);
     this.homePage = new HomePage(this.page);
   }
 

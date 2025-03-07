@@ -88,10 +88,12 @@ export class BrowserService {
       walletConfig,
       this.widgetConfig.nodeUrl,
     );
+
     const extension = new Extension(this.browserContextService.extensionId);
     this.extensionWallet = new WALLET_PAGES[
       commonWalletConfig.EXTENSION_WALLET_NAME
     ](this.browserContextService.browserContext, extension.url, walletConfig);
+
     if (commonWalletConfig.WALLET_TYPE === WalletTypes.WC) {
       this.wcImplementedWallet = new WALLET_PAGES[
         commonWalletConfig.WALLET_NAME
@@ -136,8 +138,7 @@ export class BrowserService {
     );
     await widgetPage.navigate();
     await widgetPage.connectWallet(
-      this.extensionWallet,
-      this.wcImplementedWallet,
+      this.wcImplementedWallet || this.extensionWallet,
     );
 
     return `Success. Wallet ${this.extensionWallet.config.COMMON.WALLET_NAME} successfully connected`;

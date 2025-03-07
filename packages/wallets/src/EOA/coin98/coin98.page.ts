@@ -3,6 +3,7 @@ import { WalletPage } from '../../wallet.page';
 import { test, BrowserContext, Page } from '@playwright/test';
 
 export class Coin98 implements WalletPage<WalletTypes.EOA> {
+  type = WalletTypes.EOA;
   page: Page | undefined;
 
   constructor(

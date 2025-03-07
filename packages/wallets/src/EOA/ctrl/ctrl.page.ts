@@ -4,6 +4,7 @@ import { WalletConfig, WalletTypes } from '../../wallets.constants';
 import { LoginPage, OnboardingPage, WalletOperations } from './pages';
 
 export class CtrlPage implements WalletPage<WalletTypes.EOA> {
+  type = WalletTypes.EOA;
   page: Page | undefined;
   onboardingPage: OnboardingPage;
   loginPage: LoginPage;
