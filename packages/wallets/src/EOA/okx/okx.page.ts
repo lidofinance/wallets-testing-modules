@@ -21,7 +21,6 @@ import {
 } from './helper';
 
 export class OkxPage implements WalletPage<WalletTypes.EOA> {
-  type = WalletTypes.EOA;
   page: Page | undefined;
   homePage: HomePage;
   loginPage: LoginPage;

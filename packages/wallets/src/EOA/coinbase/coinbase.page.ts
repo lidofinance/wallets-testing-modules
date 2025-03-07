@@ -8,7 +8,6 @@ import expect from 'expect';
 import { test, BrowserContext, Page } from '@playwright/test';
 
 export class CoinbasePage implements WalletPage<WalletTypes.EOA> {
-  type = WalletTypes.EOA;
   page: Page | undefined;
 
   constructor(

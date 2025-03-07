@@ -11,7 +11,6 @@ import {
  * - T -> WalletTypes.WC describes the connection with WalletConnect wallet (_like Safe etc._)
  * and lets to manage these wallets with included methods*/
 export interface WalletPage<T extends WalletType> {
-  type: WalletTypes;
   page: Page | undefined;
   config?: WalletConfig;
 

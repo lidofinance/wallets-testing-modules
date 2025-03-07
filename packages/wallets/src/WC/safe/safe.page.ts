@@ -4,7 +4,6 @@ import { WalletPage } from '../../wallet.page';
 import { WalletConfig, WalletTypes } from '../../wallets.constants';
 
 export class SafePage implements WalletPage<WalletTypes.WC> {
-  type = WalletTypes.WC;
   page: Page | undefined;
   setupPage: SetupPage;
   homePage: HomePage;

@@ -3,7 +3,6 @@ import { WalletPage } from '../../wallet.page';
 import { test, BrowserContext, Page } from '@playwright/test';
 
 export class BitgetPage implements WalletPage<WalletTypes.EOA> {
-  type = WalletTypes.EOA;
   page: Page | undefined;
 
   constructor(

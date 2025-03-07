@@ -4,7 +4,6 @@ import { test, BrowserContext, Page } from '@playwright/test';
 import { OnboardingPage } from './pages';
 
 export class ExodusPage implements WalletPage<WalletTypes.EOA> {
-  type = WalletTypes.EOA;
   page: Page | undefined;
   onboardingPage: OnboardingPage;
 
