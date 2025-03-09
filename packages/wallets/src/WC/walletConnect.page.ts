@@ -1,9 +1,9 @@
 import { Page } from '@playwright/test';
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 
 export interface WalletConnectPage {
   page: Page | undefined;
-  logger: Logger;
+  logger: ConsoleLogger;
 
   navigate(): Promise<void>;
 
