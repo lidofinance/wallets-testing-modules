@@ -24,8 +24,8 @@ import { BrowserContextService } from './browser.context.service';
 @Injectable()
 export class BrowserService {
   private readonly logger = new Logger(BrowserService.name);
-  private extensionWallet: WalletPage<WalletTypes.EOA>;
-  private wcImplementedWallet?: WalletPage<WalletTypes.WC>;
+  private walletPage: WalletPage<WalletTypes>;
+  private wcExtensionHelperWallet?: WalletPage<WalletTypes.EOA>;
   private account: Account;
   private widgetConfig: WidgetConfig;
   private stakeConfig: StakeConfig;
@@ -44,7 +44,12 @@ export class BrowserService {
   ) {
     await this.ethereumNodeService.startNode();
     this.account = this.ethereumNodeService.state.accounts[0];
-    await this.setup(commonWalletConfig, widgetConfig, stakeConfig);
+    await this.setup(
+      commonWalletConfig,
+      widgetConfig,
+      stakeConfig,
+      this.ethereumNodeService.state.nodeUrl,
+    );
     if (
       this.stakeConfig &&
       this.stakeConfig.tokenAddress &&
@@ -57,21 +62,13 @@ export class BrowserService {
         this.stakeConfig.stakeAmount * 100,
       );
     }
-    await this.extensionWallet.importKey(this.account.secretKey);
-    await this.extensionWallet.addNetwork({
-      chainName: this.widgetConfig.chainName,
-      rpcUrl: this.ethereumNodeService.state.nodeUrl,
-      chainId: this.widgetConfig.chainId,
-      tokenSymbol: this.widgetConfig.tokenSymbol,
-      scan: '',
-    });
-    await this.browserContextService.closePages();
   }
 
   async setup(
     commonWalletConfig: CommonWalletConfig,
     widgetConfig: WidgetConfig,
     stakeConfig?: StakeConfig,
+    forkNodeUrl?: string,
   ) {
     this.widgetConfig = widgetConfig;
     this.stakeConfig = stakeConfig;
@@ -88,33 +85,45 @@ export class BrowserService {
       walletConfig,
       this.widgetConfig.nodeUrl,
     );
-
     const extension = new Extension(this.browserContextService.extensionId);
-    this.extensionWallet = new WALLET_PAGES[
-      commonWalletConfig.EXTENSION_WALLET_NAME
-    ](this.browserContextService.browserContext, extension.url, walletConfig);
 
-    if (commonWalletConfig.WALLET_TYPE === WalletTypes.WC) {
-      this.wcImplementedWallet = new WALLET_PAGES[
-        commonWalletConfig.WALLET_NAME
-      ](
-        this.browserContextService.browserContext,
-        this.extensionWallet,
-        this.widgetConfig.chainId,
-        walletConfig,
-      );
+    switch (commonWalletConfig.WALLET_TYPE) {
+      case WalletTypes.EOA: {
+        this.walletPage = new WALLET_PAGES[
+          commonWalletConfig.EXTENSION_WALLET_NAME
+        ](
+          this.browserContextService.browserContext,
+          extension.url,
+          walletConfig,
+        );
+        // reuse setupEoaWallet
+        await this.setupEoaWallet(this.walletPage);
+        break;
+      }
+      case WalletTypes.WC: {
+        this.wcExtensionHelperWallet = new WALLET_PAGES[
+          commonWalletConfig.EXTENSION_WALLET_NAME
+        ](
+          this.browserContextService.browserContext,
+          extension.url,
+          walletConfig,
+        );
+
+        //testing wallet setup
+        this.walletPage = new WALLET_PAGES[commonWalletConfig.WALLET_NAME](
+          this.browserContextService.browserContext,
+          this.wcExtensionHelperWallet,
+          this.widgetConfig.chainId,
+          walletConfig,
+        );
+
+        // helper wallet  setup
+        await this.wcExtensionHelperWallet.setup(this.widgetConfig.networkName);
+        // reuse
+        await this.setupEoaWallet(this.wcExtensionHelperWallet);
+        break;
+      }
     }
-    await this.browserContextService.closePages();
-    await this.extensionWallet.setup(this.widgetConfig.networkName);
-    if (!this.widgetConfig.isDefaultNetwork)
-      await this.extensionWallet.addNetwork({
-        chainName: this.widgetConfig.chainName,
-        rpcUrl: this.widgetConfig.nodeUrl,
-        chainId: this.widgetConfig.chainId,
-        tokenSymbol: this.widgetConfig.tokenSymbol,
-        scan: '',
-      });
-    await this.browserContextService.closePages();
   }
 
   async stake(): Promise<string> {
@@ -124,8 +133,8 @@ export class BrowserService {
         this.stakeConfig || {},
       );
       await widgetPage.navigate();
-      await widgetPage.connectWallet(this.extensionWallet);
-      await widgetPage.doStaking(this.extensionWallet);
+      await widgetPage.connectWallet(this.walletPage);
+      await widgetPage.doStaking();
     } catch {
       this.logger.log('Stake failed');
     }
@@ -138,16 +147,36 @@ export class BrowserService {
       this.stakeConfig || {},
     );
     await widgetPage.navigate();
-    await widgetPage.connectWallet(
-      this.wcImplementedWallet || this.extensionWallet,
-    );
+    await widgetPage.connectWallet(this.walletPage);
 
-    return `Success. Wallet ${this.extensionWallet.config.COMMON.WALLET_NAME} successfully connected`;
+    return `Success. Wallet ${this.walletPage.config.COMMON.WALLET_NAME} successfully connected`;
   }
 
   async teardown() {
     if (this.browserContextService.browserContext !== null)
       await this.browserContextService.browserContext.close();
     await this.ethereumNodeService.stopNode();
+  }
+
+  async setupEoaWallet(wallet: WalletPage<WalletTypes.EOA>) {
+    await wallet.setup(this.widgetConfig.networkName);
+
+    let forkUrl = undefined;
+    if (this.ethereumNodeService.state) {
+      await wallet.importKey(this.account.secretKey);
+      forkUrl = this.ethereumNodeService.state.nodeUrl;
+    }
+
+    const needsCustomNetwork = forkUrl || !this.widgetConfig.isDefaultNetwork;
+    if (needsCustomNetwork)
+      await wallet.addNetwork({
+        chainName: this.widgetConfig.chainName,
+        rpcUrl:
+          this.ethereumNodeService.state.nodeUrl || this.widgetConfig.nodeUrl,
+        chainId: this.widgetConfig.chainId,
+        tokenSymbol: this.widgetConfig.tokenSymbol,
+        scan: '',
+      });
+    await this.browserContextService.closePages();
   }
 }
