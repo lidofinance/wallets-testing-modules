@@ -85,7 +85,10 @@ export class WalletOperationPage {
       if (await this.page.locator('text=Use default').isVisible())
         await this.page.click('text=Use default');
     });
+    // Additional delay before confirm tx
+    await this.page.waitForTimeout(1000);
     await this.confirmButton.click();
+    // Close page after tx confirming
     await this.page.close().catch(() => {
       console.log('[INFO] Tx page closed on its own');
     });
