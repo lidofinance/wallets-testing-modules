@@ -1,9 +1,9 @@
 import { Locator, Page, test } from '@playwright/test';
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 import { WalletPage } from '../../../EOA/wallet.page';
 
 export class SetupPage {
-  logger: Logger;
+  logger: ConsoleLogger;
   saveCookiesSettingBtn: Locator;
   connectWalletBtn: Locator;
   accountCenter: Locator;
@@ -16,7 +16,7 @@ export class SetupPage {
     public metamaskPage: WalletPage,
     public chainId: number,
   ) {
-    this.logger = new Logger('WC+Safe wallet. Setup page');
+    this.logger = new ConsoleLogger('WC+Safe wallet. Setup page');
     this.setupUrl =
       this.chainId === 1
         ? 'https://app.safe.global/welcome/accounts'

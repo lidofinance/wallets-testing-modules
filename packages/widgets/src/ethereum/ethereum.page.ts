@@ -2,7 +2,7 @@ import { ETHEREUM_WIDGET_CONFIG } from './ethereum.constants';
 import { StakeConfig } from '../widgets.constants';
 import { WidgetPage } from '../widgets.page';
 import expect from 'expect';
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 import {
   WalletConnectPage,
   WalletPage,
@@ -11,7 +11,7 @@ import {
 import { Locator, Page, test } from '@playwright/test';
 
 export class EthereumPage implements WidgetPage {
-  private readonly logger = new Logger(EthereumPage.name);
+  private readonly logger = new ConsoleLogger(EthereumPage.name);
   page: Page;
   connectBtn: Locator;
   stakeSubmitBtn: Locator;
