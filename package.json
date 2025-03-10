@@ -40,9 +40,9 @@
     "branches": [
       "main",
       {
-        "name": "fix/logger-not-working",
-        "channel": "alpha-logger",
-        "prerelease": "alpha-logger"
+        "name": "develop",
+        "channel": "alpha",
+        "prerelease": "alpha"
       }
     ]
   }
