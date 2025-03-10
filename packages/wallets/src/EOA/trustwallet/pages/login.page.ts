@@ -1,6 +1,6 @@
 import { Locator, Page, test } from '@playwright/test';
 import { WalletConfig } from '../../../wallets.constants';
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 
 export class LoginPage {
   passwordInput: Locator;
@@ -9,7 +9,7 @@ export class LoginPage {
   constructor(
     public page: Page,
     public config: WalletConfig,
-    public logger: Logger,
+    public logger: ConsoleLogger,
   ) {
     this.passwordInput = this.page.getByTestId('password-field');
     this.submitButton = this.page.locator(

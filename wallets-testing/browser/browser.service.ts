@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 import {
   WalletConnectPage,
   CommonWalletConfig,
@@ -23,7 +23,7 @@ import { WALLET_PAGES, WIDGET_PAGES } from './browser.constants';
 import { BrowserContextService } from './browser.context.service';
 
 export class BrowserService {
-  private readonly logger = new Logger(BrowserService.name);
+  private readonly logger = new ConsoleLogger(BrowserService.name);
   private walletPage: WalletPage;
   private additionalWallet?: WalletConnectPage;
   private account: Account;

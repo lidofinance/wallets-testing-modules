@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, ConsoleLogger } from '@nestjs/common';
 import axios from 'axios';
 import * as unzipper from 'unzipper';
 import { once } from 'events';
@@ -14,7 +14,7 @@ export class ExtensionService {
   staleExtensionDirs: string[] = [];
   extensionDirBasePath = path.join(__dirname, 'extension');
   idToExtension: Record<string, string> = {};
-  private readonly logger = new Logger(ExtensionService.name);
+  private readonly logger = new ConsoleLogger(ExtensionService.name);
   private versions: Map<string, string> = new Map();
 
   async getExtensionDirFromId(

@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 import { BrowserContext, chromium, Page } from '@playwright/test';
 import * as fs from 'fs/promises';
 import * as os from 'os';
@@ -17,7 +17,7 @@ export class BrowserContextService {
   extensionId: string;
   extensionPage: Page;
   nodeUrl: string;
-  private readonly logger = new Logger(BrowserContextService.name);
+  private readonly logger = new ConsoleLogger(BrowserContextService.name);
 
   constructor(
     private ethereumNodeService: EthereumNodeService,

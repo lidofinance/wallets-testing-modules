@@ -1,7 +1,7 @@
 import { NetworkConfig, WalletConfig } from '../../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import { test, BrowserContext, Page, expect } from '@playwright/test';
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 import {
   OnboardingPage,
   SettingPage,
@@ -18,7 +18,7 @@ export class TrustWalletPage implements WalletPage {
   homePage: HomePage;
   loginPage: LoginPage;
   walletOperations: WalletOperations;
-  logger = new Logger('Trust Wallet');
+  logger = new ConsoleLogger('Trust Wallet');
 
   constructor(
     private browserContext: BrowserContext,

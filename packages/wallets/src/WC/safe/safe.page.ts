@@ -1,12 +1,12 @@
 import { BrowserContext, Page, test } from '@playwright/test';
 import { WalletConnectPage } from '../walletConnect.page';
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 import { HomePage, SetupPage } from './pages';
 import { WalletPage } from '../../EOA/wallet.page';
 
 export class SafePage implements WalletConnectPage {
   page: Page | undefined;
-  logger: Logger;
+  logger: ConsoleLogger;
   setupPage: SetupPage;
   homePage: HomePage;
   setupUrl: string;
@@ -17,7 +17,7 @@ export class SafePage implements WalletConnectPage {
     public metamaskPage: WalletPage,
     public chainId: 1 | 17000,
   ) {
-    this.logger = new Logger('WC+Safe wallet');
+    this.logger = new ConsoleLogger('WC+Safe wallet');
   }
 
   async initLocators() {
