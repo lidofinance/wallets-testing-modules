@@ -86,7 +86,9 @@ export class WalletOperationPage {
         await this.page.click('text=Use default');
     });
     await this.confirmButton.click();
-    await this.page.close();
+    await this.page.close().catch(() => {
+      console.log('[INFO] Tx page closed on its own');
+    });
   }
 
   async confirmTransaction(setAggressiveGas?: boolean) {
