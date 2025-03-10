@@ -52,7 +52,7 @@ export class WalletOperationPage {
   }
 
   async cancelAllTxInQueue() {
-    test.step('Cancel all tx in queue', async () => {
+    await test.step('Cancel all tx in queue', async () => {
       //Is there is any tx in queue.
       try {
         await this.cancelButton.waitFor({
@@ -95,6 +95,8 @@ export class WalletOperationPage {
       await this.setHighGasFeeButton.click();
     }
     await this.confirmButton.waitFor({ state: 'visible', timeout: 30000 });
+    // Additional delay before confirm tx
+    await this.page.waitForTimeout(1000);
     await this.confirmButton.click();
   }
 
