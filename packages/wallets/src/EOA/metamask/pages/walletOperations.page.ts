@@ -86,6 +86,7 @@ export class WalletOperationPage {
         await this.page.click('text=Use default');
     });
     await this.confirmButton.click();
+    await this.page.close();
   }
 
   async confirmTransaction(setAggressiveGas?: boolean) {
