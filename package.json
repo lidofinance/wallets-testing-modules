@@ -40,9 +40,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "mm-delay-before-sign-tx",
+        "channel": "test-delay",
+        "prerelease": "test-delay"
       }
     ]
   }
