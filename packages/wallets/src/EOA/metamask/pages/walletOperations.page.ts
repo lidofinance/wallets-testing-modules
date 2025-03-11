@@ -85,13 +85,7 @@ export class WalletOperationPage {
       if (await this.page.locator('text=Use default').isVisible())
         await this.page.click('text=Use default');
     });
-    // Additional delay before confirm tx
-    await this.page.waitForTimeout(1000);
     await this.confirmButton.click();
-    // Close page after tx confirming
-    await this.page.close().catch(() => {
-      console.log('[INFO] Tx page closed on its own');
-    });
   }
 
   async confirmTransaction(setAggressiveGas?: boolean) {
@@ -103,7 +97,24 @@ export class WalletOperationPage {
     await this.confirmButton.waitFor({ state: 'visible', timeout: 30000 });
     // Additional delay before confirm tx
     await this.page.waitForTimeout(1000);
+    console.log(
+      'Count pages before confirm tx:',
+      this.page.context().pages().length,
+    );
     await this.confirmButton.click();
+    console.log(
+      'Count pages after confirm tx:',
+      this.page.context().pages().length,
+    );
+    try {
+      await this.page.close();
+      console.log(
+        'Count pages after page closing:',
+        this.page.context().pages().length,
+      );
+    } catch {
+      console.log('[INFO] Tx page closed on its own');
+    }
   }
 
   async getReceiptAddress() {
