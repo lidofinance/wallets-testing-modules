@@ -97,27 +97,16 @@ export class WalletOperationPage {
     await this.confirmButton.waitFor({ state: 'visible', timeout: 30000 });
     // Additional delay before confirm tx
     await this.page.waitForTimeout(1000);
-    console.log(
-      'Count pages before confirm tx:',
-      this.page.context().pages().length,
-    );
     await this.confirmButton.click();
-    console.log(
-      'Count pages after confirm tx:',
-      this.page.context().pages().length,
-    );
     try {
       await this.page.close();
-      console.log(
-        'Count pages after page closing:',
-        this.page.context().pages().length,
-      );
     } catch {
       console.log('[INFO] Tx page closed on its own');
     }
   }
 
   async getReceiptAddress() {
+    await this.recipientButton.waitFor({ state: 'visible', timeout: 30000 });
     while (!(await this.recipientButton.isEnabled())) {
       await this.page.waitForTimeout(100);
     }
