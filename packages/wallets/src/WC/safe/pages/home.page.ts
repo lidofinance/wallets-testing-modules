@@ -32,7 +32,7 @@ export class HomePage {
         }
       });
 
-      await this.connectedAppIcon.waitFor({ state: 'visible', timeout: 3000 });
+      await this.connectedAppIcon.waitFor({ state: 'visible', timeout: 10000 });
       await this.page.close();
     });
   }

@@ -65,7 +65,18 @@ export class SetupPage {
 
   async connectWalletExtension() {
     await test.step('Connect MetaMask wallet', async () => {
-      await this.connectWalletBtn.click();
+      try {
+        await this.connectWalletBtn.click();
+        await this.page
+          .getByText(this.extensionPage.config.COMMON.EXTENSION_WALLET_NAME)
+          .waitFor({ state: 'visible' });
+      } catch {
+        this.logger.warn(
+          'Connect wallet modal is not opened. Need to reload page',
+        );
+        await this.page.reload();
+        await this.connectWalletBtn.click();
+      }
       try {
         const [connectWalletPage] = await Promise.all([
           this.page.context().waitForEvent('page', { timeout: 5000 }),
