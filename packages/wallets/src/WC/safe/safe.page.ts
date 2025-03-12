@@ -1,10 +1,12 @@
 import { BrowserContext, Page, test } from '@playwright/test';
+import { ConsoleLogger } from '@nestjs/common';
 import { HomePage, SetupPage } from './pages';
 import { WalletPage } from '../../wallet.page';
 import { WalletConfig, WalletTypes } from '../../wallets.constants';
 
 export class SafePage implements WalletPage<WalletTypes.WC> {
   page: Page | undefined;
+  logger = new ConsoleLogger('WC+Safe wallet');
   setupPage: SetupPage;
   homePage: HomePage;
   safeAccountUrl?: string;

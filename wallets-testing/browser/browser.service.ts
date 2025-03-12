@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, ConsoleLogger } from '@nestjs/common';
 import {
   CommonWalletConfig,
   WalletConfig,
@@ -23,7 +23,7 @@ import { BrowserContextService } from './browser.context.service';
 
 @Injectable()
 export class BrowserService {
-  private readonly logger = new Logger(BrowserService.name);
+  private readonly logger = new ConsoleLogger(BrowserService.name);
   private walletPage: WalletPage<WalletTypes>;
   private account: Account;
   private widgetConfig: WidgetConfig;

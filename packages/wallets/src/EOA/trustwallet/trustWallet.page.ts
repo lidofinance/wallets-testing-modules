@@ -5,6 +5,7 @@ import {
 } from '../../wallets.constants';
 import { WalletPage } from '../../wallet.page';
 import { test, BrowserContext, Page, expect } from '@playwright/test';
+import { ConsoleLogger } from '@nestjs/common';
 import {
   OnboardingPage,
   SettingPage,
@@ -21,6 +22,7 @@ export class TrustWalletPage implements WalletPage<WalletTypes.EOA> {
   homePage: HomePage;
   loginPage: LoginPage;
   walletOperations: WalletOperations;
+  logger = new ConsoleLogger('Trust Wallet');
 
   constructor(
     private browserContext: BrowserContext,

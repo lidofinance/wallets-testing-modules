@@ -1,8 +1,8 @@
 import { Locator, Page } from '@playwright/test';
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 
 export class WalletOperations {
-  logger = new Logger('Trust wallet. WalletOperations');
+  logger = new ConsoleLogger('Trust wallet. WalletOperations');
   connectBtn: Locator;
   confirmBtn: Locator;
   rejectBtn: Locator;

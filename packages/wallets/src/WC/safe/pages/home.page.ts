@@ -1,8 +1,8 @@
 import { Locator, Page, test } from '@playwright/test';
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 
 export class HomePage {
-  logger = new Logger('WC+Safe wallet. HomePage');
+  logger = new ConsoleLogger('WC+Safe wallet. HomePage');
   wcBtn: Locator;
   wcUrlInput: Locator;
   approveBtn: Locator;

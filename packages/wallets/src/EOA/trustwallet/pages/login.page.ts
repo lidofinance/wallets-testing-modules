@@ -1,9 +1,9 @@
 import { Locator, Page, test } from '@playwright/test';
 import { WalletConfig } from '../../../wallets.constants';
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 
 export class LoginPage {
-  logger = new Logger('Trust wallet. Login page');
+  logger = new ConsoleLogger('Trust wallet. Login page');
   passwordInput: Locator;
   submitButton: Locator;
 

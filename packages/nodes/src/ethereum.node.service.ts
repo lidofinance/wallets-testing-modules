@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 import * as ganache from 'ganache';
 import { Server } from 'ganache';
 import {
@@ -27,7 +27,7 @@ export class EthereumNodeService {
         accounts: Account[];
       }
     | undefined;
-  private readonly logger = new Logger(EthereumNodeService.name);
+  private readonly logger = new ConsoleLogger(EthereumNodeService.name);
 
   constructor(@Inject(OPTIONS) private options: EthereumNodeServiceOptions) {}
 

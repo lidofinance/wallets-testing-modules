@@ -1,10 +1,10 @@
 import { Locator, Page, test } from '@playwright/test';
 import { WalletPage } from '../../../wallet.page';
 import { WalletTypes } from '../../../wallets.constants';
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 
 export class SetupPage {
-  logger = new Logger('WC+Safe wallet. Setup page');
+  logger = new ConsoleLogger('WC+Safe wallet. Setup page');
   saveCookiesSettingBtn: Locator;
   connectWalletBtn: Locator;
   accountCenter: Locator;
