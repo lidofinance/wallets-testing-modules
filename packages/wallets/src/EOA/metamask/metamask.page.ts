@@ -112,8 +112,11 @@ export class MetamaskPage implements WalletPage {
         await this.header.networkList.addPopularNetwork(
           networkConfig.chainName,
         );
+        await this.navigate();
+        await this.header.networkList.addNetworkManually(networkConfig);
       } else {
         await this.header.networkList.addNetworkManually(networkConfig);
+        await this.changeNetwork(networkConfig.chainName);
       }
       if (isClosePage) await this.page.close();
     });
