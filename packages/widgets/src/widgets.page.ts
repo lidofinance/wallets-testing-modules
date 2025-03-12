@@ -6,10 +6,7 @@ export interface WidgetPage {
 
   navigate(): Promise<void>;
 
-  connectWallet(
-    extensionWallet: WalletPage<WalletTypes.EOA>,
-    wcImplementedWallet?: WalletPage<WalletTypes.WC>,
-  ): Promise<void>;
+  connectWallet(walletPage: WalletPage<WalletTypes.EOA>): Promise<void>;
 
   doStaking(walletPage: WalletPage<WalletTypes.EOA>): Promise<void>;
 }

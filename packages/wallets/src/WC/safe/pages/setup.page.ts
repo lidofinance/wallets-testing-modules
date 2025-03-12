@@ -14,7 +14,7 @@ export class SetupPage {
 
   constructor(
     public page: Page,
-    public metamaskPage: WalletPage<WalletTypes.EOA>,
+    public extensionPage: WalletPage<WalletTypes.EOA>,
     public chainId: number,
   ) {
     this.setupUrl =
@@ -70,10 +70,10 @@ export class SetupPage {
         const [connectWalletPage] = await Promise.all([
           this.page.context().waitForEvent('page', { timeout: 5000 }),
           this.page
-            .getByText(this.metamaskPage.config.COMMON.EXTENSION_WALLET_NAME)
+            .getByText(this.extensionPage.config.COMMON.EXTENSION_WALLET_NAME)
             .click(),
         ]);
-        await this.metamaskPage.connectWallet(connectWalletPage);
+        await this.extensionPage.connectWallet(connectWalletPage);
       } catch {
         this.logger.log('Simple way wallet connection');
       }

@@ -12,7 +12,7 @@ import {
  * and lets to manage these wallets with included methods*/
 export interface WalletPage<T extends WalletType> {
   page: Page | undefined;
-  config?: WalletConfig;
+  config: WalletConfig;
 
   setup(network?: string): Promise<void>;
 
