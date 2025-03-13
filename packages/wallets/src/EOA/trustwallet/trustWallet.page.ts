@@ -22,7 +22,7 @@ export class TrustWalletPage implements WalletPage<WalletTypes.EOA> {
   homePage: HomePage;
   loginPage: LoginPage;
   walletOperations: WalletOperations;
-  logger = new ConsoleLogger('Trust Wallet');
+  logger = new ConsoleLogger(TrustWalletPage.name);
 
   constructor(
     private browserContext: BrowserContext,

@@ -5,6 +5,7 @@ import {
   TestResult,
 } from '@playwright/test/reporter';
 import axios from 'axios';
+import { ConsoleLogger } from '@nestjs/common';
 
 interface EmbedField {
   name: string;
@@ -53,6 +54,7 @@ interface ReporterOptions {
 }
 
 class DiscordReporter implements Reporter {
+  logger = new ConsoleLogger(DiscordReporter.name);
   private enabled: boolean;
 
   private webhookUrl: string;
@@ -69,7 +71,7 @@ class DiscordReporter implements Reporter {
 
     const webhook = process.env.DISCORD_WEBHOOK_URL;
     if (!webhook) {
-      console.error(
+      this.logger.error(
         'DISCORD_WEBHOOK_URL is not defined in environment variables',
       );
       this.enabled = false;
@@ -85,9 +87,9 @@ class DiscordReporter implements Reporter {
           'Content-Type': 'application/json',
         },
       });
-      console.log('Discord message successfully sended:', response.status);
+      this.logger.log('Discord message successfully sended:', response.status);
     } catch (error: any) {
-      console.error('Error while discord message sended:', error?.message);
+      this.logger.error('Error while discord message sended:', error?.message);
     }
   }
 
