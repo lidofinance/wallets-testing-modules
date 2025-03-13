@@ -1,5 +1,6 @@
 import { plainToClass } from 'class-transformer';
 import { IsString, IsUrl, validateSync } from 'class-validator';
+import { ConsoleLogger } from '@nestjs/common';
 
 export class EnvironmentVariables {
   @IsUrl()
@@ -19,7 +20,7 @@ export function validate(config: Record<string, unknown>) {
   const errors = validateSync(validatedConfig, validatorOptions);
 
   if (errors.length > 0) {
-    console.error(errors.toString());
+    new ConsoleLogger('env validation').error(errors.toString());
     process.exit(1);
   }
 

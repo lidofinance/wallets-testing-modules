@@ -3,7 +3,7 @@ import { WalletConfig } from '../../../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 
 export class LoginPage {
-  logger = new ConsoleLogger('Trust wallet. Login page');
+  logger = new ConsoleLogger(`TrustWallet. ${LoginPage.name}`);
   passwordInput: Locator;
   submitButton: Locator;
 
