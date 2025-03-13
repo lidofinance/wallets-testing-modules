@@ -118,14 +118,8 @@ export class MetamaskPage implements WalletPage<WalletTypes.EOA> {
         );
 
         if (networkConfig.chainId === 10) {
-          await this.header.networkListButton.click();
-          await this.header.networkList.openModalNetworkEdit(
-            networkConfig.chainId,
-          );
-          await this.header.networkSetting.addRpcForNetwork(
-            networkConfig.rpcUrl,
-            networkConfig.scan,
-          );
+          await this.navigate();
+          await this.header.networkList.addNetworkManually(networkConfig);
         }
       } else {
         await this.header.networkList.addNetworkManually(networkConfig);
