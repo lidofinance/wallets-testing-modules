@@ -3,7 +3,7 @@ import { NetworkConfig } from '../../../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 
 export class NetworkList {
-  logger = new ConsoleLogger('OKX. Network List');
+  logger = new ConsoleLogger(`OKX. ${NetworkList.name}`);
   popularNetworkList: Locator;
   popularNetworkTabButton: Locator;
   userNetworkList: Locator;

@@ -3,7 +3,7 @@ import { WalletConfig } from '../../../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 
 export class OnboardingPage {
-  logger = new ConsoleLogger('Ctrl. OnboardingPage');
+  logger = new ConsoleLogger(`Ctrl. ${OnboardingPage.name}`);
   alreadyHaveWalletBtn: Locator;
   importRecoveryPhraseBtn: Locator;
   passwordInput: Locator;

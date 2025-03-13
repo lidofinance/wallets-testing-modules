@@ -2,7 +2,7 @@ import { Locator, Page, test } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
 
 export class WalletOperations {
-  logger = new ConsoleLogger('OKX. WalletOperations');
+  logger = new ConsoleLogger(`OKX. ${WalletOperations.name}`);
   connectButton: Locator;
   confirmTxButton: Locator;
   cancelTxButton: Locator;

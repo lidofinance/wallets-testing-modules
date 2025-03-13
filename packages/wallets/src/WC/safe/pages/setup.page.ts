@@ -4,7 +4,7 @@ import { WalletTypes } from '../../../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 
 export class SetupPage {
-  logger = new ConsoleLogger('WC+Safe wallet. Setup page');
+  logger = new ConsoleLogger(`Safe. ${SetupPage.name}`);
   saveCookiesSettingBtn: Locator;
   connectWalletBtn: Locator;
   accountCenter: Locator;

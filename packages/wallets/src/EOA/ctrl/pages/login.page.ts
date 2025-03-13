@@ -3,7 +3,7 @@ import { WalletConfig } from '../../../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 
 export class LoginPage {
-  logger = new ConsoleLogger('Ctrl. LoginPage');
+  logger = new ConsoleLogger(`Ctrl. ${LoginPage.name}`);
   unlockBtn: Locator;
   passwordInput: Locator;
   homeBtn: Locator;

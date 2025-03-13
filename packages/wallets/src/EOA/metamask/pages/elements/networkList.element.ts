@@ -4,7 +4,7 @@ import { NetworkConfig } from '../../../../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 
 export class NetworkList {
-  logger = new ConsoleLogger('MetaMask. NetworkList');
+  logger = new ConsoleLogger(`MetaMask. ${NetworkList.name}`);
   networkSetting: NetworkSetting;
 
   networkListButton: Locator;
