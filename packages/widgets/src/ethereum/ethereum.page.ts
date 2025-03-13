@@ -3,11 +3,7 @@ import { StakeConfig } from '../widgets.constants';
 import { WidgetPage } from '../widgets.page';
 import expect from 'expect';
 import { ConsoleLogger } from '@nestjs/common';
-import {
-  WalletConnectPage,
-  WalletPage,
-  WalletTypes,
-} from '@lidofinance/wallets-testing-wallets';
+import { WalletPage, WalletTypes } from '@lidofinance/wallets-testing-wallets';
 import { Locator, Page, test } from '@playwright/test';
 
 export class EthereumPage implements WidgetPage {
@@ -48,14 +44,8 @@ export class EthereumPage implements WidgetPage {
     });
   }
 
-  async connectWallet(
-    walletPage: WalletPage,
-    additionalWallet?: WalletConnectPage,
-  ) {
-    await test.step(`Connect wallet ${
-      walletPage.config.COMMON.ADDITIONAL_WALLET_NAME ||
-      walletPage.config.COMMON.WALLET_NAME
-    }`, async () => {
+  async connectWallet(walletPage: WalletPage<WalletTypes>) {
+    await test.step(`Connect wallet ${walletPage.config.COMMON.WALLET_NAME}`, async () => {
       await this.page.waitForTimeout(2000);
       // If wallet connected -> return
       if ((await this.connectBtn.count()) === 0) return;
@@ -85,7 +75,7 @@ export class EthereumPage implements WidgetPage {
         case WalletTypes.WC: {
           await walletButton.click();
           await this.copyWcUrlBtn.click();
-          await additionalWallet.connectWallet(
+          await walletPage.connectWallet(
             await this.page.evaluate(() => navigator.clipboard.readText()),
           );
           break;
@@ -105,7 +95,7 @@ export class EthereumPage implements WidgetPage {
     });
   }
 
-  async doStaking(walletPage: WalletPage) {
+  async doStaking(walletPage: WalletPage<WalletTypes.EOA>) {
     await test.step('Do staking', async () => {
       await this.waitForTextContent(
         this.page

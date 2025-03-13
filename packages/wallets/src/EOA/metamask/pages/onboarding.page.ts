@@ -2,7 +2,6 @@ import { Locator, Page, test } from '@playwright/test';
 import { WalletConfig } from '../../../wallets.constants';
 
 export class OnboardingPage {
-  page: Page;
   termsCheckboxButton: Locator;
   importWalletButton: Locator;
   metricAgreeButton: Locator;
@@ -16,8 +15,7 @@ export class OnboardingPage {
   pinExtensionNextButton: Locator;
   pinExtensionDoneButton: Locator;
 
-  constructor(page: Page, public config: WalletConfig) {
-    this.page = page;
+  constructor(public page: Page, public config: WalletConfig) {
     this.termsCheckboxButton = this.page.getByTestId(
       'onboarding-terms-checkbox',
     );

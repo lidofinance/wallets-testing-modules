@@ -2,14 +2,13 @@ import { Locator, Page, test } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
 
 export class HomePage {
-  logger: ConsoleLogger;
+  logger = new ConsoleLogger('WC+Safe wallet. HomePage');
   wcBtn: Locator;
   wcUrlInput: Locator;
   approveBtn: Locator;
   connectedAppIcon: Locator;
 
   constructor(public page: Page) {
-    this.logger = new ConsoleLogger('WC+Safe wallet. Home page');
     this.wcBtn = this.page.locator('[title="WalletConnect"]');
     this.wcUrlInput = this.page.locator('input[placeholder="wc:"]');
     this.approveBtn = this.page.locator('button:has-text("Approve")');
@@ -33,7 +32,7 @@ export class HomePage {
         }
       });
 
-      await this.connectedAppIcon.waitFor({ state: 'visible', timeout: 3000 });
+      await this.connectedAppIcon.waitFor({ state: 'visible', timeout: 10000 });
       await this.page.close();
     });
   }

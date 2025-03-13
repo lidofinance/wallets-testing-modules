@@ -1,5 +1,9 @@
-import { NetworkConfig, WalletConfig } from '../../wallets.constants';
-import { WalletPage } from '../wallet.page';
+import {
+  NetworkConfig,
+  WalletConfig,
+  WalletTypes,
+} from '../../wallets.constants';
+import { WalletPage } from '../../wallet.page';
 import { test, BrowserContext, Page, expect } from '@playwright/test';
 import {
   AccountList,
@@ -16,7 +20,7 @@ import {
   isNeedAddNetwork,
 } from './helper';
 
-export class OkxPage implements WalletPage {
+export class OkxPage implements WalletPage<WalletTypes.EOA> {
   page: Page | undefined;
   homePage: HomePage;
   loginPage: LoginPage;

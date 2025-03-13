@@ -3,7 +3,6 @@ import { NetworkSetting } from './networkSetting.element';
 import { NetworkConfig } from '../../../../wallets.constants';
 
 export class NetworkList {
-  page: Page;
   networkSetting: NetworkSetting;
 
   networkListButton: Locator;
@@ -15,8 +14,7 @@ export class NetworkList {
   editNetworkButton: Locator;
   approveAddNetworkButton: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public page: Page) {
     this.networkSetting = new NetworkSetting(this.page);
 
     this.networkListButton = this.page.getByTestId('network-display');

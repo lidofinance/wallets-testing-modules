@@ -1,13 +1,13 @@
 export interface CommonWalletConfig {
-  WALLET_NAME: string; // Wallet name for install extension
+  WALLET_NAME: string; // Name of the wallet being tested
+  EXTENSION_WALLET_NAME: string; // Wallet name for install extension
   CONNECTED_WALLET_NAME: string; // Displayed name of connected wallet
+  CONNECT_BUTTON_NAME: string; // Button name in the wallet list
   RPC_URL_PATTERN: string;
   STORE_EXTENSION_ID: string;
-  CONNECT_BUTTON_NAME: string; // Button name in the wallet list
   WALLET_TYPE: WalletType;
   LATEST_STABLE_DOWNLOAD_LINK?: string; // Link to stable wallet extension version for test (optional)
   EXTENSION_START_PATH: string; // Start path for wallet setup
-  ADDITIONAL_WALLET_NAME?: string; // Wallet name if we use not default wallet
 }
 
 export enum WalletTypes {
