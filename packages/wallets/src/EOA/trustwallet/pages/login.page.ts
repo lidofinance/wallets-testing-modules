@@ -3,14 +3,11 @@ import { WalletConfig } from '../../../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 
 export class LoginPage {
+  logger = new ConsoleLogger(`TrustWallet. ${LoginPage.name}`);
   passwordInput: Locator;
   submitButton: Locator;
 
-  constructor(
-    public page: Page,
-    public config: WalletConfig,
-    public logger: ConsoleLogger,
-  ) {
+  constructor(public page: Page, public config: WalletConfig) {
     this.passwordInput = this.page.getByTestId('password-field');
     this.submitButton = this.page.locator(
       'button[data-testid="okd-button"][type="submit"]',

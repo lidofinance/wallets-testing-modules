@@ -1,9 +1,10 @@
 import { Locator, Page, test } from '@playwright/test';
+import { WalletPage } from '../../../wallet.page';
+import { WalletTypes } from '../../../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
-import { WalletPage } from '../../../EOA/wallet.page';
 
 export class SetupPage {
-  logger: ConsoleLogger;
+  logger = new ConsoleLogger(`Safe. ${SetupPage.name}`);
   saveCookiesSettingBtn: Locator;
   connectWalletBtn: Locator;
   accountCenter: Locator;
@@ -13,10 +14,9 @@ export class SetupPage {
 
   constructor(
     public page: Page,
-    public metamaskPage: WalletPage,
+    public extensionPage: WalletPage<WalletTypes.EOA>,
     public chainId: number,
   ) {
-    this.logger = new ConsoleLogger('WC+Safe wallet. Setup page');
     this.setupUrl =
       this.chainId === 1
         ? 'https://app.safe.global/welcome/accounts'
@@ -34,8 +34,6 @@ export class SetupPage {
   async firstTimeSetupWallet() {
     return await test.step('Safe wallet setup', async () => {
       await this.page.goto(this.setupUrl);
-      await this.closeExtraPopup();
-      await this.agreeCookiesSetting();
       await this.connectWalletExtension();
       try {
         await this.safeAccount.waitFor({ state: 'visible', timeout: 3000 });
@@ -65,15 +63,29 @@ export class SetupPage {
 
   async connectWalletExtension() {
     await test.step('Connect MetaMask wallet', async () => {
+      await this.closeExtraPopup();
+      await this.agreeCookiesSetting();
       await this.connectWalletBtn.click();
+      try {
+        await this.page
+          .getByText(this.extensionPage.config.COMMON.EXTENSION_WALLET_NAME)
+          .waitFor({ state: 'visible' });
+      } catch {
+        this.logger.log(
+          'Connect wallet modal is not opened. Need to reload page',
+        );
+        await this.page.reload();
+        await this.closeExtraPopup();
+        await this.connectWalletBtn.click();
+      }
       try {
         const [connectWalletPage] = await Promise.all([
           this.page.context().waitForEvent('page', { timeout: 5000 }),
           this.page
-            .getByText(this.metamaskPage.config.COMMON.WALLET_NAME)
+            .getByText(this.extensionPage.config.COMMON.EXTENSION_WALLET_NAME)
             .click(),
         ]);
-        await this.metamaskPage.connectWallet(connectWalletPage);
+        await this.extensionPage.connectWallet(connectWalletPage);
       } catch {
         this.logger.log('Simple way wallet connection');
       }

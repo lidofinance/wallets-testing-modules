@@ -1,9 +1,13 @@
-import { NetworkConfig, WalletConfig } from '../../wallets.constants';
-import { WalletPage } from '../wallet.page';
+import {
+  NetworkConfig,
+  WalletConfig,
+  WalletTypes,
+} from '../../wallets.constants';
+import { WalletPage } from '../../wallet.page';
 import expect from 'expect';
 import { test, BrowserContext, Page } from '@playwright/test';
 
-export class CoinbasePage implements WalletPage {
+export class CoinbasePage implements WalletPage<WalletTypes.EOA> {
   page: Page | undefined;
 
   constructor(
@@ -128,6 +132,10 @@ export class CoinbasePage implements WalletPage {
       await this.closeTransactionPopover();
       await page.click('button[data-testid="request-confirm-button"]');
     });
+  }
+
+  async cancelTx() {
+    throw new Error('Method not implemented.');
   }
 
   async signTx() {

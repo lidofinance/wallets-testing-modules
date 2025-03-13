@@ -1,5 +1,9 @@
-import { NetworkConfig, WalletConfig } from '../../wallets.constants';
-import { WalletPage } from '../wallet.page';
+import {
+  NetworkConfig,
+  WalletConfig,
+  WalletTypes,
+} from '../../wallets.constants';
+import { WalletPage } from '../../wallet.page';
 import { expect } from '@playwright/test';
 import { test, BrowserContext, Page } from '@playwright/test';
 import { HomePage, LoginPage, SettingsPage } from './pages';
@@ -14,7 +18,7 @@ import {
 import { getAddress } from 'viem';
 import { isPopularNetwork } from './helper';
 
-export class MetamaskPage implements WalletPage {
+export class MetamaskPage implements WalletPage<WalletTypes.EOA> {
   page: Page | undefined;
   header: Header;
   homePage: HomePage;

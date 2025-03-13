@@ -2,7 +2,6 @@ import { Locator, Page, test } from '@playwright/test';
 import { WalletConfig } from '../../../wallets.constants';
 
 export class HomePage {
-  page: Page;
   activityTabButton: Locator;
   nftTabButton: Locator;
   tokensTabButton: Locator;
@@ -12,12 +11,10 @@ export class HomePage {
   importTokenButton: Locator;
 
   constructor(
-    page: Page,
+    public page: Page,
     private extensionUrl: string,
     public config: WalletConfig,
   ) {
-    this.page = page;
-
     // Activity tab locators
     this.activityTabButton = this.page
       .getByTestId('account-overview__activity-tab')

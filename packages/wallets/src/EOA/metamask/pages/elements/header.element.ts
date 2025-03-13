@@ -3,7 +3,6 @@ import { NetworkSetting } from './networkSetting.element';
 import { NetworkList } from './networkList.element';
 
 export class Header {
-  page: Page;
   networkList: NetworkList;
   networkSetting: NetworkSetting;
   accountMenuButton: Locator;
@@ -11,8 +10,7 @@ export class Header {
   optionsMenuButton: Locator;
   appHeaderLogo: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public page: Page) {
     this.networkList = new NetworkList(this.page);
     this.networkSetting = new NetworkSetting(this.page);
     this.accountMenuButton = this.page.getByTestId('account-menu-icon');
