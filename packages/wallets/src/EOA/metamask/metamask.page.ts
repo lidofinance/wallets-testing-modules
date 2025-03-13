@@ -77,7 +77,7 @@ export class MetamaskPage implements WalletPage {
     await test.step(`Change Metamask network to ${networkName}`, async () => {
       await this.navigate();
       await this.header.networkListButton.click();
-      await this.header.networkList.clickToNetwork(networkName);
+      await this.header.networkList.clickToNetworkItemButton(networkName);
       if (networkName === 'Linea') {
         await this.popoverElements.closePopover(); //Linea network require additional confirmation
       }
@@ -112,8 +112,17 @@ export class MetamaskPage implements WalletPage {
         await this.header.networkList.addPopularNetwork(
           networkConfig.chainName,
         );
-        await this.navigate();
-        await this.header.networkList.addNetworkManually(networkConfig);
+
+        if (networkConfig.chainId === 10) {
+          await this.header.networkListButton.click();
+          await this.header.networkList.openModalNetworkEdit(
+            networkConfig.chainId,
+          );
+          await this.header.networkSetting.addRpcForNetwork(
+            networkConfig.rpcUrl,
+            networkConfig.scan,
+          );
+        }
       } else {
         await this.header.networkList.addNetworkManually(networkConfig);
         await this.changeNetwork(networkConfig.chainName);
