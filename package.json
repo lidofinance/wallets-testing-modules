@@ -40,9 +40,9 @@
     "branches": [
       "main",
       {
-        "name": "improve-wallet-page-interface",
-        "channel": "wallet-page",
-        "prerelease": "wallet-page"
+        "name": "develop",
+        "channel": "alpha",
+        "prerelease": "alpha"
       }
     ]
   }
