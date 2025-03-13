@@ -46,7 +46,7 @@ export class MetamaskPage implements WalletPage {
   async navigate() {
     await test.step('Navigate to metamask Home page', async () => {
       await this.initLocators();
-      await this.homePage.openWidgetPage();
+      await this.homePage.goto();
       await this.header.appHeaderLogo.waitFor({ state: 'visible' });
       await this.loginPage.unlock();
       if (await this.header.networkListButton.isVisible()) {
