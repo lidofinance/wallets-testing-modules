@@ -1,5 +1,6 @@
 import {
   NetworkConfig,
+  NETWORKS_CONFIG,
   WalletConfig,
   WalletTypes,
 } from '../../wallets.constants';
@@ -116,8 +117,7 @@ export class MetamaskPage implements WalletPage<WalletTypes.EOA> {
         await this.header.networkList.addPopularNetwork(
           networkConfig.chainName,
         );
-
-        if (networkConfig.chainId === 10) {
+        if (networkConfig.rpcUrl) {
           await this.navigate();
           await this.header.networkList.addNetworkManually(networkConfig);
         }
