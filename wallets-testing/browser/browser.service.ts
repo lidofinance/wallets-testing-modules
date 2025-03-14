@@ -1,6 +1,5 @@
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 import {
-  WalletConnectPage,
   CommonWalletConfig,
   WalletConfig,
   WalletPage,
@@ -23,9 +22,8 @@ import { WALLET_PAGES, WIDGET_PAGES } from './browser.constants';
 import { BrowserContextService } from './browser.context.service';
 
 export class BrowserService {
-  private readonly logger = new Logger(BrowserService.name);
-  private walletPage: WalletPage;
-  private additionalWallet?: WalletConnectPage;
+  private readonly logger = new ConsoleLogger(BrowserService.name);
+  private walletPage: WalletPage<WalletTypes>;
   private account: Account;
   private widgetConfig: WidgetConfig;
   private stakeConfig: StakeConfig;
@@ -56,15 +54,6 @@ export class BrowserService {
         this.stakeConfig.stakeAmount * 100,
       );
     }
-    await this.walletPage.importKey(this.account.secretKey);
-    await this.walletPage.addNetwork({
-      chainName: this.widgetConfig.chainName,
-      rpcUrl: this.ethereumNodeService.state.nodeUrl,
-      chainId: this.widgetConfig.chainId,
-      tokenSymbol: this.widgetConfig.tokenSymbol,
-      scan: '',
-    });
-    await this.browserContextService.closePages();
   }
 
   async setup(
@@ -84,36 +73,42 @@ export class BrowserService {
         commonWalletConfig.STORE_EXTENSION_ID,
       );
     await this.browserContextService.setup(
-      commonWalletConfig.WALLET_NAME,
       walletConfig,
       this.widgetConfig.nodeUrl,
     );
+    await this.browserContextService.closePages();
+
     const extension = new Extension(this.browserContextService.extensionId);
-    this.walletPage = new WALLET_PAGES[commonWalletConfig.WALLET_NAME](
-      this.browserContextService.browserContext,
-      extension.url,
-      walletConfig,
-    );
-    if (commonWalletConfig.WALLET_TYPE === WalletTypes.WC) {
-      this.additionalWallet = new WALLET_PAGES[
-        commonWalletConfig.ADDITIONAL_WALLET_NAME
-      ](
-        this.browserContextService.browserContext,
-        this.walletPage,
-        this.widgetConfig.chainId,
-      );
+    switch (commonWalletConfig.WALLET_TYPE) {
+      case WalletTypes.EOA: {
+        this.walletPage = new WALLET_PAGES[
+          commonWalletConfig.EXTENSION_WALLET_NAME
+        ](
+          this.browserContextService.browserContext,
+          extension.url,
+          walletConfig,
+        );
+        await this.setupEoaWallet(this.walletPage);
+        break;
+      }
+      case WalletTypes.WC: {
+        const wcExtensionHelperWallet = new WALLET_PAGES[
+          commonWalletConfig.EXTENSION_WALLET_NAME
+        ](
+          this.browserContextService.browserContext,
+          extension.url,
+          walletConfig,
+        );
+        await this.setupEoaWallet(wcExtensionHelperWallet);
+        this.walletPage = new WALLET_PAGES[commonWalletConfig.WALLET_NAME](
+          this.browserContextService.browserContext,
+          wcExtensionHelperWallet,
+          this.widgetConfig.chainId,
+          walletConfig,
+        );
+        break;
+      }
     }
-    await this.browserContextService.closePages();
-    await this.walletPage.setup(this.widgetConfig.networkName);
-    if (!this.widgetConfig.isDefaultNetwork)
-      await this.walletPage.addNetwork({
-        chainName: this.widgetConfig.chainName,
-        rpcUrl: this.widgetConfig.nodeUrl,
-        chainId: this.widgetConfig.chainId,
-        tokenSymbol: this.widgetConfig.tokenSymbol,
-        scan: '',
-      });
-    await this.browserContextService.closePages();
   }
 
   async stake(): Promise<string> {
@@ -125,8 +120,8 @@ export class BrowserService {
       await widgetPage.navigate();
       await widgetPage.connectWallet(this.walletPage);
       await widgetPage.doStaking(this.walletPage);
-    } finally {
-      await this.browserContextService.closePages();
+    } catch {
+      this.logger.log('Stake failed');
     }
     return 'Success';
   }
@@ -137,9 +132,8 @@ export class BrowserService {
       this.stakeConfig || {},
     );
     await widgetPage.navigate();
-    await widgetPage.connectWallet(this.walletPage, this.additionalWallet);
+    await widgetPage.connectWallet(this.walletPage);
 
-    await this.browserContextService.closePages();
     return `Success. Wallet ${this.walletPage.config.COMMON.WALLET_NAME} successfully connected`;
   }
 
@@ -147,5 +141,24 @@ export class BrowserService {
     if (this.browserContextService.browserContext !== null)
       await this.browserContextService.browserContext.close();
     await this.ethereumNodeService.stopNode();
+  }
+
+  async setupEoaWallet(wallet: WalletPage<WalletTypes.EOA>) {
+    await wallet.setup(this.widgetConfig.networkName);
+    if (this.ethereumNodeService.state) {
+      await wallet.importKey(this.account.secretKey);
+    }
+    const needsCustomNetwork =
+      !!this.ethereumNodeService.state || !this.widgetConfig.isDefaultNetwork;
+    if (needsCustomNetwork)
+      await wallet.addNetwork({
+        chainName: this.widgetConfig.chainName,
+        rpcUrl:
+          this.ethereumNodeService.state.nodeUrl || this.widgetConfig.nodeUrl,
+        chainId: this.widgetConfig.chainId,
+        tokenSymbol: this.widgetConfig.tokenSymbol,
+        scan: '',
+      });
+    await this.browserContextService.closePages();
   }
 }

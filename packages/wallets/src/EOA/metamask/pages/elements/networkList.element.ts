@@ -1,9 +1,10 @@
 import { Locator, Page, test } from '@playwright/test';
 import { NetworkSetting } from './networkSetting.element';
 import { NetworkConfig } from '../../../../wallets.constants';
+import { ConsoleLogger } from '@nestjs/common';
 
 export class NetworkList {
-  page: Page;
+  logger = new ConsoleLogger(`MetaMask. ${NetworkList.name}`);
   networkSetting: NetworkSetting;
 
   networkListButton: Locator;
@@ -15,8 +16,7 @@ export class NetworkList {
   editNetworkButton: Locator;
   approveAddNetworkButton: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public page: Page) {
     this.networkSetting = new NetworkSetting(this.page);
 
     this.networkListButton = this.page.getByTestId('network-display');
@@ -146,7 +146,7 @@ export class NetworkList {
               .getByText('Connecting to')
               .waitFor({ state: 'hidden' });
           } catch {
-            console.log('[INFO] Connecting network was without loader');
+            this.logger.log('Connecting network was without loader');
           }
         });
       });

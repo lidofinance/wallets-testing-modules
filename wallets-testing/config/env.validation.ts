@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
+import { ConsoleLogger } from '@nestjs/common';
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
@@ -20,7 +21,7 @@ export function validate(
   const parsedConfig = EnvironmentSchema.safeParse(config);
 
   if (!parsedConfig.success) {
-    console.error('Config validation failed:', parsedConfig.error.format());
+    new ConsoleLogger('env validation').error(parsedConfig.error.format());
     process.exit(1);
   }
 

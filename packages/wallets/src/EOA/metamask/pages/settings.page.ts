@@ -2,7 +2,6 @@ import { Locator, Page, test } from '@playwright/test';
 import { WalletConfig } from '../../../wallets.constants';
 
 export class SettingsPage {
-  page: Page;
   tabBarMenu: Locator;
   experimentalTabButton: Locator;
 
@@ -10,11 +9,10 @@ export class SettingsPage {
   selectNetworksForEachSiteToggle: Locator;
 
   constructor(
-    page: Page,
+    public page: Page,
     private extensionUrl: string,
     public config: WalletConfig,
   ) {
-    this.page = page;
     this.tabBarMenu = this.page.locator('.tab-bar');
     this.experimentalTabButton = this.tabBarMenu
       .getByRole('button')

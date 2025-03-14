@@ -1,8 +1,8 @@
 import { Locator, Page } from '@playwright/test';
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 
 export class WalletOperations {
-  page: Page;
+  logger = new ConsoleLogger(`TrustWallet. ${WalletOperations.name}`);
   connectBtn: Locator;
   confirmBtn: Locator;
   rejectBtn: Locator;
@@ -12,8 +12,7 @@ export class WalletOperations {
   continueAnywayBtn: Locator;
   checkbox: Locator;
 
-  constructor(page: Page, public logger: Logger) {
-    this.page = page;
+  constructor(public page: Page) {
     this.connectBtn = this.page.locator('button:has-text("Connect")');
     this.confirmBtn = this.page
       .getByTestId('confirm-button')

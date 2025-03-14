@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 import { BrowserContext, chromium, Page } from '@playwright/test';
 import * as fs from 'fs/promises';
 import * as os from 'os';
@@ -17,20 +17,20 @@ export class BrowserContextService {
   extensionId: string;
   extensionPage: Page;
   nodeUrl: string;
-  private readonly logger = new Logger(BrowserContextService.name);
+  private readonly logger = new ConsoleLogger(BrowserContextService.name);
 
   constructor(
     private ethereumNodeService: EthereumNodeService,
     private extensionService: ExtensionService,
   ) {}
 
-  async setup(walletName: string, walletConfig: WalletConfig, nodeUrl: string) {
+  async setup(walletConfig: WalletConfig, nodeUrl: string) {
     this.walletConfig = walletConfig;
     this.nodeUrl = nodeUrl;
-    await this.initBrowserContext(walletName);
+    await this.initBrowserContext();
   }
 
-  async initBrowserContext(walletName: string) {
+  async initBrowserContext() {
     this.logger.debug('Starting a new browser context');
     const browserContextPath = await fs.mkdtemp(os.tmpdir() + path.sep);
     this.browserContext = await chromium.launchPersistentContext(
@@ -50,9 +50,7 @@ export class BrowserContextService {
       },
     );
     this.browserContext.on('page', async (page) => {
-      await page.once('crash', () =>
-        this.logger.error(`Page ${page.url()} crashed`),
-      );
+      page.once('crash', () => this.logger.error(`Page ${page.url()} crashed`));
     });
     this.browserContext.once('close', async () => {
       this.browserContext = null;
@@ -60,7 +58,7 @@ export class BrowserContextService {
       this.logger.debug('Browser context closed');
     });
     await this.setExtensionVars(
-      walletName,
+      this.walletConfig.COMMON.EXTENSION_WALLET_NAME,
       this.walletConfig.COMMON.EXTENSION_START_PATH,
     );
     if (this.ethereumNodeService.state) {

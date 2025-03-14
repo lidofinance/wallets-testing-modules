@@ -1,5 +1,9 @@
-import { NetworkConfig, WalletConfig } from '../../wallets.constants';
-import { WalletPage } from '../wallet.page';
+import {
+  NetworkConfig,
+  WalletConfig,
+  WalletTypes,
+} from '../../wallets.constants';
+import { WalletPage } from '../../wallet.page';
 import { test, BrowserContext, Page, expect } from '@playwright/test';
 import {
   AccountList,
@@ -15,8 +19,10 @@ import {
   closeUnnecessaryPages,
   isNeedAddNetwork,
 } from './helper';
+import { ConsoleLogger } from '@nestjs/common';
 
-export class OkxPage implements WalletPage {
+export class OkxPage implements WalletPage<WalletTypes.EOA> {
+  logger = new ConsoleLogger(OkxPage.name);
   page: Page | undefined;
   homePage: HomePage;
   loginPage: LoginPage;
@@ -79,7 +85,7 @@ export class OkxPage implements WalletPage {
         });
         await this.onboardingPage.firstTimeSetup();
       } catch {
-        console.log('[INFO] Import is not necessary');
+        this.logger.log('Import is not necessary');
       }
       await closeUnnecessaryPages(this.browserContext);
     });
@@ -251,8 +257,8 @@ export class OkxPage implements WalletPage {
 
   // need realize for mainnet
   async openLastTxInEthplorer(txIndex = 0) {
-    console.log(
-      `[INFO] OKX wallet does not display the transaction history for testnet (param ${txIndex})`,
+    this.logger.log(
+      `OKX wallet does not display the transaction history for testnet (param ${txIndex})`,
     );
     return null;
   }

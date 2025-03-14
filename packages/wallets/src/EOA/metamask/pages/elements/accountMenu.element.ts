@@ -1,7 +1,6 @@
 import { Locator, Page, test } from '@playwright/test';
 
 export class AccountMenu {
-  page: Page;
   accountListModal: Locator;
   addAccountOrHardwareWalletButton: Locator;
   importAccountButton: Locator;
@@ -9,8 +8,7 @@ export class AccountMenu {
   importAccountConfirmButton: Locator;
   accountListAddress: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public page: Page) {
     this.accountListModal = this.page.locator('section[role=dialog]');
     this.addAccountOrHardwareWalletButton = this.accountListModal.getByTestId(
       'multichain-account-menu-popover-action-button',
