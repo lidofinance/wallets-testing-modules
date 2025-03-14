@@ -1,6 +1,5 @@
 import {
   NetworkConfig,
-  NETWORKS_CONFIG,
   WalletConfig,
   WalletTypes,
 } from '../../wallets.constants';
