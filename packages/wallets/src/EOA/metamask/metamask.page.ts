@@ -50,7 +50,7 @@ export class MetamaskPage implements WalletPage<WalletTypes.EOA> {
   async navigate() {
     await test.step('Navigate to metamask Home page', async () => {
       await this.initLocators();
-      await this.homePage.openWidgetPage();
+      await this.homePage.goto();
       await this.header.appHeaderLogo.waitFor({ state: 'visible' });
       await this.loginPage.unlock();
       if (await this.header.networkListButton.isVisible()) {
@@ -81,7 +81,7 @@ export class MetamaskPage implements WalletPage<WalletTypes.EOA> {
     await test.step(`Change Metamask network to ${networkName}`, async () => {
       await this.navigate();
       await this.header.networkListButton.click();
-      await this.header.networkList.clickToNetwork(networkName);
+      await this.header.networkList.clickToNetworkItemButton(networkName);
       if (networkName === 'Linea') {
         await this.popoverElements.closePopover(); //Linea network require additional confirmation
       }
@@ -116,8 +116,13 @@ export class MetamaskPage implements WalletPage<WalletTypes.EOA> {
         await this.header.networkList.addPopularNetwork(
           networkConfig.chainName,
         );
+        if (networkConfig.rpcUrl) {
+          await this.navigate();
+          await this.header.networkList.addNetworkManually(networkConfig);
+        }
       } else {
         await this.header.networkList.addNetworkManually(networkConfig);
+        await this.changeNetwork(networkConfig.chainName);
       }
       if (isClosePage) await this.page.close();
     });
