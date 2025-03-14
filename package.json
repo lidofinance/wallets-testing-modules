@@ -40,9 +40,9 @@
     "branches": [
       "main",
       {
-        "name": "fix/nestjs-config-version",
-        "channel": "alpha-config",
-        "prerelease": "alpha-config"
+        "name": "develop",
+        "channel": "alpha",
+        "prerelease": "alpha"
       }
     ]
   }
