@@ -16,7 +16,7 @@ export class OnboardingPage {
     this.agreementCheckbox = this.page.locator('input[type=checkbox]');
     this.nextBtn = this.page.locator('button:has-text("Next")');
     this.seedPhraseTypeInput = this.page.locator(
-      '#headlessui-listbox-button-1',
+      '[id="headlessui-listbox-button-:r0:"]',
     );
     this.seedPhraseInputs = this.page.locator('input[type="password"]');
     this.noThanksBtn = this.page.locator('button:has-text("No thanks")');
@@ -35,6 +35,13 @@ export class OnboardingPage {
         await this.newPasswordInput.nth(0).fill(this.config.PASSWORD);
         await this.newPasswordInput.nth(1).fill(this.config.PASSWORD);
         await this.agreementCheckbox.click();
+        await this.nextBtn.click();
+      });
+
+      await test.step('Verify safety', async () => {
+        await this.agreementCheckbox.nth(0).check();
+        await this.agreementCheckbox.nth(1).check();
+        await this.agreementCheckbox.nth(2).check();
         await this.nextBtn.click();
       });
 
