@@ -5,6 +5,8 @@ import {
   TestResult,
 } from '@playwright/test/reporter';
 import * as fs from 'fs';
+import path from 'path';
+import { ConsoleLogger } from '@nestjs/common';
 
 const testStatusToEmoji = {
   passed: '✅',
@@ -42,6 +44,7 @@ export const discordReporterSkipAnnotation = {
 };
 
 class DiscordReporter implements Reporter {
+  logger = new ConsoleLogger(DiscordReporter.name);
   groups: { [key: string]: { [key: string]: string } } = {};
   options: { outputFile: string };
 
@@ -51,9 +54,10 @@ class DiscordReporter implements Reporter {
 
   onTestEnd(test: TestCase, result: TestResult) {
     if (!this.groups[test.parent.title]) this.groups[test.parent.title] = {};
+    const walletVersion = this.getTestWalletVersion(test.title);
 
     this.groups[test.parent.title][test.id] =
-      testStatusToEmoji[result.status] + ' ' + test.title;
+      testStatusToEmoji[result.status] + ' ' + test.title + ' ' + walletVersion;
   }
 
   onEnd(result: FullResult): void | Promise<void> {
@@ -73,7 +77,22 @@ class DiscordReporter implements Reporter {
         },
       ],
     };
+    console.log(embeds.embeds[0].fields); // remove after tests
     fs.writeFileSync(this.options.outputFile, JSON.stringify(embeds));
+  }
+
+  getTestWalletVersion(testName: string) {
+    const filePath = path.join(process.cwd(), 'testToExtensionVersion.json');
+    if (!fs.existsSync(filePath)) {
+      this.logger.error(`extensions version file is not found (${filePath})`);
+    }
+    const content = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    for (const el of content) {
+      if (testName === el.testName) {
+        return `(v.${el.extensionVersion})`;
+      }
+    }
+    return '';
   }
 }
 

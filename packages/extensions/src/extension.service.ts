@@ -6,7 +6,7 @@ import * as unzipper from 'unzipper';
 import { once } from 'events';
 import { ExtensionVersionChange, Manifest } from './extension.model';
 import { ExtensionStorePage } from './extension.store.page';
-import { BrowserContext, chromium } from '@playwright/test';
+import { BrowserContext, chromium, test } from '@playwright/test';
 import { Readable } from 'node:stream';
 
 @Injectable()
@@ -157,5 +157,48 @@ export class ExtensionService {
     }
     this.versions = versions;
     return changes;
+  }
+
+  async extractExtensionVersion(extensionId: string) {
+    const manifestPath = path.join(
+      this.idToExtension[extensionId],
+      'manifest.json',
+    );
+
+    let manifestContent;
+    try {
+      const content = await fs.readFile(manifestPath, 'utf-8');
+      manifestContent = JSON.parse(content);
+    } catch (er) {
+      this.logger.warn(`error with extension manifest reading (${er})`);
+      return;
+    }
+
+    const testToExtensionVersionFilePath = path.join(
+      process.cwd(),
+      'testToExtensionVersion.json',
+    );
+
+    let jsonArray = [];
+    try {
+      const fileContent = await fs.readFile(
+        testToExtensionVersionFilePath,
+        'utf-8',
+      );
+      jsonArray = fileContent ? JSON.parse(fileContent) : [];
+    } catch {
+      this.logger.log('extensionToVersion file created');
+    }
+
+    jsonArray.push({
+      testName: test.info().title,
+      extensionVersion: manifestContent.version,
+    });
+
+    await fs.writeFile(
+      testToExtensionVersionFilePath,
+      JSON.stringify(jsonArray, null, 2),
+      'utf-8',
+    );
   }
 }

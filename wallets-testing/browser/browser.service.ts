@@ -78,6 +78,14 @@ export class BrowserService {
     );
     await this.browserContextService.closePages();
 
+    if (
+      commonWalletConfig.WALLET_TYPE === WalletTypes.EOA &&
+      !!process.env.CI
+    ) {
+      await this.extensionService.extractExtensionVersion(
+        commonWalletConfig.STORE_EXTENSION_ID,
+      );
+    }
     const extension = new Extension(this.browserContextService.extensionId);
     switch (commonWalletConfig.WALLET_TYPE) {
       case WalletTypes.EOA: {

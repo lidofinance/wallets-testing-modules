@@ -65,11 +65,12 @@ export class SetupPage {
     await test.step('Connect MetaMask wallet', async () => {
       await this.closeExtraPopup();
       await this.agreeCookiesSetting();
+      await this.page.waitForTimeout(2000);
       await this.connectWalletBtn.click();
       try {
         await this.page
           .getByText(this.extensionPage.config.COMMON.EXTENSION_WALLET_NAME)
-          .waitFor({ state: 'visible' });
+          .waitFor({ state: 'visible', timeout: 5000 });
       } catch {
         this.logger.log(
           'Connect wallet modal is not opened. Need to reload page',
