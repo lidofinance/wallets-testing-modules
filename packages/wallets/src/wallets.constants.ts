@@ -48,6 +48,7 @@ type MainnetNetworks =
   | 'ZIRCUIT';
 
 export type TestnetNetworks =
+  | 'ETHEREUM_HOODI'
   | 'ETHEREUM_HOLESKY'
   | 'ETHEREUM_SEPOLIA'
   | 'OP_SEPOLIA'
@@ -151,6 +152,13 @@ export const NETWORKS_CONFIG: {
     },
   },
   Testnet: {
+    ETHEREUM_HOODI: {
+      chainId: 560048,
+      chainName: 'Ethereum Hoodi',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://rpc.hoodi.ethpandaops.io/',
+      scan: '',
+    },
     ETHEREUM_HOLESKY: {
       chainId: 17000,
       chainName: 'Ethereum Holesky',
