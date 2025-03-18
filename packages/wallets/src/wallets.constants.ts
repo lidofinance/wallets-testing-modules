@@ -36,6 +36,7 @@ type MainnetNetworks =
   | 'ETHEREUM'
   | 'OPTIMISM'
   | 'SONEIUM'
+  | 'UNICHAIN'
   | 'ZKSYNC'
   | 'ARBITRUM'
   | 'POLYGON'
@@ -52,7 +53,8 @@ export type TestnetNetworks =
   | 'ETHEREUM_HOLESKY'
   | 'ETHEREUM_SEPOLIA'
   | 'OP_SEPOLIA'
-  | 'SONEIUM_MINATO';
+  | 'SONEIUM_MINATO'
+  | 'UNICHAIN_SEPOLIA';
 
 export const NETWORKS_CONFIG: {
   Mainnet: Record<MainnetNetworks, NetworkConfig>;
@@ -79,6 +81,13 @@ export const NETWORKS_CONFIG: {
       tokenSymbol: 'ETH',
       rpcUrl: 'https://rpc.soneium.org/',
       scan: 'https://soneium-minato.blockscout.com/',
+    },
+    UNICHAIN: {
+      chainId: 130,
+      chainName: 'Unichain',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://mainnet.unichain.org',
+      scan: 'https://uniscan.xyz/',
     },
     ZKSYNC: {
       chainId: 324,
@@ -186,6 +195,13 @@ export const NETWORKS_CONFIG: {
       tokenSymbol: 'ETH',
       rpcUrl: 'https://rpc.minato.soneium.org/',
       scan: 'https://soneium-minato.blockscout.com/',
+    },
+    UNICHAIN_SEPOLIA: {
+      chainId: 1301,
+      chainName: 'Unichain Sepolia',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://unichain.sepolia.org/',
+      scan: 'https://unichain.sepolia.xyz/',
     },
   },
 };
