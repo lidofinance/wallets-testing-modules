@@ -47,8 +47,7 @@ type MainnetNetworks =
   | 'SCROLL'
   | 'MODE'
   | 'ZIRCUIT'
-  | 'LISK'
-  | 'METIS';
+  | 'LISK';
 
 export type TestnetNetworks =
   | 'ETHEREUM_HOODI'
@@ -159,13 +158,6 @@ export const NETWORKS_CONFIG: {
       chainName: 'Zircuit',
       tokenSymbol: 'ETH',
       rpcUrl: 'https://zircuit1-mainnet.p2pify.com',
-      scan: '',
-    },
-    METIS: {
-      chainId: 1088,
-      chainName: 'Metis',
-      tokenSymbol: 'ETH',
-      rpcUrl: 'https://metis.drpc.org/',
       scan: '',
     },
     LISK: {
