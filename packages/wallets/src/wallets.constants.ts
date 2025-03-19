@@ -36,6 +36,7 @@ type MainnetNetworks =
   | 'ETHEREUM'
   | 'OPTIMISM'
   | 'SONEIUM'
+  | 'UNICHAIN'
   | 'ZKSYNC'
   | 'ARBITRUM'
   | 'POLYGON'
@@ -45,13 +46,16 @@ type MainnetNetworks =
   | 'MANTLE'
   | 'SCROLL'
   | 'MODE'
-  | 'ZIRCUIT';
+  | 'ZIRCUIT'
+  | 'LISK';
 
 export type TestnetNetworks =
+  | 'ETHEREUM_HOODI'
   | 'ETHEREUM_HOLESKY'
   | 'ETHEREUM_SEPOLIA'
   | 'OP_SEPOLIA'
-  | 'SONEIUM_MINATO';
+  | 'SONEIUM_MINATO'
+  | 'UNICHAIN_SEPOLIA';
 
 export const NETWORKS_CONFIG: {
   Mainnet: Record<MainnetNetworks, NetworkConfig>;
@@ -78,6 +82,13 @@ export const NETWORKS_CONFIG: {
       tokenSymbol: 'ETH',
       rpcUrl: 'https://rpc.soneium.org/',
       scan: 'https://soneium-minato.blockscout.com/',
+    },
+    UNICHAIN: {
+      chainId: 130,
+      chainName: 'Unichain',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://mainnet.unichain.org',
+      scan: 'https://uniscan.xyz/',
     },
     ZKSYNC: {
       chainId: 324,
@@ -149,8 +160,22 @@ export const NETWORKS_CONFIG: {
       rpcUrl: 'https://zircuit1-mainnet.p2pify.com',
       scan: '',
     },
+    LISK: {
+      chainId: 1135,
+      chainName: 'Lisk',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://rpc.api.lisk.com/',
+      scan: '',
+    },
   },
   Testnet: {
+    ETHEREUM_HOODI: {
+      chainId: 560048,
+      chainName: 'Ethereum Hoodi',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://rpc.hoodi.ethpandaops.io/',
+      scan: 'https://explorer.hoodi.ethpandaops.io/',
+    },
     ETHEREUM_HOLESKY: {
       chainId: 17000,
       chainName: 'Ethereum Holesky',
@@ -178,6 +203,13 @@ export const NETWORKS_CONFIG: {
       tokenSymbol: 'ETH',
       rpcUrl: 'https://rpc.minato.soneium.org/',
       scan: 'https://soneium-minato.blockscout.com/',
+    },
+    UNICHAIN_SEPOLIA: {
+      chainId: 1301,
+      chainName: 'Unichain Sepolia',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://unichain.sepolia.org/',
+      scan: 'https://unichain.sepolia.xyz/',
     },
   },
 };
