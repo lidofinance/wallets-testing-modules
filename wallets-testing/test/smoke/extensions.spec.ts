@@ -10,15 +10,14 @@ test.describe('Extension service', () => {
   });
 
   test('should init', async () => {
+    const extensionId = 'nkbihfbeogaeaoehlefnkodbefgpgknn';
     const extensionDir = await extensionService.getExtensionDirFromId(
-      'nkbihfbeogaeaoehlefnkodbefgpgknn',
+      extensionId,
     );
     expect(extensionDir).toBeDefined();
     expect(fs.readdirSync(extensionDir).length).toBeGreaterThan(0);
     expect(
-      await extensionService.getManifestVersion(
-        'nkbihfbeogaeaoehlefnkodbefgpgknn',
-      ),
+      await extensionService.getManifestVersion(extensionId),
     ).toBeGreaterThan(0);
   });
 });
