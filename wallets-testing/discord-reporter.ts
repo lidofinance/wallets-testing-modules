@@ -5,7 +5,6 @@ import {
   TestResult,
 } from '@playwright/test/reporter';
 import * as fs from 'fs';
-import { ConsoleLogger } from '@nestjs/common';
 
 const testStatusToEmoji = {
   passed: '✅',
@@ -43,7 +42,6 @@ export const discordReporterSkipAnnotation = {
 };
 
 class DiscordReporter implements Reporter {
-  logger = new ConsoleLogger(DiscordReporter.name);
   groups: { [key: string]: { [key: string]: string } } = {};
   options: { outputFile: string };
 
@@ -55,9 +53,12 @@ class DiscordReporter implements Reporter {
     if (!this.groups[test.parent.title]) this.groups[test.parent.title] = {};
     const walletVersion = test.annotations[0].description;
 
-    this.groups[test.parent.title][test.id] = `${
-      testStatusToEmoji[result.status]
-    } ${test.title} (v.${walletVersion})`;
+    this.groups[test.parent.title][test.id] =
+      testStatusToEmoji[result.status] +
+      ' ' +
+      test.title +
+      ' ' +
+      `(v.${walletVersion})`;
   }
 
   onEnd(result: FullResult): void | Promise<void> {
@@ -77,7 +78,6 @@ class DiscordReporter implements Reporter {
         },
       ],
     };
-    console.log(embeds.embeds[0].fields);
     fs.writeFileSync(this.options.outputFile, JSON.stringify(embeds));
   }
 }
