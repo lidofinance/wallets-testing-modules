@@ -82,7 +82,7 @@ export class BrowserService {
       commonWalletConfig.WALLET_TYPE === WalletTypes.EOA &&
       !!process.env.CI
     ) {
-      await this.extensionService.extractExtensionVersion(
+      await this.extensionService.annotateExtensionVersion(
         commonWalletConfig.STORE_EXTENSION_ID,
       );
     }

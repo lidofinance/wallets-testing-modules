@@ -159,46 +159,22 @@ export class ExtensionService {
     return changes;
   }
 
-  async extractExtensionVersion(extensionId: string) {
+  async annotateExtensionVersion(extensionId: string) {
     const manifestPath = path.join(
       this.idToExtension[extensionId],
       'manifest.json',
     );
 
-    let manifestContent;
     try {
       const content = await fs.readFile(manifestPath, 'utf-8');
-      manifestContent = JSON.parse(content);
+      const manifestContent = JSON.parse(content);
+      test.info().annotations.push({
+        type: 'wallet version',
+        description: manifestContent.version,
+      });
     } catch (er) {
       this.logger.warn(`error with extension manifest reading (${er})`);
       return;
     }
-
-    const testToExtensionVersionFilePath = path.join(
-      process.cwd(),
-      'testToExtensionVersion.json',
-    );
-
-    let jsonArray = [];
-    try {
-      const fileContent = await fs.readFile(
-        testToExtensionVersionFilePath,
-        'utf-8',
-      );
-      jsonArray = fileContent ? JSON.parse(fileContent) : [];
-    } catch {
-      this.logger.log('extensionToVersion file created');
-    }
-
-    jsonArray.push({
-      testName: test.info().title,
-      extensionVersion: manifestContent.version,
-    });
-
-    await fs.writeFile(
-      testToExtensionVersionFilePath,
-      JSON.stringify(jsonArray, null, 2),
-      'utf-8',
-    );
   }
 }

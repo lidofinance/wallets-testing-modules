@@ -5,7 +5,6 @@ import {
   TestResult,
 } from '@playwright/test/reporter';
 import * as fs from 'fs';
-import path from 'path';
 import { ConsoleLogger } from '@nestjs/common';
 
 const testStatusToEmoji = {
@@ -54,10 +53,11 @@ class DiscordReporter implements Reporter {
 
   onTestEnd(test: TestCase, result: TestResult) {
     if (!this.groups[test.parent.title]) this.groups[test.parent.title] = {};
-    const walletVersion = this.getTestWalletVersion(test.title);
+    const walletVersion = test.annotations[0].description;
 
-    this.groups[test.parent.title][test.id] =
-      testStatusToEmoji[result.status] + ' ' + test.title + ' ' + walletVersion;
+    this.groups[test.parent.title][test.id] = `${
+      testStatusToEmoji[result.status]
+    } ${test.title} (v.${walletVersion})`;
   }
 
   onEnd(result: FullResult): void | Promise<void> {
@@ -78,20 +78,6 @@ class DiscordReporter implements Reporter {
       ],
     };
     fs.writeFileSync(this.options.outputFile, JSON.stringify(embeds));
-  }
-
-  getTestWalletVersion(testName: string) {
-    const filePath = path.join(process.cwd(), 'testToExtensionVersion.json');
-    if (!fs.existsSync(filePath)) {
-      this.logger.error(`extensions version file is not found (${filePath})`);
-    }
-    const content = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-    for (const el of content) {
-      if (testName === el.testName) {
-        return `(v.${el.extensionVersion})`;
-      }
-    }
-    return '';
   }
 }
 
