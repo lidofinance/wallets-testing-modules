@@ -6,7 +6,7 @@ import * as unzipper from 'unzipper';
 import { once } from 'events';
 import { ExtensionVersionChange, Manifest } from './extension.model';
 import { ExtensionStorePage } from './extension.store.page';
-import { BrowserContext, chromium, test } from '@playwright/test';
+import { BrowserContext, chromium } from '@playwright/test';
 import { Readable } from 'node:stream';
 
 @Injectable()
@@ -26,10 +26,17 @@ export class ExtensionService {
     return this.idToExtension[id];
   }
 
-  async getManifestVersion(extensionDir: string): Promise<Manifest> {
-    const content = await fs.readFile(extensionDir + '/manifest.json');
-    return JSON.parse(String(content)).manifest_version;
+  async getManifestContent(extensionId: string) {
+    const content = await fs.readFile(
+      this.idToExtension[extensionId] + '/manifest.json',
+    );
+    return JSON.parse(String(content));
   }
+
+  async getManifestVersion(extensionId: string): Promise<Manifest> {
+    return (await this.getManifestContent(extensionId)).manifest_version;
+  }
+
   async createExtensionDirById(id: string) {
     const extensionDirById = `${this.extensionDirBasePath}/${id}`;
     try {
@@ -157,24 +164,5 @@ export class ExtensionService {
     }
     this.versions = versions;
     return changes;
-  }
-
-  async annotateExtensionVersion(extensionId: string) {
-    const manifestPath = path.join(
-      this.idToExtension[extensionId],
-      'manifest.json',
-    );
-
-    try {
-      const content = await fs.readFile(manifestPath, 'utf-8');
-      const manifestContent = JSON.parse(content);
-      test.info().annotations.push({
-        type: 'wallet version',
-        description: manifestContent.version,
-      });
-    } catch (er) {
-      this.logger.warn(`error with extension manifest reading (${er})`);
-      return;
-    }
   }
 }

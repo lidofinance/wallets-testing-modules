@@ -16,7 +16,9 @@ test.describe('Extension service', () => {
     expect(extensionDir).toBeDefined();
     expect(fs.readdirSync(extensionDir).length).toBeGreaterThan(0);
     expect(
-      await extensionService.getManifestVersion(extensionDir),
+      await extensionService.getManifestVersion(
+        'nkbihfbeogaeaoehlefnkodbefgpgknn',
+      ),
     ).toBeGreaterThan(0);
   });
 });

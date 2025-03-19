@@ -20,6 +20,7 @@ import {
 } from '@lidofinance/wallets-testing-widgets';
 import { WALLET_PAGES, WIDGET_PAGES } from './browser.constants';
 import { BrowserContextService } from './browser.context.service';
+import { test } from '@playwright/test';
 
 export class BrowserService {
   private readonly logger = new ConsoleLogger(BrowserService.name);
@@ -82,9 +83,13 @@ export class BrowserService {
       commonWalletConfig.WALLET_TYPE === WalletTypes.EOA &&
       !!process.env.CI
     ) {
-      await this.extensionService.annotateExtensionVersion(
+      const manifestContent = await this.extensionService.getManifestContent(
         commonWalletConfig.STORE_EXTENSION_ID,
       );
+      test.info().annotations.push({
+        type: 'wallet version',
+        description: manifestContent.version,
+      });
     }
     const extension = new Extension(this.browserContextService.extensionId);
     switch (commonWalletConfig.WALLET_TYPE) {

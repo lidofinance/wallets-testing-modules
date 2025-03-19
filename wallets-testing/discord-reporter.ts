@@ -51,14 +51,14 @@ class DiscordReporter implements Reporter {
 
   onTestEnd(test: TestCase, result: TestResult) {
     if (!this.groups[test.parent.title]) this.groups[test.parent.title] = {};
-    const walletVersion = test.annotations[0].description;
+
+    let walletVersion = '';
+    if (test.annotations.length > 0) {
+      walletVersion = `(v.${test.annotations[0].description})`;
+    }
 
     this.groups[test.parent.title][test.id] =
-      testStatusToEmoji[result.status] +
-      ' ' +
-      test.title +
-      ' ' +
-      `(v.${walletVersion})`;
+      testStatusToEmoji[result.status] + ' ' + test.title + ' ' + walletVersion;
   }
 
   onEnd(result: FullResult): void | Promise<void> {
@@ -78,6 +78,7 @@ class DiscordReporter implements Reporter {
         },
       ],
     };
+    console.log(embeds.embeds[0].fields);
     fs.writeFileSync(this.options.outputFile, JSON.stringify(embeds));
   }
 }
