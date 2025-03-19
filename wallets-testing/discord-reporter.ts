@@ -77,6 +77,7 @@ class DiscordReporter implements Reporter {
         },
       ],
     };
+    console.log(embeds.embeds[0].fields);
     fs.writeFileSync(this.options.outputFile, JSON.stringify(embeds));
   }
 }
