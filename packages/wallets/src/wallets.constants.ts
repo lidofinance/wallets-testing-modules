@@ -174,7 +174,7 @@ export const NETWORKS_CONFIG: {
       chainName: 'Ethereum Hoodi',
       tokenSymbol: 'ETH',
       rpcUrl: 'https://rpc.hoodi.ethpandaops.io/',
-      scan: '',
+      scan: 'https://explorer.hoodi.ethpandaops.io/',
     },
     ETHEREUM_HOLESKY: {
       chainId: 17000,
