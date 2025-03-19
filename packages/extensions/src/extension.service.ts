@@ -26,10 +26,17 @@ export class ExtensionService {
     return this.idToExtension[id];
   }
 
-  async getManifestVersion(extensionDir: string): Promise<Manifest> {
-    const content = await fs.readFile(extensionDir + '/manifest.json');
-    return JSON.parse(String(content)).manifest_version;
+  async getManifestContent(extensionId: string) {
+    const content = await fs.readFile(
+      this.idToExtension[extensionId] + '/manifest.json',
+    );
+    return JSON.parse(String(content));
   }
+
+  async getManifestVersion(extensionId: string): Promise<Manifest> {
+    return (await this.getManifestContent(extensionId)).manifest_version;
+  }
+
   async createExtensionDirById(id: string) {
     const extensionDirById = `${this.extensionDirBasePath}/${id}`;
     try {

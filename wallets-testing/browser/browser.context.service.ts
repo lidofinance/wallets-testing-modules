@@ -79,7 +79,7 @@ export class BrowserContextService {
       this.extensionId = extensionId;
     } else {
       const manifest = await this.extensionService.getManifestVersion(
-        this.walletConfig.EXTENSION_PATH,
+        this.walletConfig.COMMON.STORE_EXTENSION_ID,
       );
       switch (manifest) {
         case Manifest.v2: {
