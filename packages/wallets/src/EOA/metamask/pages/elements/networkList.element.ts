@@ -62,7 +62,9 @@ export class NetworkList {
 
   async openModalNetworkEdit(chainId: any) {
     await this.dialogSection
-      .getByTestId(`network-list-item-options-button-0x${chainId.toString(16)}`)
+      .getByTestId(
+        `network-list-item-options-button-eip155:${chainId.toString(16)}`,
+      )
       .click();
     await this.editNetworkButton.click();
   }
