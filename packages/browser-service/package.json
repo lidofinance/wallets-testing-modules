@@ -29,6 +29,9 @@
     "access": "public"
   },
   "dependencies": {
+    "@lidofinance/wallets-testing-wallets": "*",
+    "@lidofinance/wallets-testing-extensions": "*",
+    "@lidofinance/wallets-testing-nodes": "*",
     "@playwright/test": "^1.44.1"
   }
 }
