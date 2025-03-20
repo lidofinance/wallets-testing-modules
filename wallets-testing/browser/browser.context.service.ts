@@ -1,4 +1,4 @@
-import { Injectable, ConsoleLogger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 import { BrowserContext, chromium, Page } from '@playwright/test';
 import * as fs from 'fs/promises';
 import * as os from 'os';
@@ -10,7 +10,6 @@ import {
   Manifest,
 } from '@lidofinance/wallets-testing-extensions';
 
-@Injectable()
 export class BrowserContextService {
   browserContext: BrowserContext = null;
   browserContextPaths: string[] = [];
@@ -80,7 +79,7 @@ export class BrowserContextService {
       this.extensionId = extensionId;
     } else {
       const manifest = await this.extensionService.getManifestVersion(
-        this.walletConfig.EXTENSION_PATH,
+        this.walletConfig.COMMON.STORE_EXTENSION_ID,
       );
       switch (manifest) {
         case Manifest.v2: {

@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
-    "@nestjs/config": "^2.2.0",
     "axios": "^0.27.2",
     "@playwright/test": "^1.44.1",
     "reflect-metadata": "^0.1.13",
@@ -38,8 +37,6 @@
     "unzipper": "^0.10.11"
   },
   "devDependencies": {
-    "@nestjs/core": "^10.0.0",
-    "@nestjs/testing": "^10.0.0",
     "@types/unzipper": "^0.10.5"
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, ConsoleLogger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 import {
   CommonWalletConfig,
   WalletConfig,
@@ -9,7 +9,7 @@ import {
   Extension,
   ExtensionService,
 } from '@lidofinance/wallets-testing-extensions';
-import { ConfigService } from '../config';
+import { configService } from '../config';
 import {
   Account,
   EthereumNodeService,
@@ -20,8 +20,8 @@ import {
 } from '@lidofinance/wallets-testing-widgets';
 import { WALLET_PAGES, WIDGET_PAGES } from './browser.constants';
 import { BrowserContextService } from './browser.context.service';
+import { test } from '@playwright/test';
 
-@Injectable()
 export class BrowserService {
   private readonly logger = new ConsoleLogger(BrowserService.name);
   private walletPage: WalletPage<WalletTypes>;
@@ -32,7 +32,6 @@ export class BrowserService {
   constructor(
     private extensionService: ExtensionService,
     private browserContextService: BrowserContextService,
-    private configService: ConfigService,
     private ethereumNodeService: EthereumNodeService,
   ) {}
 
@@ -66,8 +65,8 @@ export class BrowserService {
     this.widgetConfig = widgetConfig;
     this.stakeConfig = stakeConfig;
     const walletConfig: WalletConfig = {
-      SECRET_PHRASE: this.configService.get('WALLET_SECRET_PHRASE'),
-      PASSWORD: this.configService.get('WALLET_PASSWORD'),
+      SECRET_PHRASE: configService.get('WALLET_SECRET_PHRASE'),
+      PASSWORD: configService.get('WALLET_PASSWORD'),
       COMMON: commonWalletConfig,
     };
     walletConfig.EXTENSION_PATH =
@@ -80,6 +79,18 @@ export class BrowserService {
     );
     await this.browserContextService.closePages();
 
+    if (
+      commonWalletConfig.WALLET_TYPE === WalletTypes.EOA &&
+      !!process.env.CI
+    ) {
+      const manifestContent = await this.extensionService.getManifestContent(
+        commonWalletConfig.STORE_EXTENSION_ID,
+      );
+      test.info().annotations.push({
+        type: 'wallet version',
+        description: manifestContent.version,
+      });
+    }
     const extension = new Extension(this.browserContextService.extensionId);
     switch (commonWalletConfig.WALLET_TYPE) {
       case WalletTypes.EOA: {

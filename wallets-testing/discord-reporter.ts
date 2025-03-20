@@ -52,8 +52,13 @@ class DiscordReporter implements Reporter {
   onTestEnd(test: TestCase, result: TestResult) {
     if (!this.groups[test.parent.title]) this.groups[test.parent.title] = {};
 
+    let walletVersion = '';
+    if (test.annotations.length > 0) {
+      walletVersion = `(v.${test.annotations[0].description})`;
+    }
+
     this.groups[test.parent.title][test.id] =
-      testStatusToEmoji[result.status] + ' ' + test.title;
+      testStatusToEmoji[result.status] + ' ' + test.title + ' ' + walletVersion;
   }
 
   onEnd(result: FullResult): void | Promise<void> {
