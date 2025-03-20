@@ -37,5 +37,8 @@
     {
       "path": "../packages/widgets"
     },
+    {
+      "path": "../packages/browser-service"
+    },
   ]
 }

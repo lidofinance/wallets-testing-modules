@@ -58,9 +58,9 @@ export class BrowserContextService {
   }
 
   async initBrowserContext() {
-    //TODO for fork state this.options.contextDataDir =  false
     this.logger.debug(
-      `Starting a new browser context ${this.options.contextDataDir}`,
+      `Starting a new browser context (temp context: ${!this.options
+        .contextDataDir})`,
     );
     let browserContextPath;
     let isCreated;

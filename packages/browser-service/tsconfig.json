@@ -24,5 +24,15 @@
     "outDir": "./dist",
     "rootDir": "."
   },
-  "references": []
+  "references": [
+    {
+      "path": "../wallets"
+    },
+    {
+      "path": "../nodes"
+    },
+    {
+      "path": "../extensions"
+    }
+  ]
 }
