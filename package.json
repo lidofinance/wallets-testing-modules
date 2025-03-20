@@ -40,9 +40,9 @@
     "branches": [
       "main",
       {
-        "name": "fix-add-network",
-        "channel": "alpha-add-network",
-        "prerelease": "alpha-add-network"
+        "name": "develop",
+        "channel": "alpha",
+        "prerelease": "alpha"
       }
     ]
   }
