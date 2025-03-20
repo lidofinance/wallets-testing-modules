@@ -85,7 +85,7 @@ export class BrowserContextService {
       {
         locale: 'en-us',
         headless: false,
-        // slowMo: 200,
+        slowMo: 200,
         args: [
           '--lang=en-US',
           '--disable-dev-shm-usage',
