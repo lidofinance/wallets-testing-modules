@@ -27,20 +27,15 @@ export class NetworkList {
     this.networkDisplayCloseBtn = this.dialogSection
       .locator('[aria-label="Close"]')
       .first();
-    this.networkItemBtn = this.dialogSection.locator('div[role="button"]');
-    this.networkItemText = this.networkItemBtn.locator('p');
+    this.networkItemText = this.dialogSection
+      .locator('div[role="button"]')
+      .locator('p');
     this.editNetworkButton = this.page.getByTestId(
       'network-list-item-options-edit',
     );
     this.approveAddNetworkButton = this.page.getByTestId(
       'confirmation-submit-button',
     );
-  }
-
-  async clickToNetwork(networkName: string) {
-    await test.step(`Click to "${networkName}" network`, async () => {
-      await this.dialogSection.getByText(networkName).click();
-    });
   }
 
   async getNetworkListText() {
@@ -56,7 +51,7 @@ export class NetworkList {
 
   async clickToNetworkItemButton(chainName: string) {
     await test.step(`Click to "${chainName}" network item button`, async () => {
-      await this.networkItemBtn.getByText(chainName).click();
+      await this.networkItemText.getByText(chainName).click();
     });
   }
 
@@ -103,7 +98,7 @@ export class NetworkList {
     });
 
     if (
-      await this.dialogSection.getByText(networkConfig.chainName).isVisible()
+      await this.networkItemText.getByText(networkConfig.chainName).isVisible()
     ) {
       await this.openModalNetworkEdit(networkConfig.chainId);
       await this.networkSetting.addRpcForNetwork(
