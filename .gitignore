@@ -16,4 +16,5 @@ generated/
 /.jest
 
 .idea
+**/.browser_context**
 .vscode

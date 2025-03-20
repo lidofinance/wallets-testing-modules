@@ -13,6 +13,7 @@ export class Coin98 implements WalletPage<WalletTypes.EOA> {
 
   async navigate() {
     await test.step('Navigate to Coin98', async () => {
+      this.page = await this.browserContext.newPage();
       await this.page.goto(
         this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
       );

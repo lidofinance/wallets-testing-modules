@@ -14,7 +14,7 @@ export class EthereumPage implements WidgetPage {
   termsCheckbox: Locator;
   copyWcUrlBtn: Locator;
 
-  constructor(page: Page, private stakeConfig: StakeConfig) {
+  constructor(page: Page, private stakeConfig?: StakeConfig) {
     this.page = page;
     this.connectBtn = this.page.getByTestId('connectBtn');
     this.stakeSubmitBtn = this.page.getByTestId('stakeSubmitBtn');
