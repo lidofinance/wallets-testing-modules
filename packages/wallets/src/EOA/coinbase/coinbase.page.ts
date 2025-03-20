@@ -6,9 +6,11 @@ import {
 import { WalletPage } from '../../wallet.page';
 import expect from 'expect';
 import { test, BrowserContext, Page } from '@playwright/test';
+import { ConsoleLogger } from '@nestjs/common';
 
 export class CoinbasePage implements WalletPage<WalletTypes.EOA> {
   page: Page | undefined;
+  logger = new ConsoleLogger(`Coinbase. ${CoinbasePage.name}`);
 
   constructor(
     private browserContext: BrowserContext,
@@ -55,8 +57,14 @@ export class CoinbasePage implements WalletPage<WalletTypes.EOA> {
       if (!this.page) throw "Page isn't ready";
       await this.page.click('text=I already have a wallet');
       await this.page.click('text=Enter recovery phrase');
-      if (await this.page.locator('text=Acknowledge').isVisible())
+      try {
+        await this.page
+          .locator('text=Acknowledge')
+          .waitFor({ state: 'visible', timeout: 2000 });
         await this.page.click('text=Acknowledge');
+      } catch (error) {
+        this.logger.warn('The popup did not appear, skipping the click.');
+      }
       await this.page.fill('input[type=input]', this.config.SECRET_PHRASE);
       await this.page.click('button:has-text("Import wallet")');
       await this.page.fill(
