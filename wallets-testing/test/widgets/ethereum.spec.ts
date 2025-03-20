@@ -23,7 +23,6 @@ async function connectWallet(browserService) {
 }
 
 test.describe('Ethereum', () => {
-  // let browserService: BrowserService;
   let browserService: BrowserService;
 
   test.beforeAll(async () => {
