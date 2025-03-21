@@ -14,7 +14,7 @@ export class EthereumPage implements WidgetPage {
   termsCheckbox: Locator;
   copyWcUrlBtn: Locator;
 
-  constructor(page: Page, private stakeConfig: StakeConfig) {
+  constructor(page: Page, private stakeConfig?: StakeConfig) {
     this.page = page;
     this.connectBtn = this.page.getByTestId('connectBtn');
     this.stakeSubmitBtn = this.page.getByTestId('stakeSubmitBtn');
@@ -66,7 +66,7 @@ export class EthereumPage implements WidgetPage {
       switch (walletPage.config.COMMON.WALLET_TYPE) {
         case WalletTypes.EOA: {
           const [connectWalletPage] = await Promise.all([
-            this.page.context().waitForEvent('page', { timeout: 5000 }),
+            this.page.context().waitForEvent('page'),
             walletButton.dblclick(),
           ]);
           await walletPage.connectWallet(connectWalletPage);

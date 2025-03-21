@@ -113,10 +113,10 @@ export class TrustWalletPage implements WalletPage<WalletTypes.EOA> {
     // https://linear.app/lidofi/issue/QA-3382/high-risk-popup-before-connect-to-trust-wallet
     await test.step('Connect wallet', async () => {
       const txPage = new WalletOperations(page);
-      await txPage.confirmHighRisk();
-      if (await txPage.connectBtn.isVisible()) {
+      try {
+        await txPage.connectBtn.waitFor({ state: 'visible', timeout: 5000 });
         await txPage.connectBtn.click();
-      } else {
+      } catch (error) {
         await txPage.confirmHighRisk();
       }
     });
