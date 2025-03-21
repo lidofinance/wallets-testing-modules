@@ -92,6 +92,7 @@ export class BrowserContextService {
           `--disable-extensions-except=${this.walletExtensionStartPath}`,
           '--js-flags="--max-old-space-size=2048"',
         ],
+        permissions: ['clipboard-read', 'clipboard-write'],
         httpCredentials: this.options.httpCredentials,
       },
     );

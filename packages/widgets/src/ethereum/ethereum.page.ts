@@ -66,8 +66,8 @@ export class EthereumPage implements WidgetPage {
       switch (walletPage.config.COMMON.WALLET_TYPE) {
         case WalletTypes.EOA: {
           const [connectWalletPage] = await Promise.all([
-            this.page.context().waitForEvent('page', { timeout: 5000 }),
-            walletButton.click(),
+            this.page.context().waitForEvent('page', { timeout: 15000 }),
+            walletButton.dblclick(),
           ]);
           await walletPage.connectWallet(connectWalletPage);
           break;
