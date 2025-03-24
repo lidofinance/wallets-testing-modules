@@ -87,7 +87,7 @@ export const NETWORKS_CONFIG: {
       chainId: 130,
       chainName: 'Unichain',
       tokenSymbol: 'ETH',
-      rpcUrl: 'https://mainnet.unichain.org',
+      rpcUrl: 'https://unichain-rpc.publicnode.com/',
       scan: 'https://uniscan.xyz/',
     },
     ZKSYNC: {
@@ -208,7 +208,7 @@ export const NETWORKS_CONFIG: {
       chainId: 1301,
       chainName: 'Unichain Sepolia',
       tokenSymbol: 'ETH',
-      rpcUrl: 'https://unichain.sepolia.org/',
+      rpcUrl: 'https://unichain-sepolia-rpc.publicnode.com/',
       scan: 'https://unichain.sepolia.xyz/',
     },
   },
