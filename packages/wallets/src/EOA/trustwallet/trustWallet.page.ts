@@ -117,6 +117,9 @@ export class TrustWalletPage implements WalletPage<WalletTypes.EOA> {
         await txPage.connectBtn.waitFor({ state: 'visible', timeout: 5000 });
         await txPage.connectBtn.click();
       } catch (error) {
+        this.logger.warn(
+          'Button "Connect" not visible, perhabs opened high risk.',
+        );
         await txPage.confirmHighRisk();
       }
     });
