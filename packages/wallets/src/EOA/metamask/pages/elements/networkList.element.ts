@@ -58,7 +58,7 @@ export class NetworkList {
   async openModalNetworkEdit(chainId: any) {
     const hexChainId = chainId.toString(16);
     const testIdPrefix = 'network-list-item-options-button-';
-    // or locator used for different MM versions from newest and LATEST_STABLE_DOWNLOAD_LINK
+    // or locator used for different MM versions from latest and LATEST_STABLE_DOWNLOAD_LINK
     const modalNetworkEditButton = this.dialogSection
       .getByTestId(`${testIdPrefix}eip155:${hexChainId}`)
       .or(this.dialogSection.getByTestId(`${testIdPrefix}0x${hexChainId}`));
