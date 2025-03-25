@@ -18,3 +18,4 @@ generated/
 .idea
 **/.browser_context**
 .vscode
+embeds.json
