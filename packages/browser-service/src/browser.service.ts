@@ -145,35 +145,20 @@ export class BrowserService {
 
     const extension = new Extension(this.browserContextService.extensionId);
 
-    switch (walletConfig.COMMON.WALLET_TYPE) {
-      case WalletTypes.EOA: {
-        this.walletPage = new WALLET_PAGES[
-          walletConfig.COMMON.EXTENSION_WALLET_NAME
-        ](
-          this.browserContextService.browserContext,
-          extension.url,
-          walletConfig,
-        );
-        await this.setupEoaWallet(this.walletPage);
-        break;
-      }
-      case WalletTypes.WC: {
-        const wcExtensionHelperWallet = new WALLET_PAGES[
-          walletConfig.COMMON.EXTENSION_WALLET_NAME
-        ](
-          this.browserContextService.browserContext,
-          extension.url,
-          walletConfig,
-        );
-        await this.setupEoaWallet(wcExtensionHelperWallet);
-        this.walletPage = new WALLET_PAGES[walletConfig.COMMON.WALLET_NAME](
-          this.browserContextService.browserContext,
-          wcExtensionHelperWallet,
-          this.options.networkConfig.chainId,
-          walletConfig,
-        );
-        break;
-      }
+    const extensionWalletPage = new WALLET_PAGES[
+      walletConfig.COMMON.EXTENSION_WALLET_NAME
+    ](this.browserContextService.browserContext, extension.url, walletConfig);
+    await this.setupEoaWallet(extensionWalletPage);
+
+    if (walletConfig.COMMON.WALLET_TYPE === WalletTypes.WC) {
+      this.walletPage = new WALLET_PAGES[walletConfig.COMMON.WALLET_NAME](
+        this.browserContextService.browserContext,
+        extensionWalletPage,
+        this.options.networkConfig.chainId,
+        walletConfig,
+      );
+    } else {
+      this.walletPage = extensionWalletPage;
     }
   }
 
