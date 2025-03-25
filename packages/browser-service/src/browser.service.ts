@@ -99,7 +99,7 @@ export class BrowserService {
     });
 
     await this.ethereumNodeService.mockRoute(
-      this.options.nodeConfig.rpcUrlToMock, // '**/api/rpc?chainId=1',
+      this.options.nodeConfig.rpcUrlToMock,
       this.browserContextService.browserContext,
     );
     await this.browserContextService.closePages();
