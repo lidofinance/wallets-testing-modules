@@ -8,10 +8,19 @@ import * as fs from 'fs/promises';
 import * as os from 'os';
 import path from 'path';
 
+export type BrowserOptions = {
+  locale?: string;
+  headless?: boolean;
+  slowMo?: number;
+  args?: string[];
+  permissions?: string[];
+};
+
 type OptionsBrowserContext = {
   // If contextDataDir is undefined - will be created temp dir for context data.
   // Else contextDataDir is not undefined - will be created user dir for context data in current folder.
   contextDataDir: string;
+  browserOptions?: BrowserOptions;
   cookies?: ReadonlyArray<{
     name: string;
     value: string;
@@ -48,6 +57,22 @@ export class BrowserContextService {
   ) {
     this.walletExtensionStartPath = walletExtensionStartPath;
     this.options = options;
+    const defaultBrowserOptions = {
+      locale: 'en-us',
+      headless: false,
+      args: [
+        '--lang=en-US',
+        '--disable-dev-shm-usage',
+        `--disable-extensions-except=${this.walletExtensionStartPath}`,
+        '--js-flags="--max-old-space-size=2048"',
+      ],
+      permissions: ['clipboard-read', 'clipboard-write'],
+      httpCredentials: this.options.httpCredentials,
+    };
+    this.options.browserOptions = {
+      ...defaultBrowserOptions,
+      ...options.browserOptions,
+    };
     await this.getBrowserContextPage();
   }
   async getBrowserContextPage() {
@@ -81,20 +106,7 @@ export class BrowserContextService {
 
     this.browserContext = await chromium.launchPersistentContext(
       browserContextPath,
-      // @TODO: Must to use common config.
-      {
-        locale: 'en-us',
-        headless: false,
-        slowMo: 200,
-        args: [
-          '--lang=en-US',
-          '--disable-dev-shm-usage',
-          `--disable-extensions-except=${this.walletExtensionStartPath}`,
-          '--js-flags="--max-old-space-size=2048"',
-        ],
-        permissions: ['clipboard-read', 'clipboard-write'],
-        httpCredentials: this.options.httpCredentials,
-      },
+      this.options.browserOptions,
     );
     const splitted = this.walletExtensionStartPath.split('/');
     const storeId = splitted[splitted.length - 1];

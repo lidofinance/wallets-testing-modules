@@ -32,6 +32,6 @@
     "@lidofinance/wallets-testing-wallets": "*",
     "@lidofinance/wallets-testing-extensions": "*",
     "@lidofinance/wallets-testing-nodes": "*",
-    "@playwright/test": "^1.44.1"
+    "@playwright/test": "^1.51.1"
   }
 }

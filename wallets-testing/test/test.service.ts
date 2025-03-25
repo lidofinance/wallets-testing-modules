@@ -19,5 +19,8 @@ export async function initBrowserService() {
     },
     nodeConfig: { rpcUrlToMock: '**/api/rpc?chainId=1' },
     useTmpContextDir: true,
+    browserOptions: {
+      slowMo: 200,
+    },
   });
 }

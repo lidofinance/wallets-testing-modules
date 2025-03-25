@@ -17,7 +17,10 @@ import {
   DEFAULT_BROWSER_CONTEXT_DIR_NAME,
   WALLET_PAGES,
 } from './browser.constants';
-import { BrowserContextService } from './browser.context.service';
+import {
+  BrowserContextService,
+  BrowserOptions,
+} from './browser.context.service';
 import { mnemonicToAccount } from 'viem/accounts';
 import { test } from '@playwright/test';
 
@@ -29,6 +32,7 @@ type BrowserServiceOptions = {
   networkConfig: NetworkConfig;
   walletConfig: WalletConfig;
   nodeConfig: NodeConfig;
+  browserOptions?: BrowserOptions;
   useTmpContextDir?: boolean;
 };
 
@@ -123,6 +127,7 @@ export class BrowserService {
         `${DEFAULT_BROWSER_CONTEXT_DIR_NAME}_${
           mnemonicToAccount(this.options.walletConfig.SECRET_PHRASE).address
         }`,
+      browserOptions: this.options.browserOptions,
     });
 
     if (
