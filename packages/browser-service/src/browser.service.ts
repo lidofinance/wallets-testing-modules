@@ -148,7 +148,7 @@ export class BrowserService {
     const extensionWalletPage = new WALLET_PAGES[
       walletConfig.COMMON.EXTENSION_WALLET_NAME
     ](this.browserContextService.browserContext, extension.url, walletConfig);
-    await this.setupEoaWallet(extensionWalletPage);
+    await extensionWalletPage.setup('Ethereum'); // @TODO: instead this.widgetConfig.networkName
 
     if (walletConfig.COMMON.WALLET_TYPE === WalletTypes.WC) {
       this.walletPage = new WALLET_PAGES[walletConfig.COMMON.WALLET_NAME](
@@ -168,10 +168,5 @@ export class BrowserService {
     if (this.ethereumNodeService) {
       await this.ethereumNodeService.stopNode();
     }
-  }
-
-  async setupEoaWallet(wallet: WalletPage<WalletTypes.EOA>) {
-    await wallet.setup('Ethereum'); // @TODO: instead this.widgetConfig.networkName
-    await this.browserContextService.closePages();
   }
 }
