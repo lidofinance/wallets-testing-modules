@@ -1,13 +1,4 @@
-import {
-  COIN98_COMMON_CONFIG,
-  TRUST_WALLET_COMMON_CONFIG,
-  COINBASE_COMMON_CONFIG,
-  EXODUS_COMMON_CONFIG,
-  OKX_COMMON_CONFIG,
-  BITGET_COMMON_CONFIG,
-  CTRL_COMMON_CONFIG,
-  SAFE_COMMON_CONFIG,
-} from '@lidofinance/wallets-testing-wallets';
+import { SAFE_COMMON_CONFIG } from '@lidofinance/wallets-testing-wallets';
 import { WIDGET_PAGES } from '../../browser';
 import { BrowserService } from '@lidofinance/browser-service';
 import { test } from '@playwright/test';
