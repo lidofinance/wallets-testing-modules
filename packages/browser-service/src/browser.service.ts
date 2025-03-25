@@ -122,10 +122,37 @@ export class BrowserService {
         }`,
     });
     const extension = new Extension(this.browserContextService.extensionId);
-    this.walletPage = new WALLET_PAGES[
-      walletConfig.COMMON.EXTENSION_WALLET_NAME
-    ](this.browserContextService.browserContext, extension.url, walletConfig);
-    await this.walletPage.setup('Ethereum'); // @TODO: instead this.widgetConfig.networkName
+
+    switch (walletConfig.COMMON.WALLET_TYPE) {
+      case WalletTypes.EOA: {
+        this.walletPage = new WALLET_PAGES[
+          walletConfig.COMMON.EXTENSION_WALLET_NAME
+        ](
+          this.browserContextService.browserContext,
+          extension.url,
+          walletConfig,
+        );
+        await this.setupEoaWallet(this.walletPage);
+        break;
+      }
+      case WalletTypes.WC: {
+        const wcExtensionHelperWallet = new WALLET_PAGES[
+          walletConfig.COMMON.EXTENSION_WALLET_NAME
+        ](
+          this.browserContextService.browserContext,
+          extension.url,
+          walletConfig,
+        );
+        await this.setupEoaWallet(wcExtensionHelperWallet);
+        this.walletPage = new WALLET_PAGES[walletConfig.COMMON.WALLET_NAME](
+          this.browserContextService.browserContext,
+          wcExtensionHelperWallet,
+          this.options.networkConfig.chainId,
+          walletConfig,
+        );
+        break;
+      }
+    }
   }
 
   async teardown() {
@@ -134,5 +161,10 @@ export class BrowserService {
     if (this.ethereumNodeService) {
       await this.ethereumNodeService.stopNode();
     }
+  }
+
+  async setupEoaWallet(wallet: WalletPage<WalletTypes.EOA>) {
+    await wallet.setup('Ethereum'); // @TODO: instead this.widgetConfig.networkName
+    await this.browserContextService.closePages();
   }
 }
