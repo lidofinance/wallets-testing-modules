@@ -131,7 +131,7 @@ export class BrowserService {
     });
 
     if (
-      commonWalletConfig.WALLET_TYPE === WalletTypes.EOA &&
+      walletConfig.COMMON.WALLET_TYPE === WalletTypes.EOA &&
       !!process.env.CI
     ) {
       const manifestContent = await extensionService.getManifestContent(
