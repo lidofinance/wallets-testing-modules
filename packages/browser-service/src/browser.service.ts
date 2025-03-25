@@ -19,6 +19,7 @@ import {
 } from './browser.constants';
 import { BrowserContextService } from './browser.context.service';
 import { mnemonicToAccount } from 'viem/accounts';
+import { test } from '@playwright/test';
 
 type NodeConfig = {
   rpcUrlToMock: string; // example: '**/api/rpc?chainId=1'
@@ -106,7 +107,9 @@ export class BrowserService {
       COMMON: commonWalletConfig || this.options.walletConfig.COMMON,
     };
 
-    const extensionPath = await new ExtensionService().getExtensionDirFromId(
+    const extensionService = new ExtensionService();
+
+    const extensionPath = await extensionService.getExtensionDirFromId(
       walletConfig.COMMON.STORE_EXTENSION_ID,
       walletConfig.COMMON.LATEST_STABLE_DOWNLOAD_LINK,
     );
@@ -121,6 +124,20 @@ export class BrowserService {
           mnemonicToAccount(this.options.walletConfig.SECRET_PHRASE).address
         }`,
     });
+
+    if (
+      commonWalletConfig.WALLET_TYPE === WalletTypes.EOA &&
+      !!process.env.CI
+    ) {
+      const manifestContent = await extensionService.getManifestContent(
+        walletConfig.COMMON.STORE_EXTENSION_ID,
+      );
+      test.info().annotations.push({
+        type: 'wallet version',
+        description: manifestContent.version,
+      });
+    }
+
     const extension = new Extension(this.browserContextService.extensionId);
 
     switch (walletConfig.COMMON.WALLET_TYPE) {
