@@ -22,7 +22,7 @@ interface Embed {
 }
 
 interface WebhookPayload {
-  content: string;
+  content?: string;
   embeds: Embed[];
 }
 
