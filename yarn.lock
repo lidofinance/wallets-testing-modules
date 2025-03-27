@@ -1281,6 +1281,18 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@lidofinance/wallets-testing-extensions@*":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@lidofinance/wallets-testing-extensions/-/wallets-testing-extensions-1.1.0.tgz#322a302e631955555e14f781b6dfb4c2e7394c85"
+  integrity sha512-bm7gVz/Jz/bO1nsl+E8sSbQAFdj1PjdAtvB12gvP+ej+LTindSp/syMhsWMWwuf9lThawZTsS6QSBDz4UZdqdA==
+  dependencies:
+    "@nestjs/common" "^10.0.0"
+    "@playwright/test" "^1.44.1"
+    axios "^0.27.2"
+    reflect-metadata "^0.1.13"
+    rxjs "^7.5.6"
+    unzipper "^0.10.11"
+
 "@ljharb/through@^2.3.12":
   version "2.3.14"
   resolved "https://registry.yarnpkg.com/@ljharb/through/-/through-2.3.14.tgz#a5df44295f44dc23bfe106af59426dd0677760b1"
@@ -2213,13 +2225,6 @@
   integrity sha512-X3HPWTwXRerBZS7Mo1k6vMVR1Z6zmJcDVn5O/31whe0tnjE4te6ZJSJGq1RiqHPjzPdMTfjCFogDJmwng9xHaQ==
   dependencies:
     "@types/superagent" "*"
-
-"@types/unzipper@^0.10.5":
-  version "0.10.5"
-  resolved "https://registry.yarnpkg.com/@types/unzipper/-/unzipper-0.10.5.tgz#36a963cf025162b4ac31642590cb4192971d633b"
-  integrity sha512-NrLJb29AdnBARpg9S/4ktfPEisbJ0AvaaAr3j7Q1tg8AgcEUsq2HqbNzvgLRoWyRtjzeLEv7vuL39u1mrNIyNA==
-  dependencies:
-    "@types/node" "*"
 
 "@types/yargs-parser@*":
   version "21.0.0"

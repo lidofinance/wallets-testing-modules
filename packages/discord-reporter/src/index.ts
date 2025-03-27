@@ -153,7 +153,7 @@ class DiscordReporter implements Reporter {
               value: `${this.failedTestCount}`,
               inline: true,
             },
-            { name: '', value: '', inline: true },
+            { name: '', value: '', inline: true }, // just empty column
             {
               name: `${testStatusToEmoji.skipped} Skipped`,
               value: `${this.skippedTestCount}`,
@@ -164,6 +164,7 @@ class DiscordReporter implements Reporter {
               value: `${this.flakyTestCount}`,
               inline: true,
             },
+            { name: '', value: '', inline: true }, // just empty column
             {
               name: '⏳ Run Time',
               value: `${duration}`,
