@@ -22,6 +22,7 @@ interface Embed {
 }
 
 interface WebhookPayload {
+  content: string;
   embeds: Embed[];
 }
 
@@ -31,19 +32,28 @@ const testStatusToEmoji = {
   timedOut: '❌',
   skipped: '⏸️',
   interrupted: '❌',
+  flaky: '🎲',
 };
 
 const GREEN = 47872;
 const RED = 13959168;
 
 const resultToStatus = {
-  passed: { color: GREEN, title: '🎉 Testing Completed!' },
-  failed: { color: RED, title: `${testStatusToEmoji.failed} Testing Failed!` },
+  passed: { content: undefined, color: GREEN, title: '🎉 Testing Completed!' },
+  failed: {
+    content:
+      process.env.DISCORD_DUTY_TAG &&
+      `<@${process.env.DISCORD_DUTY_TAG}> please take a look at the test results`,
+    color: RED,
+    title: `${testStatusToEmoji.failed} Testing Failed!`,
+  },
   timedout: {
+    content: undefined,
     color: RED,
     title: `${testStatusToEmoji.failed} Testing Failed!`,
   },
   interrupted: {
+    content: undefined,
     color: RED,
     title: `${testStatusToEmoji.failed} Testing Failed!`,
   },
@@ -60,6 +70,7 @@ class DiscordReporter implements Reporter {
   private webhookUrl: string;
   private passedTestCount = 0;
   private failedTestCount = 0;
+  private flakyTestCount = 0;
   private skippedTestCount = 0;
 
   constructor(options: ReporterOptions) {
@@ -97,12 +108,18 @@ class DiscordReporter implements Reporter {
     if (!this.enabled) return;
     switch (result.status) {
       case 'passed':
-        this.passedTestCount++;
+        if (result.retry > 0) {
+          this.flakyTestCount = (this.flakyTestCount ?? 0) + 1;
+        } else {
+          this.passedTestCount++;
+        }
         break;
       case 'failed':
       case 'timedOut':
       case 'interrupted': {
-        this.failedTestCount++;
+        if (result.retry === test.retries) {
+          this.failedTestCount++;
+        }
         break;
       }
       case 'skipped':
@@ -117,10 +134,13 @@ class DiscordReporter implements Reporter {
     const githubRunUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
 
     const payload: WebhookPayload = {
+      content: resultToStatus[result.status].content,
       embeds: [
         {
           title: resultToStatus[result.status].title,
-          description: 'Here are the test run results:',
+          description: process.env.GH_JOB_NAME
+            ? `Test job name: ${process.env.GH_JOB_NAME}`
+            : 'Here are the test run results:',
           color: resultToStatus[result.status].color,
           fields: [
             {
@@ -133,9 +153,15 @@ class DiscordReporter implements Reporter {
               value: `${this.failedTestCount}`,
               inline: true,
             },
+            { name: '', value: '', inline: true },
             {
               name: `${testStatusToEmoji.skipped} Skipped`,
               value: `${this.skippedTestCount}`,
+              inline: true,
+            },
+            {
+              name: `${testStatusToEmoji.flaky} Flaky`,
+              value: `${this.flakyTestCount}`,
               inline: true,
             },
             {
