@@ -16,4 +16,6 @@ generated/
 /.jest
 
 .idea
+**/.browser_context**
 .vscode
+embeds.json
