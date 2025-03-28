@@ -7,24 +7,48 @@ import {
 import axios from 'axios';
 import { ConsoleLogger } from '@nestjs/common';
 
-interface EmbedField {
+const GREEN = 47872;
+const RED = 13959168;
+
+type EmbedField = {
   name: string;
   value: string;
   inline?: boolean;
-}
+};
 
-interface Embed {
+type Embed = {
   title: string;
   description: string;
   color: number;
   fields: EmbedField[];
   url?: string;
-}
+};
 
-interface WebhookPayload {
+type WebhookPayload = {
   content?: string;
   embeds: Embed[];
-}
+};
+
+type ReporterOptions = {
+  enabled: string;
+  ciJobName?: string;
+  ciRunUrl?: string;
+  discordWebhookUrl: string;
+  discordDutyTag?: string;
+};
+
+type Status = {
+  content?: string;
+  color: number;
+  title: string;
+};
+
+type ResultToStatus = {
+  passed: Status;
+  failed: Status;
+  timedout: Status;
+  interrupted: Status;
+};
 
 const testStatusToEmoji = {
   passed: '✅',
@@ -35,42 +59,12 @@ const testStatusToEmoji = {
   flaky: '🎲',
 };
 
-const GREEN = 47872;
-const RED = 13959168;
-
-const resultToStatus = {
-  passed: { content: undefined, color: GREEN, title: '🎉 Testing Completed!' },
-  failed: {
-    content:
-      process.env.DISCORD_DUTY_TAG &&
-      `<@${process.env.DISCORD_DUTY_TAG}> please take a look at the test results`,
-    color: RED,
-    title: `${testStatusToEmoji.failed} Testing Failed!`,
-  },
-  timedout: {
-    content: undefined,
-    color: RED,
-    title: `${testStatusToEmoji.failed} Testing Failed!`,
-  },
-  interrupted: {
-    content: undefined,
-    color: RED,
-    title: `${testStatusToEmoji.failed} Testing Failed!`,
-  },
-};
-
-interface ReporterOptions {
-  enabled: string;
-  ciJobName?: string;
-  ciRunUrl?: string;
-}
-
 class DiscordReporter implements Reporter {
   logger = new ConsoleLogger(DiscordReporter.name);
   private enabled: boolean;
   private options: ReporterOptions;
+  private resultToStatus: ResultToStatus;
 
-  private webhookUrl: string;
   private passedTestCount = 0;
   private failedTestCount = 0;
   private flakyTestCount = 0;
@@ -84,24 +78,51 @@ class DiscordReporter implements Reporter {
 
     if (!this.enabled) return;
 
-    const webhook = process.env.DISCORD_WEBHOOK_URL;
-    if (!webhook) {
+    if (!this.options.discordWebhookUrl) {
       this.logger.error(
-        'DISCORD_WEBHOOK_URL is not defined in environment variables',
+        'discordWebhookUrl is not defined in environment variables',
       );
       this.enabled = false;
       return;
     }
-    this.webhookUrl = webhook;
+
+    this.resultToStatus = {
+      passed: {
+        content: undefined,
+        color: GREEN,
+        title: '🎉 Testing Completed!',
+      },
+      failed: {
+        content:
+          this.options.discordDutyTag &&
+          `<@${this.options.discordDutyTag}> please take a look at the test results`,
+        color: RED,
+        title: `${testStatusToEmoji.failed} Testing Failed!`,
+      },
+      timedout: {
+        content: undefined,
+        color: RED,
+        title: `${testStatusToEmoji.failed} Testing Failed!`,
+      },
+      interrupted: {
+        content: undefined,
+        color: RED,
+        title: `${testStatusToEmoji.failed} Testing Failed!`,
+      },
+    };
   }
 
   async sendDiscordWebhook(payload: WebhookPayload) {
     try {
-      const response = await axios.post(this.webhookUrl, payload, {
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await axios.post(
+        this.options.discordWebhookUrl,
+        payload,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
       this.logger.log('Discord message successfully sended:', response.status);
     } catch (error: any) {
       this.logger.error('Error while discord message sended:', error?.message);
@@ -137,14 +158,14 @@ class DiscordReporter implements Reporter {
     const duration = this.formatDuration(result.duration);
 
     const payload: WebhookPayload = {
-      content: resultToStatus[result.status].content,
+      content: this.resultToStatus[result.status].content,
       embeds: [
         {
-          title: resultToStatus[result.status].title,
+          title: this.resultToStatus[result.status].title,
           description: this.options.ciJobName
             ? `Test job name: ${this.options.ciJobName}`
             : 'Here are the test run results:',
-          color: resultToStatus[result.status].color,
+          color: this.resultToStatus[result.status].color,
           fields: [
             {
               name: `${testStatusToEmoji.passed} Passed`,
@@ -177,11 +198,11 @@ class DiscordReporter implements Reporter {
               name: '🔗 GitHub Run',
               value: process.env.CI
                 ? `[View GitHub Run](${this.options.ciRunUrl})`
-                : 'Local run',
+                : 'Test run',
               inline: true,
             },
           ],
-          url: process.env.CI ? this.options.ciRunUrl : undefined,
+          url: this.options.ciRunUrl,
         },
       ],
     };
