@@ -61,7 +61,7 @@ const resultToStatus = {
 
 interface ReporterOptions {
   enabled: string;
-  ciJobTitle?: string;
+  ciJobName?: string;
   ciRunUrl?: string;
 }
 
@@ -141,8 +141,8 @@ class DiscordReporter implements Reporter {
       embeds: [
         {
           title: resultToStatus[result.status].title,
-          description: this.options.ciJobTitle
-            ? `Test job name: ${this.options.ciJobTitle}`
+          description: this.options.ciJobName
+            ? `Test job name: ${this.options.ciJobName}`
             : 'Here are the test run results:',
           color: resultToStatus[result.status].color,
           fields: [
