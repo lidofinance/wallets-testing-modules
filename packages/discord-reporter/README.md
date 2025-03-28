@@ -24,7 +24,11 @@ Before running your tests, make sure the following environment variables are set
 - `GITHUB_SERVER_URL`: (Optional) GitHub server URL (e.g., https://github.com) if running in CI.
 - `GITHUB_REPOSITORY`: (Optional) The GitHub repository in the format username/repository.
 - `GITHUB_RUN_ID`: (Optional) The GitHub Actions run ID.
+- `GH_JOB_NAME`: (Optional) Job name from Github Actions. Example `GH_JOB_NAME: Ethereum Widget Tests (Layer-${{ matrix.layer }})`
 - `CI`: (Optional) Set to any value to indicate that tests are running in a CI environment.
+- `DISCORD_DUTY_TAG`: (Optional) an environment variable specifying the Discord user or role ID to receive test notifications. 
+  It can be either a user ID or a role ID; 
+  if it refers to a role, prefix its numeric ID with an ampersand (&), otherwise provide the numeric user ID alone.
 
 ## Playwright Configuration
 To use the reporter, update your Playwright configuration (e.g., `playwright.config.ts`) to include `@lidofinance/discord-reporter`:
