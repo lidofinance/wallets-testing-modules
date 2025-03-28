@@ -47,7 +47,7 @@ export class BrowserService {
 
   constructor(
     options: BrowserServiceOptions,
-    private ethereumNodeService?: EthereumNodeService,
+    private ethereumNodeService?: EthereumNodeService, // TODO make it public
   ) {
     this.browserContextService = new BrowserContextService();
     this.options = options;
