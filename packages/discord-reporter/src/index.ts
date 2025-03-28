@@ -61,11 +61,14 @@ const resultToStatus = {
 
 interface ReporterOptions {
   enabled: string;
+  ciJobTitle?: string;
+  ciRunUrl?: string;
 }
 
 class DiscordReporter implements Reporter {
   logger = new ConsoleLogger(DiscordReporter.name);
   private enabled: boolean;
+  private options: ReporterOptions;
 
   private webhookUrl: string;
   private passedTestCount = 0;
@@ -74,6 +77,7 @@ class DiscordReporter implements Reporter {
   private skippedTestCount = 0;
 
   constructor(options: ReporterOptions) {
+    this.options = options;
     this.enabled = options.enabled
       ? options.enabled.toLowerCase() === 'true'
       : true;
@@ -131,15 +135,14 @@ class DiscordReporter implements Reporter {
   async onEnd(result: FullResult) {
     if (!this.enabled) return;
     const duration = this.formatDuration(result.duration);
-    const githubRunUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
 
     const payload: WebhookPayload = {
       content: resultToStatus[result.status].content,
       embeds: [
         {
           title: resultToStatus[result.status].title,
-          description: process.env.GH_JOB_NAME
-            ? `Test job name: ${process.env.GH_JOB_NAME}`
+          description: this.options.ciJobTitle
+            ? `Test job name: ${this.options.ciJobTitle}`
             : 'Here are the test run results:',
           color: resultToStatus[result.status].color,
           fields: [
@@ -173,12 +176,12 @@ class DiscordReporter implements Reporter {
             {
               name: '🔗 GitHub Run',
               value: process.env.CI
-                ? `[View GitHub Run](${githubRunUrl})`
+                ? `[View GitHub Run](${this.options.ciRunUrl})`
                 : 'Local run',
               inline: true,
             },
           ],
-          url: process.env.CI ? githubRunUrl : undefined,
+          url: process.env.CI ? this.options.ciRunUrl : undefined,
         },
       ],
     };

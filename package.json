@@ -40,9 +40,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "feat/add-tag-and-title-discord",
+        "channel": "alpha-discord",
+        "prerelease": "alpha-discord"
       }
     ]
   }
