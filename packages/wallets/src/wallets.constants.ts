@@ -22,6 +22,7 @@ export interface WalletConfig {
   PASSWORD: string;
   COMMON: CommonWalletConfig;
   EXTENSION_PATH?: string;
+  NETWORK_NAME?: string;
 }
 
 export interface NetworkConfig {

@@ -33,7 +33,7 @@ type BrowserServiceOptions = {
   walletConfig: WalletConfig;
   nodeConfig: NodeConfig;
   browserOptions?: BrowserOptions;
-  useTmpContextDir?: boolean;
+  enableBrowserContext?: boolean;
 };
 
 export class BrowserService {
@@ -111,15 +111,17 @@ export class BrowserService {
       walletConfig.COMMON.LATEST_STABLE_DOWNLOAD_LINK,
     );
 
+    // If fork was started we send to browserContextService set up separetly context
+    // but, if fork wasnt started we send custom directory for create share context.
+    const isCustomDirNeeded =
+      !this.ethereumNodeService?.state && !this.options.enableBrowserContext;
+    const contextDataDir =
+      isCustomDirNeeded &&
+      `${DEFAULT_BROWSER_CONTEXT_DIR_NAME}_${
+        mnemonicToAccount(walletConfig.SECRET_PHRASE).address
+      }`;
     this.browserContextService = new BrowserContextService(extensionPath, {
-      // If fork was started we send to browserContextService set up separetly context
-      // but, if fork wasnt started we send custom directory for create share context.
-      contextDataDir:
-        !this.ethereumNodeService?.state &&
-        !this.options.useTmpContextDir &&
-        `${DEFAULT_BROWSER_CONTEXT_DIR_NAME}_${
-          mnemonicToAccount(this.options.walletConfig.SECRET_PHRASE).address
-        }`,
+      contextDataDir,
       browserOptions: this.options.browserOptions,
     });
 
@@ -143,7 +145,7 @@ export class BrowserService {
     const extensionWalletPage = new WALLET_PAGES[
       walletConfig.COMMON.EXTENSION_WALLET_NAME
     ](this.browserContextService.browserContext, extension.url, walletConfig);
-    await extensionWalletPage.setup('Ethereum'); // @TODO: instead this.widgetConfig.networkName
+    await extensionWalletPage.setup(walletConfig.NETWORK_NAME);
 
     if (walletConfig.COMMON.WALLET_TYPE === WalletTypes.WC) {
       this.walletPage = new WALLET_PAGES[walletConfig.COMMON.WALLET_NAME](
