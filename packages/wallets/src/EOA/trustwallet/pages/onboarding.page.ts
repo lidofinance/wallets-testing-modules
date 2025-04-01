@@ -11,7 +11,7 @@ export class OnboardingPage {
   noThanksBtn: Locator;
 
   constructor(public page: Page, public config: WalletConfig) {
-    this.importWalletBtn = this.page.getByText('Import or recover wallet');
+    this.importWalletBtn = this.page.getByText('Recover with mnemonic');
     this.newPasswordInput = this.page.getByTestId('password-field');
     this.agreementCheckbox = this.page.locator('input[type=checkbox]');
     this.nextBtn = this.page.locator('button:has-text("Next")');
