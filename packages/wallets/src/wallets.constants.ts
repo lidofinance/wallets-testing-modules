@@ -73,7 +73,7 @@ export const NETWORKS_CONFIG: {
       chainId: 10,
       chainName: 'OP Mainnet',
       tokenSymbol: 'ETH',
-      rpcUrl: 'https://rpc.ankr.com/optimism',
+      rpcUrl: 'https://mainnet.optimism.io',
       scan: '',
     },
     SONEIUM: {
