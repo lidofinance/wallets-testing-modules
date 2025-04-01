@@ -14,6 +14,10 @@ export type BrowserOptions = {
   slowMo?: number;
   args?: string[];
   permissions?: string[];
+  httpCredentials?: {
+    username: string;
+    password: string;
+  };
 };
 
 type OptionsBrowserContext = {
@@ -31,10 +35,6 @@ type OptionsBrowserContext = {
     httpOnly?: boolean;
     secure?: boolean;
   }>;
-  httpCredentials?: {
-    username: string;
-    password: string;
-  };
 };
 
 const excludeExtensionForWaitingHomePage = [
@@ -45,19 +45,16 @@ const excludeExtensionForWaitingHomePage = [
 export class BrowserContextService {
   page: Page;
   browserContext: BrowserContext = null;
+  defaultBrowserOptions: BrowserOptions;
   browserContextPaths: string[] = [];
-  walletExtensionStartPath: string;
-  options: OptionsBrowserContext;
   extensionId: string;
   private readonly logger = new ConsoleLogger(BrowserContextService.name);
 
-  async setup(
-    walletExtensionStartPath: string,
-    options?: OptionsBrowserContext,
+  constructor(
+    public walletExtensionStartPath: string,
+    public options: OptionsBrowserContext,
   ) {
-    this.walletExtensionStartPath = walletExtensionStartPath;
-    this.options = options;
-    const defaultBrowserOptions = {
+    this.defaultBrowserOptions = {
       locale: 'en-us',
       headless: false,
       args: [
@@ -67,14 +64,14 @@ export class BrowserContextService {
         '--js-flags="--max-old-space-size=2048"',
       ],
       permissions: ['clipboard-read', 'clipboard-write'],
-      httpCredentials: this.options.httpCredentials,
     };
+
     this.options.browserOptions = {
-      ...defaultBrowserOptions,
+      ...this.defaultBrowserOptions,
       ...options.browserOptions,
     };
-    await this.getBrowserContextPage();
   }
+
   async getBrowserContextPage() {
     if (!this.browserContext) {
       await this.initBrowserContext();
@@ -133,14 +130,12 @@ export class BrowserContextService {
       await this.browserContext.addCookies(this.options.cookies);
     }
 
-    await this.setExtensionVars();
-  }
-
-  async setExtensionVars() {
     let [background] = this.browserContext.serviceWorkers();
     if (!background)
       background = await this.browserContext.waitForEvent('serviceworker');
     this.extensionId = background.url().split('/')[2];
+
+    return this.page;
   }
 
   async closePages() {

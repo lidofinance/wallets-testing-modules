@@ -37,21 +37,14 @@ type BrowserServiceOptions = {
 };
 
 export class BrowserService {
-  private options: BrowserServiceOptions;
-
   private walletPage: WalletPage<WalletTypes.EOA>;
   private account: Account;
   private browserContextService: BrowserContextService;
+  public ethereumNodeService: EthereumNodeService;
 
   public isFork: boolean;
 
-  constructor(
-    options: BrowserServiceOptions,
-    private ethereumNodeService?: EthereumNodeService, // TODO make it public
-  ) {
-    this.browserContextService = new BrowserContextService();
-    this.options = options;
-  }
+  constructor(private options: BrowserServiceOptions) {}
 
   getWalletPage() {
     return this.walletPage;
@@ -118,7 +111,7 @@ export class BrowserService {
       walletConfig.COMMON.LATEST_STABLE_DOWNLOAD_LINK,
     );
 
-    await this.browserContextService.setup(extensionPath, {
+    this.browserContextService = new BrowserContextService(extensionPath, {
       // If fork was started we send to browserContextService set up separetly context
       // but, if fork wasnt started we send custom directory for create share context.
       contextDataDir:
@@ -129,6 +122,8 @@ export class BrowserService {
         }`,
       browserOptions: this.options.browserOptions,
     });
+
+    await this.browserContextService.initBrowserContext();
 
     if (
       walletConfig.COMMON.WALLET_TYPE === WalletTypes.EOA &&
