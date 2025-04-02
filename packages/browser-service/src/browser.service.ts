@@ -114,7 +114,7 @@ export class BrowserService {
     // If fork was started we send to browserContextService set up separetly context
     // but, if fork wasnt started we send custom directory for create share context.
     const isCustomDirNeeded =
-      !this.ethereumNodeService?.state && !this.options.enableBrowserContext;
+      !this.ethereumNodeService?.state && this.options.enableBrowserContext;
     const contextDataDir =
       isCustomDirNeeded &&
       `${DEFAULT_BROWSER_CONTEXT_DIR_NAME}_${

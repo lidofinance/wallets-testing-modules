@@ -22,7 +22,6 @@ export async function initBrowserService() {
     nodeConfig: {
       rpcUrlToMock: ETHEREUM_WIDGET_CONFIG.nodeUrl,
     },
-    enableBrowserContext: true,
     browserOptions: {
       slowMo: 200,
     },
