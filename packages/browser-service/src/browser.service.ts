@@ -9,10 +9,7 @@ import {
   Extension,
   ExtensionService,
 } from '@lidofinance/wallets-testing-extensions';
-import {
-  Account,
-  EthereumNodeService,
-} from '@lidofinance/wallets-testing-nodes';
+import { EthereumNodeService } from '@lidofinance/wallets-testing-nodes';
 import {
   DEFAULT_BROWSER_CONTEXT_DIR_NAME,
   WALLET_PAGES,
@@ -38,7 +35,6 @@ type BrowserServiceOptions = {
 
 export class BrowserService {
   private walletPage: WalletPage<WalletTypes.EOA>;
-  private account: Account;
   private browserContextService: BrowserContextService;
   public ethereumNodeService: EthereumNodeService;
 
@@ -77,12 +73,12 @@ export class BrowserService {
       defaultBalance: 100,
     });
     await this.ethereumNodeService.startNode();
-    this.account = this.ethereumNodeService.state.accounts[0];
+    const account = this.ethereumNodeService.getAccount();
     await this.setup();
-    if (!(await this.walletPage.isWalletAddressExist(this.account.address))) {
-      await this.walletPage.importKey(this.account.secretKey);
+    if (!(await this.walletPage.isWalletAddressExist(account.address))) {
+      await this.walletPage.importKey(account.secretKey);
     } else {
-      await this.walletPage.changeWalletAccountByName(this.account.address);
+      await this.walletPage.changeWalletAccountByName(account.address);
     }
 
     await this.walletPage.setupNetwork({

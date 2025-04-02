@@ -92,6 +92,10 @@ export class EthereumNodeService {
     this.state = { node, nodeUrl, accounts };
   }
 
+  getAccount(index = 0) {
+    return this.state.accounts[index];
+  }
+
   async stopNode() {
     if (this.state !== undefined) await this.state.node.close();
   }
