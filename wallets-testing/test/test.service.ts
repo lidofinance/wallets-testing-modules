@@ -4,6 +4,7 @@ import { BrowserService } from '@lidofinance/browser-service';
 import { METAMASK_COMMON_CONFIG } from '@lidofinance/wallets-testing-wallets';
 
 export async function initBrowserService() {
+  METAMASK_COMMON_CONFIG.LATEST_STABLE_DOWNLOAD_LINK = undefined;
   return new BrowserService({
     networkConfig: {
       chainId: ETHEREUM_WIDGET_CONFIG.chainId,
