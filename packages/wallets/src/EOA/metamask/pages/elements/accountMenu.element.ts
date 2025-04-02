@@ -13,9 +13,9 @@ export class AccountMenu {
     this.addAccountOrHardwareWalletButton = this.accountListModal.getByTestId(
       'multichain-account-menu-popover-action-button',
     );
-    this.importAccountButton = this.page
-      .getByRole('button')
-      .getByText('Import account');
+    this.importAccountButton = this.page.getByTestId(
+      'multichain-account-menu-popover-add-imported-account',
+    );
     this.privateKeyInput = this.page.locator('id=private-key-box');
     this.importAccountConfirmButton = this.page.getByTestId(
       'import-account-confirm-button',
