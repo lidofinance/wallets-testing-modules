@@ -40,7 +40,7 @@
     "branches": [
       "main",
       {
-        "name": "develop",
+        "name": "fix-edit-network",
         "channel": "alpha",
         "prerelease": "alpha"
       }
