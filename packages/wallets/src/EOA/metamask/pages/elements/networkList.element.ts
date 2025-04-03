@@ -75,20 +75,15 @@ export class NetworkList {
     if (await existNetworkByName.isHidden()) {
       return false;
     }
-    // For fork Mainnet we have to verify is forkNode url added to "Ethereum Mainnet" network
-    const isForkMainnet = chainId === 1 && rpcUrl.includes('127.0.0.1');
 
-    if (isForkMainnet) {
-      // that locator exists only for added networks
-      try {
-        // By default no rpc label below network Name
-        const elements = this.page.getByTestId(
-          `network-rpc-name-button-0x${chainId.toString(16)}`,
-        );
-        return rpcUrl.includes(await elements.textContent({ timeout: 1000 }));
-      } catch (Error) {
-        return false;
-      }
+    try {
+      // By default no rpc label below network Name
+      const elements = this.page.getByTestId(
+        `network-rpc-name-button-0x${chainId.toString(16)}`,
+      );
+      return rpcUrl.includes(await elements.textContent({ timeout: 1000 }));
+    } catch (Error) {
+      return false;
     }
 
     return true;
