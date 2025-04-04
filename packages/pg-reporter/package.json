@@ -1,0 +1,35 @@
+{
+  "name": "@lidofinance/pg-reporter",
+  "version": "0.0.0",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "license": "MIT",
+  "homepage": "https://github.com/lidofinance/wallets-testing-modules",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lidofinance/wallets-testing-modules.git",
+    "directory": "packages/pg-reporter"
+  },
+  "bugs": {
+    "url": "https://github.com/lidofinance/wallets-testing-modules/issues"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc --build"
+  },
+  "keywords": [
+    "lido",
+    "lidofinance"
+  ],
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.51.1",
+    "axios": "^0.27.2"
+  }
+}
