@@ -60,8 +60,8 @@ export class BrowserContextService {
       args: [
         '--lang=en-US',
         '--disable-dev-shm-usage',
-        '--js-flags="--max-old-space-size=2048"',
         `--disable-extensions-except=${this.walletExtensionStartPath}`,
+        '--js-flags="--max-old-space-size=2048"',
       ],
       permissions: ['clipboard-read', 'clipboard-write'],
     };
