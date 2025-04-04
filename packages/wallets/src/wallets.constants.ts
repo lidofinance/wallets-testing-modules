@@ -22,6 +22,7 @@ export interface WalletConfig {
   PASSWORD: string;
   COMMON: CommonWalletConfig;
   EXTENSION_PATH?: string;
+  NETWORK_NAME?: string;
 }
 
 export interface NetworkConfig {
@@ -30,6 +31,7 @@ export interface NetworkConfig {
   tokenSymbol: string;
   rpcUrl: string;
   scan: string;
+  isDefaultNetwork?: boolean; //set true if the network exist in web3 extension.To set true fill in chainId,chainName,tokenSymbol
 }
 
 type MainnetNetworks =

@@ -40,9 +40,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "feat/move-browser-service",
+        "channel": "alpha-move-br",
+        "prerelease": "alpha-move-br"
       }
     ]
   }
