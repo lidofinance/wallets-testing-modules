@@ -1,1 +1,3 @@
-export default class PgReport {}
+class PgReport {}
+
+export default PgReport;
