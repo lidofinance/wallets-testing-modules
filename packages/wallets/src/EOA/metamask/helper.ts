@@ -6,6 +6,7 @@ const MMPopularNetworks = [
   'Base Mainnet',
   'Binance Smart Chain',
   'Linea',
+  'Avalanche Network C-Chain',
 ];
 
 export async function isPopularNetwork(networkName: string) {

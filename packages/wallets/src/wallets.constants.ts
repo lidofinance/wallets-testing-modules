@@ -47,7 +47,8 @@ type MainnetNetworks =
   | 'SCROLL'
   | 'MODE'
   | 'ZIRCUIT'
-  | 'LISK';
+  | 'LISK'
+  | 'AVAX';
 
 export type TestnetNetworks =
   | 'ETHEREUM_HOODI'
@@ -166,6 +167,13 @@ export const NETWORKS_CONFIG: {
       tokenSymbol: 'ETH',
       rpcUrl: 'https://rpc.api.lisk.com/',
       scan: '',
+    },
+    AVAX: {
+      chainId: 43114,
+      chainName: 'Avalanche Network C-Chain',
+      tokenSymbol: 'AVAX',
+      rpcUrl: null,
+      scan: 'https://snowtrace.io/',
     },
   },
   Testnet: {
