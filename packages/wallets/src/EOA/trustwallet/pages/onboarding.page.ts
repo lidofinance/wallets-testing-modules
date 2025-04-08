@@ -1,7 +1,9 @@
-import { Locator, Page, test } from '@playwright/test';
+import { Locator, Page, test, expect } from '@playwright/test';
 import { WalletConfig } from '../../../wallets.constants';
+import { ConsoleLogger } from '@nestjs/common';
 
 export class OnboardingPage {
+  logger = new ConsoleLogger(`TrustWallet. ${OnboardingPage.name}`);
   importWalletBtn: Locator;
   newPasswordInput: Locator;
   agreementCheckbox: Locator;
@@ -29,7 +31,15 @@ export class OnboardingPage {
 
     await test.step('First time setup', async () => {
       await this.importWalletBtn.click();
-      if ((await this.newPasswordInput.count()) < 2) return;
+      try {
+        await this.newPasswordInput
+          .nth(0)
+          .waitFor({ timeout: 2000, state: 'visible' });
+        expect(await this.newPasswordInput.count()).toEqual(2);
+      } catch (er) {
+        this.logger.log('The wallet does not need to be configured');
+        return;
+      }
 
       await test.step('Setup wallet password', async () => {
         await this.newPasswordInput.nth(0).fill(this.config.PASSWORD);
