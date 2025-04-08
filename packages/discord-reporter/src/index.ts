@@ -31,7 +31,8 @@ type WebhookPayload = {
 
 type ReporterOptions = {
   enabled: string;
-  ciJobName?: string;
+  customTitle?: string;
+  customDescription?: string;
   ciRunUrl?: string;
   discordWebhookUrl: string;
   discordDutyTag?: string;
@@ -90,7 +91,7 @@ class DiscordReporter implements Reporter {
       passed: {
         content: undefined,
         color: GREEN,
-        title: '🎉 Testing Completed!',
+        title: '🧘 Testing Completed!',
       },
       failed: {
         content:
@@ -123,9 +124,9 @@ class DiscordReporter implements Reporter {
           },
         },
       );
-      this.logger.log('Discord message successfully sended:', response.status);
+      this.logger.log(`Discord message successfully sent: ${response.status}`);
     } catch (error: any) {
-      this.logger.error('Error while discord message sended:', error?.message);
+      this.logger.error(`Error while discord message sent: ${error?.message}`);
     }
   }
 
@@ -161,10 +162,13 @@ class DiscordReporter implements Reporter {
       content: this.resultToStatus[result.status].content,
       embeds: [
         {
-          title: this.resultToStatus[result.status].title,
-          description: this.options.ciJobName
-            ? `Test job name: ${this.options.ciJobName}`
-            : 'Here are the test run results:',
+          title: `${this.resultToStatus[result.status].title} ${
+            this.options.customTitle || ''
+          }`,
+          description:
+            (this.options.customDescription ||
+              'Here are the test run results:') +
+            `\n- View [GitHub Run](${this.options.ciRunUrl})`,
           color: this.resultToStatus[result.status].color,
           fields: [
             {
@@ -193,13 +197,6 @@ class DiscordReporter implements Reporter {
               name: '⏳ Run Time',
               value: `${duration}`,
               inline: false,
-            },
-            {
-              name: '🔗 GitHub Run',
-              value: process.env.CI
-                ? `[View GitHub Run](${this.options.ciRunUrl})`
-                : 'Test run',
-              inline: true,
             },
           ],
           url: this.options.ciRunUrl,

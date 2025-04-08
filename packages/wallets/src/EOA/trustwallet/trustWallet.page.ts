@@ -114,12 +114,9 @@ export class TrustWalletPage implements WalletPage<WalletTypes.EOA> {
     await test.step('Connect wallet', async () => {
       const txPage = new WalletOperations(page);
       try {
-        await txPage.connectBtn.waitFor({ state: 'visible', timeout: 5000 });
+        await txPage.connectBtn.waitFor({ timeout: 5000, state: 'visible' });
         await txPage.connectBtn.click();
-      } catch (error) {
-        this.logger.warn(
-          'Button "Connect" not visible, perhabs opened high risk.',
-        );
+      } catch (er) {
         await txPage.confirmHighRisk();
       }
     });
