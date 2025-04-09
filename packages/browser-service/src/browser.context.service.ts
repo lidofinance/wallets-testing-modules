@@ -72,15 +72,6 @@ export class BrowserContextService {
     };
   }
 
-  async getBrowserContextPage() {
-    if (!this.browserContext) {
-      this.logger.warn(
-        'Unable to retrieve the browser context page because the context hasn’t been configured.',
-      );
-    }
-    return this.page;
-  }
-
   async initBrowserContext() {
     this.logger.debug(
       `Starting a new browser context (temp context: ${!this.options
@@ -136,6 +127,8 @@ export class BrowserContextService {
     if (!background)
       background = await this.browserContext.waitForEvent('serviceworker');
     this.extensionId = background.url().split('/')[2];
+
+    return this.page;
   }
 
   async closePages() {
