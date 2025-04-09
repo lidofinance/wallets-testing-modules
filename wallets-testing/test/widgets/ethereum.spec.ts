@@ -8,10 +8,11 @@ import {
   CTRL_COMMON_CONFIG,
   SAFE_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
-import { WIDGET_PAGES } from '../../browser';
+
 import { BrowserService } from '@lidofinance/browser-service';
 import { test } from '@playwright/test';
 import { initBrowserService } from '../test.service';
+import { WIDGET_PAGES } from '../../config/browser.constants';
 
 async function connectWallet(browserService) {
   const browserContext = await browserService.getBrowserContext();
