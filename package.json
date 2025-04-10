@@ -40,9 +40,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "feat/sepoliaPopular",
+        "channel": "alpha-sepolia-pop",
+        "prerelease": "alpha-sepolia-pop"
       }
     ]
   }
