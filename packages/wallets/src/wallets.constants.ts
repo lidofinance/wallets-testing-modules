@@ -193,7 +193,7 @@ export const NETWORKS_CONFIG: {
     },
     ETHEREUM_SEPOLIA: {
       chainId: 11155111,
-      chainName: 'Ethereum Sepolia',
+      chainName: 'Sepolia',
       tokenSymbol: 'ETH',
       rpcUrl: 'https://sepolia.drpc.org',
       scan: 'https://sepolia.etherscan.io/',
