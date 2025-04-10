@@ -19,7 +19,7 @@ import {
   BrowserOptions,
 } from './browser.context.service';
 import { mnemonicToAccount } from 'viem/accounts';
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 
 type NodeConfig = {
   rpcUrlToMock: string; // example: '**/api/rpc?chainId=1'
@@ -36,7 +36,6 @@ type BrowserServiceOptions = {
 export class BrowserService {
   private walletPage: WalletPage<WalletTypes.EOA>;
   private browserContextService: BrowserContextService;
-  private browserContextPage: Page;
   public ethereumNodeService: EthereumNodeService;
 
   public isFork: boolean;
@@ -47,12 +46,12 @@ export class BrowserService {
     return this.walletPage;
   }
 
-  async getBrowserContext() {
+  getBrowserContext() {
     return this.browserContextService.browserContext;
   }
 
-  async getBrowserContextPage() {
-    return this.browserContextPage;
+  getBrowserContextPage() {
+    return this.browserContextService.browserContext.pages()[0];
   }
 
   async initWalletSetup(useFork?: boolean) {
@@ -122,8 +121,7 @@ export class BrowserService {
       browserOptions: this.options.browserOptions,
     });
 
-    this.browserContextPage =
-      await this.browserContextService.initBrowserContext();
+    await this.browserContextService.initBrowserContext();
 
     if (
       walletConfig.COMMON.WALLET_TYPE === WalletTypes.EOA &&

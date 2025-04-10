@@ -3,7 +3,7 @@ import {
   CTRL_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import { ConsoleLogger } from '@nestjs/common';
-import { BrowserContext, chromium, Page } from '@playwright/test';
+import { BrowserContext, chromium } from '@playwright/test';
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import path from 'path';
@@ -43,7 +43,6 @@ const excludeExtensionForWaitingHomePage = [
 ];
 
 export class BrowserContextService {
-  page: Page;
   browserContext: BrowserContext = null;
   defaultBrowserOptions: BrowserOptions;
   browserContextPaths: string[] = [];
@@ -107,9 +106,6 @@ export class BrowserContextService {
       await this.browserContext.waitForEvent('page');
     }
 
-    const pages = this.browserContext.pages();
-    this.page = pages.at(-1);
-
     this.browserContext.on('page', async (page) => {
       page.once('crash', () => this.logger.error(`Page ${page.url()} crashed`));
     });
@@ -127,15 +123,13 @@ export class BrowserContextService {
     if (!background)
       background = await this.browserContext.waitForEvent('serviceworker');
     this.extensionId = background.url().split('/')[2];
-
-    return this.page;
   }
 
   async closePages() {
     if (!this.browserContext) {
       return;
     }
-    this.page = await this.browserContext.newPage();
+    await this.browserContext.newPage();
     await Promise.all(
       this.browserContext
         .pages()
