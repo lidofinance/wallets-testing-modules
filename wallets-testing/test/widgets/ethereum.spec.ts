@@ -12,9 +12,10 @@ import {
 import { BrowserService } from '@lidofinance/browser-service';
 import { test } from '@playwright/test';
 import { initBrowserService } from '../test.service';
+import { EthereumPage } from '@lidofinance/wallets-testing-widgets';
 import { WIDGET_PAGES } from '../../config/browser.constants';
 
-async function connectWallet(browserService) {
+async function connectWallet(browserService: BrowserService) {
   const browserContext = await browserService.getBrowserContext();
   const widgetPage = new WIDGET_PAGES['ethereum'](browserContext.pages()[0], {
     stakeAmount: 50,
@@ -25,6 +26,7 @@ async function connectWallet(browserService) {
 
 test.describe('Ethereum', () => {
   let browserService: BrowserService;
+  let widgetService: EthereumPage;
 
   test.beforeAll(async () => {
     browserService = await initBrowserService();
@@ -33,12 +35,12 @@ test.describe('Ethereum', () => {
   test(`Metamask stake`, async () => {
     await browserService.setupWithNode();
     const browserContext = await browserService.getBrowserContext();
-    const widgetPage = new WIDGET_PAGES['ethereum'](browserContext.pages()[0], {
+    widgetService = new EthereumPage(browserContext.pages()[0], {
       stakeAmount: 50,
     });
-    await widgetPage.navigate();
-    await widgetPage.connectWallet(browserService.getWalletPage());
-    await widgetPage.doStaking(browserService.getWalletPage());
+    await widgetService.navigate();
+    await widgetService.connectWallet(browserService.getWalletPage());
+    await widgetService.doStaking(browserService.getWalletPage());
   });
 
   test(`Coin98 connect`, async () => {
