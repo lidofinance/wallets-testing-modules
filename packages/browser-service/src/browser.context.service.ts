@@ -1,11 +1,6 @@
-import {
-  COINBASE_COMMON_CONFIG,
-  CTRL_COMMON_CONFIG,
-} from '@lidofinance/wallets-testing-wallets';
 import { ConsoleLogger } from '@nestjs/common';
 import { BrowserContext, chromium } from '@playwright/test';
 import * as fs from 'fs/promises';
-import * as os from 'os';
 import path from 'path';
 
 export type BrowserOptions = {
@@ -36,11 +31,6 @@ type OptionsBrowserContext = {
     secure?: boolean;
   }>;
 };
-
-const excludeExtensionForWaitingHomePage = [
-  COINBASE_COMMON_CONFIG.STORE_EXTENSION_ID,
-  CTRL_COMMON_CONFIG.STORE_EXTENSION_ID,
-];
 
 export class BrowserContextService {
   browserContext: BrowserContext = null;
@@ -76,8 +66,7 @@ export class BrowserContextService {
       `Starting a new browser context (temp context: ${!this.options
         .contextDataDir})`,
     );
-    let browserContextPath;
-    let isCreated;
+    let browserContextPath = '';
 
     if (this.options.contextDataDir) {
       browserContextPath = path.join(
@@ -85,26 +74,15 @@ export class BrowserContextService {
         this.options.contextDataDir,
       );
 
-      isCreated = await fs.mkdir(browserContextPath, {
+      await fs.mkdir(browserContextPath, {
         recursive: true,
       });
-    } else {
-      browserContextPath = await fs.mkdtemp(os.tmpdir() + path.sep);
-      isCreated = true;
     }
 
     this.browserContext = await chromium.launchPersistentContext(
       browserContextPath,
       this.options.browserOptions,
     );
-    const splitted = this.walletExtensionStartPath.split('/');
-    const storeId = splitted[splitted.length - 1];
-
-    // if dir already created by fs.mkdir method - isCreated will be undefined,
-    // and hone page will not open
-    if (isCreated && !excludeExtensionForWaitingHomePage.includes(storeId)) {
-      await this.browserContext.waitForEvent('page');
-    }
 
     this.browserContext.on('page', async (page) => {
       page.once('crash', () => this.logger.error(`Page ${page.url()} crashed`));

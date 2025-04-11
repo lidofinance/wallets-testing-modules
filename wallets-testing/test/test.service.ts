@@ -1,23 +1,23 @@
 import { configService } from '../config';
 import { ETHEREUM_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
 import { BrowserService } from '@lidofinance/browser-service';
-import { METAMASK_COMMON_CONFIG } from '@lidofinance/wallets-testing-wallets';
+import {
+  CommonWalletConfig,
+  NETWORKS_CONFIG,
+} from '@lidofinance/wallets-testing-wallets';
+import { WIDGET_PAGES } from '../config/browser.constants';
 
-export async function initBrowserService() {
-  METAMASK_COMMON_CONFIG.LATEST_STABLE_DOWNLOAD_LINK = undefined;
+export async function initBrowserService(commonConfig: CommonWalletConfig) {
   return new BrowserService({
     networkConfig: {
-      chainId: ETHEREUM_WIDGET_CONFIG.chainId,
-      chainName: ETHEREUM_WIDGET_CONFIG.chainName,
-      tokenSymbol: ETHEREUM_WIDGET_CONFIG.tokenSymbol,
+      ...NETWORKS_CONFIG.Mainnet.ETHEREUM,
       rpcUrl: configService.get('RPC_URL'),
-      scan: 'https://etherscan.io/',
     },
     walletConfig: {
       SECRET_PHRASE: configService.get('WALLET_SECRET_PHRASE'),
       PASSWORD: configService.get('WALLET_PASSWORD'),
-      COMMON: METAMASK_COMMON_CONFIG,
-      NETWORK_NAME: ETHEREUM_WIDGET_CONFIG.networkName,
+      COMMON: commonConfig,
+      NETWORK_NAME: ETHEREUM_WIDGET_CONFIG.networkName, // @TODO: remove it
     },
     nodeConfig: {
       rpcUrlToMock: ETHEREUM_WIDGET_CONFIG.nodeUrl,
@@ -26,4 +26,13 @@ export async function initBrowserService() {
       slowMo: 200,
     },
   });
+}
+
+export async function connectWallet(browserService: BrowserService) {
+  const browserContext = await browserService.getBrowserContext();
+  const widgetPage = new WIDGET_PAGES['ethereum'](browserContext.pages()[0], {
+    stakeAmount: 50,
+  });
+  await widgetPage.navigate();
+  await widgetPage.connectWallet(browserService.getWalletPage());
 }

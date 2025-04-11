@@ -30,7 +30,6 @@ type BrowserServiceOptions = {
   walletConfig: WalletConfig;
   nodeConfig: NodeConfig;
   browserOptions?: BrowserOptions;
-  enableBrowserContext?: boolean;
 };
 
 export class BrowserService {
@@ -94,28 +93,19 @@ export class BrowserService {
     await this.browserContextService.closePages();
   }
 
-  async setup(commonWalletConfig?: CommonWalletConfig) {
-    const walletConfig = {
-      ...this.options.walletConfig,
-      COMMON: commonWalletConfig || this.options.walletConfig.COMMON,
-    };
-
+  async setup() {
     const extensionService = new ExtensionService();
 
     const extensionPath = await extensionService.getExtensionDirFromId(
-      walletConfig.COMMON.STORE_EXTENSION_ID,
-      walletConfig.COMMON.LATEST_STABLE_DOWNLOAD_LINK,
+      this.options.walletConfig.COMMON.STORE_EXTENSION_ID,
+      this.options.walletConfig.COMMON.LATEST_STABLE_DOWNLOAD_LINK,
     );
 
-    // If fork was started we send to browserContextService set up separetly context
-    // but, if fork wasnt started we send custom directory for create share context.
-    const isCustomDirNeeded =
-      !this.ethereumNodeService?.state && this.options.enableBrowserContext;
     const contextDataDir =
-      isCustomDirNeeded &&
+      !this.ethereumNodeService?.state &&
       `${DEFAULT_BROWSER_CONTEXT_DIR_NAME}_${
-        mnemonicToAccount(walletConfig.SECRET_PHRASE).address
-      }`;
+        mnemonicToAccount(this.options.walletConfig.SECRET_PHRASE).address
+      }_${this.options.walletConfig.COMMON.WALLET_NAME}`;
     this.browserContextService = new BrowserContextService(extensionPath, {
       contextDataDir,
       browserOptions: this.options.browserOptions,
@@ -124,11 +114,11 @@ export class BrowserService {
     await this.browserContextService.initBrowserContext();
 
     if (
-      walletConfig.COMMON.WALLET_TYPE === WalletTypes.EOA &&
+      this.options.walletConfig.COMMON.WALLET_TYPE === WalletTypes.EOA &&
       !!process.env.CI
     ) {
       const manifestContent = await extensionService.getManifestContent(
-        walletConfig.COMMON.STORE_EXTENSION_ID,
+        this.options.walletConfig.COMMON.STORE_EXTENSION_ID,
       );
       test.info().annotations.push({
         type: 'wallet version',
@@ -139,16 +129,22 @@ export class BrowserService {
     const extension = new Extension(this.browserContextService.extensionId);
 
     const extensionWalletPage = new WALLET_PAGES[
-      walletConfig.COMMON.EXTENSION_WALLET_NAME
-    ](this.browserContextService.browserContext, extension.url, walletConfig);
-    await extensionWalletPage.setup(walletConfig.NETWORK_NAME);
+      this.options.walletConfig.COMMON.EXTENSION_WALLET_NAME
+    ](
+      this.browserContextService.browserContext,
+      extension.url,
+      this.options.walletConfig,
+    );
+    await extensionWalletPage.setup(this.options.walletConfig.NETWORK_NAME);
 
-    if (walletConfig.COMMON.WALLET_TYPE === WalletTypes.WC) {
-      this.walletPage = new WALLET_PAGES[walletConfig.COMMON.WALLET_NAME](
+    if (this.options.walletConfig.COMMON.WALLET_TYPE === WalletTypes.WC) {
+      this.walletPage = new WALLET_PAGES[
+        this.options.walletConfig.COMMON.WALLET_NAME
+      ](
         this.browserContextService.browserContext,
         extensionWalletPage,
         this.options.networkConfig.chainId,
-        walletConfig,
+        this.options.walletConfig,
       );
     } else {
       this.walletPage = extensionWalletPage;
