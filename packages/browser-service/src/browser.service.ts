@@ -1,5 +1,4 @@
 import {
-  CommonWalletConfig,
   NetworkConfig,
   WalletConfig,
   WalletPage,
