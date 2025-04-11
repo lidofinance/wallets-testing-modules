@@ -13,13 +13,6 @@ export type BrowserOptions = {
     username: string;
     password: string;
   };
-};
-
-type OptionsBrowserContext = {
-  // If contextDataDir is undefined - will be created temp dir for context data.
-  // Else contextDataDir is not undefined - will be created user dir for context data in current folder.
-  contextDataDir: string;
-  browserOptions?: BrowserOptions;
   cookies?: ReadonlyArray<{
     name: string;
     value: string;
@@ -30,6 +23,13 @@ type OptionsBrowserContext = {
     httpOnly?: boolean;
     secure?: boolean;
   }>;
+};
+
+type OptionsBrowserContext = {
+  // If contextDataDir is undefined - will be created temp dir for context data.
+  // Else contextDataDir is not undefined - will be created user dir for context data in current folder.
+  contextDataDir: string;
+  browserOptions?: BrowserOptions;
 };
 
 export class BrowserContextService {
@@ -93,8 +93,8 @@ export class BrowserContextService {
       this.logger.debug('Browser context closed');
     });
 
-    if (this.options.cookies) {
-      await this.browserContext.addCookies(this.options.cookies);
+    if (this.options.browserOptions.cookies) {
+      await this.browserContext.addCookies(this.options.browserOptions.cookies);
     }
 
     let [background] = this.browserContext.serviceWorkers();
