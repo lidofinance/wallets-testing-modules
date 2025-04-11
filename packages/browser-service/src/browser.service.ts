@@ -53,6 +53,7 @@ export class BrowserService {
   }
 
   async initWalletSetup(useFork?: boolean) {
+    this.isFork = useFork;
     if (useFork) {
       await this.setupWithNode();
     } else {
@@ -61,7 +62,6 @@ export class BrowserService {
       await this.walletPage.changeNetwork(this.options.networkConfig.chainName);
       await this.browserContextService.closePages();
     }
-    this.isFork = !!this.ethereumNodeService;
   }
 
   async setupWithNode() {
