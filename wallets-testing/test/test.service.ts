@@ -37,4 +37,5 @@ export async function connectWallet(browserService: BrowserService) {
   });
   await widgetPage.navigate();
   await widgetPage.connectWallet(browserService.getWalletPage());
+  return widgetPage;
 }

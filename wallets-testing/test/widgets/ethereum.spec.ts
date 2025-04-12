@@ -13,22 +13,15 @@ import {
 import { BrowserService } from '@lidofinance/browser-service';
 import { test } from '@playwright/test';
 import { connectWallet, initBrowserService } from '../test.service';
-import { EthereumPage } from '@lidofinance/wallets-testing-widgets';
 
 test.describe('Ethereum', () => {
   let browserService: BrowserService;
-  let widgetService: EthereumPage;
 
   test(`Metamask stake`, async () => {
     METAMASK_COMMON_CONFIG.LATEST_STABLE_DOWNLOAD_LINK = undefined;
     browserService = await initBrowserService(METAMASK_COMMON_CONFIG);
     await browserService.setupWithNode();
-    const browserContext = await browserService.getBrowserContext();
-    widgetService = new EthereumPage(browserContext.pages()[0], {
-      stakeAmount: 50,
-    });
-    await widgetService.navigate();
-    await widgetService.connectWallet(browserService.getWalletPage());
+    const widgetService = await connectWallet(browserService);
     await widgetService.doStaking(browserService.getWalletPage());
   });
 
