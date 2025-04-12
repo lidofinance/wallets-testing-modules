@@ -31,8 +31,7 @@ export async function initBrowserService(commonConfig: CommonWalletConfig) {
 }
 
 export async function connectWallet(browserService: BrowserService) {
-  const browserContext = await browserService.getBrowserContext();
-  const widgetPage = new EthereumPage(browserContext.pages()[0], {
+  const widgetPage = new EthereumPage(browserService.getBrowserContextPage(), {
     stakeAmount: 50,
   });
   await widgetPage.navigate();
