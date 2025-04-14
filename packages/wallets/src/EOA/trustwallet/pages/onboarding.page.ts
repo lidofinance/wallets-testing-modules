@@ -18,7 +18,7 @@ export class OnboardingPage {
     this.agreementCheckbox = this.page.locator('input[type=checkbox]');
     this.nextBtn = this.page.locator('button:has-text("Next")');
     this.seedPhraseTypeInput = this.page.locator(
-      '[id="headlessui-listbox-button-:r2:"]',
+      '#headlessui-listbox-button-«r2»',
     );
     this.seedPhraseInputs = this.page.locator('input[type="password"]');
     this.noThanksBtn = this.page.locator('button:has-text("No thanks")');
