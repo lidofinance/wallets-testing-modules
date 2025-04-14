@@ -1,5 +1,5 @@
 {
-  "name": "@lidofinance/wallets-testing-widgets",
+  "name": "@lidofinance/pg-reporter",
   "version": "0.0.0",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -8,7 +8,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/lidofinance/wallets-testing-modules.git",
-    "directory": "packages/widgets"
+    "directory": "packages/pg-reporter"
   },
   "bugs": {
     "url": "https://github.com/lidofinance/wallets-testing-modules/issues"
@@ -29,11 +29,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@lidofinance/wallets-testing-wallets": "*",
-    "@nestjs/common": "^10.0.0",
     "@playwright/test": "^1.51.1",
-    "expect": "^28.1.3",
-    "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.5.6"
+    "axios": "^0.27.2"
   }
 }

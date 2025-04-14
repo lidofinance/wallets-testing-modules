@@ -1,28 +1,25 @@
 import {
-  Coin98,
-  MetamaskPage,
-  TrustWalletPage,
-  ExodusPage,
-  CoinbasePage,
-  OkxPage,
   BitgetPage,
+  Coin98,
+  CoinbasePage,
   CtrlPage,
+  ExodusPage,
+  MetamaskPage,
+  OkxPage,
   SafePage,
+  TrustWalletPage,
 } from '@lidofinance/wallets-testing-wallets';
-import { EthereumPage } from '@lidofinance/wallets-testing-widgets';
 
 export const WALLET_PAGES = {
   metamask: MetamaskPage,
-  coin98: Coin98,
-  trust: TrustWalletPage,
-  exodus: ExodusPage,
-  coinbase: CoinbasePage,
   okx: OkxPage,
-  bitget: BitgetPage,
+  coin98: Coin98,
+  exodus: ExodusPage,
+  trust: TrustWalletPage,
+  coinbase: CoinbasePage,
   ctrl: CtrlPage,
+  bitget: BitgetPage,
   safe: SafePage,
 };
 
-export const WIDGET_PAGES = {
-  ethereum: EthereumPage,
-};
+export const DEFAULT_BROWSER_CONTEXT_DIR_NAME = '.browser_context';

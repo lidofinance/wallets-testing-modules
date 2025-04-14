@@ -5,7 +5,6 @@ export const ETHEREUM_WIDGET_CONFIG: WidgetConfig = {
   nodeUrl: '**/api/rpc?chainId=1',
   name: 'ethereum',
   networkName: 'Ethereum',
-  isDefaultNetwork: true,
   stakeContract: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
   wrapContract: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
   chainName: 'Ethereum Mainnet',
