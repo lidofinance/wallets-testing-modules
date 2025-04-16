@@ -1,10 +1,10 @@
-import { ETHEREUM_WIDGET_CONFIG, TxConfig } from './consts';
+import { ETHEREUM_WIDGET_CONFIG, TxConfig } from '../utils/consts';
 import expect from 'expect';
 import { WalletTypes } from '@lidofinance/wallets-testing-wallets';
 import { Page, test } from '@playwright/test';
 import { BrowserService } from '@lidofinance/browser-service';
-import { WidgetPage } from './pages/widget.page';
-import { waitForTextContent } from './helpers';
+import { WidgetPage } from '../pages/widget.page';
+import { waitForTextContent } from '../utils/helpers';
 
 export class WidgetService {
   page: Page;

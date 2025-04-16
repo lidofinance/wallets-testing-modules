@@ -1,5 +1,5 @@
 import { BrowserService } from '@lidofinance/browser-service';
-import { ETHEREUM_WIDGET_CONFIG, TxConfig } from './consts';
+import { ETHEREUM_WIDGET_CONFIG, TxConfig } from '../utils/consts';
 import {
   CommonWalletConfig,
   NETWORKS_CONFIG,

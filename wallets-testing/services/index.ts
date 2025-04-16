@@ -1,2 +1,2 @@
 export * from './service.widget';
-export * from './consts';
+export * from './service.test';
