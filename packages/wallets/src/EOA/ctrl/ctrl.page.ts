@@ -1,6 +1,10 @@
 import { WalletPage } from '../../wallet.page';
 import { test, BrowserContext, Page } from '@playwright/test';
-import { WalletConfig, WalletTypes } from '../../wallets.constants';
+import {
+  AccountConfig,
+  CommonWalletConfig,
+  WalletTypes,
+} from '../../wallets.constants';
 import { LoginPage, OnboardingPage, WalletOperations } from './pages';
 
 export class CtrlPage implements WalletPage<WalletTypes.EOA> {
@@ -11,7 +15,8 @@ export class CtrlPage implements WalletPage<WalletTypes.EOA> {
   constructor(
     private browserContext: BrowserContext,
     private extensionUrl: string,
-    public config: WalletConfig,
+    public accountConfig: AccountConfig,
+    public walletConfig: CommonWalletConfig,
   ) {}
 
   /** Init all page objects Classes included to wallet */
@@ -20,15 +25,16 @@ export class CtrlPage implements WalletPage<WalletTypes.EOA> {
     this.onboardingPage = new OnboardingPage(
       this.page,
       this.extensionUrl,
-      this.config,
+      this.accountConfig,
+      this.walletConfig,
     );
-    this.loginPage = new LoginPage(this.page, this.config);
+    this.loginPage = new LoginPage(this.page, this.accountConfig);
   }
 
   /** Open the home page of the wallet extension */
   async goto() {
     await this.page.goto(
-      this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+      this.extensionUrl + this.walletConfig.EXTENSION_START_PATH,
     );
   }
 

@@ -1,5 +1,5 @@
 import { Locator, Page, test } from '@playwright/test';
-import { WalletConfig } from '../../../wallets.constants';
+import { AccountConfig } from '../../../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 
 export class LoginPage {
@@ -8,7 +8,7 @@ export class LoginPage {
   passwordInput: Locator;
   homeBtn: Locator;
 
-  constructor(public page: Page, public config: WalletConfig) {
+  constructor(public page: Page, public accountConfig: AccountConfig) {
     this.unlockBtn = this.page.getByTestId('unlock-btn');
     this.passwordInput = this.page.locator('input[type="password"]');
   }
@@ -17,7 +17,7 @@ export class LoginPage {
     await test.step('Unlock wallet', async () => {
       try {
         await this.unlockBtn.waitFor({ state: 'visible', timeout: 2000 });
-        await this.passwordInput.fill(this.config.PASSWORD);
+        await this.passwordInput.fill(this.accountConfig.PASSWORD);
         await this.unlockBtn.click();
         await this.homeBtn.waitFor({ state: 'visible' });
       } catch {

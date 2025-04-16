@@ -1,6 +1,7 @@
 import {
   NetworkConfig,
-  WalletConfig,
+  AccountConfig,
+  CommonWalletConfig,
   WalletTypes,
 } from '../../wallets.constants';
 import { WalletPage } from '../../wallet.page';
@@ -32,16 +33,21 @@ export class MetamaskPage implements WalletPage<WalletTypes.EOA> {
   constructor(
     private browserContext: BrowserContext,
     private extensionUrl: string,
-    public config: WalletConfig,
+    public accountConfig: AccountConfig,
+    public walletConfig: CommonWalletConfig,
   ) {}
 
   async initLocators() {
     this.page = await this.browserContext.newPage();
     this.header = new Header(this.page);
-    this.homePage = new HomePage(this.page, this.extensionUrl, this.config);
-    this.loginPage = new LoginPage(this.page, this.config);
+    this.homePage = new HomePage(
+      this.page,
+      this.extensionUrl,
+      this.walletConfig,
+    );
+    this.loginPage = new LoginPage(this.page, this.accountConfig);
     this.walletOperation = new WalletOperationPage(this.page);
-    this.onboardingPage = new OnboardingPage(this.page, this.config);
+    this.onboardingPage = new OnboardingPage(this.page, this.accountConfig);
     this.optionsMenu = new OptionsMenu(this.page);
     this.popoverElements = new PopoverElements(this.page);
     this.accountMenu = new AccountMenu(this.page);
@@ -71,7 +77,7 @@ export class MetamaskPage implements WalletPage<WalletTypes.EOA> {
         await new SettingsPage(
           await this.browserContext.newPage(),
           this.extensionUrl,
-          this.config,
+          this.walletConfig,
         ).setupNetworkChangingSetting(); // need to make it possible to change the wallet network
       }
     });

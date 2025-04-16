@@ -1281,6 +1281,29 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@lidofinance/wallets-testing-wallets@1.31.1":
+  version "1.31.1"
+  resolved "https://registry.yarnpkg.com/@lidofinance/wallets-testing-wallets/-/wallets-testing-wallets-1.31.1.tgz#da955797f03e041cdab5478d0299521c37f9fc48"
+  integrity sha512-MkK5/5nn63mGlxUZu2XnOgkeu8absZQNNFdUVJ8Cdq9M/c/WNZgipOyQDmRY2os9gsgSzNkfYKYBMjpkK+OxlQ==
+  dependencies:
+    "@playwright/test" "^1.51.1"
+    expect "^28.1.3"
+    reflect-metadata "^0.1.13"
+    rxjs "^7.5.6"
+    viem "^2.21.40"
+
+"@lidofinance/wallets-testing-widgets@*":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@lidofinance/wallets-testing-widgets/-/wallets-testing-widgets-1.4.1.tgz#434d56de44ecb8b033e950e4666f6ad4590883ef"
+  integrity sha512-9Tga5jtcCpstcKtZif9S6adQSqM9hue/ayRYoPISgEfZpiwJv86Af06gDxSDSsPJ+IPWSgaZ4+JPxBjdMFrx5g==
+  dependencies:
+    "@lidofinance/wallets-testing-wallets" "1.31.1"
+    "@nestjs/common" "^10.0.0"
+    "@playwright/test" "^1.51.1"
+    expect "^28.1.3"
+    reflect-metadata "^0.1.13"
+    rxjs "^7.5.6"
+
 "@ljharb/through@^2.3.12":
   version "2.3.14"
   resolved "https://registry.yarnpkg.com/@ljharb/through/-/through-2.3.14.tgz#a5df44295f44dc23bfe106af59426dd0677760b1"

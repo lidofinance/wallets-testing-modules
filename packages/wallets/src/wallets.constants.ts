@@ -17,12 +17,10 @@ export enum WalletTypes {
 
 export type WalletType = WalletTypes.WC | WalletTypes.EOA;
 
-export interface WalletConfig {
+export interface AccountConfig {
   SECRET_PHRASE: string;
   PASSWORD: string;
-  COMMON: CommonWalletConfig;
   EXTENSION_PATH?: string;
-  NETWORK_NAME?: string;
 }
 
 export interface NetworkConfig {

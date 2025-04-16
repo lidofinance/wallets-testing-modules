@@ -1,6 +1,7 @@
 import {
   NetworkConfig,
-  WalletConfig,
+  AccountConfig,
+  CommonWalletConfig,
   WalletTypes,
 } from '../../wallets.constants';
 import { WalletPage } from '../../wallet.page';
@@ -35,18 +36,19 @@ export class OkxPage implements WalletPage<WalletTypes.EOA> {
   constructor(
     private browserContext: BrowserContext,
     private extensionUrl: string,
-    public config: WalletConfig,
+    public accountConfig: AccountConfig,
+    public walletConfig: CommonWalletConfig,
   ) {}
 
   /** Init all page objects Classes included to wallet */
   async initLocators() {
     this.page = await this.browserContext.newPage();
     this.homePage = new HomePage(this.page);
-    this.loginPage = new LoginPage(this.page, this.config);
+    this.loginPage = new LoginPage(this.page, this.accountConfig);
     this.onboardingPage = new OnboardingPage(
       this.page,
-      this.config,
-      this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+      this.accountConfig,
+      this.extensionUrl + this.walletConfig.EXTENSION_START_PATH,
     );
     this.networkListPage = new NetworkList(this.page);
     this.manageCryptoPage = new ManageCryptoPage(this.page);
@@ -57,7 +59,7 @@ export class OkxPage implements WalletPage<WalletTypes.EOA> {
   /** Open the home page of the wallet extension */
   async goto() {
     await this.page.goto(
-      this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+      this.extensionUrl + this.walletConfig.EXTENSION_START_PATH,
     );
   }
 
@@ -149,7 +151,7 @@ export class OkxPage implements WalletPage<WalletTypes.EOA> {
 
       // switch network for connected dApp
       await this.homePage.switchNetworkForDApp(
-        this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+        this.extensionUrl + this.walletConfig.EXTENSION_START_PATH,
         networkName,
       );
       await this.page.close();
