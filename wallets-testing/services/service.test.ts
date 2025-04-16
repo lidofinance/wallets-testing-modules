@@ -1,11 +1,10 @@
 import { BrowserService } from '@lidofinance/browser-service';
-import { ETHEREUM_WIDGET_CONFIG, TxConfig } from '../utils/consts';
 import {
   CommonWalletConfig,
   NETWORKS_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
-import { configService } from '../config';
-import { WidgetService } from './service.widget';
+import { configService, ETHEREUM_WIDGET_CONFIG } from '../config';
+import { WidgetService, TxConfig } from './service.widget';
 
 export async function initBrowserWithExtension(
   walletConfig: CommonWalletConfig,

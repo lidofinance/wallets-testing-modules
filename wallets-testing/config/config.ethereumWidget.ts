@@ -3,12 +3,6 @@ import {
   NETWORKS_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 
-export interface TxConfig {
-  txAmount: string;
-  tokenAddress?: string;
-  mappingSlot?: number;
-}
-
 export interface WidgetConfig {
   url: string;
   nodeUrl: string;

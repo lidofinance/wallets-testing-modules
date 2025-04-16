@@ -1,7 +1,7 @@
 import { EthereumNodeService } from '@lidofinance/wallets-testing-nodes';
 import { MATIC_TOKEN } from './consts';
 import { test, expect } from '@playwright/test';
-import { ETHEREUM_WIDGET_CONFIG } from '../../services';
+import { ETHEREUM_WIDGET_CONFIG } from '../../config';
 import { configService } from '../../config';
 
 test.describe('Ethereum node', () => {
