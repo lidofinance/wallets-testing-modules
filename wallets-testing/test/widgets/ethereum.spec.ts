@@ -1,6 +1,5 @@
 import {
   COIN98_COMMON_CONFIG,
-  METAMASK_COMMON_CONFIG,
   TRUST_WALLET_COMMON_CONFIG,
   COINBASE_COMMON_CONFIG,
   EXODUS_COMMON_CONFIG,
@@ -8,71 +7,70 @@ import {
   BITGET_COMMON_CONFIG,
   CTRL_COMMON_CONFIG,
   SAFE_COMMON_CONFIG,
+  METAMASK_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
-import { ETHEREUM_WIDGET_CONFIG } from '@lidofinance/wallets-testing-widgets';
-import { BrowserService } from '../../browser';
+
+import { BrowserService } from '@lidofinance/browser-service';
 import { test } from '@playwright/test';
-import { initBrowserService } from '../test.service';
+import { connectWallet, initBrowserService } from '../test.service';
 
 test.describe('Ethereum', () => {
   let browserService: BrowserService;
 
-  test.beforeAll(async () => {
-    browserService = await initBrowserService();
-  });
-
   test(`Metamask stake`, async () => {
-    await browserService.setupWithNode(
-      METAMASK_COMMON_CONFIG,
-      ETHEREUM_WIDGET_CONFIG,
-      {
-        stakeAmount: 100,
-      },
-    );
-    await browserService.stake();
+    METAMASK_COMMON_CONFIG.LATEST_STABLE_DOWNLOAD_LINK = undefined;
+    browserService = await initBrowserService(METAMASK_COMMON_CONFIG);
+    await browserService.setupWithNode();
+    const widgetService = await connectWallet(browserService);
+    await widgetService.doStaking(browserService.getWalletPage());
   });
 
   test(`Coin98 connect`, async () => {
-    await browserService.setup(COIN98_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
-    await browserService.connectWallet();
+    browserService = await initBrowserService(COIN98_COMMON_CONFIG);
+    await browserService.setup();
+    await connectWallet(browserService);
   });
 
   test(`Exodus connect`, async () => {
-    await browserService.setup(EXODUS_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
-    await browserService.connectWallet();
+    browserService = await initBrowserService(EXODUS_COMMON_CONFIG);
+    await browserService.setup();
+    await connectWallet(browserService);
   });
 
   test(`Trust connect`, async () => {
-    await browserService.setup(
-      TRUST_WALLET_COMMON_CONFIG,
-      ETHEREUM_WIDGET_CONFIG,
-    );
-    await browserService.connectWallet();
+    browserService = await initBrowserService(TRUST_WALLET_COMMON_CONFIG);
+    await browserService.setup();
+    await connectWallet(browserService);
   });
 
   test(`Coinbase connect`, async () => {
-    await browserService.setup(COINBASE_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
-    await browserService.connectWallet();
+    browserService = await initBrowserService(COINBASE_COMMON_CONFIG);
+    await browserService.setup();
+    await connectWallet(browserService);
   });
 
   test(`Ctrl connect`, async () => {
-    await browserService.setup(CTRL_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
-    await browserService.connectWallet();
+    browserService = await initBrowserService(CTRL_COMMON_CONFIG);
+    await browserService.setup();
+    await connectWallet(browserService);
   });
 
   test(`OKX connect`, async () => {
-    await browserService.setup(OKX_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
-    await browserService.connectWallet();
+    browserService = await initBrowserService(OKX_COMMON_CONFIG);
+    await browserService.setup();
+    await connectWallet(browserService);
   });
 
   test(`Bitget connect`, async () => {
-    await browserService.setup(BITGET_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
-    await browserService.connectWallet();
+    browserService = await initBrowserService(BITGET_COMMON_CONFIG);
+    await browserService.setup();
+    await connectWallet(browserService);
   });
 
   test('WC+Safe connect', async () => {
-    await browserService.setup(SAFE_COMMON_CONFIG, ETHEREUM_WIDGET_CONFIG);
-    await browserService.connectWallet();
+    browserService = await initBrowserService(SAFE_COMMON_CONFIG);
+    await browserService.setup();
+    await connectWallet(browserService);
   });
 
   test.afterEach(async () => {

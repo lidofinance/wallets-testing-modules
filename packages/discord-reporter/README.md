@@ -19,16 +19,7 @@ yarn add @lidofinance/discord-reporter
 Environment Variables
 Before running your tests, make sure the following environment variables are set:
 
-- `DISCORD_REPORTER_ENABLED`: Set to true to enable Discord notifications.
-- `DISCORD_WEBHOOK_URL`: Your Discord webhook URL where the report messages will be sent.
-- `GITHUB_SERVER_URL`: (Optional) GitHub server URL (e.g., https://github.com) if running in CI.
-- `GITHUB_REPOSITORY`: (Optional) The GitHub repository in the format username/repository.
-- `GITHUB_RUN_ID`: (Optional) The GitHub Actions run ID.
-- `GH_JOB_NAME`: (Optional) Job name from Github Actions. Example `GH_JOB_NAME: Ethereum Widget Tests (Layer-${{ matrix.layer }})`
 - `CI`: (Optional) Set to any value to indicate that tests are running in a CI environment.
-- `DISCORD_DUTY_TAG`: (Optional) an environment variable specifying the Discord user or role ID to receive test notifications. 
-  It can be either a user ID or a role ID; 
-  if it refers to a role, prefix its numeric ID with an ampersand (&), otherwise provide the numeric user ID alone.
 
 ## Playwright Configuration
 To use the reporter, update your Playwright configuration (e.g., `playwright.config.ts`) to include `@lidofinance/discord-reporter`:
@@ -46,6 +37,16 @@ const config = {
 export default config;
 ```
 
+Available options for report:
+- `enabled`- A string indicating whether the report is enabled. Typically accepts values like "true" or "false".
+- `customTitle` - An optional value for setting a custom title in the report.
+- `customDescription` - An optional value for adding a custom description or summary in the report.
+- `ciRunUrl` - An optional value pointing to the CI/CD run or job URL. Useful for referencing the pipeline run details.
+- `discordWebhookUrl` - A value containing the Discord webhook URL where the report/notification should be sent.
+- `discordDutyTag` - An optional value for specifying the Discord user or role ID to receive test notifications. 
+  It can be either a user ID or a role ID; 
+  if it refers to a role, prefix its numeric ID with an ampersand (&), otherwise provide the numeric user ID alone.
+
 Alternatively, if you use a custom configuration object with specific options, you can also pass options accordingly.
 
 ## Usage
@@ -56,9 +57,6 @@ You can use a .env file or set the environment variables in your CI/CD pipeline:
 ```env
 DISCORD_REPORTER_ENABLED=true
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/your_webhook_url
-GITHUB_SERVER_URL=https://github.com
-GITHUB_REPOSITORY=yourusername/yourrepository
-GITHUB_RUN_ID=123456789
 CI=true
 ```
 

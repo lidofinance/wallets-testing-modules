@@ -26,19 +26,13 @@
   },
   "references": [
     {
-      "path": "../packages/extensions"
+      "path": "../wallets"
     },
     {
-      "path": "../packages/nodes"
+      "path": "../nodes"
     },
     {
-      "path": "../packages/wallets"
-    },
-    {
-      "path": "../packages/widgets"
-    },
-    {
-      "path": "../packages/browser-service"
-    },
+      "path": "../extensions"
+    }
   ]
 }

@@ -24,21 +24,5 @@
     "outDir": "./dist",
     "rootDir": "."
   },
-  "references": [
-    {
-      "path": "../packages/extensions"
-    },
-    {
-      "path": "../packages/nodes"
-    },
-    {
-      "path": "../packages/wallets"
-    },
-    {
-      "path": "../packages/widgets"
-    },
-    {
-      "path": "../packages/browser-service"
-    },
-  ]
+  "references": []
 }
