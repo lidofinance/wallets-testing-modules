@@ -15,6 +15,7 @@ export class NetworkList {
   networkItemText: Locator;
   editNetworkButton: Locator;
   approveAddNetworkButton: Locator;
+  showTestnetButton: Locator;
 
   constructor(public page: Page) {
     this.networkSetting = new NetworkSetting(this.page);
@@ -36,6 +37,7 @@ export class NetworkList {
     this.approveAddNetworkButton = this.page.getByTestId(
       'confirmation-submit-button',
     );
+    this.showTestnetButton = this.dialogSection.locator('label.toggle-button');
   }
 
   async getNetworkListText() {
@@ -85,8 +87,6 @@ export class NetworkList {
     } catch (Error) {
       return false;
     }
-
-    return true;
   }
 
   async addNetworkManually(networkConfig: NetworkConfig) {
@@ -108,6 +108,16 @@ export class NetworkList {
       });
       await this.networkSetting.addCustomNetwork(networkConfig);
     }
+  }
+
+  async addPopularTestnetNetwork(networkConfig: NetworkConfig) {
+    await this.networkListButton.click();
+    if (
+      await this.dialogSection.getByTestId(networkConfig.chainName).isHidden()
+    ) {
+      await this.showTestnetButton.click();
+    }
+    await this.dialogSection.getByTestId(networkConfig.chainName).click();
   }
 
   async addPopularNetwork(networkName: string) {

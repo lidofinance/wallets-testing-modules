@@ -12,7 +12,7 @@ export async function initBrowserWithExtension(
 ) {
   const browserService = new BrowserService({
     networkConfig: {
-      ...NETWORKS_CONFIG.Mainnet.ETHEREUM,
+      ...NETWORKS_CONFIG.mainnet.ETHEREUM,
       rpcUrl: configService.get('RPC_URL'),
     },
     accountConfig: {
