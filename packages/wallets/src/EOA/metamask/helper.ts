@@ -9,6 +9,12 @@ const MMPopularNetworks = [
   'Avalanche Network C-Chain',
 ];
 
-export async function isPopularNetwork(networkName: string) {
+const MMPopularTestnetNetworks = ['Sepolia', 'Linea Sepolia'];
+
+export async function isPopularMainnetNetwork(networkName: string) {
   return MMPopularNetworks.includes(networkName);
+}
+
+export async function isPopularTestnetNetwork(networkName: string) {
+  return MMPopularTestnetNetworks.includes(networkName);
 }

@@ -12,7 +12,7 @@ import {
 export async function initBrowserService(commonConfig: CommonWalletConfig) {
   return new BrowserService({
     networkConfig: {
-      ...NETWORKS_CONFIG.Mainnet.ETHEREUM,
+      ...NETWORKS_CONFIG.mainnet.ETHEREUM,
       rpcUrl: configService.get('RPC_URL'),
     },
     walletConfig: {

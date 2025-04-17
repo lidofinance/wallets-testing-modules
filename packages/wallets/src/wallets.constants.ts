@@ -60,10 +60,10 @@ export type TestnetNetworks =
   | 'UNICHAIN_SEPOLIA';
 
 export const NETWORKS_CONFIG: {
-  Mainnet: Record<MainnetNetworks, NetworkConfig>;
-  Testnet: Record<TestnetNetworks, NetworkConfig>;
+  mainnet: Record<MainnetNetworks, NetworkConfig>;
+  testnet: Record<TestnetNetworks, NetworkConfig>;
 } = {
-  Mainnet: {
+  mainnet: {
     ETHEREUM: {
       chainId: 1,
       chainName: 'Ethereum Mainnet',
@@ -177,7 +177,7 @@ export const NETWORKS_CONFIG: {
       scan: 'https://snowtrace.io/',
     },
   },
-  Testnet: {
+  testnet: {
     ETHEREUM_HOODI: {
       chainId: 560048,
       chainName: 'Ethereum Hoodi',
@@ -194,7 +194,7 @@ export const NETWORKS_CONFIG: {
     },
     ETHEREUM_SEPOLIA: {
       chainId: 11155111,
-      chainName: 'Ethereum Sepolia',
+      chainName: 'Sepolia',
       tokenSymbol: 'ETH',
       rpcUrl: 'https://sepolia.drpc.org',
       scan: 'https://sepolia.etherscan.io/',
