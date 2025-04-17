@@ -20,7 +20,10 @@
     "resolveJsonModule": true,
     "composite": true,
     "sourceMap": true,
-    "lib": ["ES2020"],
+    "lib": [
+      "ES2020",
+      "dom"
+    ],
     "outDir": "./dist",
     "rootDir": "."
   },
@@ -33,9 +36,6 @@
     },
     {
       "path": "../packages/wallets"
-    },
-    {
-      "path": "../packages/widgets"
     },
     {
       "path": "../packages/browser-service"

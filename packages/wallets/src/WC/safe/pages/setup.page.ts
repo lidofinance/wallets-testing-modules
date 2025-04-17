@@ -36,7 +36,7 @@ export class SetupPage {
       await this.page.goto(this.setupUrl);
       await this.connectWalletExtension();
       try {
-        await this.safeAccount.waitFor({ state: 'visible', timeout: 3000 });
+        await this.safeAccount.waitFor({ state: 'visible', timeout: 5000 });
       } catch {
         this.logger.error(
           "Used wallet address doesn't have any accounts in Safe",
@@ -69,7 +69,7 @@ export class SetupPage {
       await this.connectWalletBtn.click();
       try {
         await this.page
-          .getByText(this.extensionPage.config.COMMON.EXTENSION_WALLET_NAME)
+          .getByText(this.extensionPage.walletConfig.EXTENSION_WALLET_NAME)
           .waitFor({ state: 'visible', timeout: 5000 });
       } catch {
         this.logger.log(
@@ -83,7 +83,7 @@ export class SetupPage {
         const [connectWalletPage] = await Promise.all([
           this.page.context().waitForEvent('page', { timeout: 5000 }),
           this.page
-            .getByText(this.extensionPage.config.COMMON.EXTENSION_WALLET_NAME)
+            .getByText(this.extensionPage.walletConfig.EXTENSION_WALLET_NAME)
             .click(),
         ]);
         await this.extensionPage.connectWallet(connectWalletPage);

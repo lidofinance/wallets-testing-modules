@@ -1,6 +1,7 @@
 import {
+  AccountConfig,
+  CommonWalletConfig,
   NetworkConfig,
-  WalletConfig,
   WalletPage,
   WalletTypes,
 } from '@lidofinance/wallets-testing-wallets';
@@ -19,6 +20,7 @@ import {
 } from './browser.context.service';
 import { mnemonicToAccount } from 'viem/accounts';
 import { test } from '@playwright/test';
+import { ConsoleLogger } from '@nestjs/common';
 
 type NodeConfig = {
   rpcUrlToMock: string; // example: '**/api/rpc?chainId=1'
@@ -26,13 +28,15 @@ type NodeConfig = {
 
 type BrowserServiceOptions = {
   networkConfig: NetworkConfig;
-  walletConfig: WalletConfig;
+  accountConfig: AccountConfig;
+  walletConfig: CommonWalletConfig;
   nodeConfig: NodeConfig;
   browserOptions?: BrowserOptions;
 };
 
 export class BrowserService {
-  private walletPage: WalletPage<WalletTypes.EOA>;
+  private logger = new ConsoleLogger(BrowserService.name);
+  private walletPage: WalletPage<WalletTypes.WC | WalletTypes.EOA>;
   private browserContextService: BrowserContextService;
   public ethereumNodeService: EthereumNodeService;
 
@@ -41,6 +45,10 @@ export class BrowserService {
   constructor(private options: BrowserServiceOptions) {}
 
   getWalletPage() {
+    if (!this.walletPage)
+      this.logger.error(
+        '"walletPage" is not initialized. Use initWalletSetup() function',
+      );
     return this.walletPage;
   }
 
@@ -96,15 +104,15 @@ export class BrowserService {
     const extensionService = new ExtensionService();
 
     const extensionPath = await extensionService.getExtensionDirFromId(
-      this.options.walletConfig.COMMON.STORE_EXTENSION_ID,
-      this.options.walletConfig.COMMON.LATEST_STABLE_DOWNLOAD_LINK,
+      this.options.walletConfig.STORE_EXTENSION_ID,
+      this.options.walletConfig.LATEST_STABLE_DOWNLOAD_LINK,
     );
 
     const contextDataDir =
       !this.ethereumNodeService?.state &&
       `${DEFAULT_BROWSER_CONTEXT_DIR_NAME}_${
-        mnemonicToAccount(this.options.walletConfig.SECRET_PHRASE).address
-      }_${this.options.walletConfig.COMMON.WALLET_NAME}`;
+        mnemonicToAccount(this.options.accountConfig.SECRET_PHRASE).address
+      }_${this.options.walletConfig.WALLET_NAME}`;
     this.browserContextService = new BrowserContextService(extensionPath, {
       contextDataDir,
       browserOptions: this.options.browserOptions,
@@ -113,11 +121,11 @@ export class BrowserService {
     await this.browserContextService.initBrowserContext();
 
     if (
-      this.options.walletConfig.COMMON.WALLET_TYPE === WalletTypes.EOA &&
+      this.options.walletConfig.WALLET_TYPE === WalletTypes.EOA &&
       !!process.env.CI
     ) {
       const manifestContent = await extensionService.getManifestContent(
-        this.options.walletConfig.COMMON.STORE_EXTENSION_ID,
+        this.options.walletConfig.STORE_EXTENSION_ID,
       );
       test.info().annotations.push({
         type: 'wallet version',
@@ -128,21 +136,21 @@ export class BrowserService {
     const extension = new Extension(this.browserContextService.extensionId);
 
     const extensionWalletPage = new WALLET_PAGES[
-      this.options.walletConfig.COMMON.EXTENSION_WALLET_NAME
+      this.options.walletConfig.EXTENSION_WALLET_NAME
     ](
       this.browserContextService.browserContext,
       extension.url,
+      this.options.accountConfig,
       this.options.walletConfig,
     );
-    await extensionWalletPage.setup(this.options.walletConfig.NETWORK_NAME);
+    await extensionWalletPage.setup(this.options.networkConfig.chainName);
 
-    if (this.options.walletConfig.COMMON.WALLET_TYPE === WalletTypes.WC) {
-      this.walletPage = new WALLET_PAGES[
-        this.options.walletConfig.COMMON.WALLET_NAME
-      ](
+    if (this.options.walletConfig.WALLET_TYPE === WalletTypes.WC) {
+      this.walletPage = new WALLET_PAGES[this.options.walletConfig.WALLET_NAME](
         this.browserContextService.browserContext,
         extensionWalletPage,
         this.options.networkConfig.chainId,
+        this.options.accountConfig,
         this.options.walletConfig,
       );
     } else {

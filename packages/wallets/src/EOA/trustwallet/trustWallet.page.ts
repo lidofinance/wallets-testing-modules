@@ -1,6 +1,7 @@
 import {
   NetworkConfig,
-  WalletConfig,
+  AccountConfig,
+  CommonWalletConfig,
   WalletTypes,
 } from '../../wallets.constants';
 import { WalletPage } from '../../wallet.page';
@@ -14,6 +15,7 @@ import {
   LoginPage,
 } from './pages';
 import { closeUnnecessaryPages } from '../okx/helper';
+import { getCorrectNetworkName } from './helper';
 
 export class TrustWalletPage implements WalletPage<WalletTypes.EOA> {
   page: Page | undefined;
@@ -27,14 +29,15 @@ export class TrustWalletPage implements WalletPage<WalletTypes.EOA> {
   constructor(
     private browserContext: BrowserContext,
     private extensionUrl: string,
-    public config: WalletConfig,
+    public accountConfig: AccountConfig,
+    public walletConfig: CommonWalletConfig,
   ) {}
 
   async initLocators() {
-    this.onboardingPage = new OnboardingPage(this.page, this.config);
+    this.onboardingPage = new OnboardingPage(this.page, this.accountConfig);
     this.settingsPage = new SettingPage(this.page);
     this.homePage = new HomePage(this.page);
-    this.loginPage = new LoginPage(this.page, this.config);
+    this.loginPage = new LoginPage(this.page, this.accountConfig);
     this.walletOperations = new WalletOperations(this.page);
   }
 
@@ -48,7 +51,7 @@ export class TrustWalletPage implements WalletPage<WalletTypes.EOA> {
       this.page = await this.browserContext.newPage();
       await this.initLocators();
       await this.page.goto(
-        this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+        this.extensionUrl + this.walletConfig.EXTENSION_START_PATH,
       );
       await this.loginPage.unlock();
       await this.walletOperations.confirmHighRisk();
@@ -80,6 +83,7 @@ export class TrustWalletPage implements WalletPage<WalletTypes.EOA> {
 
   /** Checks the is installed the needed network and add new network to wallet (if needed) */
   async setupNetwork(networkConfig: NetworkConfig) {
+    networkConfig.chainName = getCorrectNetworkName(networkConfig.chainName);
     await test.step(`Setup "${networkConfig.chainName}" Network`, async () => {
       await this.navigate();
       if (!(await this.homePage.isNetworkExists(networkConfig.chainName))) {
@@ -90,6 +94,7 @@ export class TrustWalletPage implements WalletPage<WalletTypes.EOA> {
 
   /** Change network in the wallet */
   async changeNetwork(networkName: string) {
+    networkName = getCorrectNetworkName(networkName);
     await this.navigate();
     await this.homePage.changeNetwork(networkName);
     await this.page.close();

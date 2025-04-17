@@ -8,7 +8,6 @@ export const SAFE_COMMON_CONFIG: CommonWalletConfig = {
   STORE_EXTENSION_ID: 'nkbihfbeogaeaoehlefnkodbefgpgknn',
   CONNECT_BUTTON_NAME: 'WalletConnect',
   WALLET_TYPE: WalletTypes.WC,
-  LATEST_STABLE_DOWNLOAD_LINK:
-    'https://github.com/MetaMask/metamask-extension/releases/download/v12.10.4/metamask-chrome-12.10.4.zip',
+  LATEST_STABLE_DOWNLOAD_LINK: null,
   EXTENSION_START_PATH: '/home.html',
 };

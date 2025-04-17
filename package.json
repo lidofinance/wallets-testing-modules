@@ -40,9 +40,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "remove-widget-package",
+        "channel": "remove-widget-alpha",
+        "prerelease": "remove-widget-alpha"
       }
     ]
   }

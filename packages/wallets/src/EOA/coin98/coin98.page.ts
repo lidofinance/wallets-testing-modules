@@ -1,6 +1,11 @@
-import { WalletConfig, WalletTypes } from '../../wallets.constants';
+import {
+  AccountConfig,
+  CommonWalletConfig,
+  WalletTypes,
+} from '../../wallets.constants';
 import { WalletPage } from '../../wallet.page';
 import { test, BrowserContext, Page } from '@playwright/test';
+import { getCorrectNetworkName } from './helper';
 
 export class Coin98 implements WalletPage<WalletTypes.EOA> {
   page: Page | undefined;
@@ -8,13 +13,14 @@ export class Coin98 implements WalletPage<WalletTypes.EOA> {
   constructor(
     private browserContext: BrowserContext,
     private extensionUrl: string,
-    public config: WalletConfig,
+    public accountConfig: AccountConfig,
+    public walletConfig: CommonWalletConfig,
   ) {}
 
   async navigate() {
     await test.step('Navigate to Coin98', async () => {
       await this.page.goto(
-        this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+        this.extensionUrl + this.walletConfig.EXTENSION_START_PATH,
       );
       await this.page.reload();
       await this.closePopover(this.page);
@@ -31,6 +37,7 @@ export class Coin98 implements WalletPage<WalletTypes.EOA> {
   }
 
   async firstTimeSetup(network: string) {
+    network = getCorrectNetworkName(network);
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.page.click('button:has-text("Continue")');
@@ -38,13 +45,13 @@ export class Coin98 implements WalletPage<WalletTypes.EOA> {
       await this.page.waitForSelector('input[type=password]');
       await this.page.waitForTimeout(1000);
       const inputs = this.page.locator('input[type=password]');
-      for (const char of this.config.PASSWORD) {
+      for (const char of this.accountConfig.PASSWORD) {
         await inputs.nth(0).press(char);
         // need some input timeout since first input has validation - requires Digit,letters,special symbols.
         // If input full value validation is lagy - doesn't mark as filled required specs.
         await this.page.waitForTimeout(40);
       }
-      await inputs.nth(1).fill(this.config.PASSWORD);
+      await inputs.nth(1).fill(this.accountConfig.PASSWORD);
       // Coin98 UI bug there is 2 div with pws/confirm btn and etc - that's why [first] && [exact true]
       await this.page
         .locator('button:has-text("Confirm")')
@@ -61,13 +68,14 @@ export class Coin98 implements WalletPage<WalletTypes.EOA> {
       await this.page.fill('input[name="name"]', 'test');
       await this.page.fill(
         'div[class="relative w-full"] >> div',
-        this.config.SECRET_PHRASE.trim(),
+        this.accountConfig.SECRET_PHRASE.trim(),
       );
       await this.page
         .locator('button:has-text("Restore")')
         .first()
         .click({ force: true });
       await this.page.waitForSelector('text=Restore Wallet Successfully');
+      await this.page.close();
     });
   }
 
@@ -114,7 +122,7 @@ export class Coin98 implements WalletPage<WalletTypes.EOA> {
     await test.step('Unlock', async () => {
       await page.waitForSelector('input[name="password"]');
       if ((await page.locator('input[name="password"]').count()) > 0) {
-        await page.fill('input[name=password]', this.config.PASSWORD);
+        await page.fill('input[name=password]', this.accountConfig.PASSWORD);
         await page.click('text=Unlock Wallet');
         await this.closePopover(page);
       }

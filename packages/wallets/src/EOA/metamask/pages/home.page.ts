@@ -1,5 +1,5 @@
 import { Locator, Page, test } from '@playwright/test';
-import { WalletConfig } from '../../../wallets.constants';
+import { CommonWalletConfig } from '../../../wallets.constants';
 
 export class HomePage {
   activityTabButton: Locator;
@@ -13,7 +13,7 @@ export class HomePage {
   constructor(
     public page: Page,
     private extensionUrl: string,
-    public config: WalletConfig,
+    public walletConfig: CommonWalletConfig,
   ) {
     // Activity tab locators
     this.activityTabButton = this.page
@@ -43,7 +43,7 @@ export class HomePage {
 
   async goto() {
     await this.page.goto(
-      this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+      this.extensionUrl + this.walletConfig.EXTENSION_START_PATH,
     );
   }
 

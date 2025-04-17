@@ -1,4 +1,8 @@
-import { WalletConfig, WalletTypes } from '../../wallets.constants';
+import {
+  AccountConfig,
+  CommonWalletConfig,
+  WalletTypes,
+} from '../../wallets.constants';
 import { WalletPage } from '../../wallet.page';
 import { test, BrowserContext, Page } from '@playwright/test';
 import { OnboardingPage } from './pages';
@@ -10,12 +14,13 @@ export class ExodusPage implements WalletPage<WalletTypes.EOA> {
   constructor(
     private browserContext: BrowserContext,
     private extensionUrl: string,
-    public config: WalletConfig,
+    public accountConfig: AccountConfig,
+    public walletConfig: CommonWalletConfig,
   ) {}
 
   /** Init all page objects Classes included to wallet */
   async initLocators() {
-    this.onboardingPage = new OnboardingPage(this.page, this.config);
+    this.onboardingPage = new OnboardingPage(this.page, this.accountConfig);
   }
 
   /** Navigate to home page of OXK Wallet extension:
@@ -27,7 +32,7 @@ export class ExodusPage implements WalletPage<WalletTypes.EOA> {
       this.page = await this.browserContext.newPage();
       await this.initLocators();
       await this.page.goto(
-        this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+        this.extensionUrl + this.walletConfig.EXTENSION_START_PATH,
       );
       await this.page.reload();
       await this.page.waitForTimeout(1000);
@@ -53,7 +58,7 @@ export class ExodusPage implements WalletPage<WalletTypes.EOA> {
       ) {
         await this.page.fill(
           'input[placeholder="Enter password"]',
-          this.config.PASSWORD,
+          this.accountConfig.PASSWORD,
         );
         await this.page.click('text=Unlock');
       }

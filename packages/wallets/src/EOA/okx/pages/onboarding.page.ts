@@ -1,5 +1,5 @@
 import { Locator, Page, test } from '@playwright/test';
-import { WalletConfig } from '../../../wallets.constants';
+import { AccountConfig } from '../../../wallets.constants';
 
 export class OnboardingPage {
   importWalletButton: Locator;
@@ -14,7 +14,7 @@ export class OnboardingPage {
 
   constructor(
     public page: Page,
-    public config: WalletConfig,
+    public accountConfig: AccountConfig,
     extensionHomeUrl: string,
   ) {
     this.importWalletButton = this.page.locator(
@@ -44,7 +44,7 @@ export class OnboardingPage {
       await this.page.goto(this.extensionSetupUrl);
 
       await test.step('Fill the secret phrase', async () => {
-        const seedWords = this.config.SECRET_PHRASE.split(' ');
+        const seedWords = this.accountConfig.SECRET_PHRASE.split(' ');
         for (let i = 0; i < seedWords.length; i++) {
           await this.seedPhraseInputs.nth(i).fill(seedWords[i]);
         }
@@ -53,8 +53,8 @@ export class OnboardingPage {
       });
 
       await test.step('Fill the password', async () => {
-        await this.passwordInput.nth(0).fill(this.config.PASSWORD);
-        await this.passwordInput.nth(1).fill(this.config.PASSWORD);
+        await this.passwordInput.nth(0).fill(this.accountConfig.PASSWORD);
+        await this.passwordInput.nth(1).fill(this.accountConfig.PASSWORD);
         await this.confirmButton.click();
       });
 

@@ -1,5 +1,5 @@
 import { Locator, Page, test } from '@playwright/test';
-import { WalletConfig } from '../../../wallets.constants';
+import { AccountConfig } from '../../../wallets.constants';
 
 export class OnboardingPage {
   termsCheckboxButton: Locator;
@@ -15,7 +15,7 @@ export class OnboardingPage {
   pinExtensionNextButton: Locator;
   pinExtensionDoneButton: Locator;
 
-  constructor(public page: Page, public config: WalletConfig) {
+  constructor(public page: Page, public accountConfig: AccountConfig) {
     this.termsCheckboxButton = this.page.getByTestId(
       'onboarding-terms-checkbox',
     );
@@ -41,9 +41,9 @@ export class OnboardingPage {
       await this.confirmTermsOfOnboarding();
       await this.importWalletButton.click();
       await this.metricAgreeButton.click();
-      await this.fillSecretPhrase(this.config.SECRET_PHRASE);
+      await this.fillSecretPhrase(this.accountConfig.SECRET_PHRASE);
       await this.secretPhraseImportButton.click();
-      await this.createPassword(this.config.PASSWORD);
+      await this.createPassword(this.accountConfig.PASSWORD);
       await this.completeButton.click();
       await this.pinExtensionNextButton.click();
       await this.pinExtensionDoneButton.click();

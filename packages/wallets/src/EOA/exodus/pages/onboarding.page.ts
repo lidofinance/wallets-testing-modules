@@ -1,5 +1,5 @@
 import { Locator, Page, test } from '@playwright/test';
-import { WalletConfig } from '../../../wallets.constants';
+import { AccountConfig } from '../../../wallets.constants';
 
 export class OnboardingPage {
   iHaveWalletBtn: Locator;
@@ -9,7 +9,7 @@ export class OnboardingPage {
   nextButton: Locator;
   finishOnboardingBtn: Locator;
 
-  constructor(public page: Page, public config: WalletConfig) {
+  constructor(public page: Page, public accountConfig: AccountConfig) {
     this.iHaveWalletBtn = this.page.getByTestId(
       'exodusmovement.exodus:id/button-already-have-a-wallet',
     );
@@ -37,14 +37,17 @@ export class OnboardingPage {
       await this.iHaveWalletBtn.click();
 
       await test.step('Fill the seed phrase', async () => {
-        await this.page.fill('input[type="text"]', this.config.SECRET_PHRASE);
+        await this.page.fill(
+          'input[type="text"]',
+          this.accountConfig.SECRET_PHRASE,
+        );
         await this.restoreWalletBtn.click();
       });
 
       await test.step('Setup wallet password', async () => {
-        await this.walletPassword.fill(this.config.PASSWORD);
+        await this.walletPassword.fill(this.accountConfig.PASSWORD);
         await this.nextButton.click();
-        await this.repeatWalletPassword.fill(this.config.PASSWORD);
+        await this.repeatWalletPassword.fill(this.accountConfig.PASSWORD);
         await this.nextButton.click();
       });
 

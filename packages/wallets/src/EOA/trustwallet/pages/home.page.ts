@@ -21,7 +21,10 @@ export class HomePage {
   async changeNetwork(networkName: string) {
     await test.step(`Change Trust network to ${networkName}`, async () => {
       await this.networkListBtn.click();
-      await this.networkRow.getByText(networkName).click();
+      await this.networkRow.getByText(networkName, { exact: true }).click();
+      await this.networkRow
+        .getByText(networkName, { exact: true })
+        .waitFor({ state: 'hidden' });
     });
   }
 
@@ -29,7 +32,9 @@ export class HomePage {
     return await test.step('Check the network is exists', async () => {
       await this.networkListBtn.click();
       const isNetworkExists =
-        (await this.networkRow.getByText(networkName).count()) > 0;
+        (await this.networkRow
+          .getByText(networkName, { exact: true })
+          .count()) > 0;
       await this.networkListBtn.click();
       return isNetworkExists;
     });

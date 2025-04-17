@@ -1,6 +1,7 @@
 import {
+  AccountConfig,
+  CommonWalletConfig,
   NetworkConfig,
-  WalletConfig,
   WalletTypes,
 } from '../../wallets.constants';
 import { WalletPage } from '../../wallet.page';
@@ -15,14 +16,15 @@ export class CoinbasePage implements WalletPage<WalletTypes.EOA> {
   constructor(
     private browserContext: BrowserContext,
     private extensionUrl: string,
-    public config: WalletConfig,
+    public accountConfig: AccountConfig,
+    public walletConfig: CommonWalletConfig,
   ) {}
 
   async navigate() {
     await test.step('Navigate to coinbase', async () => {
       this.page = await this.browserContext.newPage();
       await this.page.goto(
-        this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+        this.extensionUrl + this.walletConfig.EXTENSION_START_PATH,
       );
       await this.page.reload();
       await this.page.waitForTimeout(1000);
@@ -46,7 +48,10 @@ export class CoinbasePage implements WalletPage<WalletTypes.EOA> {
     await test.step('Unlock', async () => {
       if (!this.page) throw "Page isn't ready";
       if ((await this.page.locator('id=Unlock with password').count()) > 0) {
-        await this.page.fill('id=Unlock with password', this.config.PASSWORD);
+        await this.page.fill(
+          'id=Unlock with password',
+          this.accountConfig.PASSWORD,
+        );
         await this.page.click('text=Unlock');
       }
     });
@@ -65,15 +70,18 @@ export class CoinbasePage implements WalletPage<WalletTypes.EOA> {
       } catch (error) {
         this.logger.warn('The popup did not appear, skipping the click.');
       }
-      await this.page.fill('input[type=input]', this.config.SECRET_PHRASE);
+      await this.page.fill(
+        'input[type=input]',
+        this.accountConfig.SECRET_PHRASE,
+      );
       await this.page.click('button:has-text("Import wallet")');
       await this.page.fill(
         'input[placeholder="Enter password"]',
-        this.config.PASSWORD,
+        this.accountConfig.PASSWORD,
       );
       await this.page.fill(
         'input[placeholder="Enter password again"]',
-        this.config.PASSWORD,
+        this.accountConfig.PASSWORD,
       );
       await this.page.click('data-testid=terms-and-privacy-policy');
 
