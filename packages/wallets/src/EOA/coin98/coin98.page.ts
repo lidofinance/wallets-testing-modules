@@ -5,6 +5,7 @@ import {
 } from '../../wallets.constants';
 import { WalletPage } from '../../wallet.page';
 import { test, BrowserContext, Page } from '@playwright/test';
+import { getCorrectNetworkName } from './helper';
 
 export class Coin98 implements WalletPage<WalletTypes.EOA> {
   page: Page | undefined;
@@ -36,6 +37,7 @@ export class Coin98 implements WalletPage<WalletTypes.EOA> {
   }
 
   async firstTimeSetup(network: string) {
+    network = getCorrectNetworkName(network);
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.page.click('button:has-text("Continue")');
@@ -73,6 +75,7 @@ export class Coin98 implements WalletPage<WalletTypes.EOA> {
         .first()
         .click({ force: true });
       await this.page.waitForSelector('text=Restore Wallet Successfully');
+      await this.page.close();
     });
   }
 
