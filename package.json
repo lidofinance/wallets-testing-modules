@@ -40,9 +40,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "axios-deps",
+        "channel": "axios-deps",
+        "prerelease": "axios-deps"
       }
     ]
   }
