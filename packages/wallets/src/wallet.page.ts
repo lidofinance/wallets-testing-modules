@@ -1,7 +1,8 @@
 import { Page } from '@playwright/test';
 import {
+  AccountConfig,
+  CommonWalletConfig,
   NetworkConfig,
-  WalletConfig,
   WalletType,
   WalletTypes,
 } from './wallets.constants';
@@ -12,7 +13,8 @@ import {
  * and lets to manage these wallets with included methods*/
 export interface WalletPage<T extends WalletType> {
   page: Page | undefined;
-  config: WalletConfig;
+  accountConfig: AccountConfig;
+  walletConfig: CommonWalletConfig;
 
   setup(network?: string): Promise<void>;
 

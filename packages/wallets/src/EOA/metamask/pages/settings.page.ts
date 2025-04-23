@@ -1,5 +1,5 @@
 import { Locator, Page, test } from '@playwright/test';
-import { WalletConfig } from '../../../wallets.constants';
+import { CommonWalletConfig } from '../../../wallets.constants';
 
 export class SettingsPage {
   tabBarMenu: Locator;
@@ -11,7 +11,7 @@ export class SettingsPage {
   constructor(
     public page: Page,
     private extensionUrl: string,
-    public config: WalletConfig,
+    public walletConfig: CommonWalletConfig,
   ) {
     this.tabBarMenu = this.page.locator('.tab-bar');
     this.experimentalTabButton = this.tabBarMenu
@@ -30,7 +30,7 @@ export class SettingsPage {
     await test.step('Open wallet setting page', async () => {
       await this.page.goto(
         this.extensionUrl +
-          this.config.COMMON.EXTENSION_START_PATH +
+          this.walletConfig.EXTENSION_START_PATH +
           '#settings',
       );
     });

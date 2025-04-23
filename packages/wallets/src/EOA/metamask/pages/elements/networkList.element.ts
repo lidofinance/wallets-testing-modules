@@ -87,8 +87,6 @@ export class NetworkList {
     } catch (Error) {
       return false;
     }
-
-    return true;
   }
 
   async addNetworkManually(networkConfig: NetworkConfig) {

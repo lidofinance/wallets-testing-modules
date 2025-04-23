@@ -1,5 +1,5 @@
 import { Locator, Page, test, expect } from '@playwright/test';
-import { WalletConfig } from '../../../wallets.constants';
+import { AccountConfig } from '../../../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 
 export class OnboardingPage {
@@ -12,7 +12,7 @@ export class OnboardingPage {
   seedPhraseInputs: Locator;
   noThanksBtn: Locator;
 
-  constructor(public page: Page, public config: WalletConfig) {
+  constructor(public page: Page, public accountConfig: AccountConfig) {
     this.importWalletBtn = this.page.getByText('Recover with mnemonic');
     this.newPasswordInput = this.page.getByTestId('password-field');
     this.agreementCheckbox = this.page.locator('input[type=checkbox]');
@@ -42,8 +42,8 @@ export class OnboardingPage {
       }
 
       await test.step('Setup wallet password', async () => {
-        await this.newPasswordInput.nth(0).fill(this.config.PASSWORD);
-        await this.newPasswordInput.nth(1).fill(this.config.PASSWORD);
+        await this.newPasswordInput.nth(0).fill(this.accountConfig.PASSWORD);
+        await this.newPasswordInput.nth(1).fill(this.accountConfig.PASSWORD);
         await this.agreementCheckbox.click();
         await this.nextBtn.click();
       });
@@ -60,7 +60,7 @@ export class OnboardingPage {
           state: 'visible',
           timeout: 2000,
         });
-        const seedWords = this.config.SECRET_PHRASE.split(' ');
+        const seedWords = this.accountConfig.SECRET_PHRASE.split(' ');
         for (let i = 0; i < seedWords.length; i++) {
           await this.seedPhraseInputs.nth(i).fill(seedWords[i]);
         }

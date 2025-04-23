@@ -1,4 +1,8 @@
-import { WalletConfig, WalletTypes } from '../../wallets.constants';
+import {
+  AccountConfig,
+  CommonWalletConfig,
+  WalletTypes,
+} from '../../wallets.constants';
 import { WalletPage } from '../../wallet.page';
 import { test, BrowserContext, Page } from '@playwright/test';
 
@@ -8,14 +12,15 @@ export class BitgetPage implements WalletPage<WalletTypes.EOA> {
   constructor(
     private browserContext: BrowserContext,
     private extensionUrl: string,
-    public config: WalletConfig,
+    public accountConfig: AccountConfig,
+    public walletConfig: CommonWalletConfig,
   ) {}
 
   async navigate() {
     await test.step('Navigate to Bitget', async () => {
       this.page = await this.browserContext.newPage();
       await this.page.goto(
-        this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+        this.extensionUrl + this.walletConfig.EXTENSION_START_PATH,
       );
       await this.page.reload();
       await this.page.waitForTimeout(1000);
@@ -41,7 +46,7 @@ export class BitgetPage implements WalletPage<WalletTypes.EOA> {
     await test.step('Unlock', async () => {
       if (!this.page) throw "Page isn't ready";
       if ((await this.page.locator('id=password').count()) > 0) {
-        await this.page.fill('id=password', this.config.PASSWORD);
+        await this.page.fill('id=password', this.accountConfig.PASSWORD);
         await this.page.click('text=Unlock');
       }
     });
@@ -53,15 +58,15 @@ export class BitgetPage implements WalletPage<WalletTypes.EOA> {
       await this.page.click("button:has-text('Import a wallet')");
       await this.page.fill(
         "input:below(div > p:has-text('Enter password'))",
-        this.config.PASSWORD,
+        this.accountConfig.PASSWORD,
       );
       await this.page.fill(
         "input:below(p:has-text('Confirm password'))",
-        this.config.PASSWORD,
+        this.accountConfig.PASSWORD,
       );
       await this.page.click("button:has-text('Next')");
       const inputs = this.page.locator('.wordInput-contaniner-input');
-      const seedWords = this.config.SECRET_PHRASE.split(' ');
+      const seedWords = this.accountConfig.SECRET_PHRASE.split(' ');
       for (let i = 0; i < seedWords.length; i++) {
         await inputs.nth(i).fill(seedWords[i]);
       }

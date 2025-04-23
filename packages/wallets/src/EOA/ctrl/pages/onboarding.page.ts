@@ -1,5 +1,5 @@
 import { Locator, Page, test, expect } from '@playwright/test';
-import { WalletConfig } from '../../../wallets.constants';
+import { AccountConfig, CommonWalletConfig } from '../../../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 
 export class OnboardingPage {
@@ -17,7 +17,8 @@ export class OnboardingPage {
   constructor(
     public page: Page,
     private extensionUrl: string,
-    public config: WalletConfig,
+    public accountConfig: AccountConfig,
+    public walletConfig: CommonWalletConfig,
   ) {
     this.alreadyHaveWalletBtn = this.page.getByTestId(
       'i-already-have-a-wallet-btn',
@@ -46,7 +47,7 @@ export class OnboardingPage {
 
       await test.step('Import wallet with recovery phrase', async () => {
         await this.importRecoveryPhraseBtn.click();
-        const seedWords = this.config.SECRET_PHRASE.split(' ');
+        const seedWords = this.accountConfig.SECRET_PHRASE.split(' ');
         for (let i = 0; i < seedWords.length; i++) {
           await this.passwordInput.nth(i).fill(seedWords[i]);
         }
@@ -58,7 +59,7 @@ export class OnboardingPage {
       });
 
       await this.page.goto(
-        this.extensionUrl + this.config.COMMON.EXTENSION_START_PATH,
+        this.extensionUrl + this.walletConfig.EXTENSION_START_PATH,
       );
 
       await test.step('Close wallet tour', async () => {
@@ -68,8 +69,8 @@ export class OnboardingPage {
 
       await test.step('Create wallet password', async () => {
         await this.createPasswordBtn.click();
-        await this.passwordInput.nth(0).fill(this.config.PASSWORD);
-        await this.passwordInput.nth(1).fill(this.config.PASSWORD);
+        await this.passwordInput.nth(0).fill(this.accountConfig.PASSWORD);
+        await this.passwordInput.nth(1).fill(this.accountConfig.PASSWORD);
         await this.confirmPasswordBtn.click();
       });
     });

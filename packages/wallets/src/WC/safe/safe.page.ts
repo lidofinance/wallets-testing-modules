@@ -2,7 +2,11 @@ import { BrowserContext, Page, test } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
 import { HomePage, SetupPage } from './pages';
 import { WalletPage } from '../../wallet.page';
-import { WalletConfig, WalletTypes } from '../../wallets.constants';
+import {
+  AccountConfig,
+  CommonWalletConfig,
+  WalletTypes,
+} from '../../wallets.constants';
 
 export class SafePage implements WalletPage<WalletTypes.WC> {
   page: Page | undefined;
@@ -15,7 +19,8 @@ export class SafePage implements WalletPage<WalletTypes.WC> {
     private browserContext: BrowserContext,
     public extensionPage: WalletPage<WalletTypes.EOA>,
     public chainId: 1 | 17000,
-    public config: WalletConfig,
+    public accountConfig: AccountConfig,
+    public walletConfig: CommonWalletConfig,
   ) {}
 
   async initLocators() {

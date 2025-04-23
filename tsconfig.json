@@ -41,9 +41,6 @@
       "path": "packages/wallets"
     },
     {
-      "path": "packages/widgets"
-    },
-    {
       "path": "wallets-testing"
     }
   ]
