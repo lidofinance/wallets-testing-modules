@@ -10,7 +10,11 @@ import {
   METAMASK_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import { test } from '@playwright/test';
-import { connectWallet, initBrowserWithExtension, stake } from '../../services';
+import {
+  connectWallet,
+  initBrowserWithExtension,
+  stake,
+} from '../../utils/helpers';
 import { BrowserService } from '@lidofinance/browser-service';
 
 test.describe('Ethereum', () => {
