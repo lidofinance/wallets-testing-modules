@@ -20,7 +20,6 @@ export type WalletType = WalletTypes.WC | WalletTypes.EOA;
 export interface AccountConfig {
   SECRET_PHRASE: string;
   PASSWORD: string;
-  EXTENSION_PATH?: string;
 }
 
 export interface NetworkConfig {
