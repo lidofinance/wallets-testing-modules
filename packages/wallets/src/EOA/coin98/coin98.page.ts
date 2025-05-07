@@ -40,8 +40,8 @@ export class Coin98 implements WalletPage<WalletTypes.EOA> {
     network = getCorrectNetworkName(network);
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
-      await this.page.click('button:has-text("Continue")');
-      await this.page.click('button:has-text("Confirm")');
+      await this.page.locator('button:has-text("Continue")').click();
+      await this.page.locator('button:has-text("Continue")').last().click();
       await this.page.waitForSelector('input[type=password]');
       await this.page.waitForTimeout(1000);
       const inputs = this.page.locator('input[type=password]');
