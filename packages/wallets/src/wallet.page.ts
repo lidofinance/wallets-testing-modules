@@ -1,21 +1,34 @@
 import { Page } from '@playwright/test';
-import { NetworkConfig, WalletConfig } from './wallets.constants';
+import {
+  AccountConfig,
+  CommonWalletConfig,
+  NetworkConfig,
+  WalletType,
+  WalletTypes,
+} from './wallets.constants';
 
-export interface WalletPage {
+/** - T -> WalletTypes.EOA describes the EOA wallets (_like Metamask, OKX, Trust etc._)
+ * and lets to manage these wallets with included methods
+ * - T -> WalletTypes.WC describes the connection with WalletConnect wallet (_like Safe etc._)
+ * and lets to manage these wallets with included methods*/
+export interface WalletPage<T extends WalletType> {
   page: Page | undefined;
-  config: WalletConfig;
+  accountConfig: AccountConfig;
+  walletConfig: CommonWalletConfig;
 
   setup(network?: string): Promise<void>;
 
   importKey(key: string): Promise<void>;
 
-  connectWallet(page: Page): Promise<void>;
+  connectWallet(
+    param: T extends WalletTypes.EOA ? Page : string,
+  ): Promise<void>;
 
   assertTxAmount(page: Page, expectedAmount: string): Promise<void>;
 
   confirmTx(page: Page, setAggressiveGas?: boolean): Promise<void>;
 
-  cancelTx?(page: Page): Promise<void>;
+  cancelTx(page: Page): Promise<void>;
 
   approveTokenTx?(page: Page): Promise<void>;
 

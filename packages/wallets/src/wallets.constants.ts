@@ -1,20 +1,25 @@
 export interface CommonWalletConfig {
-  WALLET_NAME: string;
-  CONNECTED_WALLET_NAME: string;
+  WALLET_NAME: string; // Name of the wallet being tested
+  EXTENSION_WALLET_NAME: string; // Wallet name for install extension
+  CONNECTED_WALLET_NAME: string; // Displayed name of connected wallet
+  CONNECT_BUTTON_NAME: string; // Button name in the wallet list
   RPC_URL_PATTERN: string;
   STORE_EXTENSION_ID: string;
-  CONNECT_BUTTON_NAME: string;
-  SIMPLE_CONNECT: boolean;
-  // optional stable link for test
-  LATEST_STABLE_DOWNLOAD_LINK?: string;
-  EXTENSION_START_PATH: string;
+  WALLET_TYPE: WalletType;
+  LATEST_STABLE_DOWNLOAD_LINK?: string; // Link to stable wallet extension version for test (optional)
+  EXTENSION_START_PATH: string; // Start path for wallet setup
 }
 
-export interface WalletConfig {
+export enum WalletTypes {
+  EOA = 'EOA',
+  WC = 'WC',
+}
+
+export type WalletType = WalletTypes.WC | WalletTypes.EOA;
+
+export interface AccountConfig {
   SECRET_PHRASE: string;
   PASSWORD: string;
-  COMMON: CommonWalletConfig;
-  EXTENSION_PATH?: string;
 }
 
 export interface NetworkConfig {
@@ -29,6 +34,7 @@ type MainnetNetworks =
   | 'ETHEREUM'
   | 'OPTIMISM'
   | 'SONEIUM'
+  | 'UNICHAIN'
   | 'ZKSYNC'
   | 'ARBITRUM'
   | 'POLYGON'
@@ -38,19 +44,23 @@ type MainnetNetworks =
   | 'MANTLE'
   | 'SCROLL'
   | 'MODE'
-  | 'ZIRCUIT';
+  | 'ZIRCUIT'
+  | 'LISK'
+  | 'AVAX';
 
 export type TestnetNetworks =
+  | 'ETHEREUM_HOODI'
   | 'ETHEREUM_HOLESKY'
   | 'ETHEREUM_SEPOLIA'
   | 'OP_SEPOLIA'
-  | 'SONEIUM_MINATO';
+  | 'SONEIUM_MINATO'
+  | 'UNICHAIN_SEPOLIA';
 
 export const NETWORKS_CONFIG: {
-  Mainnet: Record<MainnetNetworks, NetworkConfig>;
-  Testnet: Record<TestnetNetworks, NetworkConfig>;
+  mainnet: Record<MainnetNetworks, NetworkConfig>;
+  testnet: Record<TestnetNetworks, NetworkConfig>;
 } = {
-  Mainnet: {
+  mainnet: {
     ETHEREUM: {
       chainId: 1,
       chainName: 'Ethereum Mainnet',
@@ -62,7 +72,7 @@ export const NETWORKS_CONFIG: {
       chainId: 10,
       chainName: 'OP Mainnet',
       tokenSymbol: 'ETH',
-      rpcUrl: 'https://rpc.ankr.com/optimism',
+      rpcUrl: 'https://mainnet.optimism.io',
       scan: '',
     },
     SONEIUM: {
@@ -71,6 +81,13 @@ export const NETWORKS_CONFIG: {
       tokenSymbol: 'ETH',
       rpcUrl: 'https://rpc.soneium.org/',
       scan: 'https://soneium-minato.blockscout.com/',
+    },
+    UNICHAIN: {
+      chainId: 130,
+      chainName: 'Unichain',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://unichain-rpc.publicnode.com/',
+      scan: 'https://uniscan.xyz/',
     },
     ZKSYNC: {
       chainId: 324,
@@ -142,8 +159,29 @@ export const NETWORKS_CONFIG: {
       rpcUrl: 'https://zircuit1-mainnet.p2pify.com',
       scan: '',
     },
+    LISK: {
+      chainId: 1135,
+      chainName: 'Lisk',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://rpc.api.lisk.com/',
+      scan: '',
+    },
+    AVAX: {
+      chainId: 43114,
+      chainName: 'Avalanche Network C-Chain',
+      tokenSymbol: 'AVAX',
+      rpcUrl: null,
+      scan: 'https://snowtrace.io/',
+    },
   },
-  Testnet: {
+  testnet: {
+    ETHEREUM_HOODI: {
+      chainId: 560048,
+      chainName: 'Ethereum Hoodi',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://rpc.hoodi.ethpandaops.io/',
+      scan: 'https://explorer.hoodi.ethpandaops.io/',
+    },
     ETHEREUM_HOLESKY: {
       chainId: 17000,
       chainName: 'Ethereum Holesky',
@@ -153,7 +191,7 @@ export const NETWORKS_CONFIG: {
     },
     ETHEREUM_SEPOLIA: {
       chainId: 11155111,
-      chainName: 'Ethereum Sepolia',
+      chainName: 'Sepolia',
       tokenSymbol: 'ETH',
       rpcUrl: 'https://sepolia.drpc.org',
       scan: 'https://sepolia.etherscan.io/',
@@ -171,6 +209,13 @@ export const NETWORKS_CONFIG: {
       tokenSymbol: 'ETH',
       rpcUrl: 'https://rpc.minato.soneium.org/',
       scan: 'https://soneium-minato.blockscout.com/',
+    },
+    UNICHAIN_SEPOLIA: {
+      chainId: 1301,
+      chainName: 'Unichain Sepolia',
+      tokenSymbol: 'ETH',
+      rpcUrl: 'https://unichain-sepolia-rpc.publicnode.com/',
+      scan: 'https://unichain.sepolia.xyz/',
     },
   },
 };

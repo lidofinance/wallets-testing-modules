@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, ConsoleLogger } from '@nestjs/common';
 import axios from 'axios';
 import * as unzipper from 'unzipper';
 import { once } from 'events';
@@ -14,7 +14,7 @@ export class ExtensionService {
   staleExtensionDirs: string[] = [];
   extensionDirBasePath = path.join(__dirname, 'extension');
   idToExtension: Record<string, string> = {};
-  private readonly logger = new Logger(ExtensionService.name);
+  private readonly logger = new ConsoleLogger(ExtensionService.name);
   private versions: Map<string, string> = new Map();
 
   async getExtensionDirFromId(
@@ -26,10 +26,17 @@ export class ExtensionService {
     return this.idToExtension[id];
   }
 
-  async getManifestVersion(extensionDir: string): Promise<Manifest> {
-    const content = await fs.readFile(extensionDir + '/manifest.json');
-    return JSON.parse(String(content)).manifest_version;
+  async getManifestContent(extensionId: string) {
+    const content = await fs.readFile(
+      this.idToExtension[extensionId] + '/manifest.json',
+    );
+    return JSON.parse(String(content));
   }
+
+  async getManifestVersion(extensionId: string): Promise<Manifest> {
+    return (await this.getManifestContent(extensionId)).manifest_version;
+  }
+
   async createExtensionDirById(id: string) {
     const extensionDirById = `${this.extensionDirBasePath}/${id}`;
     try {

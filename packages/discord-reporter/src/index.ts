@@ -5,24 +5,51 @@ import {
   TestResult,
 } from '@playwright/test/reporter';
 import axios from 'axios';
+import { ConsoleLogger } from '@nestjs/common';
 
-interface EmbedField {
+const GREEN = 47872;
+const RED = 13959168;
+
+type EmbedField = {
   name: string;
   value: string;
   inline?: boolean;
-}
+};
 
-interface Embed {
+type Embed = {
   title: string;
   description: string;
   color: number;
   fields: EmbedField[];
   url?: string;
-}
+};
 
-interface WebhookPayload {
+type WebhookPayload = {
+  content?: string;
   embeds: Embed[];
-}
+};
+
+type ReporterOptions = {
+  enabled: string;
+  customTitle?: string;
+  customDescription?: string;
+  ciRunUrl?: string;
+  discordWebhookUrl: string;
+  discordDutyTag?: string;
+};
+
+type Status = {
+  content?: string;
+  color: number;
+  title: string;
+};
+
+type ResultToStatus = {
+  passed: Status;
+  failed: Status;
+  timedout: Status;
+  interrupted: Status;
+};
 
 const testStatusToEmoji = {
   passed: '✅',
@@ -30,65 +57,76 @@ const testStatusToEmoji = {
   timedOut: '❌',
   skipped: '⏸️',
   interrupted: '❌',
+  flaky: '🎲',
 };
-
-const GREEN = 47872;
-const RED = 13959168;
-
-const resultToStatus = {
-  passed: { color: GREEN, title: '🎉 Testing Completed!' },
-  failed: { color: RED, title: `${testStatusToEmoji.failed} Testing Failed!` },
-  timedout: {
-    color: RED,
-    title: `${testStatusToEmoji.failed} Testing Failed!`,
-  },
-  interrupted: {
-    color: RED,
-    title: `${testStatusToEmoji.failed} Testing Failed!`,
-  },
-};
-
-interface ReporterOptions {
-  enabled: string;
-}
 
 class DiscordReporter implements Reporter {
+  logger = new ConsoleLogger(DiscordReporter.name);
   private enabled: boolean;
+  private options: ReporterOptions;
+  private resultToStatus: ResultToStatus;
 
-  private webhookUrl: string;
   private passedTestCount = 0;
   private failedTestCount = 0;
+  private flakyTestCount = 0;
   private skippedTestCount = 0;
 
   constructor(options: ReporterOptions) {
+    this.options = options;
     this.enabled = options.enabled
       ? options.enabled.toLowerCase() === 'true'
       : true;
 
     if (!this.enabled) return;
 
-    const webhook = process.env.DISCORD_WEBHOOK_URL;
-    if (!webhook) {
-      console.error(
-        'DISCORD_WEBHOOK_URL is not defined in environment variables',
+    if (!this.options.discordWebhookUrl) {
+      this.logger.error(
+        'discordWebhookUrl is not defined in environment variables',
       );
       this.enabled = false;
       return;
     }
-    this.webhookUrl = webhook;
+
+    this.resultToStatus = {
+      passed: {
+        content: undefined,
+        color: GREEN,
+        title: '🧘 Testing Completed!',
+      },
+      failed: {
+        content:
+          this.options.discordDutyTag &&
+          `<@${this.options.discordDutyTag}> please take a look at the test results`,
+        color: RED,
+        title: `${testStatusToEmoji.failed} Testing Failed!`,
+      },
+      timedout: {
+        content: undefined,
+        color: RED,
+        title: `${testStatusToEmoji.failed} Testing Failed!`,
+      },
+      interrupted: {
+        content: undefined,
+        color: RED,
+        title: `${testStatusToEmoji.failed} Testing Failed!`,
+      },
+    };
   }
 
   async sendDiscordWebhook(payload: WebhookPayload) {
     try {
-      console.log(JSON.stringify(payload));
-      const response = await axios.post(this.webhookUrl, payload, {
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await axios.post(
+        this.options.discordWebhookUrl,
+        payload,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      });
-      console.log('Discord message successfully sended:', response.status);
+      );
+      this.logger.log(`Discord message successfully sent: ${response.status}`);
     } catch (error: any) {
-      console.error('Error while discord message sended:', error?.message);
+      this.logger.error(`Error while discord message sent: ${error?.message}`);
     }
   }
 
@@ -96,12 +134,18 @@ class DiscordReporter implements Reporter {
     if (!this.enabled) return;
     switch (result.status) {
       case 'passed':
-        this.passedTestCount++;
+        if (result.retry > 0) {
+          this.flakyTestCount = (this.flakyTestCount ?? 0) + 1;
+        } else {
+          this.passedTestCount++;
+        }
         break;
       case 'failed':
       case 'timedOut':
       case 'interrupted': {
-        this.failedTestCount++;
+        if (result.retry === test.retries) {
+          this.failedTestCount++;
+        }
         break;
       }
       case 'skipped':
@@ -113,14 +157,19 @@ class DiscordReporter implements Reporter {
   async onEnd(result: FullResult) {
     if (!this.enabled) return;
     const duration = this.formatDuration(result.duration);
-    const githubRunUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
 
     const payload: WebhookPayload = {
+      content: this.resultToStatus[result.status].content,
       embeds: [
         {
-          title: resultToStatus[result.status].title,
-          description: 'Here are the test run results:',
-          color: resultToStatus[result.status].color,
+          title: `${this.resultToStatus[result.status].title} ${
+            this.options.customTitle || ''
+          }`,
+          description:
+            (this.options.customDescription ||
+              'Here are the test run results:') +
+            `\n- View [GitHub Run](${this.options.ciRunUrl})`,
+          color: this.resultToStatus[result.status].color,
           fields: [
             {
               name: `${testStatusToEmoji.passed} Passed`,
@@ -132,25 +181,25 @@ class DiscordReporter implements Reporter {
               value: `${this.failedTestCount}`,
               inline: true,
             },
+            { name: '', value: '', inline: true }, // just empty column
             {
               name: `${testStatusToEmoji.skipped} Skipped`,
               value: `${this.skippedTestCount}`,
               inline: true,
             },
             {
+              name: `${testStatusToEmoji.flaky} Flaky`,
+              value: `${this.flakyTestCount}`,
+              inline: true,
+            },
+            { name: '', value: '', inline: true }, // just empty column
+            {
               name: '⏳ Run Time',
               value: `${duration}`,
               inline: false,
             },
-            {
-              name: '🔗 GitHub Run',
-              value: process.env.CI
-                ? `[View GitHub Run](${githubRunUrl})`
-                : 'Local run',
-              inline: true,
-            },
           ],
-          url: process.env.CI ? githubRunUrl : undefined,
+          url: this.options.ciRunUrl,
         },
       ],
     };
