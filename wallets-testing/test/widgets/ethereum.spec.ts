@@ -10,19 +10,22 @@ import {
   METAMASK_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import { test } from '@playwright/test';
-import { connectWallet, initBrowserWithExtension } from '../../utils/helpers';
+import {
+  connectWallet,
+  initBrowserWithExtension,
+  stake,
+} from '../../utils/helpers';
 import { BrowserService } from '@lidofinance/browser-service';
 
 test.describe('Ethereum', () => {
   let browserService: BrowserService;
 
-  test.only(`Metamask stake`, async () => {
+  test(`Metamask stake`, async () => {
     browserService = await initBrowserWithExtension(
       METAMASK_COMMON_CONFIG,
-      false,
+      true,
     );
-    await connectWallet(browserService);
-    // await stake(browserService, { txAmount: '50' });
+    await stake(browserService, { txAmount: '50' });
   });
 
   test(`Coin98 connect`, async () => {
