@@ -27,19 +27,20 @@ export class PopoverElements {
     await test.step('Close popover if it exists', async () => {
       if (!this.page) throw "Page isn't ready";
 
-      if (await this.isPopoverVisible()) await this.popoverCloseButton.click();
+      if (await this.isPopoverVisible())
+        await this.popoverCloseButton.click({ timeout: 3000 });
 
       if (await this.manageInSettingButton.isVisible())
-        await this.manageInSettingButton.click();
+        await this.manageInSettingButton.click({ timeout: 3000 });
 
       if (await this.notRightNowButton.isVisible())
-        await this.notRightNowButton.click();
+        await this.notRightNowButton.click({ timeout: 3000 });
 
       if (await this.gotItButton.first().isVisible())
-        await this.gotItButton.first().click();
+        await this.gotItButton.first().click({ timeout: 3000 });
 
       if (await this.noThanksButton.isVisible())
-        await this.noThanksButton.click();
+        await this.noThanksButton.click({ timeout: 3000 });
     });
   }
 
