@@ -1,6 +1,8 @@
 import { Locator, Page, test } from '@playwright/test';
+import { ConsoleLogger } from '@nestjs/common';
 
 export class PopoverElements {
+  logger = new ConsoleLogger('Metamask. ' + PopoverElements.name);
   popoverCloseButton: Locator;
   manageInSettingButton: Locator;
   notRightNowButton: Locator;
@@ -28,7 +30,11 @@ export class PopoverElements {
       if (!this.page) throw "Page isn't ready";
 
       if (await this.isPopoverVisible())
-        await this.popoverCloseButton.click({ timeout: 3000 });
+        try {
+          await this.popoverCloseButton.click({ force: true, timeout: 3000 });
+        } catch {
+          this.logger.log('The popover close button is not clicked');
+        }
 
       if (await this.manageInSettingButton.isVisible())
         await this.manageInSettingButton.click({ timeout: 3000 });
