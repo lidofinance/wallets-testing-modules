@@ -8,6 +8,7 @@ export class PopoverElements {
   noThanksButton: Locator;
   switchToButton: Locator;
   accountDetailAddressLabel: Locator;
+  solanaPopupCloseBtn: Locator;
 
   constructor(public page: Page) {
     this.popoverCloseButton = this.page.getByTestId('popover-close');
@@ -21,11 +22,15 @@ export class PopoverElements {
     this.accountDetailAddressLabel = this.page.locator(
       '//div[@data-testid="address-copy-button-text"]/preceding-sibling::p',
     );
+    this.solanaPopupCloseBtn = this.page.getByText('Not now');
   }
 
   async closePopover() {
     await test.step('Close popover if it exists', async () => {
       if (!this.page) throw "Page isn't ready";
+
+      if (await this.solanaPopupCloseBtn.isVisible())
+        await this.solanaPopupCloseBtn.click();
 
       if (await this.isPopoverVisible()) await this.popoverCloseButton.click();
 
