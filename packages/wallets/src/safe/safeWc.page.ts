@@ -41,11 +41,11 @@ export class SafeWcPage implements WalletPage<WalletTypes.WC> {
   }
 
   async setupNetwork() {
-    this.logger.error('Method "setupNetwork()" is unsupported method WC+Safe');
+    this.logger.debug('Method "setupNetwork()" is unsupported method WC+Safe');
   }
 
   async changeNetwork() {
-    this.logger.error('Method "changeNetwork()" is unsupported method WC+Safe');
+    this.logger.debug('Method "changeNetwork()" is unsupported method WC+Safe');
   }
 
   assertTxAmount(): Promise<void> {

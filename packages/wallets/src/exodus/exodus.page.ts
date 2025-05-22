@@ -81,11 +81,11 @@ export class ExodusPage implements WalletPage<WalletTypes.EOA> {
   }
 
   async setupNetwork() {
-    this.logger.error('Method "setupNetwork()" not implemented.');
+    this.logger.debug('Method "setupNetwork()" not implemented.');
   }
 
   async changeNetwork() {
-    this.logger.error('Method "changeNetwork()" not implemented.');
+    this.logger.debug('Method "changeNetwork()" not implemented.');
   }
 
   async signTx() {
