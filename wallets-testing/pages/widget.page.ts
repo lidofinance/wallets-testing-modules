@@ -1,6 +1,12 @@
 import { Locator, Page } from '@playwright/test';
+import { WalletPage } from '@lidofinance/wallets-testing-wallets';
+import { WidgetConfig } from '../config';
 
-export class WidgetPage {
+export interface WidgetPage {
+  page: Page;
+  walletPage: WalletPage<any>;
+  widgetConfig: WidgetConfig;
+
   connectBtn: Locator;
   stakeInput: Locator;
   stakeSubmitBtn: Locator;
@@ -11,38 +17,17 @@ export class WidgetPage {
   ethAvailableToStakeValue: Locator;
   termsCheckbox: Locator;
   copyWcUrlBtn: Locator;
+  closeAccountModalBtn: Locator;
 
-  constructor(public page: Page) {
-    this.connectBtn = this.page.getByTestId('connectBtn');
-    this.stakeInput = this.page.getByTestId('stakeInput');
-    this.stakeSubmitBtn = this.page.getByTestId('stakeSubmitBtn');
-    this.enabledStakeSubmitBtn = this.page.locator(
-      'button[data-testid="stakeSubmitBtn"]:not([disabled])',
-    );
-    this.headerAccountSection = this.page.getByTestId('accountSectionHeader');
-    this.providerName = this.page.locator('div[data-testid="providerName"]');
-    this.ethAvailableToStakeValue = this.page.getByTestId(
-      'ethAvailableToStake',
-    );
-    this.termsCheckbox = this.page.locator('input[type=checkbox]');
-    this.copyWcUrlBtn = this.page.locator('.wcm-action-btn');
-  }
+  goto?(path?: string): Promise<void>;
 
-  async goto(path?: string) {
-    await this.page.goto(path);
-  }
+  connectWallet(): Promise<void>;
 
-  async getWalletButtonByName(walletButtonName: string) {
-    return this.page.getByRole('button').getByText(walletButtonName, {
-      exact: true,
-    });
-  }
+  confirmStakeTx(txAmount: string): Promise<void>;
 
-  async waitForPage(timeout?: number) {
-    return this.page.context().waitForEvent('page', { timeout: timeout });
-  }
+  getWalletButtonByName?(walletButtonName: string): Promise<Locator>;
 
-  async closeAccountModal() {
-    await this.page.locator('div[role="dialog"] button').nth(0).click();
-  }
+  waitForPage(timeout?: number): Promise<Page>;
+
+  closeAccountModal(): Promise<void>;
 }

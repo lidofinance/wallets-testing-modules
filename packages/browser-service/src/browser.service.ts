@@ -3,6 +3,7 @@ import {
   CommonWalletConfig,
   NetworkConfig,
   WalletPage,
+  WalletPageOptions,
   WalletTypes,
 } from '@lidofinance/wallets-testing-wallets';
 import {
@@ -36,13 +37,15 @@ type BrowserServiceOptions = {
 
 export class BrowserService {
   private logger = new ConsoleLogger(BrowserService.name);
-  private walletPage: WalletPage<WalletTypes.WC | WalletTypes.EOA>;
+  private walletPage: WalletPage<
+    WalletTypes.WC | WalletTypes.EOA | WalletTypes.IFRAME
+  >;
   private browserContextService: BrowserContextService;
   public ethereumNodeService: EthereumNodeService;
 
   public isFork: boolean;
 
-  constructor(private options: BrowserServiceOptions) {}
+  constructor(public options: BrowserServiceOptions) {}
 
   getWalletPage() {
     if (!this.walletPage)
@@ -61,18 +64,26 @@ export class BrowserService {
   }
 
   async initWalletSetup(useFork?: boolean) {
-    this.isFork = useFork;
     if (useFork) {
       await this.setupWithNode();
     } else {
       await this.setup();
-      await this.walletPage.setupNetwork(this.options.networkConfig);
-      await this.walletPage.changeNetwork(this.options.networkConfig.chainName);
+
+      const walletToSetupNetwork =
+        this.options.walletConfig.WALLET_TYPE === WalletTypes.EOA
+          ? this.walletPage
+          : this.walletPage.options.extensionPage;
+
+      await walletToSetupNetwork.setupNetwork(this.options.networkConfig);
+      await walletToSetupNetwork.changeNetwork(
+        this.options.networkConfig.chainName,
+      );
       await this.browserContextService.closePages();
     }
   }
 
   async setupWithNode() {
+    this.isFork = true;
     this.ethereumNodeService = new EthereumNodeService({
       chainId: this.options.networkConfig.chainId,
       rpcUrl: this.options.networkConfig.rpcUrl,
@@ -81,13 +92,21 @@ export class BrowserService {
     await this.ethereumNodeService.startNode();
     const account = this.ethereumNodeService.getAccount();
     await this.setup();
-    if (!(await this.walletPage.isWalletAddressExist(account.address))) {
-      await this.walletPage.importKey(account.secretKey);
+
+    const walletPage =
+      this.options.walletConfig.WALLET_TYPE === WalletTypes.EOA
+        ? this.walletPage
+        : this.walletPage.options.extensionPage;
+    if (!(await walletPage.isWalletAddressExist(account.address))) {
+      await walletPage.importKey(account.secretKey);
     } else {
-      await this.walletPage.changeWalletAccountByName(account.address);
+      await walletPage.changeWalletAccountByName(
+        account.address.slice(-5).toLowerCase(),
+        false,
+      );
     }
 
-    await this.walletPage.setupNetwork({
+    await walletPage.setupNetwork({
       ...this.options.networkConfig,
       chainName: this.options.networkConfig.chainName,
       rpcUrl: this.ethereumNodeService.state.nodeUrl,
@@ -120,10 +139,7 @@ export class BrowserService {
 
     await this.browserContextService.initBrowserContext();
 
-    if (
-      this.options.walletConfig.WALLET_TYPE === WalletTypes.EOA &&
-      !!process.env.CI
-    ) {
+    if (this.options.walletConfig.WALLET_TYPE === WalletTypes.EOA) {
       const manifestContent = await extensionService.getManifestContent(
         this.options.walletConfig.STORE_EXTENSION_ID,
       );
@@ -134,27 +150,34 @@ export class BrowserService {
     }
 
     const extension = new Extension(this.browserContextService.extensionId);
-
     const extensionWalletPage = new WALLET_PAGES[
       this.options.walletConfig.EXTENSION_WALLET_NAME
-    ](
-      this.browserContextService.browserContext,
-      extension.url,
-      this.options.accountConfig,
-      this.options.walletConfig,
-    );
+    ]({
+      browserContext: this.browserContextService.browserContext,
+      extensionUrl: extension.url,
+      accountConfig: this.options.accountConfig,
+      walletConfig: this.options.walletConfig,
+    });
     await extensionWalletPage.setup(this.options.networkConfig.chainName);
 
-    if (this.options.walletConfig.WALLET_TYPE === WalletTypes.WC) {
-      this.walletPage = new WALLET_PAGES[this.options.walletConfig.WALLET_NAME](
-        this.browserContextService.browserContext,
-        extensionWalletPage,
-        this.options.networkConfig.chainId,
-        this.options.accountConfig,
-        this.options.walletConfig,
-      );
-    } else {
-      this.walletPage = extensionWalletPage;
+    switch (this.options.walletConfig.WALLET_TYPE) {
+      case WalletTypes.WC:
+      case WalletTypes.IFRAME:
+        this.walletPage = new WALLET_PAGES[
+          this.options.walletConfig.WALLET_NAME
+        ]({
+          browserContext: this.browserContextService.browserContext,
+          extensionPage: extensionWalletPage,
+          walletConfig: this.options.walletConfig,
+          stand: {
+            chainId: this.options.networkConfig.chainId,
+            standUrl: this.getStandUrlByNetwork(),
+            forkUrl: this.ethereumNodeService?.state.nodeUrl,
+          },
+        });
+        break;
+      default:
+        this.walletPage = extensionWalletPage;
     }
   }
 
@@ -163,6 +186,17 @@ export class BrowserService {
       await this.browserContextService.browserContext.close();
     if (this.ethereumNodeService) {
       await this.ethereumNodeService.stopNode();
+    }
+  }
+
+  private getStandUrlByNetwork(): string {
+    switch (this.options.networkConfig.chainName) {
+      case 'Ethereum Hoodi':
+        return 'https://stake-hoodi.testnet.fi';
+      case 'Ethereum Holesky':
+        return 'https://stake-holesky.testnet.fi';
+      default:
+        return 'https://stake.lido.fi';
     }
   }
 }

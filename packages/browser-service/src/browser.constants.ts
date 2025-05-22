@@ -6,7 +6,8 @@ import {
   ExodusPage,
   MetamaskPage,
   OkxPage,
-  SafePage,
+  SafeIframePage,
+  SafeWcPage,
   TrustWalletPage,
 } from '@lidofinance/wallets-testing-wallets';
 
@@ -19,7 +20,8 @@ export const WALLET_PAGES = {
   coinbase: CoinbasePage,
   ctrl: CtrlPage,
   bitget: BitgetPage,
-  safe: SafePage,
+  safe: SafeWcPage,
+  safeIframe: SafeIframePage,
 };
 
 export const DEFAULT_BROWSER_CONTEXT_DIR_NAME = '.browser_context';

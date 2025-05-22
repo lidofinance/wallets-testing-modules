@@ -13,9 +13,16 @@ export interface CommonWalletConfig {
 export enum WalletTypes {
   EOA = 'EOA',
   WC = 'WC',
+  IFRAME = 'IFRAME',
 }
 
-export type WalletType = WalletTypes.WC | WalletTypes.EOA;
+export type WalletType = WalletTypes.WC | WalletTypes.EOA | WalletTypes.IFRAME;
+
+export interface StandConfig {
+  chainId: number;
+  standUrl: string;
+  forkUrl?: string;
+}
 
 export interface AccountConfig {
   SECRET_PHRASE: string;

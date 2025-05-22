@@ -6,8 +6,9 @@ import {
   OKX_COMMON_CONFIG,
   BITGET_COMMON_CONFIG,
   CTRL_COMMON_CONFIG,
-  SAFE_COMMON_CONFIG,
+  WC_SAFE_COMMON_CONFIG,
   METAMASK_COMMON_CONFIG,
+  IFRAME_SAFE_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import { test } from '@playwright/test';
 import {
@@ -20,12 +21,12 @@ import { BrowserService } from '@lidofinance/browser-service';
 test.describe('Ethereum', () => {
   let browserService: BrowserService;
 
-  test(`Metamask stake`, async () => {
+  test(`Metamask connect and stake`, async () => {
     browserService = await initBrowserWithExtension(
       METAMASK_COMMON_CONFIG,
       true,
     );
-    await stake(browserService, { txAmount: '50' });
+    await stake(browserService, '50');
   });
 
   test(`Coin98 connect`, async () => {
@@ -63,8 +64,13 @@ test.describe('Ethereum', () => {
     await connectWallet(browserService);
   });
 
-  test('WC+Safe connect', async () => {
-    browserService = await initBrowserWithExtension(SAFE_COMMON_CONFIG);
+  test('WC+Safe connect (with MM)', async () => {
+    browserService = await initBrowserWithExtension(WC_SAFE_COMMON_CONFIG);
+    await connectWallet(browserService);
+  });
+
+  test('Safe IframeApp connect (with MM)', async () => {
+    browserService = await initBrowserWithExtension(IFRAME_SAFE_COMMON_CONFIG);
     await connectWallet(browserService);
   });
 

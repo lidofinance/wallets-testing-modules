@@ -12,11 +12,35 @@ export interface WidgetConfig {
   wrapContract?: string;
 }
 
-export const ETHEREUM_WIDGET_CONFIG: WidgetConfig = {
+const ETHEREUM_WIDGET_CONFIG: WidgetConfig = {
   url: 'https://stake.lido.fi',
   nodeUrl: '**/api/rpc?chainId=1',
   name: 'ethereum',
   network: NETWORKS_CONFIG.mainnet.ETHEREUM,
   stakeContract: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
   wrapContract: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
+};
+
+const HOODI_WIDGET_CONFIG: WidgetConfig = {
+  url: 'https://stake-hoodi.testnet.fi',
+  nodeUrl: '',
+  name: 'hoodi',
+  network: NETWORKS_CONFIG.testnet.ETHEREUM_HOODI,
+  stakeContract: '0x3508A952176b3c15387C97BE809eaffB1982176a',
+  wrapContract: '0x7E99eE3C66636DE415D2d7C880938F2f40f94De4',
+};
+
+const HOLESKY_WIDGET_CONFIG: WidgetConfig = {
+  url: 'https://stake-holesky.testnet.fi',
+  nodeUrl: '',
+  name: 'holesky',
+  network: NETWORKS_CONFIG.testnet.ETHEREUM_HOLESKY,
+  stakeContract: '0x3F1c547b21f65e10480dE3ad8E19fAAC46C95034',
+  wrapContract: '0x8d09a4502Cc8Cf1547aD300E066060D043f6982D',
+};
+
+export const widgetConfig = {
+  'Ethereum Mainnet': ETHEREUM_WIDGET_CONFIG,
+  'Ethereum Hoodi': HOODI_WIDGET_CONFIG,
+  'Ethereum Holesky': HOLESKY_WIDGET_CONFIG,
 };
