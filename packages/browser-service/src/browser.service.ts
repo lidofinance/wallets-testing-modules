@@ -3,7 +3,6 @@ import {
   CommonWalletConfig,
   NetworkConfig,
   WalletPage,
-  WalletPageOptions,
   WalletTypes,
 } from '@lidofinance/wallets-testing-wallets';
 import {
