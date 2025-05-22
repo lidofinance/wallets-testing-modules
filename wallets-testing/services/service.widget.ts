@@ -14,7 +14,7 @@ export class WidgetService {
   ) {
     this.widgetPage = new WIDGET_PAGE[
       this.browserService.options.walletConfig.WALLET_TYPE
-    ](this.browserService, widgetConfig);
+    ](this.browserService, this.widgetConfig);
   }
 
   async navigate() {
