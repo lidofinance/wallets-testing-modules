@@ -11,7 +11,7 @@ export class HomePage {
     this.accountListButton = this.page.locator('img[alt="wallet-avatar"]');
     this.copyAddressButton = this.page
       .getByTestId('okd-select-reference-value-box')
-      .locator('../../div')
+      .locator('../../../div')
       .first();
     this.settingButton = this.page
       .getByTestId('okd-select-reference-value-box')
@@ -19,7 +19,7 @@ export class HomePage {
       .first();
     this.networkListButton = this.page
       .getByTestId('okd-select-reference-value-box')
-      .locator('../../div')
+      .locator('../../../div')
       .nth(2);
     this.manageCryptoButton = this.page.locator(
       'button:has-text("Manage crypto")',
