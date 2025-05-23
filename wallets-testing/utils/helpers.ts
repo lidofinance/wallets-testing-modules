@@ -3,55 +3,57 @@ import { BrowserService } from '@lidofinance/browser-service';
 import {
   CommonWalletConfig,
   NETWORKS_CONFIG,
+  WalletTypes,
 } from '@lidofinance/wallets-testing-wallets';
-import { configService, ETHEREUM_WIDGET_CONFIG } from '../config';
-import { WidgetService, TxConfig } from '../services';
+import { configService, widgetConfig } from '../config';
+import { WidgetService } from '../services';
 
 export async function initBrowserWithExtension(
   walletConfig: CommonWalletConfig,
   isFork = false,
+  network: 'ethereum' | 'holesky' | 'hoodi' = 'ethereum',
 ) {
   const browserService = new BrowserService({
-    networkConfig: {
-      ...NETWORKS_CONFIG.mainnet.ETHEREUM,
-      rpcUrl: configService.get('RPC_URL'),
-    },
+    networkConfig: networkConfig(network),
     accountConfig: {
       SECRET_PHRASE: configService.get('WALLET_SECRET_PHRASE'),
       PASSWORD: configService.get('WALLET_PASSWORD'),
     },
     walletConfig: walletConfig,
     nodeConfig: {
-      rpcUrlToMock: ETHEREUM_WIDGET_CONFIG.nodeUrl,
+      rpcUrlToMock: widgetConfig[networkConfig(network).chainName].nodeUrl,
     },
     browserOptions: {
       slowMo: 200,
     },
   });
 
-  if (isFork) {
-    await browserService.setupWithNode();
-  } else {
-    await browserService.setup();
-  }
+  await browserService.initWalletSetup(isFork);
+  if (
+    browserService.getWalletPage().options.walletConfig.WALLET_TYPE ===
+    WalletTypes.IFRAME
+  )
+    await browserService.getWalletPage().initIframeWallet();
 
   return browserService;
 }
 
 export async function connectWallet(browserService: BrowserService) {
-  const widgetService = new WidgetService(browserService);
-  await widgetService.navigate();
+  const widgetService = new WidgetService(
+    browserService,
+    widgetConfig[browserService.options.networkConfig.chainName],
+  );
   await widgetService.connectWallet();
 }
 
-export async function stake(
-  browserService: BrowserService,
-  txConfig: TxConfig,
-) {
-  const widgetService = new WidgetService(browserService);
-  await widgetService.navigate();
+// Function not tested with walletTypes.WC
+export async function stake(browserService: BrowserService, txAmount: string) {
+  const widgetService = new WidgetService(
+    browserService,
+    widgetConfig[browserService.options.networkConfig.chainName],
+  );
   await widgetService.connectWallet();
-  await widgetService.doStaking(txConfig);
+  await widgetService.doStaking(txAmount);
 }
 
 export async function waitForTextContent(locator: Locator) {
@@ -68,4 +70,17 @@ export async function waitForTextContent(locator: Locator) {
       requestAnimationFrame(checkText);
     });
   });
+}
+
+function networkConfig(network: string) {
+  if (network === 'hoodi') {
+    return NETWORKS_CONFIG.testnet.ETHEREUM_HOODI;
+  } else if (network === 'holesky') {
+    return NETWORKS_CONFIG.testnet.ETHEREUM_HOLESKY;
+  } else {
+    return {
+      ...NETWORKS_CONFIG.mainnet.ETHEREUM,
+      rpcUrl: configService.get('RPC_URL'),
+    };
+  }
 }

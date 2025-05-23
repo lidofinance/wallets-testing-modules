@@ -1,11 +1,15 @@
 export * from './wallet.page';
 export * from './wallets.constants';
-export * from './EOA/coin98';
-export * from './EOA/metamask';
-export * from './EOA/trustwallet';
-export * from './EOA/coinbase';
-export * from './EOA/exodus';
-export * from './EOA/okx';
-export * from './EOA/bitget';
-export * from './EOA/ctrl';
-export * from './WC/safe';
+
+// export EOA WalletType
+export * from './coin98';
+export * from './metamask';
+export * from './trustwallet';
+export * from './coinbase';
+export * from './exodus';
+export * from './okx';
+export * from './bitget';
+export * from './ctrl';
+
+// export WC and IFRAME WalletTypes
+export * from './safe';
