@@ -126,7 +126,7 @@ export class BrowserService {
     await this.browserContextService.initBrowserContext();
     await this.annotateExtensionWalletVersion(extensionService);
     this.setWalletPage();
-    await this.getEOAWalletPage().setup();
+    await this.getEOAWalletPage().setup(this.options.networkConfig.chainName);
   }
 
   async teardown() {
