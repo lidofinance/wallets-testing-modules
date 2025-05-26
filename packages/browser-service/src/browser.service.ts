@@ -54,10 +54,6 @@ export class BrowserService {
     return this.walletPage;
   }
 
-  getBrowserContext() {
-    return this.browserContextService.browserContext;
-  }
-
   getBrowserContextPage() {
     return this.browserContextService.browserContext.pages()[0];
   }
@@ -67,14 +63,8 @@ export class BrowserService {
       await this.setupWithNode();
     } else {
       await this.setup();
-
-      const walletToSetupNetwork =
-        this.options.walletConfig.WALLET_TYPE === WalletTypes.EOA
-          ? this.walletPage
-          : this.walletPage.options.extensionPage;
-
-      await walletToSetupNetwork.setupNetwork(this.options.networkConfig);
-      await walletToSetupNetwork.changeNetwork(
+      await this.getEOAWalletPage().setupNetwork(this.options.networkConfig);
+      await this.getEOAWalletPage().changeNetwork(
         this.options.networkConfig.chainName,
       );
       await this.browserContextService.closePages();
@@ -92,10 +82,7 @@ export class BrowserService {
     const account = this.ethereumNodeService.getAccount();
     await this.setup();
 
-    const walletPage =
-      this.options.walletConfig.WALLET_TYPE === WalletTypes.EOA
-        ? this.walletPage
-        : this.walletPage.options.extensionPage;
+    const walletPage = this.getEOAWalletPage();
     if (!(await walletPage.isWalletAddressExist(account.address))) {
       await walletPage.importKey(account.secretKey);
     } else {
@@ -137,17 +124,37 @@ export class BrowserService {
     });
 
     await this.browserContextService.initBrowserContext();
+    await this.annotateExtensionWalletVersion(extensionService);
+    this.setWalletPage();
+    await this.getEOAWalletPage().setup();
+  }
 
-    if (this.options.walletConfig.WALLET_TYPE === WalletTypes.EOA) {
-      const manifestContent = await extensionService.getManifestContent(
-        this.options.walletConfig.STORE_EXTENSION_ID,
-      );
-      test.info().annotations.push({
-        type: 'wallet version',
-        description: manifestContent.version,
-      });
+  async teardown() {
+    if (this.browserContextService.browserContext !== null)
+      await this.browserContextService.browserContext.close();
+    if (this.ethereumNodeService) {
+      await this.ethereumNodeService.stopNode();
     }
+  }
 
+  private getStandUrlByNetwork(): string {
+    switch (this.options.networkConfig.chainName) {
+      case 'Ethereum Hoodi':
+        return 'https://stake-hoodi.testnet.fi';
+      case 'Ethereum Holesky':
+        return 'https://stake-holesky.testnet.fi';
+      default:
+        return 'https://stake.lido.fi';
+    }
+  }
+
+  private getEOAWalletPage() {
+    return this.options.walletConfig.WALLET_TYPE === WalletTypes.EOA
+      ? this.walletPage
+      : this.walletPage.options.extensionPage;
+  }
+
+  private setWalletPage() {
     const extension = new Extension(this.browserContextService.extensionId);
     const extensionWalletPage = new WALLET_PAGES[
       this.options.walletConfig.EXTENSION_WALLET_NAME
@@ -157,7 +164,6 @@ export class BrowserService {
       accountConfig: this.options.accountConfig,
       walletConfig: this.options.walletConfig,
     });
-    await extensionWalletPage.setup(this.options.networkConfig.chainName);
 
     switch (this.options.walletConfig.WALLET_TYPE) {
       case WalletTypes.WC:
@@ -180,22 +186,15 @@ export class BrowserService {
     }
   }
 
-  async teardown() {
-    if (this.browserContextService.browserContext !== null)
-      await this.browserContextService.browserContext.close();
-    if (this.ethereumNodeService) {
-      await this.ethereumNodeService.stopNode();
-    }
-  }
-
-  private getStandUrlByNetwork(): string {
-    switch (this.options.networkConfig.chainName) {
-      case 'Ethereum Hoodi':
-        return 'https://stake-hoodi.testnet.fi';
-      case 'Ethereum Holesky':
-        return 'https://stake-holesky.testnet.fi';
-      default:
-        return 'https://stake.lido.fi';
-    }
+  private async annotateExtensionWalletVersion(
+    extensionService: ExtensionService,
+  ) {
+    const manifestContent = await extensionService.getManifestContent(
+      this.options.walletConfig.STORE_EXTENSION_ID,
+    );
+    test.info().annotations.push({
+      type: `${this.options.walletConfig.EXTENSION_WALLET_NAME} wallet version`,
+      description: manifestContent.version,
+    });
   }
 }
