@@ -1,4 +1,4 @@
-import { CommonWalletConfig, WalletTypes } from '../wallets.constants';
+import { CommonWalletConfig, WalletConnectTypes } from '../wallets.constants';
 
 export const BITGET_COMMON_CONFIG: CommonWalletConfig = {
   WALLET_NAME: 'bitget',
@@ -7,6 +7,6 @@ export const BITGET_COMMON_CONFIG: CommonWalletConfig = {
   CONNECT_BUTTON_NAME: 'Bitget',
   RPC_URL_PATTERN: '',
   STORE_EXTENSION_ID: 'jiidiaalihmmhddjgbnbgdfflelocpak',
-  WALLET_TYPE: WalletTypes.EOA,
+  WALLET_TYPE: WalletConnectTypes.EOA,
   EXTENSION_START_PATH: '/welcome.html',
 };

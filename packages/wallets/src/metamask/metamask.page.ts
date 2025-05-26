@@ -1,4 +1,4 @@
-import { NetworkConfig, WalletTypes } from '../wallets.constants';
+import { NetworkConfig, WalletConnectTypes } from '../wallets.constants';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { expect } from '@playwright/test';
 import { test, Page } from '@playwright/test';
@@ -14,7 +14,7 @@ import {
 import { getAddress } from 'viem';
 import { isPopularMainnetNetwork, isPopularTestnetNetwork } from './helper';
 
-export class MetamaskPage implements WalletPage<WalletTypes.EOA> {
+export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
   page: Page | undefined;
   header: Header;
   homePage: HomePage;

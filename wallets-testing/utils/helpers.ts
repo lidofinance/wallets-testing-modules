@@ -3,7 +3,7 @@ import { BrowserService } from '@lidofinance/browser-service';
 import {
   CommonWalletConfig,
   NETWORKS_CONFIG,
-  WalletTypes,
+  WalletConnectTypes,
 } from '@lidofinance/wallets-testing-wallets';
 import { configService, widgetConfig } from '../config';
 import { WidgetService } from '../services';
@@ -31,7 +31,7 @@ export async function initBrowserWithExtension(
   await browserService.initWalletSetup(isFork);
   if (
     browserService.getWalletPage().options.walletConfig.WALLET_TYPE ===
-    WalletTypes.IFRAME
+    WalletConnectTypes.IFRAME
   )
     await browserService.getWalletPage().initIframeWallet();
 
@@ -46,7 +46,7 @@ export async function connectWallet(browserService: BrowserService) {
   await widgetService.connectWallet();
 }
 
-// Function not tested with walletTypes.WC
+// Function not tested with walletConnectTypes.WC
 export async function stake(browserService: BrowserService, txAmount: string) {
   const widgetService = new WidgetService(
     browserService,

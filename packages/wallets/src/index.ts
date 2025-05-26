@@ -1,7 +1,7 @@
 export * from './wallet.page';
 export * from './wallets.constants';
 
-// export EOA WalletType
+// export EOA WalletConnectType
 export * from './coin98';
 export * from './metamask';
 export * from './trustwallet';
@@ -11,5 +11,5 @@ export * from './okx';
 export * from './bitget';
 export * from './ctrl';
 
-// export WC and IFRAME WalletTypes
+// export WC and IFRAME WalletConnectTypes
 export * from './safe';

@@ -1,10 +1,10 @@
-import { NetworkConfig, WalletTypes } from '../wallets.constants';
+import { NetworkConfig, WalletConnectTypes } from '../wallets.constants';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import expect from 'expect';
 import { test, Page } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
 
-export class CoinbasePage implements WalletPage<WalletTypes.EOA> {
+export class CoinbasePage implements WalletPage<WalletConnectTypes.EOA> {
   logger = new ConsoleLogger(CoinbasePage.name);
   page: Page | undefined;
 

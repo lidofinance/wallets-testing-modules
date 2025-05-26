@@ -1,4 +1,4 @@
-import { NetworkConfig, WalletTypes } from '../wallets.constants';
+import { NetworkConfig, WalletConnectTypes } from '../wallets.constants';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { test, Page, expect } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
@@ -12,7 +12,7 @@ import {
 import { closeUnnecessaryPages } from '../okx/helper';
 import { getCorrectNetworkName } from './helper';
 
-export class TrustWalletPage implements WalletPage<WalletTypes.EOA> {
+export class TrustWalletPage implements WalletPage<WalletConnectTypes.EOA> {
   logger = new ConsoleLogger(TrustWalletPage.name);
   page?: Page;
 

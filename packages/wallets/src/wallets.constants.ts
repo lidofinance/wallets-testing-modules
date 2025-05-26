@@ -5,18 +5,21 @@ export interface CommonWalletConfig {
   CONNECT_BUTTON_NAME: string; // Button name in the wallet list
   RPC_URL_PATTERN: string;
   STORE_EXTENSION_ID: string;
-  WALLET_TYPE: WalletType;
+  WALLET_TYPE: WalletConnectType;
   LATEST_STABLE_DOWNLOAD_LINK?: string; // Link to stable wallet extension version for test (optional)
   EXTENSION_START_PATH: string; // Start path for wallet setup
 }
 
-export enum WalletTypes {
+export enum WalletConnectTypes {
   EOA = 'EOA',
   WC = 'WC',
   IFRAME = 'IFRAME',
 }
 
-export type WalletType = WalletTypes.WC | WalletTypes.EOA | WalletTypes.IFRAME;
+export type WalletConnectType =
+  | WalletConnectTypes.WC
+  | WalletConnectTypes.EOA
+  | WalletConnectTypes.IFRAME;
 
 export interface StandConfig {
   chainId: number;

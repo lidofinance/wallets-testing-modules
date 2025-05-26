@@ -1,10 +1,10 @@
 import { Page, test, expect } from '@playwright/test';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
-import { WalletTypes } from '../wallets.constants';
+import { WalletConnectTypes } from '../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 import { SetupPage, SettingPage, TransactionPage } from './pages';
 
-export class SafeIframePage implements WalletPage<WalletTypes.IFRAME> {
+export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
   logger = new ConsoleLogger(SafeIframePage.name);
   page?: Page;
 
@@ -121,27 +121,27 @@ export class SafeIframePage implements WalletPage<WalletTypes.IFRAME> {
 
   // SafePage does not support these methods
   setup(): Promise<void> {
-    throw new Error('Unsupported method for WalletTypes.WC');
+    throw new Error('Unsupported method for WalletConnectTypes.WC');
   }
 
   importKey(): Promise<void> {
-    throw new Error('Unsupported method for WalletTypes.WC');
+    throw new Error('Unsupported method for WalletConnectTypes.WC');
   }
 
   openLastTxInEthplorer?(): Promise<Page> {
-    throw new Error('Unsupported method for WalletTypes.WC');
+    throw new Error('Unsupported method for WalletConnectTypes.WC');
   }
 
   confirmAddTokenToWallet?(): Promise<void> {
-    throw new Error('Unsupported method for WalletTypes.WC');
+    throw new Error('Unsupported method for WalletConnectTypes.WC');
   }
 
   addNetwork(): Promise<void> {
-    throw new Error('Unsupported method for WalletTypes.WC');
+    throw new Error('Unsupported method for WalletConnectTypes.WC');
   }
 
   changeNetwork?(): Promise<void> {
-    throw new Error('Unsupported method for WalletTypes.WC');
+    throw new Error('Unsupported method for WalletConnectTypes.WC');
   }
 
   private getUrl(pageName: 'lidoApp' | 'envSetting') {

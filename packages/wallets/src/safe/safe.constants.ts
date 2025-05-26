@@ -1,4 +1,4 @@
-import { CommonWalletConfig, WalletTypes } from '../wallets.constants';
+import { CommonWalletConfig, WalletConnectTypes } from '../wallets.constants';
 
 export const WC_SAFE_COMMON_CONFIG: CommonWalletConfig = {
   WALLET_NAME: 'safe',
@@ -7,7 +7,7 @@ export const WC_SAFE_COMMON_CONFIG: CommonWalletConfig = {
   RPC_URL_PATTERN: 'https://mainnet.infura.io/v3/**',
   STORE_EXTENSION_ID: 'nkbihfbeogaeaoehlefnkodbefgpgknn',
   CONNECT_BUTTON_NAME: 'WalletConnect',
-  WALLET_TYPE: WalletTypes.WC,
+  WALLET_TYPE: WalletConnectTypes.WC,
   LATEST_STABLE_DOWNLOAD_LINK: null,
   EXTENSION_START_PATH: '/home.html',
 };
@@ -19,7 +19,7 @@ export const IFRAME_SAFE_COMMON_CONFIG: CommonWalletConfig = {
   RPC_URL_PATTERN: 'https://mainnet.infura.io/v3/**',
   STORE_EXTENSION_ID: 'nkbihfbeogaeaoehlefnkodbefgpgknn',
   CONNECT_BUTTON_NAME: '', // auto connection
-  WALLET_TYPE: WalletTypes.IFRAME,
+  WALLET_TYPE: WalletConnectTypes.IFRAME,
   LATEST_STABLE_DOWNLOAD_LINK: null,
   EXTENSION_START_PATH: '/home.html',
 };

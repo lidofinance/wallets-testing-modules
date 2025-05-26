@@ -3,7 +3,7 @@ import {
   CommonWalletConfig,
   NetworkConfig,
   WalletPage,
-  WalletTypes,
+  WalletConnectTypes,
 } from '@lidofinance/wallets-testing-wallets';
 import {
   Extension,
@@ -37,7 +37,7 @@ type BrowserServiceOptions = {
 export class BrowserService {
   private logger = new ConsoleLogger(BrowserService.name);
   private walletPage: WalletPage<
-    WalletTypes.WC | WalletTypes.EOA | WalletTypes.IFRAME
+    WalletConnectTypes.WC | WalletConnectTypes.EOA | WalletConnectTypes.IFRAME
   >;
   private browserContextService: BrowserContextService;
   public ethereumNodeService: EthereumNodeService;
@@ -149,7 +149,7 @@ export class BrowserService {
   }
 
   private getEOAWalletPage() {
-    return this.options.walletConfig.WALLET_TYPE === WalletTypes.EOA
+    return this.options.walletConfig.WALLET_TYPE === WalletConnectTypes.EOA
       ? this.walletPage
       : this.walletPage.options.extensionPage;
   }
@@ -166,8 +166,8 @@ export class BrowserService {
     });
 
     switch (this.options.walletConfig.WALLET_TYPE) {
-      case WalletTypes.WC:
-      case WalletTypes.IFRAME:
+      case WalletConnectTypes.WC:
+      case WalletConnectTypes.IFRAME:
         this.walletPage = new WALLET_PAGES[
           this.options.walletConfig.WALLET_NAME
         ]({

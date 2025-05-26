@@ -1,13 +1,16 @@
 import { FrameLocator, Locator, Page, test } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
-import { WalletPage, WalletTypes } from '@lidofinance/wallets-testing-wallets';
+import {
+  WalletPage,
+  WalletConnectTypes,
+} from '@lidofinance/wallets-testing-wallets';
 import { BrowserService } from '@lidofinance/browser-service';
 import { WidgetPage } from './widget.page';
 import { WidgetConfig } from '../config';
 
 export class IframeWidgetPage implements WidgetPage {
   logger = new ConsoleLogger(IframeWidgetPage.name);
-  walletPage: WalletPage<WalletTypes.IFRAME>;
+  walletPage: WalletPage<WalletConnectTypes.IFRAME>;
   app: FrameLocator;
   page: Page;
 

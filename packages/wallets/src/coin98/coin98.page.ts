@@ -1,10 +1,10 @@
-import { WalletTypes } from '../wallets.constants';
+import { WalletConnectTypes } from '../wallets.constants';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { test, Page } from '@playwright/test';
 import { getCorrectNetworkName } from './helper';
 import { ConsoleLogger } from '@nestjs/common';
 
-export class Coin98 implements WalletPage<WalletTypes.EOA> {
+export class Coin98 implements WalletPage<WalletConnectTypes.EOA> {
   logger = new ConsoleLogger(Coin98.name);
   page: Page | undefined;
 

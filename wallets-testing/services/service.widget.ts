@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 import { BrowserService } from '@lidofinance/browser-service';
 import { WIDGET_PAGE, WidgetPage } from '../pages';
 import { waitForTextContent } from '../utils/helpers';
-import { WalletTypes } from '@lidofinance/wallets-testing-wallets';
+import { WalletConnectTypes } from '@lidofinance/wallets-testing-wallets';
 
 export class WidgetService {
   widgetPage: WidgetPage;
@@ -26,12 +26,12 @@ export class WidgetService {
   async connectWallet() {
     await test.step(`Connect wallet ${this.widgetPage.walletPage.options.walletConfig.WALLET_NAME}`, async () => {
       switch (this.widgetPage.walletPage.options.walletConfig.WALLET_TYPE) {
-        case WalletTypes.EOA:
-        case WalletTypes.WC:
+        case WalletConnectTypes.EOA:
+        case WalletConnectTypes.WC:
           await this.navigate();
           await this.widgetPage.connectWallet();
           break;
-        case WalletTypes.IFRAME:
+        case WalletConnectTypes.IFRAME:
           await this.widgetPage.connectWallet();
       }
     });
@@ -46,7 +46,7 @@ export class WidgetService {
     });
   }
 
-  // Function not tested with walletTypes.WC
+  // Function not tested with walletConnectTypes.WC
   async doStaking(txAmount: string) {
     await test.step('Do staking', async () => {
       await waitForTextContent(this.widgetPage.ethAvailableToStakeValue);

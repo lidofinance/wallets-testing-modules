@@ -1,6 +1,6 @@
 import { Locator, Page, test } from '@playwright/test';
 import { WalletPage } from '../../wallet.page';
-import { WalletTypes } from '../../wallets.constants';
+import { WalletConnectTypes } from '../../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 
 export class SetupPage {
@@ -15,7 +15,7 @@ export class SetupPage {
 
   constructor(
     public page: Page,
-    public extensionPage: WalletPage<WalletTypes.EOA>,
+    public extensionPage: WalletPage<WalletConnectTypes.EOA>,
     public chainId: number,
   ) {
     this.setupUrl =

@@ -1,9 +1,9 @@
-import { WalletTypes } from '../wallets.constants';
+import { WalletConnectTypes } from '../wallets.constants';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { test, Page } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
 
-export class BitgetPage implements WalletPage<WalletTypes.EOA> {
+export class BitgetPage implements WalletPage<WalletConnectTypes.EOA> {
   logger = new ConsoleLogger(BitgetPage.name);
   page: Page | undefined;
 

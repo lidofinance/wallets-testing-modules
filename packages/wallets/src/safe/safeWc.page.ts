@@ -2,9 +2,9 @@ import { Page, test } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
 import { HomePage, SetupPage } from './pages';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
-import { WalletTypes } from '../wallets.constants';
+import { WalletConnectTypes } from '../wallets.constants';
 
-export class SafeWcPage implements WalletPage<WalletTypes.WC> {
+export class SafeWcPage implements WalletPage<WalletConnectTypes.WC> {
   logger = new ConsoleLogger(SafeWcPage.name);
   page?: Page;
   setupPage: SetupPage;

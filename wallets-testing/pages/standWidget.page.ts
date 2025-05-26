@@ -1,12 +1,15 @@
 import { Locator, Page } from '@playwright/test';
 import { WidgetPage } from './widget.page';
 import { BrowserService } from '@lidofinance/browser-service';
-import { WalletPage, WalletTypes } from '@lidofinance/wallets-testing-wallets';
+import {
+  WalletPage,
+  WalletConnectTypes,
+} from '@lidofinance/wallets-testing-wallets';
 import { WidgetConfig } from '../config';
 
 export class StandWidgetPage implements WidgetPage {
   page: Page;
-  walletPage: WalletPage<WalletTypes.EOA | WalletTypes.WC>;
+  walletPage: WalletPage<WalletConnectTypes.EOA | WalletConnectTypes.WC>;
 
   connectBtn: Locator;
   stakeInput: Locator;
@@ -80,7 +83,7 @@ export class StandWidgetPage implements WidgetPage {
     );
 
     switch (this.walletPage.options.walletConfig.WALLET_TYPE) {
-      case WalletTypes.EOA: {
+      case WalletConnectTypes.EOA: {
         const [connectWalletPage] = await Promise.all([
           this.waitForPage(),
           walletButton.dblclick(),
@@ -88,7 +91,7 @@ export class StandWidgetPage implements WidgetPage {
         await this.walletPage.connectWallet(connectWalletPage);
         break;
       }
-      case WalletTypes.WC: {
+      case WalletConnectTypes.WC: {
         await walletButton.click();
         await this.copyWcUrlBtn.click();
         await this.walletPage.connectWallet(
@@ -99,7 +102,7 @@ export class StandWidgetPage implements WidgetPage {
     }
   }
 
-  // Function not tested with walletTypes.WC
+  // Function not tested with walletConnectTypes.WC
   async confirmStakeTx(txAmount: string) {
     const [walletSignPage] = await Promise.all([
       this.waitForPage(180000),

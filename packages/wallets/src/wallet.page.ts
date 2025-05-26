@@ -4,8 +4,8 @@ import {
   CommonWalletConfig,
   NetworkConfig,
   StandConfig,
-  WalletType,
-  WalletTypes,
+  WalletConnectType,
+  WalletConnectTypes,
 } from './wallets.constants';
 
 /** Required options to manage wallet */
@@ -14,11 +14,11 @@ export interface WalletPageOptions {
   accountConfig?: AccountConfig;
   walletConfig?: CommonWalletConfig;
   extensionUrl?: string;
-  extensionPage?: WalletPage<WalletTypes.EOA>;
+  extensionPage?: WalletPage<WalletConnectTypes.EOA>;
   stand?: StandConfig;
 }
 
-/** **T -> WalletTypes.EOA**
+/** **T -> WalletConnectTypes.EOA**
  * - describes the EOA wallets (_Metamask, OKX, Trust, BitGet, Coin98, Coinbase, Ctrl, Exodus._) and lets to manage these wallets with included methods
  * - required options:
  *   - browserContext
@@ -26,7 +26,7 @@ export interface WalletPageOptions {
  *   - accountConfig
  *   - walletConfig
  *
- *  **T -> WalletTypes.WC**
+ *  **T -> WalletConnectTypes.WC**
  * - describes the connection with WalletConnect wallet (_Safe_) and lets to manage these wallets with included methods
  * - required options:
  *   - browserContext
@@ -34,7 +34,7 @@ export interface WalletPageOptions {
  *   - walletConfig
  *   - stand
  *
- * **T -> WalletTypes.IFRAME**
+ * **T -> WalletConnectTypes.IFRAME**
  * - describes the opening the Lido ETH Widget in the iframe app of the wallet (_Safe iframe._) and lets to manage these wallets with included methods
  * - required options:
  *   - browserContext
@@ -42,7 +42,7 @@ export interface WalletPageOptions {
  *   - walletConfig
  *   - stand
  * */
-export interface WalletPage<T extends WalletType> {
+export interface WalletPage<T extends WalletConnectType> {
   options: WalletPageOptions;
   page?: Page;
 
@@ -51,7 +51,7 @@ export interface WalletPage<T extends WalletType> {
   importKey(key: string): Promise<void>;
 
   connectWallet(
-    param?: T extends WalletTypes.EOA ? Page : string,
+    param?: T extends WalletConnectTypes.EOA ? Page : string,
   ): Promise<void>;
 
   assertTxAmount(page: Page, expectedAmount: string): Promise<void>;
