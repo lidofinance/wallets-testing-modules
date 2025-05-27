@@ -31,9 +31,26 @@ type BrowserServiceOptions = {
   accountConfig: AccountConfig;
   walletConfig: CommonWalletConfig;
   nodeConfig: NodeConfig;
+  standUrl?: string;
   browserOptions?: BrowserOptions;
 };
 
+/**
+ * Required options depends on `WalletConnectTypes`:
+ * - `WalletConnectType.EOA` and `WalletConnectType.WC`:
+ *   - networkConfig
+ *   - accountConfig
+ *   - walletConfig
+ *   - nodeConfig
+ *   - browserOptions?
+ * - `WalletConnectType.IFRAME`:
+ *   - networkConfig
+ *   - accountConfig
+ *   - walletConfig
+ *   - nodeConfig
+ *   - standUrl
+ *   - browserOptions?
+ */
 export class BrowserService {
   private logger = new ConsoleLogger(BrowserService.name);
   private walletPage: WalletPage<
@@ -143,17 +160,6 @@ export class BrowserService {
     }
   }
 
-  private getStandUrlByNetwork(): string {
-    switch (this.options.networkConfig.chainName) {
-      case 'Ethereum Hoodi':
-        return 'https://stake-hoodi.testnet.fi';
-      case 'Ethereum Holesky':
-        return 'https://stake-holesky.testnet.fi';
-      default:
-        return 'https://stake.lido.fi';
-    }
-  }
-
   private getEOAWalletPage() {
     return this.options.walletConfig.WALLET_TYPE === WalletConnectTypes.EOA
       ? this.walletPage
@@ -182,7 +188,7 @@ export class BrowserService {
           walletConfig: this.options.walletConfig,
           stand: {
             chainId: this.options.networkConfig.chainId,
-            standUrl: this.getStandUrlByNetwork(),
+            standUrl: this.options.standUrl,
             forkUrl: this.ethereumNodeService?.state.nodeUrl,
           },
         });
@@ -202,5 +208,6 @@ export class BrowserService {
       type: `${this.options.walletConfig.EXTENSION_WALLET_NAME} wallet version`,
       description: manifestContent.version,
     });
+    console.log('version: ', manifestContent.version);
   }
 }

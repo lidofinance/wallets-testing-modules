@@ -284,7 +284,7 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   async sendEthTo(address: string, amount: string) {
-    await test.step('Send ETH', async () => {
+    await test.step(`Send ${amount} ETH to ${address}`, async () => {
       await this.navigate();
       await this.homePage.sendEthBtn.click();
       await this.page.getByTestId('ens-input').fill(address);

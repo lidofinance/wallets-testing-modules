@@ -26,6 +26,7 @@ export async function initBrowserWithExtension(
     browserOptions: {
       slowMo: 200,
     },
+    standUrl: getStandUrlByNetwork(network),
   });
 
   await browserService.initWalletSetup(isFork);
@@ -81,5 +82,16 @@ function networkConfig(network: string) {
       ...NETWORKS_CONFIG.mainnet.ETHEREUM,
       rpcUrl: configService.get('RPC_URL'),
     };
+  }
+}
+
+function getStandUrlByNetwork(network: string): string {
+  switch (network) {
+    case 'hoodi':
+      return 'https://stake-hoodi.testnet.fi';
+    case 'holesky':
+      return 'https://stake-holesky.testnet.fi';
+    default:
+      return 'https://stake.lido.fi';
   }
 }
