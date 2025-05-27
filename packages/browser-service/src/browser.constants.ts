@@ -20,7 +20,7 @@ export const WALLET_PAGES = {
   coinbase: CoinbasePage,
   ctrl: CtrlPage,
   bitget: BitgetPage,
-  safe: SafeWcPage,
+  safeWc: SafeWcPage,
   safeIframe: SafeIframePage,
 };
 
