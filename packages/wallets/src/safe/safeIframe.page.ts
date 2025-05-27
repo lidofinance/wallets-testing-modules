@@ -1,6 +1,6 @@
 import { Page, test, expect } from '@playwright/test';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
-import { WalletConnectTypes } from '../wallets.constants';
+import { NetworkConfig, WalletConnectTypes } from '../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 import { SetupPage, SettingPage, TransactionPage } from './pages';
 
@@ -107,6 +107,14 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
     });
   }
 
+  async setupNetwork(networkConfig: NetworkConfig) {
+    await this.options.extensionPage.setupNetwork(networkConfig);
+  }
+
+  async changeNetwork(networkName: string) {
+    await this.options.extensionPage.changeNetwork(networkName);
+  }
+
   cancelTx(): Promise<void> {
     throw new Error('Method not implemented.');
   }
@@ -121,27 +129,23 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
 
   // SafePage does not support these methods
   setup(): Promise<void> {
-    throw new Error('Unsupported method for WalletConnectTypes.WC');
+    throw new Error('Unsupported method for WalletConnectTypes.IFRAME');
   }
 
   importKey(): Promise<void> {
-    throw new Error('Unsupported method for WalletConnectTypes.WC');
+    throw new Error('Unsupported method for WalletConnectTypes.IFRAME');
   }
 
   openLastTxInEthplorer?(): Promise<Page> {
-    throw new Error('Unsupported method for WalletConnectTypes.WC');
+    throw new Error('Unsupported method for WalletConnectTypes.IFRAME');
   }
 
   confirmAddTokenToWallet?(): Promise<void> {
-    throw new Error('Unsupported method for WalletConnectTypes.WC');
+    throw new Error('Unsupported method for WalletConnectTypes.IFRAME');
   }
 
   addNetwork(): Promise<void> {
-    throw new Error('Unsupported method for WalletConnectTypes.WC');
-  }
-
-  changeNetwork?(): Promise<void> {
-    throw new Error('Unsupported method for WalletConnectTypes.WC');
+    throw new Error('Unsupported method for WalletConnectTypes.IFRAME');
   }
 
   private getUrl(pageName: 'lidoApp' | 'envSetting') {

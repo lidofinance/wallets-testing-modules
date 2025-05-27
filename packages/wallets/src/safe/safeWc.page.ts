@@ -2,7 +2,7 @@ import { Page, test } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
 import { HomePage, SetupPage } from './pages';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
-import { WalletConnectTypes } from '../wallets.constants';
+import { NetworkConfig, WalletConnectTypes } from '../wallets.constants';
 
 export class SafeWcPage implements WalletPage<WalletConnectTypes.WC> {
   logger = new ConsoleLogger(SafeWcPage.name);
@@ -40,12 +40,12 @@ export class SafeWcPage implements WalletPage<WalletConnectTypes.WC> {
     await this.page.close();
   }
 
-  async setupNetwork() {
-    this.logger.debug('Method "setupNetwork()" is unsupported method WC+Safe');
+  async setupNetwork(networkConfig: NetworkConfig) {
+    await this.options.extensionPage.setupNetwork(networkConfig);
   }
 
-  async changeNetwork() {
-    this.logger.debug('Method "changeNetwork()" is unsupported method WC+Safe');
+  async changeNetwork(networkName: string) {
+    await this.options.extensionPage.changeNetwork(networkName);
   }
 
   assertTxAmount(): Promise<void> {

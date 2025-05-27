@@ -30,8 +30,7 @@ export async function initBrowserWithExtension(
 
   await browserService.initWalletSetup(isFork);
   if (
-    browserService.getWalletPage().options.walletConfig.WALLET_TYPE ===
-    WalletConnectTypes.IFRAME
+    browserService.getWalletConfig().WALLET_TYPE === WalletConnectTypes.IFRAME
   )
     await browserService.getWalletPage().initIframeWallet();
 
@@ -41,7 +40,7 @@ export async function initBrowserWithExtension(
 export async function connectWallet(browserService: BrowserService) {
   const widgetService = new WidgetService(
     browserService,
-    widgetConfig[browserService.options.networkConfig.chainName],
+    widgetConfig[browserService.getNetworkConfig().chainName],
   );
   await widgetService.connectWallet();
 }
@@ -50,7 +49,7 @@ export async function connectWallet(browserService: BrowserService) {
 export async function stake(browserService: BrowserService, txAmount: string) {
   const widgetService = new WidgetService(
     browserService,
-    widgetConfig[browserService.options.networkConfig.chainName],
+    widgetConfig[browserService.getNetworkConfig().chainName],
   );
   await widgetService.connectWallet();
   await widgetService.doStaking(txAmount);

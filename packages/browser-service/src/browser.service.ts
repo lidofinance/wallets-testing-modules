@@ -44,7 +44,7 @@ export class BrowserService {
 
   public isFork: boolean;
 
-  constructor(public options: BrowserServiceOptions) {}
+  constructor(private options: BrowserServiceOptions) {}
 
   getWalletPage() {
     if (!this.walletPage)
@@ -52,6 +52,14 @@ export class BrowserService {
         '"walletPage" is not initialized. Use initWalletSetup() function',
       );
     return this.walletPage;
+  }
+
+  getNetworkConfig() {
+    return this.options.networkConfig;
+  }
+
+  getWalletConfig() {
+    return this.options.walletConfig;
   }
 
   getBrowserContextPage() {
@@ -63,10 +71,8 @@ export class BrowserService {
       await this.setupWithNode();
     } else {
       await this.setup();
-      await this.getEOAWalletPage().setupNetwork(this.options.networkConfig);
-      await this.getEOAWalletPage().changeNetwork(
-        this.options.networkConfig.chainName,
-      );
+      await this.walletPage.setupNetwork(this.options.networkConfig);
+      await this.walletPage.changeNetwork(this.options.networkConfig.chainName);
       await this.browserContextService.closePages();
     }
   }

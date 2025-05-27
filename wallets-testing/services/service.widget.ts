@@ -13,7 +13,7 @@ export class WidgetService {
     public widgetConfig: WidgetConfig,
   ) {
     this.widgetPage = new WIDGET_PAGE[
-      this.browserService.options.walletConfig.WALLET_TYPE
+      this.browserService.getWalletConfig().WALLET_TYPE
     ](this.browserService, this.widgetConfig);
   }
 
@@ -24,8 +24,10 @@ export class WidgetService {
   }
 
   async connectWallet() {
-    await test.step(`Connect wallet ${this.widgetPage.walletPage.options.walletConfig.WALLET_NAME}`, async () => {
-      switch (this.widgetPage.walletPage.options.walletConfig.WALLET_TYPE) {
+    await test.step(`Connect wallet ${
+      this.browserService.getWalletConfig().WALLET_NAME
+    }`, async () => {
+      switch (this.browserService.getWalletConfig().WALLET_TYPE) {
         case WalletConnectTypes.EOA:
         case WalletConnectTypes.WC:
           await this.navigate();
@@ -40,7 +42,7 @@ export class WidgetService {
       await this.widgetPage.stakeSubmitBtn.waitFor({ timeout: 90000 });
       await this.widgetPage.headerAccountSection.click();
       expect(await this.widgetPage.providerName.textContent()).toContain(
-        this.widgetPage.walletPage.options.walletConfig.CONNECTED_WALLET_NAME,
+        this.browserService.getWalletConfig().CONNECTED_WALLET_NAME,
       );
       await this.widgetPage.closeAccountModal();
     });
