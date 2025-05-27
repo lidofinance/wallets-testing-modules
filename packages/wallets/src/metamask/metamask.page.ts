@@ -242,11 +242,12 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async changeWalletAccountByAddress(address: string) {
+  async changeWalletAccountByAddress(address: string, isClosePage = false) {
     await test.step('Change wallet account by address', async () => {
       await this.navigate();
       await this.header.accountMenuButton.click();
       await this.accountMenu.clickToAddress(address);
+      if (isClosePage) await this.page.close();
     });
   }
 

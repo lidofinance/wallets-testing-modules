@@ -109,10 +109,7 @@ export class BrowserService {
     if (!(await walletPage.isWalletAddressExist(account.address))) {
       await walletPage.importKey(account.secretKey);
     } else {
-      await walletPage.changeWalletAccountByName(
-        account.address.slice(-5).toLowerCase(),
-        false,
-      );
+      await walletPage.changeWalletAccountByAddress(account.address);
     }
 
     await walletPage.setupNetwork({
@@ -208,6 +205,5 @@ export class BrowserService {
       type: `${this.options.walletConfig.EXTENSION_WALLET_NAME} wallet version`,
       description: manifestContent.version,
     });
-    console.log('version: ', manifestContent.version);
   }
 }
