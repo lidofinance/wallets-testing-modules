@@ -91,9 +91,6 @@ export class BrowserService {
       await this.walletPage.setupNetwork(this.options.networkConfig);
       await this.walletPage.changeNetwork(this.options.networkConfig.chainName);
       await this.browserContextService.closePages();
-
-      if (this.options.walletConfig.WALLET_TYPE === WalletConnectTypes.IFRAME)
-        await this.walletPage.initIframeWallet();
     }
   }
 
@@ -108,14 +105,13 @@ export class BrowserService {
     const account = this.ethereumNodeService.getAccount();
     await this.setup();
 
-    const walletPage = this.getEOAWalletPage();
-    if (!(await walletPage.isWalletAddressExist(account.address))) {
-      await walletPage.importKey(account.secretKey);
+    if (!(await this.walletPage.isWalletAddressExist(account.address))) {
+      await this.walletPage.importKey(account.secretKey);
     } else {
-      await walletPage.changeWalletAccountByAddress(account.address);
+      await this.walletPage.changeWalletAccountByAddress(account.address);
     }
 
-    await walletPage.setupNetwork({
+    await this.walletPage.setupNetwork({
       ...this.options.networkConfig,
       chainName: this.options.networkConfig.chainName,
       rpcUrl: this.ethereumNodeService.state.nodeUrl,
@@ -158,12 +154,6 @@ export class BrowserService {
     if (this.ethereumNodeService) {
       await this.ethereumNodeService.stopNode();
     }
-  }
-
-  private getEOAWalletPage() {
-    return this.options.walletConfig.WALLET_TYPE === WalletConnectTypes.EOA
-      ? this.walletPage
-      : this.walletPage.options.extensionPage;
   }
 
   private setWalletPage() {

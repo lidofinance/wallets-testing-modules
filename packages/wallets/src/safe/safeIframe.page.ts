@@ -14,7 +14,12 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
 
   constructor(public options: WalletPageOptions) {}
 
-  async initLocators() {
+  async initLocators(page?: Page) {
+    if (!page) {
+      this.page = await this.options.browserContext.newPage();
+    } else {
+      this.page = page;
+    }
     this.setupPage = new SetupPage(
       this.page,
       this.options.extensionPage,
@@ -23,8 +28,30 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
     this.settingPage = new SettingPage(this.page);
   }
 
+  /** Navigate to Safe Iframe
+   * - Setup Extension wallet
+   * - Open Gnosis Safe app
+   * - Connect EOA wallet and setup Safe
+   * - Setup fork link (if needed)
+   */
   async setup() {
     await this.options.extensionPage.setup();
+
+    await test.step('Init Safe wallet', async () => {
+      await this.initLocators();
+      if (!this.safeUrl) {
+        const safeAccountUrl = await this.setupPage.firstTimeSetupWallet();
+        this.safeUrl = new URL(safeAccountUrl);
+
+        // Fork for Safe is not working correctly now
+        if (this.options.stand.forkUrl) {
+          await this.navigate('envSetting');
+          await this.settingPage.rpcUrlInput.fill(this.options.stand.forkUrl);
+          await this.settingPage.saveSettingBtn.click();
+        }
+      }
+      await this.page.goto(String(this.safeUrl));
+    });
   }
 
   async navigate(pageName: 'lidoApp' | 'envSetting') {
@@ -48,37 +75,13 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
     }
   }
 
-  /** Navigate to Safe Iframe
-   * - Open Gnosis Safe app
-   * - Connect EOA wallet and setup Safe
-   * - Setup fork link (if needed)
-   * - Open Stake Widget in iframe and connect wallet
-   */
-  async initIframeWallet() {
-    await test.step('Init Safe wallet', async () => {
-      this.page = this.options.browserContext.pages()[0];
-      await this.initLocators();
-      if (!this.safeUrl) {
-        const safeAccountUrl = await this.setupPage.firstTimeSetupWallet();
-        this.safeUrl = new URL(safeAccountUrl);
-
-        // Fork for Safe is not working correctly now
-        if (this.options.stand.forkUrl) {
-          await this.navigate('envSetting');
-          await this.settingPage.rpcUrlInput.fill(this.options.stand.forkUrl);
-          await this.settingPage.saveSettingBtn.click();
-        }
-      }
-      await this.page.goto(String(this.safeUrl));
-    });
-  }
-
   async getWalletAddress() {
     return this.safeUrl.searchParams.get('safe').slice(4);
   }
 
   /** Open Lido app and confirm wallet auto connection */
   async connectWallet() {
+    await this.initLocators(this.options.browserContext.pages()[0]);
     await this.navigate('lidoApp');
     await test.step('Open Lido app in the Safe', async () => {
       await this.setupPage.closeExtraPopup();
@@ -128,12 +131,29 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
     });
   }
 
+  /** Setup network to the extension wallet */
   async setupNetwork(networkConfig: NetworkConfig) {
     await this.options.extensionPage.setupNetwork(networkConfig);
   }
 
+  /** Change network in the extension wallet */
   async changeNetwork(networkName: string) {
     await this.options.extensionPage.changeNetwork(networkName);
+  }
+
+  /** Check the wallet address exists in the extension wallet */
+  async isWalletAddressExist(address: string) {
+    return await this.options.extensionPage.isWalletAddressExist(address);
+  }
+
+  /** Import key to the extension wallet */
+  async importKey(secretKey: string) {
+    await this.options.extensionPage.importKey(secretKey);
+  }
+
+  /** Change account in the extension wallet */
+  async changeWalletAccountByAddress(address: string) {
+    await this.options.extensionPage.changeWalletAccountByAddress(address);
   }
 
   cancelTx(): Promise<void> {
@@ -146,10 +166,6 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
 
   getTokenBalance?(): Promise<number> {
     throw new Error('Method not implemented.');
-  }
-
-  importKey(): Promise<void> {
-    throw new Error('Unsupported method for WalletConnectTypes.IFRAME');
   }
 
   openLastTxInEthplorer?(): Promise<Page> {

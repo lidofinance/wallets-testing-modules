@@ -56,6 +56,9 @@ export class IframeWidgetPage implements WidgetPage {
   async connectWallet() {
     await test.step('Connect wallet to Lido app in Safe', async () => {
       await this.walletPage.connectWallet();
+      await this.app
+        .getByText('Stake Ether')
+        .waitFor({ timeout: 15000, state: 'visible' });
       try {
         await this.connectBtn.waitFor({
           timeout: 2000,

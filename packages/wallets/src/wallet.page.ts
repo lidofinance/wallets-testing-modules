@@ -92,6 +92,4 @@ export interface WalletPage<T extends WalletConnectType> {
   isWalletAddressExist?(address: string): Promise<boolean>;
 
   sendEthTo?(address: string, amount: string): Promise<void>;
-
-  initIframeWallet?(): Promise<void>;
 }

@@ -44,12 +44,29 @@ export class SafeWcPage implements WalletPage<WalletConnectTypes.WC> {
     await this.page.close();
   }
 
+  /** Setup network to the extension wallet */
   async setupNetwork(networkConfig: NetworkConfig) {
     await this.options.extensionPage.setupNetwork(networkConfig);
   }
 
+  /** Change network in the extension wallet */
   async changeNetwork(networkName: string) {
     await this.options.extensionPage.changeNetwork(networkName);
+  }
+
+  /** Check the wallet address exists in the extension wallet */
+  async isWalletAddressExist(address: string) {
+    return await this.options.extensionPage.isWalletAddressExist(address);
+  }
+
+  /** Import key to the extension wallet */
+  async importKey(secretKey: string) {
+    await this.options.extensionPage.importKey(secretKey);
+  }
+
+  /** Change account in the extension wallet */
+  async changeWalletAccountByAddress(address: string) {
+    await this.options.extensionPage.changeWalletAccountByAddress(address);
   }
 
   assertTxAmount(): Promise<void> {
@@ -78,10 +95,6 @@ export class SafeWcPage implements WalletPage<WalletConnectTypes.WC> {
 
   getWalletAddress?(): Promise<string> {
     throw new Error('Method not implemented.');
-  }
-
-  importKey(): Promise<void> {
-    throw new Error('Unsupported method for WC+Safe wallet');
   }
 
   openLastTxInEthplorer?(): Promise<Page> {
