@@ -1,5 +1,7 @@
 import { Locator, Page, test } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
+import { WalletPage } from '../../wallet.page';
+import { WalletConnectTypes } from '../../wallets.constants';
 
 export class TransactionPage {
   logger = new ConsoleLogger(`Safe. ${TransactionPage.name}`);
@@ -8,8 +10,12 @@ export class TransactionPage {
   tokenAmount: Locator;
   executeTxBtn: Locator;
   finishTxBtn: Locator;
+  switchNetworkBtn: Locator;
 
-  constructor(public page: Page) {
+  constructor(
+    public page: Page,
+    public extensionPage: WalletPage<WalletConnectTypes.EOA>,
+  ) {
     this.transactionCardContent = this.page.getByTestId('card-content').first();
     this.contractExplorerUrl = this.transactionCardContent
       .getByTestId('explorer-btn')
@@ -17,6 +23,7 @@ export class TransactionPage {
     this.tokenAmount = this.transactionCardContent.getByTestId('token-amount');
     this.executeTxBtn = this.page.getByTestId('execute-form-btn');
     this.finishTxBtn = this.page.getByTestId('finish-transaction-btn');
+    this.switchNetworkBtn = this.page.getByText('Switch to');
   }
 
   async getContractOfTransaction() {
@@ -28,10 +35,26 @@ export class TransactionPage {
   }
 
   async confirmTransaction() {
+    await this.tokenAmount.waitFor({
+      state: 'visible',
+      timeout: 10000,
+    });
+
+    await test.step('Switch network if needed', async () => {
+      if (await this.switchNetworkBtn.isVisible()) {
+        const [extensionTxPage] = await Promise.all([
+          this.page.context().waitForEvent('page', { timeout: 10000 }),
+          await this.switchNetworkBtn.click(),
+        ]);
+        await this.extensionPage.confirmTx(extensionTxPage);
+      }
+    });
+
     const [extensionTxPage] = await Promise.all([
       this.executeTxBtnClick(),
       this.executeTxBtn.click(),
     ]);
+    await this.extensionPage.confirmTx(extensionTxPage, true);
     return extensionTxPage;
   }
 

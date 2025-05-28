@@ -20,7 +20,9 @@ export class WalletOperationPage {
 
   constructor(public page: Page) {
     this.connectBtn = this.page.getByTestId('confirm-btn');
-    this.confirmButton = this.page.getByTestId('confirm-footer-button');
+    this.confirmButton = this.page
+      .getByTestId('confirm-footer-button')
+      .or(this.page.getByTestId('page-container-footer-next'));
     this.approvalCancelButton = this.page.getByTestId(
       'page-container-footer-cancel',
     );

@@ -107,7 +107,10 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
 
   async assertReceiptAddress(page: Page, expectedAddress: string) {
     await test.step('Assert contract address', async () => {
-      const transactionPage = new TransactionPage(page);
+      const transactionPage = new TransactionPage(
+        page,
+        this.options.extensionPage,
+      );
       const contractAddress = await transactionPage.getContractOfTransaction();
       expect(contractAddress).toEqual(expectedAddress);
     });
@@ -115,9 +118,10 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
 
   async confirmTx(page: Page) {
     await test.step('Confirm transaction', async () => {
-      const transactionPage = new TransactionPage(page);
-      const extensionTxPage = await transactionPage.confirmTransaction();
-      await this.options.extensionPage.confirmTx(extensionTxPage, true);
+      const transactionPage = new TransactionPage(
+        page,
+        this.options.extensionPage,
+      );
       await this.page.waitForSelector('text=Transaction was successful');
       await transactionPage.finishTxBtn.click();
     });
@@ -125,7 +129,11 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
 
   async assertTxAmount(page: Page, expectedAmount: string) {
     await test.step('Assert transaction amount', async () => {
-      const transactionPage = new TransactionPage(page);
+      const transactionPage = new TransactionPage(
+        page,
+        this.options.extensionPage,
+      );
+      await transactionPage.confirmTransaction();
       const transactionAmount = await transactionPage.getTransactionAmount();
       expect(transactionAmount).toEqual(expectedAmount);
     });
