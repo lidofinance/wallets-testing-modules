@@ -91,6 +91,9 @@ export class BrowserService {
       await this.walletPage.setupNetwork(this.options.networkConfig);
       await this.walletPage.changeNetwork(this.options.networkConfig.chainName);
       await this.browserContextService.closePages();
+
+      if (this.options.walletConfig.WALLET_TYPE === WalletConnectTypes.IFRAME)
+        await this.walletPage.initIframeWallet();
     }
   }
 
@@ -146,7 +149,7 @@ export class BrowserService {
     await this.browserContextService.initBrowserContext();
     await this.annotateExtensionWalletVersion(extensionService);
     this.setWalletPage();
-    await this.getEOAWalletPage().setup(this.options.networkConfig.chainName);
+    await this.walletPage.setup();
   }
 
   async teardown() {

@@ -1,4 +1,4 @@
-import { WidgetConfig } from '../config';
+import { widgetConfig, WidgetConfig } from '../config';
 import { expect, test } from '@playwright/test';
 import { BrowserService } from '@lidofinance/browser-service';
 import { WIDGET_PAGE, WidgetPage } from '../pages';
@@ -6,12 +6,12 @@ import { waitForTextContent } from '../utils/helpers';
 import { WalletConnectTypes } from '@lidofinance/wallets-testing-wallets';
 
 export class WidgetService {
+  widgetConfig: WidgetConfig;
   widgetPage: WidgetPage;
 
-  constructor(
-    private browserService: BrowserService,
-    public widgetConfig: WidgetConfig,
-  ) {
+  constructor(private browserService: BrowserService) {
+    this.widgetConfig =
+      widgetConfig[browserService.getNetworkConfig().chainName];
     this.widgetPage = new WIDGET_PAGE[
       this.browserService.getWalletConfig().WALLET_TYPE
     ](this.browserService, this.widgetConfig);

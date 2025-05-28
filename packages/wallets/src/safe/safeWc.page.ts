@@ -22,6 +22,10 @@ export class SafeWcPage implements WalletPage<WalletConnectTypes.WC> {
     this.homePage = new HomePage(this.page);
   }
 
+  async setup() {
+    await this.options.extensionPage.setup();
+  }
+
   async navigate() {
     this.page = await this.options.browserContext.newPage();
     await this.initLocators();
@@ -74,11 +78,6 @@ export class SafeWcPage implements WalletPage<WalletConnectTypes.WC> {
 
   getWalletAddress?(): Promise<string> {
     throw new Error('Method not implemented.');
-  }
-
-  // SafePage does not support these methods
-  setup(): Promise<void> {
-    throw new Error('Unsupported method forWC+Safe wallet');
   }
 
   importKey(): Promise<void> {

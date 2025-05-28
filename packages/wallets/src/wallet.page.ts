@@ -46,7 +46,7 @@ export interface WalletPage<T extends WalletConnectType> {
   options: WalletPageOptions;
   page?: Page;
 
-  setup(network?: string): Promise<void>;
+  setup(): Promise<void>;
 
   importKey(key: string): Promise<void>;
 

@@ -23,6 +23,31 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
     this.settingPage = new SettingPage(this.page);
   }
 
+  async setup() {
+    await this.options.extensionPage.setup();
+  }
+
+  async navigate(pageName: 'lidoApp' | 'envSetting') {
+    await this.page.goto(this.getNavigationUrl(pageName));
+  }
+
+  private getNavigationUrl(pageName: 'lidoApp' | 'envSetting') {
+    switch (pageName) {
+      case 'lidoApp':
+        return `${
+          this.safeUrl.origin
+        }/apps/open?safe=${this.safeUrl.searchParams.get('safe')}&appUrl=${
+          this.options.stand.standUrl
+        }`;
+      case 'envSetting':
+        return `${
+          this.safeUrl.origin
+        }/settings/environment-variables?safe=${this.safeUrl.searchParams.get(
+          'safe',
+        )}`;
+    }
+  }
+
   /** Navigate to Safe Iframe
    * - Open Gnosis Safe app
    * - Connect EOA wallet and setup Safe
@@ -46,10 +71,6 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
       }
       await this.page.goto(String(this.safeUrl));
     });
-  }
-
-  async navigate(pageName: 'lidoApp' | 'envSetting') {
-    await this.page.goto(this.getUrl(pageName));
   }
 
   async getWalletAddress() {
@@ -127,11 +148,6 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
     throw new Error('Method not implemented.');
   }
 
-  // SafePage does not support these methods
-  setup(): Promise<void> {
-    throw new Error('Unsupported method for WalletConnectTypes.IFRAME');
-  }
-
   importKey(): Promise<void> {
     throw new Error('Unsupported method for WalletConnectTypes.IFRAME');
   }
@@ -146,22 +162,5 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
 
   addNetwork(): Promise<void> {
     throw new Error('Unsupported method for WalletConnectTypes.IFRAME');
-  }
-
-  private getUrl(pageName: 'lidoApp' | 'envSetting') {
-    switch (pageName) {
-      case 'lidoApp':
-        return `${
-          this.safeUrl.origin
-        }/apps/open?safe=${this.safeUrl.searchParams.get('safe')}&appUrl=${
-          this.options.stand.standUrl
-        }`;
-      case 'envSetting':
-        return `${
-          this.safeUrl.origin
-        }/settings/environment-variables?safe=${this.safeUrl.searchParams.get(
-          'safe',
-        )}`;
-    }
   }
 }

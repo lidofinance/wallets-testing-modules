@@ -1,7 +1,6 @@
 import { WalletConnectTypes } from '../wallets.constants';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { test, Page } from '@playwright/test';
-import { getCorrectNetworkName } from './helper';
 import { ConsoleLogger } from '@nestjs/common';
 
 export class Coin98 implements WalletPage<WalletConnectTypes.EOA> {
@@ -21,17 +20,16 @@ export class Coin98 implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async setup(network: string) {
+  async setup() {
     await test.step('Setup', async () => {
       await this.waitForAutomaticallyOpenedWalletPageAfterInstallation();
       await this.navigate();
       const firstTime = await this.page.waitForSelector('text=Choose language');
-      if (firstTime) await this.firstTimeSetup(network);
+      if (firstTime) await this.firstTimeSetup();
     });
   }
 
-  async firstTimeSetup(network: string) {
-    network = getCorrectNetworkName(network);
+  async firstTimeSetup() {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
       await this.page.locator('button:has-text("Continue")').click();
@@ -56,6 +54,7 @@ export class Coin98 implements WalletPage<WalletConnectTypes.EOA> {
         .locator('button:has-text("Continue")')
         .first()
         .click({ force: true });
+      const network = 'Ethereum';
       await this.page.fill('input[placeholder="Search blockchain"]', network);
       await this.page.getByText(network, { exact: true }).click();
       await this.page.click('button:has-text("Restore")');
