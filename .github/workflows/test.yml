@@ -25,13 +25,39 @@ jobs:
         with:
           node-version: '20'
           cache: 'yarn'
+
+      - name: Debug cache key
+        run: |
+          echo "Runner OS: $RUNNER_OS"
+          HASH=$(shasum yarn.lock | cut -d ' ' -f1)
+          echo "Computed yarn.lock hash: $HASH"
+          echo "Cache key will be: $RUNNER_OS-node-modules-$HASH"
+
       - name: Cache node_modules
+        id: cache-node
         uses: actions/cache@v3
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-node-modules-
+
+      - name: Show cache hit info
+        run: |
+          echo "Cache hit: ${{ steps.cache-node.outputs.cache-hit }}"
+
+      - name: Install dependencies
+        run: |
+          echo "📦 Running yarn install --frozen-lockfile"
+          yarn install --frozen-lockfile
+
+      - name: Check node_modules exists
+        run: |
+          if [ -d node_modules ]; then
+            echo "✅ node_modules exists, будет сохранён в кэше."
+          else
+            echo "❌ node_modules НЕ найдена! Кэш сохраняться не будет."
+          fi
       - name: Install dependencies
         run: yarn install --immutable
       - name: Run lint
