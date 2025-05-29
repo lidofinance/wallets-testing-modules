@@ -25,11 +25,6 @@ jobs:
         with:
           node-version: '20'
           cache: 'yarn'
-      - name: Debug cache key (SHA-256)
-        run: |
-          echo "Runner OS: $RUNNER_OS"
-          HASH=$(sha256sum yarn.lock | cut -d ' ' -f1)
-          echo "Cache key will be: $RUNNER_OS-node-modules-$HASH"
       - name: Cache node_modules
         uses: actions/cache@v3
         with:
