@@ -66,6 +66,13 @@ export class SetupPage {
       await this.closeExtraPopup();
       await this.agreeCookiesSetting();
       await this.page.waitForTimeout(2000);
+      try {
+        await this.accountCenter.waitFor({ state: 'visible', timeout: 5000 });
+        this.logger.log('Extension is auto-connected');
+        return;
+      } catch {
+        // extension not connected - continue the flow
+      }
       await this.connectWalletBtn.click();
       try {
         await this.page
