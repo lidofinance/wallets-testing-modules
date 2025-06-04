@@ -9,6 +9,7 @@ export class HomePage {
   transactionExplorerButton: Locator;
   tokensListItemValues: Locator;
   importTokenButton: Locator;
+  sendEthBtn: Locator;
 
   constructor(
     public page: Page,
@@ -39,6 +40,7 @@ export class HomePage {
       'multichain-token-list-item-value',
     );
     this.importTokenButton = this.page.getByText('import tokens');
+    this.sendEthBtn = this.page.getByTestId('eth-overview-send');
   }
 
   async goto() {
