@@ -1,6 +1,7 @@
 import { BrowserContext } from '@playwright/test';
 
 const incorrectNetworkNames = new Map<string, string>([
+  ['Ethereum Mainnet', 'Ethereum'],
   ['zkSync Era Mainnet', 'zkSync Era'],
   ['OP Mainnet', 'Optimism'],
   ['Polygon Mainnet', 'Polygon'],
@@ -12,6 +13,7 @@ const incorrectNetworkNames = new Map<string, string>([
 ]);
 
 const OkxIncludedNetwork = [
+  'Ethereum',
   'Linea',
   'zkSync Era',
   'Polygon',
