@@ -1,6 +1,6 @@
 import { CommonWalletConfig, WalletTypes } from '../../wallets.constants';
 
-export const SAFE_COMMON_CONFIG: CommonWalletConfig = {
+export const WC_SAFE_COMMON_CONFIG: CommonWalletConfig = {
   WALLET_NAME: 'safe',
   EXTENSION_WALLET_NAME: 'metamask',
   CONNECTED_WALLET_NAME: 'WalletConnect',
