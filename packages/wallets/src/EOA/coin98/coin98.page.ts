@@ -27,7 +27,8 @@ export class Coin98 implements WalletPage<WalletTypes.EOA> {
     });
   }
 
-  async setup(network: string) {
+  async setup() {
+    const network = 'Ethereum Mainnet';
     await test.step('Setup', async () => {
       await this.waitForAutomaticallyOpenedWalletPageAfterInstallation();
       await this.navigate();
