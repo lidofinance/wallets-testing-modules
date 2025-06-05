@@ -8,9 +8,9 @@ import {
   WalletTypes,
 } from '../../wallets.constants';
 
-export class SafePage implements WalletPage<WalletTypes.WC> {
+export class SafeWcPage implements WalletPage<WalletTypes.WC> {
   page: Page | undefined;
-  logger = new ConsoleLogger(SafePage.name);
+  logger = new ConsoleLogger(SafeWcPage.name);
   setupPage: SetupPage;
   homePage: HomePage;
   safeAccountUrl?: string;
