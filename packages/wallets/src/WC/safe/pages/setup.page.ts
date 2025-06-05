@@ -11,6 +11,7 @@ export class SetupPage {
   safeAccount: Locator;
   setupUrl: string;
   closeSecurityNoticeBtn: Locator;
+  inAppContinueBtn: Locator;
 
   constructor(
     public page: Page,
@@ -31,6 +32,7 @@ export class SetupPage {
     this.accountCenter = this.page.getByTestId('open-account-center');
     this.safeAccount = this.page.getByTestId('safe-list-item').nth(0);
     this.closeSecurityNoticeBtn = this.page.getByText('I understand');
+    this.inAppContinueBtn = this.page.getByText('Continue');
   }
 
   async firstTimeSetupWallet() {
