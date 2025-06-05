@@ -1,7 +1,7 @@
 import { CommonWalletConfig, WalletTypes } from '../../wallets.constants';
 
 export const WC_SAFE_COMMON_CONFIG: CommonWalletConfig = {
-  WALLET_NAME: 'safe',
+  WALLET_NAME: 'safeWc',
   EXTENSION_WALLET_NAME: 'metamask',
   CONNECTED_WALLET_NAME: 'WalletConnect',
   RPC_URL_PATTERN: 'https://mainnet.infura.io/v3/**',
