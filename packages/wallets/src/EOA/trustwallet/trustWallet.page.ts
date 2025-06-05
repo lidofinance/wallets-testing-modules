@@ -83,10 +83,10 @@ export class TrustWalletPage implements WalletPage<WalletTypes.EOA> {
 
   /** Checks the is installed the needed network and add new network to wallet (if needed) */
   async setupNetwork(networkConfig: NetworkConfig) {
-    networkConfig.chainName = getCorrectNetworkName(networkConfig.chainName);
+    const correctChainName = getCorrectNetworkName(networkConfig.chainName);
     await test.step(`Setup "${networkConfig.chainName}" Network`, async () => {
       await this.navigate();
-      if (!(await this.homePage.isNetworkExists(networkConfig.chainName))) {
+      if (!(await this.homePage.isNetworkExists(correctChainName))) {
         await this.addNetwork(networkConfig);
       }
     });
