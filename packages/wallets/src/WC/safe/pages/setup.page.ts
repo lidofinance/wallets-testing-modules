@@ -25,7 +25,7 @@ export class SetupPage {
         : 'https://app.safe.protofire.io/welcome/accounts'; //Hoodi
 
     this.saveCookiesSettingBtn = this.page.locator(
-      'button:has-text("Save settings")',
+      'button:has-text("Accept all")',
     );
     this.connectWalletBtn = this.page.getByTestId('connect-wallet-btn').nth(0);
     this.accountCenter = this.page.getByTestId('open-account-center');
