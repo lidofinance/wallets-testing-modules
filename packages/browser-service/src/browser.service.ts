@@ -143,7 +143,7 @@ export class BrowserService {
       this.options.accountConfig,
       this.options.walletConfig,
     );
-    await extensionWalletPage.setup(this.options.networkConfig.chainName);
+    await extensionWalletPage.setup();
 
     if (this.options.walletConfig.WALLET_TYPE === WalletTypes.WC) {
       this.walletPage = new WALLET_PAGES[this.options.walletConfig.WALLET_NAME](

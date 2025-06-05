@@ -16,7 +16,7 @@ export interface WalletPage<T extends WalletType> {
   accountConfig: AccountConfig;
   walletConfig: CommonWalletConfig;
 
-  setup(network?: string): Promise<void>;
+  setup(): Promise<void>;
 
   importKey(key: string): Promise<void>;
 
