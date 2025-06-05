@@ -38,7 +38,7 @@ export interface WalletPage<T extends WalletType> {
 
   confirmAddTokenToWallet?(page: Page): Promise<void>;
 
-  assertReceiptAddress(page: Page, expectedAmount: string): Promise<void>;
+  assertReceiptAddress(page: Page, expectedAddress: string): Promise<void>;
 
   getWalletAddress?(): Promise<string>;
 
