@@ -84,7 +84,7 @@ export class BrowserService {
     if (!(await this.walletPage.isWalletAddressExist(account.address))) {
       await this.walletPage.importKey(account.secretKey);
     } else {
-      await this.walletPage.changeWalletAccountByName(account.address);
+      await this.walletPage.changeWalletAccountByAddress(account.address);
     }
 
     await this.walletPage.setupNetwork({
