@@ -20,7 +20,9 @@ export class SetupPage {
     this.setupUrl =
       this.chainId === 1
         ? 'https://app.safe.global/welcome/accounts'
-        : 'https://holesky-safe.protofire.io/welcome/accounts';
+        : this.chainId === 17000
+        ? 'https://holesky-safe.protofire.io/welcome/accounts'
+        : 'https://app.safe.protofire.io/welcome/accounts'; //Hoodi
 
     this.saveCookiesSettingBtn = this.page.locator(
       'button:has-text("Save settings")',

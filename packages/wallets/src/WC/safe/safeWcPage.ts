@@ -18,7 +18,7 @@ export class SafeWcPage implements WalletPage<WalletTypes.WC> {
   constructor(
     private browserContext: BrowserContext,
     public extensionPage: WalletPage<WalletTypes.EOA>,
-    public chainId: 1 | 17000,
+    public chainId: 1 | 17000 | 560048,
     public accountConfig: AccountConfig,
     public walletConfig: CommonWalletConfig,
   ) {}
