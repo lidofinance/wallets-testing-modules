@@ -29,7 +29,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@nestjs/common": "^10.0.0",
+    "@nestjs/common": "^10.4.16",
     "axios": "^0.30.0",
     "@playwright/test": "^1.51.1",
     "reflect-metadata": "^0.1.13",
