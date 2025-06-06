@@ -51,7 +51,13 @@ export interface WalletPage<T extends WalletType> {
 
   changeNetwork?(networkName: string): Promise<void>;
 
-  changeWalletAccountByName?(accountName: string): Promise<void>;
-  changeWalletAccountByAddress?(address: string): Promise<void>;
+  changeWalletAccountByName?(
+    accountName: string,
+    isClosePage?: boolean,
+  ): Promise<void>;
+  changeWalletAccountByAddress?(
+    address: string,
+    isClosePage?: boolean,
+  ): Promise<void>;
   isWalletAddressExist?(address: string): Promise<boolean>;
 }
