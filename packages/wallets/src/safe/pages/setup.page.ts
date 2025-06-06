@@ -21,8 +21,6 @@ export class SetupPage {
     this.setupUrl =
       this.chainId === 1
         ? 'https://app.safe.global/welcome/accounts'
-        : this.chainId === 17000
-        ? 'https://holesky-safe.protofire.io/welcome/accounts'
         : 'https://app.safe.protofire.io/welcome/accounts'; //Hoodi
     this.saveCookiesSettingBtn = this.page.locator(
       'button:has-text("Accept all")',
@@ -32,11 +30,7 @@ export class SetupPage {
     this.safeAccount = this.page
       .locator(
         `[data-testId=safe-list-item]:has(img[alt='${
-          this.chainId === 1
-            ? 'Ethereum'
-            : this.chainId === 17000
-            ? 'Holesky'
-            : 'Hoodi Testnet'
+          this.chainId === 1 ? 'Ethereum' : 'Hoodi Testnet'
         } Logo'])`,
       )
       .nth(0);

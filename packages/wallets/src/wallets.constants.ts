@@ -195,7 +195,7 @@ export const NETWORKS_CONFIG: {
       chainId: 560048,
       chainName: 'Ethereum Hoodi',
       tokenSymbol: 'ETH',
-      rpcUrl: 'https://0xrpc.io/hoodi/',
+      rpcUrl: 'https://0xrpc.io/hoodi',
       scan: 'https://hoodi.etherscan.io/',
     },
     ETHEREUM_HOLESKY: {

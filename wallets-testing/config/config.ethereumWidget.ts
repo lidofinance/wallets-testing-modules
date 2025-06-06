@@ -30,17 +30,7 @@ const HOODI_WIDGET_CONFIG: WidgetConfig = {
   wrapContract: '0x7E99eE3C66636DE415D2d7C880938F2f40f94De4',
 };
 
-const HOLESKY_WIDGET_CONFIG: WidgetConfig = {
-  url: 'https://stake-holesky.testnet.fi',
-  nodeUrl: '',
-  name: 'holesky',
-  network: NETWORKS_CONFIG.testnet.ETHEREUM_HOLESKY,
-  stakeContract: '0x3F1c547b21f65e10480dE3ad8E19fAAC46C95034',
-  wrapContract: '0x8d09a4502Cc8Cf1547aD300E066060D043f6982D',
-};
-
 export const widgetConfig = {
   'Ethereum Mainnet': ETHEREUM_WIDGET_CONFIG,
   'Ethereum Hoodi': HOODI_WIDGET_CONFIG,
-  'Ethereum Holesky': HOLESKY_WIDGET_CONFIG,
 };

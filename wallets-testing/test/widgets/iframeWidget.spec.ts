@@ -8,11 +8,12 @@ test.describe('Test widget in the Safe app', () => {
 
   test.beforeAll(async () => {
     const isFork = false;
+    const network = 'hoodi';
     await test.step('Init browser with wallet', async () => {
       browserService = await initBrowserWithExtension(
         IFRAME_SAFE_COMMON_CONFIG,
         isFork,
-        'holesky',
+        network,
       );
     });
 

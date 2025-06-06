@@ -10,7 +10,7 @@ import { WidgetService } from '../services';
 export async function initBrowserWithExtension(
   walletConfig: CommonWalletConfig,
   isFork = false,
-  network: 'ethereum' | 'holesky' | 'hoodi' = 'ethereum',
+  network: 'ethereum' | 'hoodi' = 'ethereum',
 ) {
   const browserService = new BrowserService({
     networkConfig: networkConfig(network),
@@ -63,8 +63,6 @@ export async function waitForTextContent(locator: Locator) {
 function networkConfig(network: string) {
   if (network === 'hoodi') {
     return NETWORKS_CONFIG.testnet.ETHEREUM_HOODI;
-  } else if (network === 'holesky') {
-    return NETWORKS_CONFIG.testnet.ETHEREUM_HOLESKY;
   } else {
     return {
       ...NETWORKS_CONFIG.mainnet.ETHEREUM,
@@ -77,8 +75,6 @@ function getStandUrlByNetwork(network: string): string {
   switch (network) {
     case 'hoodi':
       return 'https://stake-hoodi.testnet.fi';
-    case 'holesky':
-      return 'https://stake-holesky.testnet.fi';
     default:
       return 'https://stake.lido.fi';
   }
