@@ -18,13 +18,13 @@ import { closeUnnecessaryPages } from '../okx/helper';
 import { getCorrectNetworkName } from './helper';
 
 export class TrustWalletPage implements WalletPage<WalletTypes.EOA> {
+  logger = new ConsoleLogger(TrustWalletPage.name);
   page: Page | undefined;
   onboardingPage: OnboardingPage;
   settingsPage: SettingPage;
   homePage: HomePage;
   loginPage: LoginPage;
   walletOperations: WalletOperations;
-  logger = new ConsoleLogger(TrustWalletPage.name);
 
   constructor(
     private browserContext: BrowserContext,
