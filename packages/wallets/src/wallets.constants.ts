@@ -17,6 +17,12 @@ export enum WalletTypes {
 
 export type WalletType = WalletTypes.WC | WalletTypes.EOA;
 
+export interface StandConfig {
+  chainId: number;
+  standUrl: string;
+  forkUrl?: string;
+}
+
 export interface AccountConfig {
   SECRET_PHRASE: string;
   PASSWORD: string;
