@@ -68,7 +68,10 @@ export class BitgetPage implements WalletPage<WalletTypes.EOA> {
       const inputs = this.page.locator('.wordInput-contaniner-input');
       const seedWords = this.accountConfig.SECRET_PHRASE.split(' ');
       for (let i = 0; i < seedWords.length; i++) {
-        await inputs.nth(i).fill(seedWords[i]);
+        const word = seedWords[i].trim();
+        while ((await inputs.nth(i).getAttribute('value')) !== word) {
+          await inputs.nth(i).fill(word);
+        }
       }
       await this.page.click("button:has-text('Confirm')");
       await this.page.waitForSelector('text=Wallet successfully imported');
