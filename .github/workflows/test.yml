@@ -45,7 +45,7 @@ jobs:
 
       - name: Run wallets tests
         run: |
-          if [ -n "$SUITE" == "iframe-tx" ]; then
+          if [ "$SUITE" == "iframe-tx" ]; then
             echo "Running iframe tests"
             xvfb-run --auto-servernum -- yarn test:iframe
           else
@@ -58,7 +58,7 @@ jobs:
           WALLET_SECRET_PHRASE: ${{ secrets.WALLET_SECRET_PHRASE }}
           WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
           NODE_OPTIONS: --max-old-space-size=4096
-          SUITE: ${{ inputs.suite || 'wallet-connection'}}
+          SUITE: ${{ inputs.suite }}
 
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
