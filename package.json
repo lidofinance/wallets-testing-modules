@@ -4,7 +4,8 @@
   "description": "Common modules for testing wallets",
   "private": true,
   "workspaces": [
-    "packages/**"
+    "packages/**",
+    "wallets-testing"
   ],
   "sideEffects": false,
   "scripts": {
