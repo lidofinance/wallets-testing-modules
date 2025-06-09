@@ -15,7 +15,7 @@ on:
         type: choice
         options:
           - wallet-connection
-          - iframe-tx
+          - safe-iframe-tx
   schedule:
      - cron: '0 */6 * * *'
 
@@ -45,11 +45,11 @@ jobs:
 
       - name: Run wallets tests
         run: |
-          if [ "$SUITE" == "iframe-tx" ]; then
+          if [ "$SUITE" == "safe-iframe-tx" ]; then
             echo -e "🚀 Running \033[1;34miframe\033[0m tests"
             xvfb-run --auto-servernum -- yarn test:iframe
           else
-            echo -e "🚀 Running \033[1;34wallet-connection\033[0m tests"
+            echo -e "🚀 Running \033[1;34mwallet-connection\033[0m tests"
             xvfb-run --auto-servernum -- yarn test:widgets
           fi
         working-directory: wallets-testing
