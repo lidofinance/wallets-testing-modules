@@ -74,8 +74,16 @@ export class IframeWidgetPage implements WidgetPage {
     });
   }
 
-  async confirmStakeTx(txAmount: string) {
-    await this.stakeSubmitBtn.click();
+  async stake(txAmount: string) {
+    await test.step('Fill input', async () => {
+      await this.stakeInput.fill(txAmount);
+      await this.enabledStakeSubmitBtn.waitFor({ timeout: 15000 });
+    });
+
+    await test.step('Click to staking button', async () => {
+      await this.stakeSubmitBtn.click();
+    });
+
     await this.walletPage.assertTxAmount(this.page, txAmount);
     await this.walletPage.assertReceiptAddress(
       this.page,

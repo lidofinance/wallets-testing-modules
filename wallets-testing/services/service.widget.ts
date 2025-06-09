@@ -52,9 +52,7 @@ export class WidgetService {
   async doStaking(txAmount: string) {
     await test.step('Do staking', async () => {
       await waitForTextContent(this.widgetPage.ethAvailableToStakeValue);
-      await this.widgetPage.stakeInput.fill(txAmount);
-      await this.widgetPage.enabledStakeSubmitBtn.waitFor({ timeout: 15000 });
-      await this.widgetPage.confirmStakeTx(txAmount);
+      await this.widgetPage.stake(txAmount);
     });
   }
 }

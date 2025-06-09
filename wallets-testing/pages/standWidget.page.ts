@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { Locator, Page, test } from '@playwright/test';
 import { WidgetPage } from './widget.page';
 import { BrowserService } from '@lidofinance/browser-service';
 import {
@@ -103,11 +103,20 @@ export class StandWidgetPage implements WidgetPage {
   }
 
   // Function not tested with walletConnectTypes.WC
-  async confirmStakeTx(txAmount: string) {
-    const [walletSignPage] = await Promise.all([
-      this.waitForPage(180000),
-      this.stakeSubmitBtn.click(),
-    ]);
+  async stake(txAmount: string) {
+    await test.step('Fill stake input', async () => {
+      await this.stakeInput.fill(txAmount);
+      await this.enabledStakeSubmitBtn.waitFor({ timeout: 15000 });
+    });
+
+    const [walletSignPage] =
+      await test.step('Click to staking button', async () => {
+        return await Promise.all([
+          this.waitForPage(180000),
+          this.stakeSubmitBtn.click(),
+        ]);
+      });
+
     await this.walletPage.assertTxAmount(walletSignPage, txAmount);
     await this.walletPage.assertReceiptAddress(
       walletSignPage,

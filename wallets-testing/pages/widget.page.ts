@@ -23,7 +23,7 @@ export interface WidgetPage {
 
   connectWallet(): Promise<void>;
 
-  confirmStakeTx(txAmount: string): Promise<void>;
+  stake(txAmount: string): Promise<void>;
 
   getWalletButtonByName?(walletButtonName: string): Promise<Locator>;
 
