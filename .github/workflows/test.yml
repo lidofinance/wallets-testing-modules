@@ -46,10 +46,10 @@ jobs:
       - name: Run wallets tests
         run: |
           if [ "$SUITE" == "iframe-tx" ]; then
-            echo "Running iframe tests"
+            echo -e "🚀 Running \033[1;34miframe\033[0m tests"
             xvfb-run --auto-servernum -- yarn test:iframe
           else
-            echo "Running wallet-connection tests"
+            echo -e "🚀 Running \033[1;34wallet-connection\033[0m tests"
             xvfb-run --auto-servernum -- yarn test:widgets
           fi
         working-directory: wallets-testing

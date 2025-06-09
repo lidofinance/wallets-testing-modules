@@ -122,6 +122,7 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
         page,
         this.options.extensionPage,
       );
+      await transactionPage.confirmTransaction();
       await this.page.waitForSelector('text=Transaction was successful');
       await transactionPage.finishTxBtn.click();
     });
@@ -133,7 +134,6 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
         page,
         this.options.extensionPage,
       );
-      await transactionPage.confirmTransaction();
       const transactionAmount = await transactionPage.getTransactionAmount();
       expect(transactionAmount).toEqual(expectedAmount);
     });
