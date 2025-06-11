@@ -283,20 +283,4 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
       if (isClosePage) await this.page.close();
     });
   }
-
-  async sendEthTo(address: string, amount: string) {
-    await test.step(`Send ${amount} ETH to ${address}`, async () => {
-      await this.navigate();
-      await this.homePage.sendEthBtn.click();
-      await this.page.getByTestId('ens-input').fill(address);
-
-      const amountInput = this.page.getByTestId('currency-input').nth(0);
-      await amountInput.waitFor({ state: 'visible', timeout: 90000 });
-      await amountInput.fill(amount);
-
-      await this.page.getByText('Continue').click();
-      await this.confirmTx(this.page);
-      await this.page.close();
-    });
-  }
 }

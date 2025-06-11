@@ -90,6 +90,4 @@ export interface WalletPage<T extends WalletConnectType> {
     isClosePage?: boolean,
   ): Promise<void>;
   isWalletAddressExist?(address: string): Promise<boolean>;
-
-  sendEthTo?(address: string, amount: string): Promise<void>;
 }

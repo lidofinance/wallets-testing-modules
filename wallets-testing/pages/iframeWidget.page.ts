@@ -14,6 +14,8 @@ export class IframeWidgetPage implements WidgetPage {
   app: FrameLocator;
   page: Page;
 
+  wrapTabBtn: Locator;
+
   connectBtn: Locator;
   stakeInput: Locator;
   stakeSubmitBtn: Locator;
@@ -26,6 +28,10 @@ export class IframeWidgetPage implements WidgetPage {
   copyWcUrlBtn: Locator;
   closeAccountModalBtn: Locator;
 
+  wrapInput: Locator;
+  wrapSubmitBtn: Locator;
+  enabledWrapSubmitBtn: Locator;
+
   constructor(
     browserService: BrowserService,
     public widgetConfig: WidgetConfig,
@@ -33,6 +39,8 @@ export class IframeWidgetPage implements WidgetPage {
     this.walletPage = browserService.getWalletPage();
     this.page = browserService.getBrowserContextPage();
     this.app = this.page.locator('iframe').first().contentFrame();
+
+    this.wrapTabBtn = this.app.getByTestId('navWrap');
 
     this.connectBtn = this.app
       .getByRole('button')
@@ -51,6 +59,12 @@ export class IframeWidgetPage implements WidgetPage {
     this.closeAccountModalBtn = this.app
       .locator('div[role="dialog"] button')
       .nth(0);
+
+    this.wrapInput = this.app.getByTestId('wrapInput');
+    this.wrapSubmitBtn = this.app.getByTestId('wrapBtn');
+    this.enabledWrapSubmitBtn = this.app.locator(
+      'button[data-testid="wrapBtn"]:not([disabled])',
+    );
   }
 
   async connectWallet() {
@@ -81,6 +95,7 @@ export class IframeWidgetPage implements WidgetPage {
     });
 
     await test.step('Click to staking button', async () => {
+      await this.page.waitForTimeout(2000); // without awaiting the safe can't to calculate gas cost for tx sometimes
       await this.stakeSubmitBtn.click();
     });
 
@@ -89,10 +104,37 @@ export class IframeWidgetPage implements WidgetPage {
       this.page,
       this.widgetConfig.stakeContract,
     );
-    await this.walletPage.confirmTx(this.page, true);
 
+    await this.walletPage.confirmTx(this.page, true);
     await this.app
       .getByText('Staking operation was successful.')
+      .waitFor({ state: 'visible', timeout: 90000 });
+  }
+
+  async wrap(txAmount: string) {
+    await test.step('Open Wrap tab', async () => {
+      await this.wrapTabBtn.click();
+    });
+
+    await test.step('Fill input', async () => {
+      await this.wrapInput.fill(txAmount);
+      await this.enabledWrapSubmitBtn.waitFor({ timeout: 15000 });
+    });
+
+    await test.step('Click to wrapping button', async () => {
+      await this.page.waitForTimeout(2000); // without awaiting the safe can't to calculate gas cost for tx sometimes
+      await this.wrapSubmitBtn.click();
+    });
+
+    await this.walletPage.assertTxAmount(this.page, txAmount);
+    await this.walletPage.assertReceiptAddress(
+      this.page,
+      this.widgetConfig.wrapContract,
+    );
+
+    await this.walletPage.confirmTx(this.page, true);
+    await this.app
+      .getByText('Wrapping operation was successful.')
       .waitFor({ state: 'visible', timeout: 90000 });
   }
 

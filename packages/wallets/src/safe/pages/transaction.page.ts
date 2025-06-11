@@ -1,7 +1,8 @@
-import { Locator, Page, test } from '@playwright/test';
+import { Locator, Page, test, expect } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
 import { WalletPage } from '../../wallet.page';
 import { WalletConnectTypes } from '../../wallets.constants';
+import { Big } from 'big.js';
 
 export class TransactionPage {
   logger = new ConsoleLogger(`Safe. ${TransactionPage.name}`);
@@ -11,6 +12,9 @@ export class TransactionPage {
   executeTxBtn: Locator;
   finishTxBtn: Locator;
   switchNetworkBtn: Locator;
+
+  allActionsList: Locator;
+  actionItem: Locator;
 
   constructor(
     public page: Page,
@@ -24,18 +28,48 @@ export class TransactionPage {
     this.executeTxBtn = this.page.getByTestId('execute-form-btn');
     this.finishTxBtn = this.page.getByTestId('finish-transaction-btn');
     this.switchNetworkBtn = this.page.getByText('Switch to');
+    this.allActionsList = this.page.getByTestId('all-actions');
+    this.actionItem = this.page.getByTestId('action-item');
   }
 
-  async getContractOfTransaction() {
-    const contractExplorerUrl = await this.contractExplorerUrl.getAttribute(
-      'href',
-    );
-    const match = contractExplorerUrl.match(/address\/([^/\s]+)/);
-    return match ? match[1] : null;
+  async assertsContractOfTransaction(expectedAddress: string) {
+    let isNeedToCheckAllActions = false;
+
+    try {
+      await this.allActionsList.waitFor({ timeout: 5000, state: 'visible' });
+      isNeedToCheckAllActions = true;
+    } catch {
+      const contractExplorerUrl = await this.contractExplorerUrl.getAttribute(
+        'href',
+      );
+      const match = contractExplorerUrl.match(/address\/([^/\s]+)/);
+      expect(match[1]).toEqual(expectedAddress);
+    }
+
+    if (isNeedToCheckAllActions) {
+      const actions = await this.actionItem.all();
+      for (const action of actions) {
+        await test.step(`Check address of "${await action.textContent()}" action`, async () => {
+          if ((await action.getAttribute('aria-expanded')) === 'false') {
+            await action.click();
+          }
+          const actionInfo = action.locator('../..');
+          const contractsUrls = await actionInfo
+            .getByTestId('explorer-btn')
+            .all();
+          const contractExplorerUrl = await contractsUrls[
+            contractsUrls.length - 1
+          ].getAttribute('href');
+
+          const match = contractExplorerUrl.match(/address\/([^/\s]+)/);
+          expect(match[1]).toEqual(expectedAddress);
+        });
+      }
+    }
   }
 
   async confirmTransaction() {
-    await this.tokenAmount.waitFor({
+    await this.tokenAmount.or(this.allActionsList).waitFor({
       state: 'visible',
       timeout: 10000,
     });
@@ -86,7 +120,40 @@ export class TransactionPage {
     });
   }
 
-  async getTransactionAmount() {
-    return this.tokenAmount.textContent();
+  async assertTransactionAmount(expectedAmount: string) {
+    let isNeedToCheckAllActions = false;
+    try {
+      await this.allActionsList.waitFor({ timeout: 5000, state: 'visible' });
+      isNeedToCheckAllActions = true;
+    } catch {
+      expect(await this.tokenAmount.textContent()).toEqual(expectedAmount);
+    }
+
+    if (isNeedToCheckAllActions) {
+      const actions = await this.actionItem.all();
+      for (const action of actions) {
+        await test.step(`Check amount of "${await action.textContent()}" action`, async () => {
+          if ((await action.getAttribute('aria-expanded')) === 'false') {
+            await action.click();
+          }
+          let actionInfo = action.locator('../..');
+          const actionParameters = await actionInfo
+            .getByTestId('tx-row-title')
+            .all();
+
+          if (actionParameters.length > 1) {
+            actionInfo = actionInfo
+              .locator('[data-testid="tx-row-title"]:has-text("value")')
+              .locator('..');
+          }
+
+          const valueParam = await actionInfo
+            .getByTestId('tx-data-row')
+            .textContent();
+
+          expect(String(new Big(valueParam).div(1e18))).toEqual(expectedAmount);
+        });
+      }
+    }
   }
 }

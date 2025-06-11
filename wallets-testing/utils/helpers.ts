@@ -44,6 +44,12 @@ export async function stake(browserService: BrowserService, txAmount: string) {
   await widgetService.doStaking(txAmount);
 }
 
+export async function wrap(browserService: BrowserService, txAmount: string) {
+  const widgetService = new WidgetService(browserService);
+  await widgetService.connectWallet();
+  await widgetService.doWrapping(txAmount);
+}
+
 export async function waitForTextContent(locator: Locator) {
   return await locator.evaluate(async (element) => {
     return new Promise<string>((resolve) => {

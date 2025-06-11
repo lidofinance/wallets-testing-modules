@@ -1,4 +1,4 @@
-import { Page, test, expect } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { NetworkConfig, WalletConnectTypes } from '../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
@@ -111,8 +111,7 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
         page,
         this.options.extensionPage,
       );
-      const contractAddress = await transactionPage.getContractOfTransaction();
-      expect(contractAddress).toEqual(expectedAddress);
+      await transactionPage.assertsContractOfTransaction(expectedAddress);
     });
   }
 
@@ -134,8 +133,7 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
         page,
         this.options.extensionPage,
       );
-      const transactionAmount = await transactionPage.getTransactionAmount();
-      expect(transactionAmount).toEqual(expectedAmount);
+      await transactionPage.assertTransactionAmount(expectedAmount);
     });
   }
 

@@ -55,4 +55,11 @@ export class WidgetService {
       await this.widgetPage.stake(txAmount);
     });
   }
+
+  // Function not tested with walletConnectTypes.WC
+  async doWrapping(txAmount: string) {
+    await test.step('Do wrapping', async () => {
+      await this.widgetPage.wrap(txAmount);
+    });
+  }
 }
