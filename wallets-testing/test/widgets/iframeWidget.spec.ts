@@ -1,6 +1,10 @@
 import { test } from '@playwright/test';
 import { IFRAME_SAFE_COMMON_CONFIG } from '@lidofinance/wallets-testing-wallets';
-import { initBrowserWithExtension, stake, wrap } from '../../utils/helpers';
+import {
+  initBrowserWithExtension,
+  stake,
+  wrapStETH,
+} from '../../utils/helpers';
 import { BrowserService } from '@lidofinance/browser-service';
 
 test.describe('Test widget Lido app of Safe wallet (iframe)', () => {
@@ -21,6 +25,6 @@ test.describe('Test widget Lido app of Safe wallet (iframe)', () => {
   });
 
   test('Wrap', async () => {
-    await wrap(browserService, '0.005');
+    await wrapStETH(browserService, '0.005');
   });
 });

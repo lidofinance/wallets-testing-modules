@@ -111,7 +111,7 @@ export class IframeWidgetPage implements WidgetPage {
       .waitFor({ state: 'visible', timeout: 90000 });
   }
 
-  async wrap(txAmount: string) {
+  async wrapStETH(txAmount: string) {
     await test.step('Open Wrap tab', async () => {
       await this.wrapTabBtn.click();
     });

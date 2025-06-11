@@ -25,7 +25,7 @@ export interface WidgetPage {
 
   stake(txAmount: string): Promise<void>;
 
-  wrap?(txAmount: string): Promise<void>;
+  wrapStETH?(txAmount: string): Promise<void>;
 
   getWalletButtonByName?(walletButtonName: string): Promise<Locator>;
 

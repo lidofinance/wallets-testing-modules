@@ -44,7 +44,10 @@ export async function stake(browserService: BrowserService, txAmount: string) {
   await widgetService.doStaking(txAmount);
 }
 
-export async function wrap(browserService: BrowserService, txAmount: string) {
+export async function wrapStETH(
+  browserService: BrowserService,
+  txAmount: string,
+) {
   const widgetService = new WidgetService(browserService);
   await widgetService.connectWallet();
   await widgetService.doWrapping(txAmount);
