@@ -1,4 +1,4 @@
-import { widgetConfig, WidgetConfig } from '../config';
+import { getWidgetConfig, WidgetConfig } from '../config';
 import { expect, test } from '@playwright/test';
 import { BrowserService } from '@lidofinance/browser-service';
 import { WIDGET_PAGE, WidgetPage } from '../pages';
@@ -11,7 +11,7 @@ export class WidgetService {
 
   constructor(private browserService: BrowserService) {
     this.widgetConfig =
-      widgetConfig[browserService.getNetworkConfig().chainName];
+      getWidgetConfig[browserService.getNetworkConfig().chainName];
     this.widgetPage = new WIDGET_PAGE[
       this.browserService.getWalletConfig().WALLET_TYPE
     ](this.browserService, this.widgetConfig);

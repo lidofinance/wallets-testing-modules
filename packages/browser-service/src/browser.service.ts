@@ -1,9 +1,9 @@
 import {
   AccountConfig,
   CommonWalletConfig,
-  NetworkConfig,
   WalletPage,
   WalletConnectTypes,
+  NetworkConfig,
 } from '@lidofinance/wallets-testing-wallets';
 import {
   Extension,
