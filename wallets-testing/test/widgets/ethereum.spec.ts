@@ -6,7 +6,7 @@ import {
   OKX_COMMON_CONFIG,
   BITGET_COMMON_CONFIG,
   CTRL_COMMON_CONFIG,
-  SAFE_COMMON_CONFIG,
+  WC_SAFE_COMMON_CONFIG,
   METAMASK_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import { test } from '@playwright/test';
@@ -64,7 +64,7 @@ test.describe('Ethereum', () => {
   });
 
   test('WC+Safe connect', async () => {
-    browserService = await initBrowserWithExtension(SAFE_COMMON_CONFIG);
+    browserService = await initBrowserWithExtension(WC_SAFE_COMMON_CONFIG);
     await connectWallet(browserService);
   });
 

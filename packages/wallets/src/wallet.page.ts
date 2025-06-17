@@ -16,7 +16,7 @@ export interface WalletPage<T extends WalletType> {
   accountConfig: AccountConfig;
   walletConfig: CommonWalletConfig;
 
-  setup(network?: string): Promise<void>;
+  setup(): Promise<void>;
 
   importKey(key: string): Promise<void>;
 
@@ -38,7 +38,7 @@ export interface WalletPage<T extends WalletType> {
 
   confirmAddTokenToWallet?(page: Page): Promise<void>;
 
-  assertReceiptAddress(page: Page, expectedAmount: string): Promise<void>;
+  assertReceiptAddress(page: Page, expectedAddress: string): Promise<void>;
 
   getWalletAddress?(): Promise<string>;
 
@@ -51,7 +51,13 @@ export interface WalletPage<T extends WalletType> {
 
   changeNetwork?(networkName: string): Promise<void>;
 
-  changeWalletAccountByName?(accountName: string): Promise<void>;
-  changeWalletAccountByAddress?(address: string): Promise<void>;
+  changeWalletAccountByName?(
+    accountName: string,
+    isClosePage?: boolean,
+  ): Promise<void>;
+  changeWalletAccountByAddress?(
+    address: string,
+    isClosePage?: boolean,
+  ): Promise<void>;
   isWalletAddressExist?(address: string): Promise<boolean>;
 }

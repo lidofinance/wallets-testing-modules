@@ -11,6 +11,7 @@ export class SetupPage {
   safeAccount: Locator;
   setupUrl: string;
   closeSecurityNoticeBtn: Locator;
+  inAppContinueBtn: Locator;
 
   constructor(
     public page: Page,
@@ -20,15 +21,18 @@ export class SetupPage {
     this.setupUrl =
       this.chainId === 1
         ? 'https://app.safe.global/welcome/accounts'
-        : 'https://holesky-safe.protofire.io/welcome/accounts';
+        : this.chainId === 17000
+        ? 'https://holesky-safe.protofire.io/welcome/accounts'
+        : 'https://app.safe.protofire.io/welcome/accounts'; //Hoodi
 
     this.saveCookiesSettingBtn = this.page.locator(
-      'button:has-text("Save settings")',
+      'button:has-text("Accept all")',
     );
     this.connectWalletBtn = this.page.getByTestId('connect-wallet-btn').nth(0);
     this.accountCenter = this.page.getByTestId('open-account-center');
     this.safeAccount = this.page.getByTestId('safe-list-item').nth(0);
     this.closeSecurityNoticeBtn = this.page.getByText('I understand');
+    this.inAppContinueBtn = this.page.getByText('Continue');
   }
 
   async firstTimeSetupWallet() {
@@ -66,6 +70,13 @@ export class SetupPage {
       await this.closeExtraPopup();
       await this.agreeCookiesSetting();
       await this.page.waitForTimeout(2000);
+      try {
+        await this.accountCenter.waitFor({ state: 'visible', timeout: 5000 });
+        this.logger.log('Extension is auto-connected');
+        return;
+      } catch {
+        // extension not connected - continue the flow
+      }
       await this.connectWalletBtn.click();
       try {
         await this.page

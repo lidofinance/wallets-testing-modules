@@ -3,8 +3,8 @@ import { CommonWalletConfig, WalletTypes } from '../../wallets.constants';
 export const TRUST_WALLET_COMMON_CONFIG: CommonWalletConfig = {
   WALLET_NAME: 'trust',
   EXTENSION_WALLET_NAME: 'trust',
-  CONNECTED_WALLET_NAME: 'Trust',
-  CONNECT_BUTTON_NAME: 'Trust',
+  CONNECTED_WALLET_NAME: 'Browser',
+  CONNECT_BUTTON_NAME: 'Browser',
   RPC_URL_PATTERN: 'https://mainnet.infura.io/v3/**',
   STORE_EXTENSION_ID: 'egjidjbpglichdcondbcbdnbeeppgdph',
   WALLET_TYPE: WalletTypes.EOA,

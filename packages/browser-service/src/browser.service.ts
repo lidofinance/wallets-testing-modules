@@ -84,7 +84,7 @@ export class BrowserService {
     if (!(await this.walletPage.isWalletAddressExist(account.address))) {
       await this.walletPage.importKey(account.secretKey);
     } else {
-      await this.walletPage.changeWalletAccountByName(account.address);
+      await this.walletPage.changeWalletAccountByAddress(account.address);
     }
 
     await this.walletPage.setupNetwork({
@@ -143,7 +143,7 @@ export class BrowserService {
       this.options.accountConfig,
       this.options.walletConfig,
     );
-    await extensionWalletPage.setup(this.options.networkConfig.chainName);
+    await extensionWalletPage.setup();
 
     if (this.options.walletConfig.WALLET_TYPE === WalletTypes.WC) {
       this.walletPage = new WALLET_PAGES[this.options.walletConfig.WALLET_NAME](

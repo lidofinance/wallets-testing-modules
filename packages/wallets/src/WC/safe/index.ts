@@ -1,2 +1,2 @@
-export * from './safe.page';
+export * from './safeWcPage';
 export * from './safe.constants';
