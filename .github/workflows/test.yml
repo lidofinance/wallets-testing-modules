@@ -34,12 +34,17 @@ jobs:
       - name: Build Components
         run: yarn build
 
-      - name: Install Foundry (anvil)
+      - name: Download foundryup installer
         run: |
           curl -L https://foundry.paradigm.xyz | bash
-          export PATH="$HOME/.foundry/bin:$PATH"
-          ~/.foundry/bin/foundryup
+
+      - name: Add Foundry to PATH
+        run: |
+          mkdir -p "$HOME/.foundry/bin"
           echo "$HOME/.foundry/bin" >> $GITHUB_PATH
+
+      - name: Install Foundry (forge/anvil)
+        run: ~/.foundry/bin/foundryup
 
       - name: Install Playwright Browsers
         run: yarn playwright install chromium --with-deps
