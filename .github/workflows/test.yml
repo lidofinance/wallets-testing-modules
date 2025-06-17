@@ -27,10 +27,18 @@ jobs:
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install --immutable
+
       - name: Run lint
         run: yarn lint
+
       - name: Build Components
         run: yarn build
+
+      - name: Install Foundry (anvil)
+        run: |
+          curl -L https://foundry.paradigm.xyz | bash
+          source ~/.bashrc || true
+          foundryup
 
       - name: Install Playwright Browsers
         run: yarn playwright install chromium --with-deps

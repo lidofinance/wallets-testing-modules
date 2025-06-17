@@ -14,10 +14,7 @@ export async function initBrowserWithExtension(
   const browserService = new BrowserService({
     networkConfig: {
       ...NETWORKS_CONFIG.mainnet.ETHEREUM,
-      rpcUrl:
-        walletConfig.WALLET_NAME == 'metamask'
-          ? 'http://127.0.0.1:8545'
-          : configService.get('RPC_URL'),
+      rpcUrl: configService.get('RPC_URL'),
     },
     accountConfig: {
       SECRET_PHRASE: configService.get('WALLET_SECRET_PHRASE'),

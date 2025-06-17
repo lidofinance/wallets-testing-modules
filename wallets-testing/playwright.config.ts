@@ -10,7 +10,6 @@ import type { PlaywrightTestConfig } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 const config: PlaywrightTestConfig = {
-  globalSetup: require.resolve('./helpers/globalSetup.ts'),
   testDir: './test',
   /* Maximum time one test can run for. */
   timeout: 240 * 1000,
@@ -48,12 +47,6 @@ const config: PlaywrightTestConfig = {
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
-  },
-  webServer: {
-    command: 'yarn start-node',
-    port: 8545,
-    reuseExistingServer: true,
-    timeout: 60 * 1000, // 60 seconds
   },
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */

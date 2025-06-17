@@ -73,19 +73,19 @@ export class BrowserService {
   }
 
   async setupWithNode() {
-    // this.ethereumNodeService = new EthereumNodeService({
-    //   chainId: this.options.networkConfig.chainId,
-    //   rpcUrl: this.options.networkConfig.rpcUrl,
-    //   defaultBalance: 100,
-    // });
-    // await this.ethereumNodeService.startNode();
-    // const account = this.ethereumNodeService.getAccount();
+    this.ethereumNodeService = new EthereumNodeService({
+      chainId: this.options.networkConfig.chainId,
+      rpcUrl: this.options.networkConfig.rpcUrl,
+      defaultBalance: 100,
+    });
+    await this.ethereumNodeService.startNode();
+    const account = this.ethereumNodeService.getAccount();
     await this.setup();
-    // if (!(await this.walletPage.isWalletAddressExist(account.address))) {
-    //   await this.walletPage.importKey(account.secretKey);
-    // } else {
-    //   await this.walletPage.changeWalletAccountByName(account.address);
-    // }
+    if (!(await this.walletPage.isWalletAddressExist(account.address))) {
+      await this.walletPage.importKey(account.secretKey);
+    } else {
+      await this.walletPage.changeWalletAccountByName(account.address);
+    }
 
     await this.walletPage.setupNetwork({
       ...this.options.networkConfig,
