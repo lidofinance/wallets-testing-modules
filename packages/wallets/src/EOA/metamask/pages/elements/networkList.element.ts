@@ -62,9 +62,8 @@ export class NetworkList {
     const testIdPrefix = 'network-list-item-options-button-';
     // or locator used for different MM versions from latest and LATEST_STABLE_DOWNLOAD_LINK
     const modalNetworkEditButton = this.dialogSection
-      .getByTestId(`${testIdPrefix}eip155:${hexChainId}`)
-      .or(this.dialogSection.getByTestId(`${testIdPrefix}0x${hexChainId}`))
-      .or(this.dialogSection.getByTestId(`${testIdPrefix}eip155:${chainId}`));
+      .getByTestId(`${testIdPrefix}eip155:${hexChainId}`) // old stable version
+      .or(this.dialogSection.getByTestId(`${testIdPrefix}eip155:${chainId}`)); // new latest version
     await modalNetworkEditButton.click();
     await this.editNetworkButton.click();
   }
