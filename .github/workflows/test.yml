@@ -36,9 +36,9 @@ jobs:
 
       - name: Install Foundry (anvil)
         run: |
-          curl -L https://github.com/foundry-rs/foundry/releases/latest/download/foundryup -o foundryup
-          chmod +x foundryup
-          ./foundryup --quiet
+          curl -L https://foundry.paradigm.xyz | bash
+          export PATH="$HOME/.foundry/bin:$PATH"
+          ~/.foundry/bin/foundryup
           echo "$HOME/.foundry/bin" >> $GITHUB_PATH
 
       - name: Install Playwright Browsers
