@@ -15,6 +15,7 @@ export class TransactionPage {
 
   allActionsList: Locator;
   actionItem: Locator;
+  contentLoader: Locator;
 
   constructor(
     public page: Page,
@@ -30,13 +31,15 @@ export class TransactionPage {
     this.switchNetworkBtn = this.page.getByText('Switch to');
     this.allActionsList = this.page.getByTestId('all-actions');
     this.actionItem = this.page.getByTestId('action-item');
+    this.contentLoader = this.page.locator('#gooey').locator('../../..');
   }
 
   async assertsContractOfTransaction(expectedAddress: string) {
-    let isNeedToCheckAllActions = false;
+    await this.waitForLoaderToBeHidden();
 
+    let isNeedToCheckAllActions = false;
     try {
-      await this.allActionsList.waitFor({ timeout: 5000, state: 'visible' });
+      await this.allActionsList.waitFor({ timeout: 3000, state: 'visible' });
       isNeedToCheckAllActions = true;
     } catch {
       const contractExplorerUrl = await this.contractExplorerUrl.getAttribute(
@@ -69,10 +72,7 @@ export class TransactionPage {
   }
 
   async confirmTransaction() {
-    await this.tokenAmount.or(this.allActionsList).waitFor({
-      state: 'visible',
-      timeout: 10000,
-    });
+    await this.waitForLoaderToBeHidden();
 
     await test.step('Switch network if needed', async () => {
       if (await this.switchNetworkBtn.isVisible()) {
@@ -121,6 +121,8 @@ export class TransactionPage {
   }
 
   async assertTransactionAmount(expectedAmount: string) {
+    await this.waitForLoaderToBeHidden();
+
     let isNeedToCheckAllActions = false;
     try {
       await this.allActionsList.waitFor({ timeout: 5000, state: 'visible' });
@@ -155,5 +157,16 @@ export class TransactionPage {
         });
       }
     }
+  }
+
+  private async waitForLoaderToBeHidden() {
+    await test.step('Waiting for loader to be hidden', async () => {
+      try {
+        await this.contentLoader.waitFor({ timeout: 5000, state: 'visible' });
+      } catch {
+        return;
+      }
+      await this.contentLoader.waitFor({ timeout: 10000, state: 'hidden' });
+    });
   }
 }

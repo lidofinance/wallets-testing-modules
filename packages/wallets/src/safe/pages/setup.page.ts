@@ -88,7 +88,12 @@ export class SetupPage {
           )
           .waitFor({ state: 'visible', timeout: 5000 });
       } catch {
-        this.logger.log('Second try to connect wallet...');
+        try {
+          await this.accountCenter.waitFor({ state: 'visible', timeout: 5000 });
+          return;
+        } catch {
+          this.logger.log('Second try to connect wallet...');
+        }
         await this.page.reload();
         await this.closeExtraPopup();
         await this.connectWalletBtn.click();

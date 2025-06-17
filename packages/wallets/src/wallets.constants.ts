@@ -27,12 +27,6 @@ export interface StandConfig {
   forkUrl?: string;
 }
 
-export interface StandConfig {
-  chainId: number;
-  standUrl: string;
-  forkUrl?: string;
-}
-
 export interface AccountConfig {
   SECRET_PHRASE: string;
   PASSWORD: string;
