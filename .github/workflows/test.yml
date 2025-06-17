@@ -37,8 +37,7 @@ jobs:
       - name: Install Foundry (anvil)
         run: |
           curl -L https://foundry.paradigm.xyz | bash
-          source ~/.bashrc || true
-          foundryup
+          ~/.foundry/bin/foundryup
 
       - name: Install Playwright Browsers
         run: yarn playwright install chromium --with-deps
