@@ -40,9 +40,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "feat/add-reducedMotion",
+        "channel": "alpha-reduceMotion",
+        "prerelease": "alpha-reduceMotion"
       }
     ]
   }
