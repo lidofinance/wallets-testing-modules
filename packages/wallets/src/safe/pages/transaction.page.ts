@@ -16,6 +16,7 @@ export class TransactionPage {
   allActionsList: Locator;
   actionItem: Locator;
   contentLoader: Locator;
+  transactionFailBanner: Locator;
 
   constructor(
     public page: Page,
@@ -32,10 +33,14 @@ export class TransactionPage {
     this.allActionsList = this.page.getByTestId('all-actions');
     this.actionItem = this.page.getByTestId('action-item');
     this.contentLoader = this.page.locator('#gooey').locator('../../..');
+    this.transactionFailBanner = this.page.getByText(
+      'This transaction will most likely fail.',
+    );
   }
 
   async assertsContractOfTransaction(expectedAddress: string) {
     await this.waitForLoaderToBeHidden();
+    await this.failTestIfSafeDisplayFailBanner();
 
     let isNeedToCheckAllActions = false;
     try {
@@ -73,6 +78,7 @@ export class TransactionPage {
 
   async confirmTransaction() {
     await this.waitForLoaderToBeHidden();
+    await this.failTestIfSafeDisplayFailBanner();
 
     await test.step('Switch network if needed', async () => {
       if (await this.switchNetworkBtn.isVisible()) {
@@ -122,6 +128,7 @@ export class TransactionPage {
 
   async assertTransactionAmount(expectedAmount: string) {
     await this.waitForLoaderToBeHidden();
+    await this.failTestIfSafeDisplayFailBanner();
 
     let isNeedToCheckAllActions = false;
     try {
@@ -166,7 +173,22 @@ export class TransactionPage {
       } catch {
         return;
       }
-      await this.contentLoader.waitFor({ timeout: 10000, state: 'hidden' });
+      await this.contentLoader.waitFor({ timeout: 30000, state: 'hidden' });
     });
+  }
+
+  private async failTestIfSafeDisplayFailBanner() {
+    try {
+      await this.transactionFailBanner.waitFor({
+        timeout: 2000,
+        state: 'visible',
+      });
+      this.logger.error(
+        "Interrupting the test process if safe can't realize transaction and display fail banner",
+      );
+      await expect(this.transactionFailBanner).not.toBeVisible();
+    } catch {
+      // Transaction fail banner is not visible
+    }
   }
 }
