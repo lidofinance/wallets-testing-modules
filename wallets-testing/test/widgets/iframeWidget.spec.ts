@@ -6,17 +6,17 @@ import {
   wrapStETH,
 } from '../../utils/helpers';
 import { BrowserService } from '@lidofinance/browser-service';
+import { HOODI_WIDGET_CONFIG } from '../../config';
 
 test.describe('Test widget Lido app of Safe wallet (iframe)', () => {
   let browserService: BrowserService;
 
   test.beforeAll(async () => {
     const isFork = false;
-    const network = 'hoodi';
     browserService = await initBrowserWithExtension(
       IFRAME_SAFE_COMMON_CONFIG,
       isFork,
-      network,
+      HOODI_WIDGET_CONFIG,
     );
   });
 

@@ -1,31 +1,28 @@
 import { Locator } from '@playwright/test';
 import { BrowserService } from '@lidofinance/browser-service';
-import {
-  CommonWalletConfig,
-  NETWORKS_CONFIG,
-} from '@lidofinance/wallets-testing-wallets';
-import { configService, widgetConfig } from '../config';
+import { CommonWalletConfig } from '@lidofinance/wallets-testing-wallets';
+import { configService, WidgetConfig, ETHEREUM_WIDGET_CONFIG } from '../config';
 import { WidgetService } from '../services';
 
 export async function initBrowserWithExtension(
   walletConfig: CommonWalletConfig,
   isFork = false,
-  network: 'ethereum' | 'hoodi' = 'ethereum',
+  widgetConfig: WidgetConfig = ETHEREUM_WIDGET_CONFIG,
 ) {
   const browserService = new BrowserService({
-    networkConfig: networkConfig(network),
+    networkConfig: widgetConfig.network,
     accountConfig: {
       SECRET_PHRASE: configService.get('WALLET_SECRET_PHRASE'),
       PASSWORD: configService.get('WALLET_PASSWORD'),
     },
     walletConfig: walletConfig,
     nodeConfig: {
-      rpcUrlToMock: widgetConfig[networkConfig(network).chainName].nodeUrl,
+      rpcUrlToMock: widgetConfig.nodeUrl,
     },
     browserOptions: {
       slowMo: 200,
     },
-    standUrl: getStandUrlByNetwork(network),
+    standUrl: widgetConfig.url,
   });
 
   await browserService.initWalletSetup(isFork);
@@ -67,24 +64,4 @@ export async function waitForTextContent(locator: Locator) {
       requestAnimationFrame(checkText);
     });
   });
-}
-
-function networkConfig(network: string) {
-  if (network === 'hoodi') {
-    return NETWORKS_CONFIG.testnet.ETHEREUM_HOODI;
-  } else {
-    return {
-      ...NETWORKS_CONFIG.mainnet.ETHEREUM,
-      rpcUrl: configService.get('RPC_URL'),
-    };
-  }
-}
-
-function getStandUrlByNetwork(network: string): string {
-  switch (network) {
-    case 'hoodi':
-      return 'https://stake-hoodi.testnet.fi';
-    default:
-      return 'https://stake.lido.fi';
-  }
 }
