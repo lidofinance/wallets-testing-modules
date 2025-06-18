@@ -26,7 +26,8 @@
     "lint-staged": "^13.1.0",
     "prettier": "^2.8.1",
     "tslib": "^2.4.1",
-    "typescript": "5.1.6"
+    "typescript": "5.1.6",
+    "tsx": "^4.19.3"
   },
   "lint-staged": {
     "./**/src/**/*.ts": [
@@ -40,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "feat/use-anvil-as-package",
+        "channel": "alpha-use-anvil-as-package",
+        "prerelease": "alpha-use-anvil-as-package"
       }
     ]
   }
