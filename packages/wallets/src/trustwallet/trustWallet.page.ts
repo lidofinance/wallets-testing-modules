@@ -19,7 +19,6 @@ export class TrustWalletPage implements WalletPage<WalletConnectTypes.EOA> {
   onboardingPage: OnboardingPage;
   settingsPage: SettingPage;
   homePage: HomePage;
-  loginPage: LoginPage;
   walletOperations: WalletOperations;
 
   constructor(public options: WalletPageOptions) {}
@@ -31,7 +30,6 @@ export class TrustWalletPage implements WalletPage<WalletConnectTypes.EOA> {
     );
     this.settingsPage = new SettingPage(this.page);
     this.homePage = new HomePage(this.page);
-    this.loginPage = new LoginPage(this.page, this.options.accountConfig);
     this.walletOperations = new WalletOperations(this.page);
   }
 
@@ -48,7 +46,7 @@ export class TrustWalletPage implements WalletPage<WalletConnectTypes.EOA> {
         this.options.extensionUrl +
           this.options.walletConfig.EXTENSION_START_PATH,
       );
-      await this.loginPage.unlock();
+      await new LoginPage(this.page, this.options.accountConfig).unlock();
       await this.walletOperations.confirmHighRisk();
       await this.homePage.rejectTxInQueue();
       await this.homePage.closePopover();
@@ -114,6 +112,8 @@ export class TrustWalletPage implements WalletPage<WalletConnectTypes.EOA> {
     // [High risk connection] Need to research before connecting the Trust wallet methods to widget tests
     // https://linear.app/lidofi/issue/QA-3382/high-risk-popup-before-connect-to-trust-wallet
     await test.step('Connect wallet', async () => {
+      await new LoginPage(page, this.options.accountConfig).unlock();
+
       const txPage = new WalletOperations(page);
       try {
         await txPage.connectBtn.waitFor({ timeout: 5000, state: 'visible' });

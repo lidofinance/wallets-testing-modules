@@ -5,6 +5,7 @@ import path from 'path';
 
 export type BrowserOptions = {
   locale?: string;
+  reducedMotion?: null | 'reduce' | 'no-preference';
   headless?: boolean;
   slowMo?: number;
   args?: string[];
