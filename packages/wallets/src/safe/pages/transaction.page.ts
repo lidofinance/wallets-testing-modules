@@ -178,17 +178,22 @@ export class TransactionPage {
   }
 
   private async failTestIfSafeDisplayFailBanner() {
+    let needToInterruptTest = false;
     try {
       await this.transactionFailBanner.waitFor({
         timeout: 2000,
         state: 'visible',
       });
+      needToInterruptTest = true;
+    } catch {
+      // Transaction fail banner is not visible
+    }
+
+    if (needToInterruptTest) {
       this.logger.error(
         "Interrupting the test process if safe can't realize transaction and display fail banner",
       );
       await expect(this.transactionFailBanner).not.toBeVisible();
-    } catch {
-      // Transaction fail banner is not visible
     }
   }
 }
