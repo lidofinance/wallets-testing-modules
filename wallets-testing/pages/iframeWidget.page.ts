@@ -54,7 +54,7 @@ export class IframeWidgetPage implements WidgetPage {
     this.headerAccountSection = this.app.getByTestId('accountSectionHeader');
     this.providerName = this.app.locator('div[data-testid="providerName"]');
     this.ethAvailableToStakeValue = this.app.getByTestId('ethAvailableToStake');
-    this.termsCheckbox = this.app.getByRole('checkbox').locator('..');
+    this.termsCheckbox = this.app.getByRole('checkbox');
     this.copyWcUrlBtn = this.app.locator('.wcm-action-btn');
     this.closeAccountModalBtn = this.app
       .locator('div[role="dialog"] button')
@@ -68,22 +68,31 @@ export class IframeWidgetPage implements WidgetPage {
   }
 
   async connectWallet() {
-    await test.step('Connect wallet to Lido app in Safe', async () => {
-      await this.walletPage.connectWallet();
-      await this.app
-        .getByText('Stake Ether')
-        .waitFor({ timeout: 15000, state: 'visible' });
-      try {
-        await this.connectBtn.waitFor({
-          timeout: 2000,
-          state: 'visible',
-        });
+    return await test.step('Connect wallet to Lido app in Safe', async () => {
+      const attemptsToConnect = 3;
+      for (let attempt = 1; attempt <= attemptsToConnect; attempt++) {
+        await this.walletPage.connectWallet();
+        await this.waitForWidgetLoaded();
+        try {
+          await this.connectBtn.waitFor({
+            timeout: 2000,
+            state: 'visible',
+          });
+          if (await this.app.getByText('timed out').isVisible()) {
+            this.logger.error(
+              `[Attempt ${attempt}] Error with connect Safe to Widget (err="timed out")`,
+            );
+            continue;
+          }
+        } catch {
+          this.logger.log('No need to connect wallet');
+          return;
+        }
+
         await test.step('Connect wallet', async () => {
-          await this.termsCheckbox.click();
-          await this.connectBtn.click();
+          await this.clickToTermsCheckbox();
+          await this.connectBtn.click({ timeout: 5000 });
         });
-      } catch {
-        this.logger.log('No need to connect wallet');
       }
     });
   }
@@ -144,5 +153,17 @@ export class IframeWidgetPage implements WidgetPage {
 
   async closeAccountModal() {
     await this.closeAccountModalBtn.click();
+  }
+
+  private async clickToTermsCheckbox() {
+    if (!(await this.termsCheckbox.isChecked())) {
+      await this.termsCheckbox.locator('..').click();
+    }
+  }
+
+  private async waitForWidgetLoaded() {
+    await this.app
+      .getByText('Stake Ether')
+      .waitFor({ timeout: 15000, state: 'visible' });
   }
 }
