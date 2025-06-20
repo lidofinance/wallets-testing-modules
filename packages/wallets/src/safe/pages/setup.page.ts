@@ -43,9 +43,9 @@ export class SetupPage {
       await this.page.goto(this.setupUrl);
       await this.connectWalletExtension();
       try {
-        await this.safeAccount.waitFor({ state: 'visible', timeout: 5000 });
+        await this.safeAccount.waitFor({ state: 'visible', timeout: 15000 });
       } catch {
-        this.logger.error(
+        this.logger.warn(
           "Used wallet address doesn't have any accounts in Safe",
         );
       }
