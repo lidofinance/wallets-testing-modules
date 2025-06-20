@@ -100,7 +100,7 @@ export class TransactionPage {
 
   private async executeTxBtnClick(maxAttempts = 3) {
     return await test.step('Click to execute transaction button', async () => {
-      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         const result = await Promise.race([
           this.page
             .context()
@@ -114,7 +114,7 @@ export class TransactionPage {
         ]);
         if (result.type === 'error') {
           await this.executeTxBtn.click();
-          this.logger.warn(`attepmt: ${attempt}`);
+          this.logger.warn(`[Attempt ${attempt}]`);
         } else if (result.type === 'page') {
           return result.value;
         }

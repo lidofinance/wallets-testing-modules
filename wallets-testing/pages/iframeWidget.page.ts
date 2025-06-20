@@ -70,7 +70,7 @@ export class IframeWidgetPage implements WidgetPage {
   async connectWallet() {
     return await test.step('Connect wallet to Lido app in Safe', async () => {
       const attemptsToConnect = 3;
-      for (let attempt = 0; attempt < attemptsToConnect; attempt++) {
+      for (let attempt = 1; attempt <= attemptsToConnect; attempt++) {
         await this.walletPage.connectWallet();
         await this.waitForWidgetLoaded();
         try {
@@ -84,16 +84,14 @@ export class IframeWidgetPage implements WidgetPage {
             );
             continue;
           }
+          await test.step('Connect wallet', async () => {
+            await this.clickToTermsCheckbox();
+            await this.connectBtn.click({ timeout: 5000 });
+          });
         } catch {
           this.logger.log('No need to connect wallet');
-          return;
         }
-
-        await test.step('Connect wallet', async () => {
-          await this.clickToTermsCheckbox();
-          await this.connectBtn.click({ timeout: 5000 });
-          return;
-        });
+        return;
       }
 
       this.logger.error(
