@@ -191,7 +191,7 @@ export class TransactionPage {
 
     if (needToInterruptTest) {
       this.logger.error(
-        "Interrupting the test process if safe can't realize transaction and display fail banner",
+        "Interrupting the test process because safe can't realize transaction and display fail banner",
       );
       await expect(this.transactionFailBanner).not.toBeVisible();
     }

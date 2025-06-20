@@ -1,4 +1,4 @@
-import { FrameLocator, Locator, Page, test } from '@playwright/test';
+import { expect, FrameLocator, Locator, Page, test } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
 import {
   WalletPage,
@@ -79,7 +79,7 @@ export class IframeWidgetPage implements WidgetPage {
             state: 'visible',
           });
           if (await this.app.getByText('timed out').isVisible()) {
-            this.logger.error(
+            this.logger.warn(
               `[Attempt ${attempt}] Error with connect Safe to Widget (err="timed out")`,
             );
             continue;
@@ -92,8 +92,14 @@ export class IframeWidgetPage implements WidgetPage {
         await test.step('Connect wallet', async () => {
           await this.clickToTermsCheckbox();
           await this.connectBtn.click({ timeout: 5000 });
+          return;
         });
       }
+
+      this.logger.error(
+        'Interrupting the test process because safe is not connected',
+      );
+      await expect(this.connectBtn).not.toBeVisible();
     });
   }
 
