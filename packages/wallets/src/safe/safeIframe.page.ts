@@ -121,7 +121,9 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
         this.options.extensionPage,
       );
       await transactionPage.confirmTransaction();
-      await this.page.waitForSelector('text=Transaction was successful');
+      await this.page.waitForSelector('text=Transaction was successful', {
+        timeout: 180000,
+      });
       await transactionPage.finishTxBtn.click();
     });
   }

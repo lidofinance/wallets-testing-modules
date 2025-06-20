@@ -78,16 +78,18 @@ export class IframeWidgetPage implements WidgetPage {
             timeout: 2000,
             state: 'visible',
           });
+
+          await test.step('Connect wallet', async () => {
+            await this.clickToTermsCheckbox();
+            await this.connectBtn.click({ timeout: 5000 });
+          });
+
           if (await this.app.getByText('timed out').isVisible()) {
             this.logger.warn(
               `[Attempt ${attempt}] Error with connect Safe to Widget (err="timed out")`,
             );
             continue;
           }
-          await test.step('Connect wallet', async () => {
-            await this.clickToTermsCheckbox();
-            await this.connectBtn.click({ timeout: 5000 });
-          });
         } catch {
           this.logger.log('No need to connect wallet');
         }
