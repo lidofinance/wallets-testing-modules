@@ -7,6 +7,9 @@ dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 export const EnvironmentSchema = z.object({
   RPC_URL: z.string().url({ message: 'RPC_URL must be a valid URL' }),
+  HOODI_RPC_URL: z
+    .string()
+    .url({ message: 'HOODI_RPC_URL must be a valid URL' }),
   WALLET_SECRET_PHRASE: z
     .string()
     .min(1, 'WALLET_SECRET_PHRASE cannot be empty'),
