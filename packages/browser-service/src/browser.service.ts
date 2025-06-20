@@ -179,7 +179,9 @@ export class BrowserService {
           stand: {
             chainId: this.options.networkConfig.chainId,
             standUrl: this.options.standUrl,
-            forkUrl: this.ethereumNodeService?.state.nodeUrl,
+            rpcUrl:
+              this.ethereumNodeService?.state.nodeUrl ||
+              this.options.networkConfig.rpcUrl,
           },
         });
         break;

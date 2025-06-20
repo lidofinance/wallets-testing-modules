@@ -71,7 +71,10 @@ export async function waitForTextContent(locator: Locator) {
 
 function networkConfig(network: string) {
   if (network === 'hoodi') {
-    return NETWORKS_CONFIG.testnet.ETHEREUM_HOODI;
+    return {
+      ...NETWORKS_CONFIG.testnet.ETHEREUM_HOODI,
+      rpcUrl: configService.get('HOODI_RPC_URL'),
+    };
   } else {
     return {
       ...NETWORKS_CONFIG.mainnet.ETHEREUM,

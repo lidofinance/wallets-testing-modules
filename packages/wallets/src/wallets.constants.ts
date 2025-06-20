@@ -24,7 +24,7 @@ export type WalletConnectType =
 export interface StandConfig {
   chainId: number;
   standUrl: string;
-  forkUrl?: string;
+  rpcUrl?: string; // fork rpc or stable rpc
 }
 
 export interface AccountConfig {

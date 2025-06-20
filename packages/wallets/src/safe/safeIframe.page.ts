@@ -43,12 +43,12 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
         const safeAccountUrl = await this.setupPage.firstTimeSetupWallet();
         this.safeUrl = new URL(safeAccountUrl);
 
-        // Fork for Safe is not working correctly now
-        if (this.options.stand.forkUrl) {
+        await test.step('Setup RPC url', async () => {
           await this.navigate('envSetting');
-          await this.settingPage.rpcUrlInput.fill(this.options.stand.forkUrl);
+          await this.setupPage.closeExtraPopup();
+          await this.settingPage.rpcUrlInput.fill(this.options.stand.rpcUrl);
           await this.settingPage.saveSettingBtn.click();
-        }
+        });
       }
       await this.page.goto(String(this.safeUrl));
     });
