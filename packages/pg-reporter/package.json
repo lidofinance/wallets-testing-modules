@@ -29,7 +29,9 @@
     "access": "public"
   },
   "dependencies": {
-    "@playwright/test": "^1.51.1",
     "axios": "^0.30.0"
+  },
+  "peerDependencies": {
+    "@playwright/test": "^1.51.1"
   }
 }
