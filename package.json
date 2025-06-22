@@ -40,9 +40,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "feat/use-peer-deps",
+        "channel": "alpha-peed-deps",
+        "prerelease": "alpha-peed-deps"
       }
     ]
   }
