@@ -73,31 +73,30 @@ export class SetupPage {
       await this.closeExtraPopup();
       await this.agreeCookiesSetting();
       await this.page.waitForTimeout(2000);
-      try {
-        await this.accountCenter.waitFor({ state: 'visible', timeout: 5000 });
+
+      if (await this.waitForVisible(this.accountCenter, 5000)) {
         this.logger.log('Extension is auto-connected');
         return;
-      } catch {
-        // extension not connected - continue the flow
       }
-      await this.connectWalletBtn.click();
-      try {
-        await this.page
-          .getByText(
-            this.extensionPage.options.walletConfig.EXTENSION_WALLET_NAME,
-          )
-          .waitFor({ state: 'visible', timeout: 5000 });
-      } catch {
-        try {
-          await this.accountCenter.waitFor({ state: 'visible', timeout: 5000 });
-          return;
-        } catch {
-          this.logger.log('Second try to connect wallet...');
-        }
-        await this.page.reload();
-        await this.closeExtraPopup();
+
+      const attempts = 3; // to connect wallet
+      for (let attempt = 1; attempt <= attempts; attempt++) {
         await this.connectWalletBtn.click();
+
+        if (
+          !(await this.waitForVisible(
+            this.page.getByText(
+              this.extensionPage.options.walletConfig.EXTENSION_WALLET_NAME,
+            ),
+            5000,
+          ))
+        ) {
+          this.logger.log(`[Attempt ${attempt}] Connect wallet to Safe failed`);
+          await this.page.reload();
+          await this.closeExtraPopup();
+        }
       }
+
       try {
         const [connectWalletPage] = await Promise.all([
           this.page.context().waitForEvent('page', { timeout: 5000 }),
@@ -109,7 +108,7 @@ export class SetupPage {
         ]);
         await this.extensionPage.connectWallet(connectWalletPage);
       } catch (er) {
-        this.logger.log('Simple way wallet connection');
+        // Expect the wallet is connected
       }
       await this.accountCenter.waitFor({ state: 'visible', timeout: 5000 });
     });
@@ -128,5 +127,14 @@ export class SetupPage {
           );
         });
     });
+  }
+
+  private async waitForVisible(locator: Locator, timeout: number) {
+    try {
+      await locator.waitFor({ state: 'visible', timeout });
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
