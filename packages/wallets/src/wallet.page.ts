@@ -32,7 +32,7 @@ export interface WalletPageOptions {
  *   - browserContext
  *   - extensionPage
  *   - walletConfig
- *   - stand
+ *   - standConfig
  *
  * **T -> WalletConnectTypes.IFRAME**
  * - describes the opening the Lido ETH Widget in the iframe app of the wallet (_Safe iframe._) and lets to manage these wallets with included methods
@@ -40,7 +40,7 @@ export interface WalletPageOptions {
  *   - browserContext
  *   - extensionPage
  *   - walletConfig
- *   - stand
+ *   - standConfig
  * */
 export interface WalletPage<T extends WalletConnectType> {
   options: WalletPageOptions;
