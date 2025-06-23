@@ -23,7 +23,7 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
     this.setupPage = new SetupPage(
       this.page,
       this.options.extensionPage,
-      this.options.stand.chainId,
+      this.options.standConfig.chainId,
     );
     this.settingPage = new SettingPage(this.page);
   }
@@ -46,7 +46,9 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
         await test.step('Setup RPC url', async () => {
           await this.navigate('envSetting');
           await this.setupPage.closeExtraPopup();
-          await this.settingPage.rpcUrlInput.fill(this.options.stand.rpcUrl);
+          await this.settingPage.rpcUrlInput.fill(
+            this.options.standConfig.rpcUrl,
+          );
           await this.settingPage.saveSettingBtn.click();
         });
       }
@@ -64,7 +66,7 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
         return `${
           this.safeUrl.origin
         }/apps/open?safe=${this.safeUrl.searchParams.get('safe')}&appUrl=${
-          this.options.stand.standUrl
+          this.options.standConfig.standUrl
         }`;
       case 'envSetting':
         return `${
@@ -99,7 +101,7 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
   }
 
   async assertReceiptAddress(page: Page, expectedAddress: string) {
-    await test.step('Assert contract address', async () => {
+    await test.step('Assert of receipt address', async () => {
       await new TransactionPage(
         page,
         this.options.extensionPage,
@@ -122,7 +124,7 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
   }
 
   async assertTxAmount(page: Page, expectedAmount: string) {
-    await test.step('Assert transaction amount', async () => {
+    await test.step('Assert of transaction amount', async () => {
       await new TransactionPage(
         page,
         this.options.extensionPage,

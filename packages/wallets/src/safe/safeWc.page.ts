@@ -17,7 +17,7 @@ export class SafeWcPage implements WalletPage<WalletConnectTypes.WC> {
     this.setupPage = new SetupPage(
       this.page,
       this.options.extensionPage,
-      this.options.stand.chainId,
+      this.options.standConfig.chainId,
     );
     this.homePage = new HomePage(this.page);
   }

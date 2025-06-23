@@ -84,17 +84,18 @@ export class SetupPage {
         await this.connectWalletBtn.click();
 
         if (
-          !(await this.waitForVisible(
+          await this.waitForVisible(
             this.page.getByText(
               this.extensionPage.options.walletConfig.EXTENSION_WALLET_NAME,
             ),
             5000,
-          ))
+          )
         ) {
-          this.logger.log(`[Attempt ${attempt}] Connect wallet to Safe failed`);
-          await this.page.reload();
-          await this.closeExtraPopup();
+          break;
         }
+        this.logger.log(`[Attempt ${attempt}] Connect wallet to Safe failed`);
+        await this.page.reload();
+        await this.closeExtraPopup();
       }
 
       try {

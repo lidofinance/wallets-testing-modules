@@ -15,7 +15,7 @@ export interface WalletPageOptions {
   walletConfig?: CommonWalletConfig;
   extensionUrl?: string;
   extensionPage?: WalletPage<WalletConnectTypes.EOA>;
-  stand?: StandConfig;
+  standConfig?: StandConfig;
 }
 
 /** **T -> WalletConnectTypes.EOA**
