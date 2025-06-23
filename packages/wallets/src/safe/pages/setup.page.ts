@@ -39,7 +39,7 @@ export class SetupPage {
   }
 
   async firstTimeSetupWallet() {
-    return await test.step('Safe wallet setup', async () => {
+    return await test.step('First time Safe wallet setup', async () => {
       await this.page.goto(this.setupUrl);
       await this.connectWalletExtension();
       try {
@@ -129,7 +129,7 @@ export class SetupPage {
     });
   }
 
-  private async waitForVisible(locator: Locator, timeout: number) {
+  async waitForVisible(locator: Locator, timeout: number) {
     try {
       await locator.waitFor({ state: 'visible', timeout });
       return true;

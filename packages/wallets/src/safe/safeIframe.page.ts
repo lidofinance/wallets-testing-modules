@@ -86,21 +86,14 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
     await test.step('Open Lido app in the Safe', async () => {
       await this.setupPage.closeExtraPopup();
 
-      try {
-        await this.setupPage.inAppContinueBtn.waitFor({
-          state: 'visible',
-          timeout: 3000,
-        });
+      while (
+        await this.setupPage.waitForVisible(
+          this.setupPage.inAppContinueBtn,
+          5000,
+        )
+      ) {
         await this.setupPage.inAppContinueBtn.click();
         await this.page.waitForTimeout(1000);
-        try {
-          await this.setupPage.inAppContinueBtn.waitFor({ timeout: 1000 });
-          await this.setupPage.inAppContinueBtn.click();
-        } catch {
-          this.logger.log('The second continue button is not visible');
-        }
-      } catch {
-        this.logger.log('Continue btn is not displayed');
       }
     });
   }
