@@ -176,7 +176,7 @@ export class BrowserService {
           browserContext: this.browserContextService.browserContext,
           extensionPage: extensionWalletPage,
           walletConfig: this.options.walletConfig,
-          stand: {
+          standConfig: {
             chainId: this.options.networkConfig.chainId,
             standUrl: this.options.standUrl,
             rpcUrl:
