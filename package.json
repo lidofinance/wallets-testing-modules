@@ -40,9 +40,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "safe-iframe-tests-implementation",
+        "channel": "alpha-safe",
+        "prerelease": "alpha-safe"
       }
     ]
   }
