@@ -68,7 +68,7 @@ test.describe('Ethereum', () => {
     await connectWallet(browserService);
   });
 
-  test.afterAll(async () => {
+  test.afterEach(async () => {
     await browserService.teardown();
   });
 });
