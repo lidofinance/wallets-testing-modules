@@ -20,6 +20,7 @@ export class EthereumNodeService {
   private readonly logger = new ConsoleLogger(EthereumNodeService.name);
   private readonly privateKeys: string[] = [];
   private readonly port: number;
+  private readonly host = '127.0.0.1';
 
   state?: {
     nodeProcess: ReturnType<typeof spawn>;
@@ -37,7 +38,7 @@ export class EthereumNodeService {
       socket.setTimeout(1000);
       socket.once('error', () => resolve(false));
       socket.once('timeout', () => resolve(false));
-      socket.connect(this.port, '127.0.0.1', () => {
+      socket.connect(this.port, this.host, () => {
         socket.end();
         resolve(true);
       });
@@ -50,7 +51,10 @@ export class EthereumNodeService {
       `--balance=${this.options.defaultBalance.toString()}`,
       '--block-time=2',
       '--mnemonic=park pond parade curious ten impulse outdoor feel cousin party duck inherit',
+      `--port=${this.port}`,
+      `--host=${this.host}`,
     ];
+    console.log(args);
     if (this.options.chainId) args.push(`--chain-id=${this.options.chainId}`);
 
     const process = spawn('anvil', args, { stdio: 'pipe' });
@@ -82,12 +86,14 @@ export class EthereumNodeService {
 
     this.logger.debug('Starting Anvil node...');
     if (!(await this.ensurePortAvailable(this.port))) {
-      this.logger.warn('Port already in use. Cleaning up before restart...');
+      this.logger.warn(
+        `Port ${this.port} already in use. Cleaning up before restart...`,
+      );
       await this.stopNode();
     }
 
     const process = this.startAnvil(rpcUrl);
-    const nodeUrl = `http://127.0.0.1:${this.port}`;
+    const nodeUrl = `http://${this.host}:${this.port}`;
 
     let ready = false;
     for (let i = 0; i < 10; i++) {
@@ -133,7 +139,7 @@ export class EthereumNodeService {
         socket.destroy();
         resolve(false);
       });
-      socket.connect(port, '127.0.0.1');
+      socket.connect(port, this.host);
     });
   }
 
