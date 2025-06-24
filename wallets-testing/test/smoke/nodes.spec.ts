@@ -19,7 +19,7 @@ test.describe('Ethereum node', () => {
     await ethereumNodeService.startNode();
     expect(ethereumNodeService.state).toBeDefined();
     const account = ethereumNodeService.state.accounts[0];
-    expect(await ethereumNodeService.getBalance(account)).toEqual('10000.0');
+    expect(await ethereumNodeService.getBalance(account)).toEqual('1000.0');
   });
 
   test('should set ERC20 balance', async () => {

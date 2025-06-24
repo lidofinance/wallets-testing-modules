@@ -6,7 +6,7 @@ export type EthereumNodeServiceOptions = {
   rpcUrl: string;
   port?: number;
   chainId?: number;
-  defaultBalance?: number;
+  defaultBalance: number;
   accounts?: OptionsAccount[];
 };
 

@@ -49,6 +49,7 @@ export class EthereumNodeService {
   private startAnvil(rpcUrl: string) {
     const args = [
       `--fork-url=${rpcUrl}`,
+      `--balance=${this.options.defaultBalance.toString()}`,
       '--block-time=2',
       '--mnemonic=park pond parade curious ten impulse outdoor feel cousin party duck inherit',
     ];
