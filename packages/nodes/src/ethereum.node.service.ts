@@ -1,4 +1,4 @@
-import { Inject, Injectable, ConsoleLogger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 import { spawn } from 'child_process';
 import net from 'net';
 import {
@@ -11,13 +11,11 @@ import {
 import { providers, utils, BigNumber, Contract } from 'ethers';
 import {
   EthereumNodeServiceOptions,
-  OPTIONS,
   ServiceUnreachableError,
   ERC20_SHORT_ABI,
   Account,
 } from './node.constants';
 
-@Injectable()
 export class EthereumNodeService {
   private readonly logger = new ConsoleLogger(EthereumNodeService.name);
   private readonly privateKeys: string[] = [];
@@ -29,7 +27,7 @@ export class EthereumNodeService {
     accounts: Account[];
   };
 
-  constructor(@Inject(OPTIONS) private options: EthereumNodeServiceOptions) {
+  constructor(private options: EthereumNodeServiceOptions) {
     this.port = options.port || 8545;
   }
 
