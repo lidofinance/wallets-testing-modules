@@ -54,14 +54,12 @@ export class EthereumNodeService {
       `--port=${this.port}`,
       `--host=${this.host}`,
     ];
-    console.log(args);
     if (this.options.chainId) args.push(`--chain-id=${this.options.chainId}`);
 
     const process = spawn('anvil', args, { stdio: 'pipe' });
 
     process.stdout.once('data', (data: Buffer) => {
       const text = data.toString();
-      this.logger.debug(`[Anvil STDOUT] ${text}`);
 
       const keyMatches = [...text.matchAll(/\(\d+\)\s+(0x[a-fA-F0-9]{64})/g)];
       keyMatches.forEach((match) => this.privateKeys.push(match[1]));
