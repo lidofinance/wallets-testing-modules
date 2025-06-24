@@ -32,17 +32,25 @@ export class EthereumNodeService {
     this.port = options.port || 8545;
   }
 
-  private verifyAnvil(): Promise<boolean> {
-    return new Promise((resolve) => {
-      const socket = new net.Socket();
-      socket.setTimeout(1000);
-      socket.once('error', () => resolve(false));
-      socket.once('timeout', () => resolve(false));
-      socket.connect(this.port, this.host, () => {
-        socket.end();
-        resolve(true);
+  private async verifyAnvil(retries = 10, delayMs = 1000): Promise<boolean> {
+    for (let i = 0; i < retries; i++) {
+      const isReady = await new Promise<boolean>((resolve) => {
+        const socket = new net.Socket();
+        socket.setTimeout(1000);
+        socket.once('error', () => resolve(false));
+        socket.once('timeout', () => resolve(false));
+        socket.connect(this.port, this.host, () => {
+          socket.end();
+          resolve(true);
+        });
       });
-    });
+
+      if (isReady) return true;
+
+      await new Promise((r) => setTimeout(r, delayMs));
+    }
+
+    return false;
   }
 
   private startAnvil(rpcUrl: string) {
@@ -93,16 +101,9 @@ export class EthereumNodeService {
     const process = this.startAnvil(rpcUrl);
     const nodeUrl = `http://${this.host}:${this.port}`;
 
-    let ready = false;
-    for (let i = 0; i < 10; i++) {
-      if (await this.verifyAnvil()) {
-        ready = true;
-        break;
-      }
-      await new Promise((r) => setTimeout(r, 1000));
-    }
+    const isAnvilStarted = await this.verifyAnvil();
 
-    if (!ready) {
+    if (!isAnvilStarted) {
       process.kill();
       throw new Error('Anvil did not start');
     }
