@@ -4,28 +4,28 @@ import {
   CommonWalletConfig,
   NETWORKS_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
-import { configService, widgetConfig } from '../config';
+import { configService, getWidgetConfig, WidgetConfig } from '../config';
 import { WidgetService } from '../services';
 
 export async function initBrowserWithExtension(
   walletConfig: CommonWalletConfig,
   isFork = false,
-  network: 'ethereum' | 'hoodi' = 'ethereum',
+  widgetConfig: WidgetConfig = getWidgetConfig['Ethereum Mainnet'],
 ) {
   const browserService = new BrowserService({
-    networkConfig: networkConfig(network),
+    networkConfig: widgetConfig.network,
     accountConfig: {
       SECRET_PHRASE: configService.get('WALLET_SECRET_PHRASE'),
       PASSWORD: configService.get('WALLET_PASSWORD'),
     },
     walletConfig: walletConfig,
     nodeConfig: {
-      rpcUrlToMock: widgetConfig[networkConfig(network).chainName].nodeUrl,
+      rpcUrlToMock: widgetConfig.nodeUrl,
     },
     browserOptions: {
       slowMo: 200,
     },
-    standUrl: getStandUrlByNetwork(network),
+    standUrl: widgetConfig.url,
   });
 
   await browserService.initWalletSetup(isFork);
@@ -67,31 +67,4 @@ export async function waitForTextContent(locator: Locator) {
       requestAnimationFrame(checkText);
     });
   });
-}
-
-export function networkConfig(network: string) {
-  if (network === 'hoodi') {
-    return {
-      ...NETWORKS_CONFIG.testnet.ETHEREUM_HOODI,
-      rpcUrl: `https://lb.drpc.org/ogrpc?network=hoodi&dkey=${configService.get(
-        'RPC_URL_TOKEN',
-      )}`,
-    };
-  } else {
-    return {
-      ...NETWORKS_CONFIG.mainnet.ETHEREUM,
-      rpcUrl: `https://lb.drpc.org/ogrpc?network=ethereum&dkey=${configService.get(
-        'RPC_URL_TOKEN',
-      )}`,
-    };
-  }
-}
-
-function getStandUrlByNetwork(network: string): string {
-  switch (network) {
-    case 'hoodi':
-      return 'https://stake-hoodi.testnet.fi';
-    default:
-      return 'https://stake.lido.fi';
-  }
 }
