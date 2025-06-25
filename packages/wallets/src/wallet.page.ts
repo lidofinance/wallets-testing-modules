@@ -11,8 +11,8 @@ import {
 /** Required options to manage wallet */
 export interface WalletPageOptions {
   browserContext: BrowserContext;
+  walletConfig: CommonWalletConfig;
   accountConfig?: AccountConfig;
-  walletConfig?: CommonWalletConfig;
   extensionUrl?: string;
   extensionPage?: WalletPage<WalletConnectTypes.EOA>;
   standConfig?: StandConfig;
@@ -22,24 +22,24 @@ export interface WalletPageOptions {
  * - describes the EOA wallets (_Metamask, OKX, Trust, BitGet, Coin98, Coinbase, Ctrl, Exodus._) and lets to manage these wallets with included methods
  * - required options:
  *   - browserContext
+ *   - walletConfig
  *   - extensionUrl
  *   - accountConfig
- *   - walletConfig
  *
  *  **T -> WalletConnectTypes.WC**
  * - describes the connection with WalletConnect wallet (_Safe_) and lets to manage these wallets with included methods
  * - required options:
  *   - browserContext
- *   - extensionPage
  *   - walletConfig
+ *   - extensionPage
  *   - standConfig
  *
  * **T -> WalletConnectTypes.IFRAME**
  * - describes the opening the Lido ETH Widget in the iframe app of the wallet (_Safe iframe._) and lets to manage these wallets with included methods
  * - required options:
  *   - browserContext
- *   - extensionPage
  *   - walletConfig
+ *   - extensionPage
  *   - standConfig
  * */
 export interface WalletPage<T extends WalletConnectType> {

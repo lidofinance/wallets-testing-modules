@@ -100,6 +100,8 @@ export class TransactionPage {
 
   private async executeTxBtnClick(maxAttempts = 3) {
     return await test.step('Click to execute transaction button', async () => {
+      // Sometimes the tx execution fails, and we need to try to execute the tx several times
+      // It helps us to avoid fail of test with the tx execution
       for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         const result = await Promise.race([
           this.page
@@ -160,6 +162,7 @@ export class TransactionPage {
             .getByTestId('tx-data-row')
             .textContent();
 
+          // Safe UI displays the BigInt type of tx value (100000000000), and we need to convert to before matching
           expect(String(new Big(valueParam).div(1e18))).toEqual(expectedAmount);
         });
       }
@@ -177,6 +180,9 @@ export class TransactionPage {
     });
   }
 
+  // If Safe UI get problems with rpc or current tx, it displays the warning banner
+  // It means the tx will not be completed
+  // So we interrupt the test to avoid long downtime
   private async failTestIfSafeDisplayFailBanner() {
     let needToInterruptTest = false;
     try {
