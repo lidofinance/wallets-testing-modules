@@ -6,9 +6,8 @@ import { SetupPage, SettingPage, TransactionPage } from './pages';
 
 export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
   logger = new ConsoleLogger(SafeIframePage.name);
-  page?: Page;
-
-  safeUrl?: URL;
+  page: Page;
+  safeUrl: URL;
   setupPage: SetupPage;
   settingPage: SettingPage;
 

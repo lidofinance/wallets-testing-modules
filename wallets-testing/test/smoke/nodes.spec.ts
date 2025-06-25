@@ -2,7 +2,7 @@ import { EthereumNodeService } from '@lidofinance/wallets-testing-nodes';
 import { MATIC_TOKEN } from './consts';
 import { test, expect } from '@playwright/test';
 import { widgetConfig } from '../../config';
-import { configService } from '../../config';
+import { networkConfig } from '../../utils/helpers';
 
 test.describe('Ethereum node', () => {
   let ethereumNodeService: EthereumNodeService;
@@ -10,7 +10,7 @@ test.describe('Ethereum node', () => {
   test.beforeEach(async () => {
     ethereumNodeService = new EthereumNodeService({
       chainId: widgetConfig['Ethereum Mainnet'].network.chainId,
-      rpcUrl: configService.get('RPC_URL'),
+      rpcUrl: networkConfig('ethereum').rpcUrl,
       defaultBalance: 1000,
     });
   });

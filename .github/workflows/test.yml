@@ -54,8 +54,7 @@ jobs:
           fi
         working-directory: wallets-testing
         env:
-          RPC_URL: ${{ secrets.RPC_URL }}
-          HOODI_RPC_URL: ${{ secrets.HOODI_RPC_URL }}
+          RPC_URL_TOKEN: ${{ secrets.RPC_URL_TOKEN }}
           WALLET_SECRET_PHRASE: ${{ secrets.WALLET_SECRET_PHRASE }}
           WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
           NODE_OPTIONS: --max-old-space-size=4096

@@ -69,16 +69,20 @@ export async function waitForTextContent(locator: Locator) {
   });
 }
 
-function networkConfig(network: string) {
+export function networkConfig(network: string) {
   if (network === 'hoodi') {
     return {
       ...NETWORKS_CONFIG.testnet.ETHEREUM_HOODI,
-      rpcUrl: configService.get('HOODI_RPC_URL'),
+      rpcUrl: `https://lb.drpc.org/ogrpc?network=hoodi&dkey=${configService.get(
+        'RPC_URL_TOKEN',
+      )}`,
     };
   } else {
     return {
       ...NETWORKS_CONFIG.mainnet.ETHEREUM,
-      rpcUrl: configService.get('RPC_URL'),
+      rpcUrl: `https://lb.drpc.org/ogrpc?network=ethereum&dkey=${configService.get(
+        'RPC_URL_TOKEN',
+      )}`,
     };
   }
 }
