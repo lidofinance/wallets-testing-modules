@@ -59,9 +59,14 @@ export class BrowserService {
   private browserContextService: BrowserContextService;
   public ethereumNodeService: EthereumNodeService;
 
+  public readonly networkConfig: NetworkConfig;
+  public readonly walletConfig: CommonWalletConfig;
   public isFork: boolean;
 
-  constructor(private options: BrowserServiceOptions) {}
+  constructor(private options: BrowserServiceOptions) {
+    this.networkConfig = options.networkConfig;
+    this.walletConfig = options.walletConfig;
+  }
 
   getWalletPage() {
     if (!this.walletPage)
@@ -69,14 +74,6 @@ export class BrowserService {
         '"walletPage" is not initialized. Use initWalletSetup() function',
       );
     return this.walletPage;
-  }
-
-  getNetworkConfig() {
-    return this.options.networkConfig;
-  }
-
-  getWalletConfig() {
-    return this.options.walletConfig;
   }
 
   getBrowserContextPage() {

@@ -5,7 +5,6 @@ export const TRUST_WALLET_COMMON_CONFIG: CommonWalletConfig = {
   EXTENSION_WALLET_NAME: 'trust',
   CONNECTED_WALLET_NAME: 'Browser',
   CONNECT_BUTTON_NAME: 'Browser',
-  RPC_URL_PATTERN: 'https://mainnet.infura.io/v3/**',
   STORE_EXTENSION_ID: 'egjidjbpglichdcondbcbdnbeeppgdph',
   WALLET_TYPE: WalletConnectTypes.EOA,
   EXTENSION_START_PATH: '/home.html',

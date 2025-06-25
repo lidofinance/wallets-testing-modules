@@ -3,7 +3,6 @@ export interface CommonWalletConfig {
   EXTENSION_WALLET_NAME: string; // Wallet name for install extension
   CONNECTED_WALLET_NAME: string; // Displayed name of connected wallet
   CONNECT_BUTTON_NAME: string; // Button name in the wallet list
-  RPC_URL_PATTERN: string;
   STORE_EXTENSION_ID: string;
   WALLET_TYPE: WalletConnectType;
   LATEST_STABLE_DOWNLOAD_LINK?: string; // Link to stable wallet extension version for test (optional)
