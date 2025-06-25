@@ -1,6 +1,7 @@
 import { ConsoleLogger } from '@nestjs/common';
 import { spawn } from 'child_process';
 import net from 'net';
+import axios from 'axios';
 import {
   Request,
   APIRequestContext,
@@ -30,27 +31,6 @@ export class EthereumNodeService {
 
   constructor(private options: EthereumNodeServiceOptions) {
     this.port = options.port || 8545;
-  }
-
-  private async verifyAnvil(retries = 10, delayMs = 1000): Promise<boolean> {
-    for (let i = 0; i < retries; i++) {
-      const isReady = await new Promise<boolean>((resolve) => {
-        const socket = new net.Socket();
-        socket.setTimeout(1000);
-        socket.once('error', () => resolve(false));
-        socket.once('timeout', () => resolve(false));
-        socket.connect(this.port, this.host, () => {
-          socket.end();
-          resolve(true);
-        });
-      });
-
-      if (isReady) return true;
-
-      await new Promise((r) => setTimeout(r, delayMs));
-    }
-
-    return false;
   }
 
   private startAnvil(rpcUrl: string) {
@@ -101,7 +81,7 @@ export class EthereumNodeService {
     const process = this.startAnvil(rpcUrl);
     const nodeUrl = `http://${this.host}:${this.port}`;
 
-    const isAnvilStarted = await this.verifyAnvil();
+    const isAnvilStarted = await this.waitForFork(nodeUrl);
 
     if (!isAnvilStarted) {
       process.kill();
@@ -120,26 +100,6 @@ export class EthereumNodeService {
 
   getAccount(index = 0): Account {
     return this.state?.accounts[index];
-  }
-
-  async stopNode(): Promise<void> {
-    if (this.state) {
-      this.logger.log('Stopping Node...');
-      this.state.nodeProcess.kill();
-      this.state = undefined;
-    }
-  }
-
-  private ensurePortAvailable(port: number): Promise<boolean> {
-    return new Promise((resolve) => {
-      const socket = new net.Socket();
-      socket.once('error', () => resolve(true));
-      socket.once('connect', () => {
-        socket.destroy();
-        resolve(false);
-      });
-      socket.connect(port, this.host);
-    });
   }
 
   async getBalance(account: Account): Promise<string | undefined> {
@@ -181,6 +141,60 @@ export class EthereumNodeService {
     return balanceAfter.div(decimals);
   }
 
+  private async waitForFork(
+    rpcUrl: string,
+    {
+      timeoutMs = 30000,
+      delayMs = 500,
+    }: { timeoutMs?: number; delayMs?: number } = {},
+  ): Promise<boolean> {
+    const start = Date.now();
+
+    // Starting to wait for fork to be run
+    while (Date.now() - start < timeoutMs) {
+      this.logger.debug(`Try to sending eth_blockNumber...`);
+      try {
+        const res = await axios.post(
+          rpcUrl,
+          {
+            jsonrpc: '2.0',
+            method: 'eth_blockNumber',
+            params: [],
+            id: 1,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            timeout: 5000,
+          },
+        );
+
+        const resBody = res.data;
+        const isHealthy = !resBody.error && !!resBody.result;
+
+        if (isHealthy) return isHealthy;
+      } catch (error: any) {
+        this.logger.warn(`RPC error: ${error?.message || 'Unknown error'}`);
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+
+    throw new Error(`Fork did not become ready within ${timeoutMs} ms`);
+  }
+
+  private ensurePortAvailable(port: number): Promise<boolean> {
+    return new Promise((resolve) => {
+      const socket = new net.Socket();
+      socket.once('error', () => resolve(true));
+      socket.once('connect', () => {
+        socket.destroy();
+        resolve(false);
+      });
+      socket.connect(port, this.host);
+    });
+  }
   async mockRoute(
     url: string,
     contextOrPage: BrowserContext | Page,
@@ -290,5 +304,13 @@ export class EthereumNodeService {
     }
 
     return undefined;
+  }
+
+  async stopNode(): Promise<void> {
+    if (this.state) {
+      this.logger.log('Stopping Node...');
+      this.state.nodeProcess.kill();
+      this.state = undefined;
+    }
   }
 }
