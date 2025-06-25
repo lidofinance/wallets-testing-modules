@@ -40,9 +40,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "fix-report-service",
+        "channel": "report-alpha",
+        "prerelease": "report-alpha"
       }
     ]
   }
