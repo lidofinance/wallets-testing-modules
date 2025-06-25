@@ -1,9 +1,6 @@
 import { Locator } from '@playwright/test';
 import { BrowserService } from '@lidofinance/browser-service';
-import {
-  CommonWalletConfig,
-  NETWORKS_CONFIG,
-} from '@lidofinance/wallets-testing-wallets';
+import { CommonWalletConfig } from '@lidofinance/wallets-testing-wallets';
 import { configService, getWidgetConfig, WidgetConfig } from '../config';
 import { WidgetService } from '../services';
 
