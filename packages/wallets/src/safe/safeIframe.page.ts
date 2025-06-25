@@ -38,19 +38,17 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
 
     await test.step('Init Safe wallet', async () => {
       await this.initLocators();
-      if (!this.safeUrl) {
-        const safeAccountUrl = await this.setupPage.firstTimeSetupWallet();
-        this.safeUrl = new URL(safeAccountUrl);
+      const safeAccountUrl = await this.setupPage.firstTimeSetupWallet();
+      this.safeUrl = new URL(safeAccountUrl);
 
-        await test.step('Setup RPC url', async () => {
-          await this.navigate('envSetting');
-          await this.setupPage.closeExtraPopup();
-          await this.settingPage.rpcUrlInput.fill(
-            this.options.standConfig.rpcUrl,
-          );
-          await this.settingPage.saveSettingBtn.click();
-        });
-      }
+      await test.step('Setup RPC url', async () => {
+        await this.navigate('envSetting');
+        await this.setupPage.closeExtraPopup();
+        await this.settingPage.rpcUrlInput.fill(
+          this.options.standConfig.rpcUrl,
+        );
+        await this.settingPage.saveSettingBtn.click();
+      });
       await this.page.goto(String(this.safeUrl));
     });
   }

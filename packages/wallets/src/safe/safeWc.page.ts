@@ -6,14 +6,16 @@ import { NetworkConfig, WalletConnectTypes } from '../wallets.constants';
 
 export class SafeWcPage implements WalletPage<WalletConnectTypes.WC> {
   logger = new ConsoleLogger(SafeWcPage.name);
-  page?: Page;
+  page: Page;
   setupPage: SetupPage;
   homePage: HomePage;
-  safeAccountUrl?: string;
+  safeAccountUrl: string;
 
   constructor(public options: WalletPageOptions) {}
 
   async initLocators() {
+    this.page = await this.options.browserContext.newPage();
+
     this.setupPage = new SetupPage(
       this.page,
       this.options.extensionPage,
@@ -24,21 +26,18 @@ export class SafeWcPage implements WalletPage<WalletConnectTypes.WC> {
 
   async setup() {
     await this.options.extensionPage.setup();
+    await this.initLocators();
+    this.safeAccountUrl = await this.setupPage.firstTimeSetupWallet();
   }
 
   async navigate() {
-    this.page = await this.options.browserContext.newPage();
-    await this.initLocators();
-    if (this.safeAccountUrl) {
-      await test.step('Open Safe account', async () => {
-        await this.page.goto(this.safeAccountUrl);
-      });
-    } else {
-      this.safeAccountUrl = await this.setupPage.firstTimeSetupWallet();
-    }
+    await test.step('Open Safe account', async () => {
+      await this.page.goto(this.safeAccountUrl);
+    });
   }
 
   async connectWallet(wcUrl: string) {
+    await this.initLocators();
     await this.navigate();
     await this.homePage.connectWallet(wcUrl);
     await this.page.close();
