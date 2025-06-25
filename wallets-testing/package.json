@@ -15,7 +15,7 @@
     "start:prod": "node dist/main",
     "test": "playwright test",
     "test:smoke": "playwright test smoke",
-    "test:widgets": "playwright test widgets/ethereum.spec",
+    "test:widgets": "playwright test widgets/widget.spec",
     "test:iframe": "playwright test widgets/iframeWidget.spec"
   },
   "dependencies": {
