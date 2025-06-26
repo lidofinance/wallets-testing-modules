@@ -1,27 +1,57 @@
-import { Page } from '@playwright/test';
+import { BrowserContext, Page } from '@playwright/test';
 import {
   AccountConfig,
   CommonWalletConfig,
   NetworkConfig,
-  WalletType,
-  WalletTypes,
+  StandConfig,
+  WalletConnectType,
+  WalletConnectTypes,
 } from './wallets.constants';
 
-/** - T -> WalletTypes.EOA describes the EOA wallets (_like Metamask, OKX, Trust etc._)
- * and lets to manage these wallets with included methods
- * - T -> WalletTypes.WC describes the connection with WalletConnect wallet (_like Safe etc._)
- * and lets to manage these wallets with included methods*/
-export interface WalletPage<T extends WalletType> {
-  page: Page | undefined;
-  accountConfig: AccountConfig;
+/** Required options to manage wallet */
+export interface WalletPageOptions {
+  browserContext: BrowserContext;
   walletConfig: CommonWalletConfig;
+  accountConfig?: AccountConfig;
+  extensionUrl?: string;
+  extensionPage?: WalletPage<WalletConnectTypes.EOA>;
+  standConfig?: StandConfig;
+}
+
+/** **T -> WalletConnectTypes.EOA**
+ * - describes the EOA wallets (_Metamask, OKX, Trust, BitGet, Coin98, Coinbase, Ctrl, Exodus._) and lets to manage these wallets with included methods
+ * - required options:
+ *   - browserContext
+ *   - walletConfig
+ *   - extensionUrl
+ *   - accountConfig
+ *
+ *  **T -> WalletConnectTypes.WC**
+ * - describes the connection with WalletConnect wallet (_Safe_) and lets to manage these wallets with included methods
+ * - required options:
+ *   - browserContext
+ *   - walletConfig
+ *   - extensionPage
+ *   - standConfig
+ *
+ * **T -> WalletConnectTypes.IFRAME**
+ * - describes the opening the Lido ETH Widget in the iframe app of the wallet (_Safe iframe._) and lets to manage these wallets with included methods
+ * - required options:
+ *   - browserContext
+ *   - walletConfig
+ *   - extensionPage
+ *   - standConfig
+ * */
+export interface WalletPage<T extends WalletConnectType> {
+  options: WalletPageOptions;
+  page?: Page;
 
   setup(): Promise<void>;
 
   importKey(key: string): Promise<void>;
 
   connectWallet(
-    param: T extends WalletTypes.EOA ? Page : string,
+    param?: T extends WalletConnectTypes.EOA ? Page : string,
   ): Promise<void>;
 
   assertTxAmount(page: Page, expectedAmount: string): Promise<void>;

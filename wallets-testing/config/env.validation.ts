@@ -6,7 +6,9 @@ import { ConsoleLogger } from '@nestjs/common';
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 export const EnvironmentSchema = z.object({
-  RPC_URL: z.string().url({ message: 'RPC_URL must be a valid URL' }),
+  RPC_URL_TOKEN: z
+    .string()
+    .min(1, { message: 'RPC_URL_TOKEN must be a valid URL' }),
   WALLET_SECRET_PHRASE: z
     .string()
     .min(1, 'WALLET_SECRET_PHRASE cannot be empty'),

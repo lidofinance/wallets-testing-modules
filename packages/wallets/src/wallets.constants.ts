@@ -3,24 +3,27 @@ export interface CommonWalletConfig {
   EXTENSION_WALLET_NAME: string; // Wallet name for install extension
   CONNECTED_WALLET_NAME: string; // Displayed name of connected wallet
   CONNECT_BUTTON_NAME: string; // Button name in the wallet list
-  RPC_URL_PATTERN: string;
   STORE_EXTENSION_ID: string;
-  WALLET_TYPE: WalletType;
+  WALLET_TYPE: WalletConnectType;
   LATEST_STABLE_DOWNLOAD_LINK?: string; // Link to stable wallet extension version for test (optional)
   EXTENSION_START_PATH: string; // Start path for wallet setup
 }
 
-export enum WalletTypes {
+export enum WalletConnectTypes {
   EOA = 'EOA',
   WC = 'WC',
+  IFRAME = 'IFRAME',
 }
 
-export type WalletType = WalletTypes.WC | WalletTypes.EOA;
+export type WalletConnectType =
+  | WalletConnectTypes.WC
+  | WalletConnectTypes.EOA
+  | WalletConnectTypes.IFRAME;
 
 export interface StandConfig {
   chainId: number;
   standUrl: string;
-  forkUrl?: string;
+  rpcUrl?: string; // fork rpc or stable rpc
 }
 
 export interface AccountConfig {
@@ -185,7 +188,7 @@ export const NETWORKS_CONFIG: {
       chainId: 560048,
       chainName: 'Ethereum Hoodi',
       tokenSymbol: 'ETH',
-      rpcUrl: 'https://0xrpc.io/hoodi/',
+      rpcUrl: 'https://0xrpc.io/hoodi',
       scan: 'https://hoodi.etherscan.io/',
     },
     ETHEREUM_HOLESKY: {
