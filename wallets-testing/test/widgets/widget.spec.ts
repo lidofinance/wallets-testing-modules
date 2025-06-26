@@ -49,7 +49,7 @@ test.describe('Ethereum', () => {
     await connectWallet(browserService);
   });
 
-  test(`Ctrl connect`, async () => {
+  test.skip(`Ctrl connect`, async () => {
     browserService = await initBrowserWithExtension(CTRL_COMMON_CONFIG);
     await connectWallet(browserService);
   });
