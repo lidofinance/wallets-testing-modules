@@ -43,7 +43,6 @@ export class EthereumNodeService {
       `--host=${this.host}`,
     ];
     if (this.options.chainId) args.push(`--chain-id=${this.options.chainId}`);
-
     const process = spawn('anvil', args, { stdio: 'pipe' });
 
     process.stdout.once('data', (data: Buffer) => {
@@ -310,7 +309,31 @@ export class EthereumNodeService {
     if (this.state) {
       this.logger.log('Stopping Node...');
       this.state.nodeProcess.kill();
+
+      try {
+        await this.waitForPortRelease(this.port);
+      } catch (err) {
+        this.logger.warn(
+          `Timeout while waiting for port ${this.port} to be released.`,
+        );
+      }
+
       this.state = undefined;
     }
+  }
+
+  private async waitForPortRelease(
+    port: number,
+    timeoutMs = 20000,
+  ): Promise<void> {
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+      const available = await this.ensurePortAvailable(port);
+      if (available) return;
+      await new Promise((res) => setTimeout(res, 100));
+    }
+    throw new Error(
+      `Port ${port} did not become available within ${timeoutMs}ms`,
+    );
   }
 }
