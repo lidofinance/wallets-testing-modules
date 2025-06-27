@@ -8,6 +8,14 @@ on:
         required: false
         default: false
         type: boolean
+      suite:
+        description: 'Test suite to run tests'
+        required: false
+        default: wallet-connection
+        type: choice
+        options:
+          - wallet-connection
+          - safe-iframe-tx
   schedule:
      - cron: '0 */6 * * *'
 
@@ -43,13 +51,21 @@ jobs:
         run: yarn playwright install chromium --with-deps
 
       - name: Run wallets tests
-        run: xvfb-run --auto-servernum -- yarn test:widgets
+        run: |
+          if [ "$SUITE" == "safe-iframe-tx" ]; then
+            echo -e "🚀 Running \033[1;34msafe-iframe\033[0m tests"
+            xvfb-run --auto-servernum -- yarn test:iframe
+          else
+            echo -e "🚀 Running \033[1;34mwallet-connection\033[0m tests"
+            xvfb-run --auto-servernum -- yarn test:widgets
+          fi
         working-directory: wallets-testing
         env:
-          RPC_URL: ${{ secrets.RPC_URL }}
+          RPC_URL_TOKEN: ${{ secrets.RPC_URL_TOKEN }}
           WALLET_SECRET_PHRASE: ${{ secrets.WALLET_SECRET_PHRASE }}
           WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
           NODE_OPTIONS: --max-old-space-size=4096
+          SUITE: ${{ inputs.suite }}
 
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
