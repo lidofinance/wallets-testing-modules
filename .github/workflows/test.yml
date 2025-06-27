@@ -35,10 +35,17 @@ jobs:
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install --immutable
+
       - name: Run lint
         run: yarn lint
+
       - name: Build Components
         run: yarn build
+
+      - name: Install Foundry from script
+        run: |
+          chmod +x ./scripts/install-foundry.sh
+          ./scripts/install-foundry.sh
 
       - name: Install Playwright Browsers
         run: yarn playwright install chromium --with-deps
