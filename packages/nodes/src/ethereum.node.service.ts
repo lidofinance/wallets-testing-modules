@@ -314,7 +314,7 @@ export class EthereumNodeService {
         await this.waitForPortRelease(this.port);
       } catch (err) {
         this.logger.warn(
-          `Timeout while waiting for port ${this.port} to be released.`,
+          `Timeout while waiting for port ${this.port} to be released`,
         );
       }
 
