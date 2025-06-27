@@ -134,7 +134,7 @@ export class ExtensionService {
         await fs.rm(extensionDir, { force: true, recursive: true });
       }
       this.staleExtensionDirs = [];
-      this.logger.debug(`Removed ${extensions} stale extension dirs`);
+      this.logger.debug(`Removed ${extensions} stale extension dir's`);
     }
   }
 

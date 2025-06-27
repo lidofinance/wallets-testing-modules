@@ -168,7 +168,7 @@ class DiscordReporter implements Reporter {
           description:
             (this.options.customDescription ||
               'Here are the test run results:') +
-            `\n- View [GitHub Run](${this.options.ciRunUrl})`,
+            `\n - View [GitHub Run](${this.options.ciRunUrl})`,
           color: this.resultToStatus[result.status].color,
           fields: [
             {
