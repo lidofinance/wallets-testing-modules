@@ -16,6 +16,7 @@ import {
   ERC20_SHORT_ABI,
   Account,
 } from './node.constants';
+import { execSync } from 'node:child_process';
 
 export class EthereumNodeService {
   private readonly logger = new ConsoleLogger(EthereumNodeService.name);
@@ -43,24 +44,24 @@ export class EthereumNodeService {
       `--host=${this.host}`,
     ];
     if (this.options.chainId) args.push(`--chain-id=${this.options.chainId}`);
-    const process = spawn('anvil', args, { stdio: 'pipe' });
+    const anvilProcess = spawn('anvil', args, { stdio: 'pipe' });
 
-    process.stdout.once('data', (data: Buffer) => {
+    anvilProcess.stdout.once('data', (data: Buffer) => {
       const text = data.toString();
 
       const keyMatches = [...text.matchAll(/\(\d+\)\s+(0x[a-fA-F0-9]{64})/g)];
       keyMatches.forEach((match) => this.privateKeys.push(match[1]));
     });
 
-    process.stderr.on('data', (data) => {
+    anvilProcess.stderr.on('data', (data) => {
       this.logger.error(`[Anvil STDERR] ${data}`);
     });
 
-    process.on('close', (code) => {
+    anvilProcess.on('close', (code) => {
       this.logger.warn(`[Anvil Closed] Code ${code}`);
     });
 
-    return process;
+    return anvilProcess;
   }
 
   async startNode() {
@@ -69,21 +70,31 @@ export class EthereumNodeService {
     const rpcUrl = this.options.rpcUrl;
     if (!rpcUrl) throw new Error('RPC URL is required');
 
-    this.logger.debug('Starting Anvil node...');
+    // Ensure port is free in case it wasn't released properly
     if (!(await this.ensurePortAvailable(this.port))) {
       this.logger.warn(
         `Port ${this.port} already in use. Cleaning up before restart...`,
       );
-      await this.stopNode();
+      try {
+        execSync(`kill -9 $(lsof -ti:${this.port})`, {
+          stdio: 'ignore',
+          shell: '/bin/bash',
+        });
+      } catch (e) {
+        throw new Error(
+          `Failed to kill process on port ${this.port}: ${e.toString()}`,
+        );
+      }
     }
 
+    this.logger.debug('Starting Anvil node...');
     const process = this.startAnvil(rpcUrl);
     const nodeUrl = `http://${this.host}:${this.port}`;
 
-    const isAnvilStarted = await this.waitForFork(nodeUrl);
+    const isAnvilReady = await this.waitForAnvilReady(nodeUrl);
 
-    if (!isAnvilStarted) {
-      process.kill();
+    if (!isAnvilReady) {
+      process.kill('SIGKILL');
       throw new Error('Anvil did not start');
     }
 
@@ -140,7 +151,7 @@ export class EthereumNodeService {
     return balanceAfter.div(decimals);
   }
 
-  private async waitForFork(
+  private async waitForAnvilReady(
     rpcUrl: string,
     {
       timeoutMs = 30000,
@@ -149,9 +160,9 @@ export class EthereumNodeService {
   ): Promise<boolean> {
     const start = Date.now();
 
-    // Starting to wait for fork to be run
+    // Wait until node responds to eth_blockNumber
     while (Date.now() - start < timeoutMs) {
-      this.logger.debug(`Try to sending eth_blockNumber...`);
+      this.logger.debug(`Trying to send eth_blockNumber...`);
       try {
         const res = await axios.post(
           rpcUrl,
@@ -194,6 +205,7 @@ export class EthereumNodeService {
       socket.connect(port, this.host);
     });
   }
+
   async mockRoute(
     url: string,
     contextOrPage: BrowserContext | Page,
@@ -308,10 +320,28 @@ export class EthereumNodeService {
   async stopNode(): Promise<void> {
     if (this.state) {
       this.logger.log('Stopping Node...');
-      this.state.nodeProcess.kill();
+      const nodeProcess = this.state.nodeProcess;
 
+      const processExited = new Promise<void>((resolve, reject) => {
+        nodeProcess.once('exit', resolve);
+        nodeProcess.once('close', resolve);
+        nodeProcess.once('error', reject);
+      });
+
+      nodeProcess.kill('SIGTERM');
+
+      const timeout = new Promise<void>((resolve) =>
+        setTimeout(() => {
+          nodeProcess.kill('SIGKILL');
+          resolve();
+        }, 5000),
+      );
+
+      await Promise.race([processExited, timeout]);
+
+      // Ensure the port is free
       try {
-        await this.waitForPortRelease(this.port);
+        await this.waitUntilPortIsFree(this.port);
       } catch (err) {
         this.logger.warn(
           `Timeout while waiting for port ${this.port} to be released`,
@@ -322,7 +352,7 @@ export class EthereumNodeService {
     }
   }
 
-  private async waitForPortRelease(
+  private async waitUntilPortIsFree(
     port: number,
     timeoutMs = 20000,
   ): Promise<void> {
