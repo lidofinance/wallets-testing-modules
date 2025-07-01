@@ -39,7 +39,7 @@ export class EthereumNodeService {
       `--fork-url=${rpcUrl}`,
       `--balance=${this.options.defaultBalance.toString()}`,
       '--block-time=2',
-      '--mnemonic=park pond parade curious ten impulse outdoor feel cousin party duck inherit',
+      "--derivation-path=m/44'/60'/2020'/0/0",
       `--port=${this.port}`,
       `--host=${this.host}`,
     ];
