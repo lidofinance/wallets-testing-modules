@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "feat/use-anvil-as-package",
-        "channel": "alpha-use-anvil-as-package",
-        "prerelease": "alpha-use-anvil-as-package"
+        "name": "develop",
+        "channel": "alpha",
+        "prerelease": "alpha"
       }
     ]
   }
