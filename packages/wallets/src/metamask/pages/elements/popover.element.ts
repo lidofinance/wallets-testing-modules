@@ -36,7 +36,7 @@ export class PopoverElements {
       'We can’t connect to Ethereum Mainnet',
     );
     this.connectingProblemCloseButton = this.page.locator(
-      '#page-container__header-close',
+      '.page-container__header-close',
     );
   }
 
