@@ -51,7 +51,9 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
       await this.initLocators();
       await this.homePage.goto();
       await this.header.appHeaderLogo.waitFor({ state: 'visible' });
+      await this.popoverElements.closeConnectingProblemPopover();
       await this.loginPage.unlock();
+
       if (await this.header.networkListButton.isVisible()) {
         await this.popoverElements.closePopover();
         await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
