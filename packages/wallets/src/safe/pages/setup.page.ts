@@ -12,6 +12,7 @@ export class SetupPage {
   setupUrl: string;
   closeSecurityNoticeBtn: Locator;
   inAppContinueBtn: Locator;
+  beamerAnnouncementBar: Locator;
 
   constructor(
     public page: Page,
@@ -36,6 +37,8 @@ export class SetupPage {
       .nth(0);
     this.closeSecurityNoticeBtn = this.page.getByText('I understand');
     this.inAppContinueBtn = this.page.getByText('Continue');
+
+    this.beamerAnnouncementBar = this.page.locator('#beamerAnnouncementBar');
   }
 
   async firstTimeSetupWallet() {
@@ -73,6 +76,7 @@ export class SetupPage {
       await this.closeExtraPopup();
       await this.agreeCookiesSetting();
       await this.page.waitForTimeout(2000);
+      await this.closeBeamerAnnouncementBanner();
 
       if (await this.waitForVisible(this.accountCenter, 5000)) {
         this.logger.log('Extension is auto-connected');
@@ -127,6 +131,14 @@ export class SetupPage {
             'Security Notice is not displayed (maybe need to remove it?)',
           );
         });
+    });
+  }
+
+  async closeBeamerAnnouncementBanner() {
+    await test.step('Close announcement banner (if visible)', async () => {
+      if (await this.waitForVisible(this.beamerAnnouncementBar, 3000)) {
+        await this.beamerAnnouncementBar.locator('svg').click();
+      }
     });
   }
 
