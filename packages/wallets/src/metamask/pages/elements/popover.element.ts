@@ -49,7 +49,7 @@ export class PopoverElements {
 
         if (!isVisible) return;
         try {
-          await this.connectingProblemCloseButton.click();
+          await this.connectingProblemCloseButton.click({ timeout: 2500 });
         } catch (error) {
           continue;
         }
