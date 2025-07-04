@@ -40,9 +40,9 @@
     "branches": [
       "main",
       {
-        "name": "fix/mm-close-modals",
-        "channel": "alpha-close-modals",
-        "prerelease": "alpha-close-modals"
+        "name": "develop",
+        "channel": "alpha",
+        "prerelease": "alpha"
       }
     ]
   }
