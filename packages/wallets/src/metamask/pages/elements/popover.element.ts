@@ -48,8 +48,11 @@ export class PopoverElements {
           (await this.connectingProblemPopover.isVisible());
 
         if (!isVisible) return;
-
-        await this.connectingProblemCloseButton.click();
+        try {
+          await this.connectingProblemCloseButton.click();
+        } catch (error) {
+          continue;
+        }
         await this.page.waitForTimeout(100);
       }
     });

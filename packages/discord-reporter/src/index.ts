@@ -73,9 +73,7 @@ class DiscordReporter implements Reporter {
 
   constructor(options: ReporterOptions) {
     this.options = options;
-    this.enabled = options.enabled
-      ? options.enabled.toLowerCase() === 'true'
-      : true;
+    this.enabled = (options.enabled ?? '').trim().toLowerCase() === 'true';
 
     if (!this.enabled) return;
 
