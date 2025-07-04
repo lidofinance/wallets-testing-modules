@@ -76,6 +76,7 @@ class DiscordReporter implements Reporter {
     this.enabled = (options.enabled ?? '').trim().toLowerCase() === 'true';
 
     if (!this.enabled) return;
+    console.info('Discord Reporter is enabled');
 
     if (!this.options.discordWebhookUrl) {
       this.logger.error(
