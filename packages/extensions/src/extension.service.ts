@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { Injectable, ConsoleLogger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
 import axios from 'axios';
 import * as unzipper from 'unzipper';
 import { once } from 'events';
@@ -9,7 +9,6 @@ import { ExtensionStorePage } from './extension.store.page';
 import { BrowserContext, chromium } from '@playwright/test';
 import { Readable } from 'node:stream';
 
-@Injectable()
 export class ExtensionService {
   staleExtensionDirs: string[] = [];
   extensionDirBasePath = path.join(__dirname, 'extension');
@@ -135,7 +134,7 @@ export class ExtensionService {
         await fs.rm(extensionDir, { force: true, recursive: true });
       }
       this.staleExtensionDirs = [];
-      this.logger.debug(`Removed ${extensions} stale extension dirs`);
+      this.logger.debug(`Removed ${extensions} stale extension dir's`);
     }
   }
 
