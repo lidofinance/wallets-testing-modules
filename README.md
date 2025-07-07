@@ -15,7 +15,8 @@ NestJS modules for wallets integrations automated testing.
 ## Install
 
 1. `yarn install`
-2. `yarn build`
+2. `curl -L https://foundry.paradigm.xyz | bash`
+3. `yarn build`
 
 ## Usage
 
