@@ -28,11 +28,14 @@ jobs:
         uses: actions/checkout@v3
         with:
           persist-credentials: false
+
       - name: Setup Node
         uses: actions/setup-node@v3
+
         with:
           node-version: '20'
           cache: 'yarn'
+
       - name: Install dependencies
         run: yarn install --immutable
 
@@ -42,10 +45,10 @@ jobs:
       - name: Build Components
         run: yarn build
 
-      - name: Install Foundry from script
-        run: |
-          chmod +x ./scripts/install-foundry.sh
-          ./scripts/install-foundry.sh
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
 
       - name: Install Playwright Browsers
         run: yarn playwright install chromium --with-deps
