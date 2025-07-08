@@ -1,7 +1,8 @@
 import { Locator, Page, test } from '@playwright/test';
-import { AccountConfig } from '../../wallets.constants';
+import { AccountConfig } from '../../../wallets.constants';
+import { OnboardingPage } from './onboarding.page';
 
-export class OnboardingPage {
+export class OnboardingPageV1 implements OnboardingPage {
   termsCheckboxButton: Locator;
   importWalletButton: Locator;
   metricAgreeButton: Locator;
@@ -37,7 +38,7 @@ export class OnboardingPage {
   }
 
   async firstTimeSetup() {
-    await test.step('First time wallet setup', async () => {
+    await test.step('First time wallet setup (v1)', async () => {
       await this.confirmTermsOfOnboarding();
       await this.importWalletButton.click();
       await this.metricAgreeButton.click();

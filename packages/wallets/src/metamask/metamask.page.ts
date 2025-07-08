@@ -4,7 +4,6 @@ import { expect } from '@playwright/test';
 import { test, Page } from '@playwright/test';
 import { HomePage, LoginPage, SettingsPage } from './pages';
 import {
-  OnboardingPage,
   WalletOperationPage,
   Header,
   OptionsMenu,
@@ -13,6 +12,32 @@ import {
 } from './pages/elements';
 import { getAddress } from 'viem';
 import { isPopularMainnetNetwork, isPopularTestnetNetwork } from './helper';
+import {
+  OnboardingPage,
+  OnboardingPageV1,
+  OnboardingPageV2,
+} from './pages/onboarding';
+
+function isOnboardingV2(stableVersion: string): boolean {
+  const v2OnboardingVersion = '12.22.0'; // onboarding v2 is used for versions >= 12.22.0
+
+  // If the version is missing → use latest (onboarding V2)
+  if (!stableVersion) return true;
+
+  const currentParts = stableVersion.split('.').map(Number);
+  const stableParts = v2OnboardingVersion.split('.').map(Number);
+
+  for (let i = 0; i < 3; i++) {
+    const curr = currentParts[i] || 0;
+    const stab = stableParts[i] || 0;
+
+    if (curr > stab) return true; // stableVersion is newer → use V2
+    if (curr < stab) return false; // stableVersion is older → use V1
+  }
+
+  // Versions are equal → use V1
+  return false;
+}
 
 export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
   page: Page | undefined;
@@ -20,10 +45,11 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
   homePage: HomePage;
   loginPage: LoginPage;
   walletOperation: WalletOperationPage;
-  onboardingPage: OnboardingPage;
   optionsMenu: OptionsMenu;
   popoverElements: PopoverElements;
   accountMenu: AccountMenu;
+
+  onboardingPage: OnboardingPage;
 
   constructor(public options: WalletPageOptions) {}
 
@@ -37,13 +63,16 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     );
     this.loginPage = new LoginPage(this.page, this.options.accountConfig);
     this.walletOperation = new WalletOperationPage(this.page);
-    this.onboardingPage = new OnboardingPage(
-      this.page,
-      this.options.accountConfig,
-    );
     this.optionsMenu = new OptionsMenu(this.page);
     this.popoverElements = new PopoverElements(this.page);
     this.accountMenu = new AccountMenu(this.page);
+
+    // Init onboarding page v1/v2 depends on version
+    this.onboardingPage = isOnboardingV2(
+      this.options.walletConfig.LATEST_STABLE_VERSION,
+    )
+      ? new OnboardingPageV2(this.page, this.options.accountConfig)
+      : new OnboardingPageV1(this.page, this.options.accountConfig);
   }
 
   async navigate() {
@@ -67,6 +96,7 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
       await this.navigate();
       if (!(await this.header.networkListButton.isVisible())) {
         await this.onboardingPage.firstTimeSetup();
+        await this.loginPage.unlock();
         await this.popoverElements.closePopover();
         await this.popoverElements.closeConnectingProblemPopover();
         await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist

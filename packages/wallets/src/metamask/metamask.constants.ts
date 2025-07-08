@@ -11,6 +11,6 @@ export const METAMASK_COMMON_CONFIG: CommonWalletConfig = {
   // which broke the unsupported chain tests flow.
   // Use this version if you need to handle unsupported chain tests.
   // https://github.com/MetaMask/metamask-extension/releases/tag/v12.11.0
-  LATEST_STABLE_DOWNLOAD_LINK: null,
+  LATEST_STABLE_VERSION: null,
   EXTENSION_START_PATH: '/home.html',
 };
