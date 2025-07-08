@@ -18,9 +18,9 @@ export class ExtensionService {
 
   async getExtensionDirFromId(
     id: string,
-    latestStableDownloadUrl?: string,
+    latestStableVersion?: string,
   ): Promise<string> {
-    await this.downloadExtension(id, latestStableDownloadUrl);
+    await this.downloadExtension(id, latestStableVersion);
 
     return this.idToExtension[id];
   }
@@ -64,12 +64,12 @@ export class ExtensionService {
     }
   }
 
-  async downloadExtension(id: string, downloadUrl?: string) {
+  async downloadExtension(id: string, downloadVersion?: string) {
     await this.createBaseExtensionDir();
     if (await this.isExtensionByIdEmpty(id)) {
       const extensionDir = await this.createExtensionDirById(id);
-      downloadUrl
-        ? await this.downloadFromUrl(id, downloadUrl, extensionDir)
+      downloadVersion
+        ? await this.downloadFromUrl(id, downloadVersion, extensionDir)
         : await this.downloadFromStore(id, extensionDir);
 
       if (this.idToExtension[id] !== undefined) {
@@ -81,13 +81,16 @@ export class ExtensionService {
   }
 
   // Download from url return zip -> unzip
-  async downloadFromUrl(id: string, url: string, extensionDir: string) {
-    this.logger.debug(`Download extension ${id} from ${url}`);
-    await axios.get(url, { responseType: 'stream' }).then((response) => {
-      const zip = unzipper.Extract({ path: extensionDir });
-      response.data.pipe(zip);
-      return once(zip, 'close');
-    });
+  async downloadFromUrl(id: string, version: string, extensionDir: string) {
+    const downloadUrl = `https://github.com/MetaMask/metamask-extension/releases/download/v${version}/metamask-chrome-${version}.zip`;
+    this.logger.debug(`Download extension ${id} from ${downloadUrl}`);
+    await axios
+      .get(downloadUrl, { responseType: 'stream' })
+      .then((response) => {
+        const zip = unzipper.Extract({ path: extensionDir });
+        response.data.pipe(zip);
+        return once(zip, 'close');
+      });
   }
 
   // Download from chrome store return crx -> zip -> unzip

@@ -126,7 +126,7 @@ export class BrowserService {
 
     const extensionPath = await extensionService.getExtensionDirFromId(
       this.options.walletConfig.STORE_EXTENSION_ID,
-      this.options.walletConfig.LATEST_STABLE_DOWNLOAD_LINK,
+      this.options.walletConfig.LATEST_STABLE_VERSION,
     );
 
     const contextDataDir =

@@ -7,7 +7,7 @@ export const WC_SAFE_COMMON_CONFIG: CommonWalletConfig = {
   STORE_EXTENSION_ID: 'nkbihfbeogaeaoehlefnkodbefgpgknn',
   CONNECT_BUTTON_NAME: 'WalletConnect',
   WALLET_TYPE: WalletConnectTypes.WC,
-  LATEST_STABLE_DOWNLOAD_LINK: null,
+  LATEST_STABLE_VERSION: null,
   EXTENSION_START_PATH: '/home.html',
 };
 
@@ -18,6 +18,6 @@ export const IFRAME_SAFE_COMMON_CONFIG: CommonWalletConfig = {
   STORE_EXTENSION_ID: 'nkbihfbeogaeaoehlefnkodbefgpgknn',
   CONNECT_BUTTON_NAME: '', // auto connection
   WALLET_TYPE: WalletConnectTypes.IFRAME,
-  LATEST_STABLE_DOWNLOAD_LINK: null,
+  LATEST_STABLE_VERSION: null,
   EXTENSION_START_PATH: '/home.html',
 };

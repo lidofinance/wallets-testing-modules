@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "fix/MM-onboarding",
+        "channel": "alpha-MM-onboarding",
+        "prerelease": "alpha-MM-onboarding"
       }
     ]
   }

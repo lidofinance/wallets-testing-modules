@@ -5,7 +5,7 @@ export interface CommonWalletConfig {
   CONNECT_BUTTON_NAME: string; // Button name in the wallet list
   STORE_EXTENSION_ID: string;
   WALLET_TYPE: WalletConnectType;
-  LATEST_STABLE_DOWNLOAD_LINK?: string; // Link to stable wallet extension version for test (optional)
+  LATEST_STABLE_VERSION?: string; // Stable wallet extension version for test (optional)
   EXTENSION_START_PATH: string; // Start path for wallet setup
 }
 
