@@ -1,7 +1,7 @@
 import { Locator, Page, test } from '@playwright/test';
 import { AccountConfig } from '../../wallets.constants';
 
-export class OnboardingPageV2 {
+export class OnboardingPage {
   getStartedButton: Locator;
   termsOfUseScrollButton: Locator;
   termsCheckboxButton: Locator;
