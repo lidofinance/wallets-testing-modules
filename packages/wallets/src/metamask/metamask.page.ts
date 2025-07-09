@@ -79,9 +79,9 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
 
   // should be used only after connection to dapp after v12.10.4
   async changeNetwork(networkName: string) {
-    await test.step(`Change Metamask network to ${networkName}`, async () => {
+    await test.step(`Change network to ${networkName}`, async () => {
       await this.navigate();
-      await this.changeNetworksForWebSite(
+      await this.changeNetworkForDapp(
         this.options.standConfig.standUrl,
         networkName,
       );
@@ -129,8 +129,8 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async changeNetworksForWebSite(url: string, networkName: string) {
-    await test.step(`Change Metamask network for url -  ${url} to ${networkName}`, async () => {
+  async changeNetworkForDapp(url: string, networkName: string) {
+    await test.step(`Change network for ${url} to ${networkName}`, async () => {
       const allPermissionsPage = new AllPermissionsPage(
         this.page,
         this.options.extensionUrl,

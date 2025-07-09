@@ -48,7 +48,7 @@ export class OnboardingPage {
   }
 
   async firstTimeSetup() {
-    await test.step('First time wallet setup (v2)', async () => {
+    await test.step('First time wallet setup', async () => {
       await this.getStartedButton.click();
       await this.confirmTermsOfOnboarding();
       await this.importWalletButton.click();
