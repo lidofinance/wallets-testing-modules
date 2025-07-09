@@ -2,7 +2,7 @@ import { NetworkConfig, WalletConnectTypes } from '../wallets.constants';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { expect } from '@playwright/test';
 import { test, Page } from '@playwright/test';
-import { HomePage, LoginPage, SettingsPage } from './pages';
+import { HomePage, LoginPage } from './pages';
 import {
   OnboardingPage,
   WalletOperationPage,
@@ -13,6 +13,8 @@ import {
 } from './pages/elements';
 import { getAddress } from 'viem';
 import { isPopularMainnetNetwork, isPopularTestnetNetwork } from './helper';
+import { EditNetworksTab } from './pages/navBarMenu';
+import { AllPermissionsPage } from './pages/navBarMenu';
 
 export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
   page: Page | undefined;
@@ -71,23 +73,18 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
         await this.popoverElements.closePopover();
         await this.popoverElements.closeConnectingProblemPopover();
         await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
-        await new SettingsPage(
-          await this.options.browserContext.newPage(),
-          this.options.extensionUrl,
-          this.options.walletConfig,
-        ).setupNetworkChangingSetting(); // need to make it possible to change the wallet network
       }
     });
   }
 
+  // should be used only after connection to dapp after v12.10.4
   async changeNetwork(networkName: string) {
     await test.step(`Change Metamask network to ${networkName}`, async () => {
       await this.navigate();
-      await this.header.networkListButton.click();
-      await this.header.networkList.clickToNetworkItemButton(networkName);
-      if (networkName === 'Linea') {
-        await this.popoverElements.closePopover(); //Linea network require additional confirmation
-      }
+      await this.changeNetworksForWebSite(
+        this.options.standConfig.standUrl,
+        networkName,
+      );
       await this.page.close();
     });
   }
@@ -127,9 +124,29 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
         await this.header.networkList.addPopularTestnetNetwork(networkConfig);
       } else {
         await this.header.networkList.addNetworkManually(networkConfig);
-        await this.changeNetwork(networkConfig.chainName);
       }
       if (isClosePage) await this.page.close();
+    });
+  }
+
+  async changeNetworksForWebSite(url: string, networkName: string) {
+    await test.step(`Change Metamask network for url -  ${url} to ${networkName}`, async () => {
+      const allPermissionsPage = new AllPermissionsPage(
+        this.page,
+        this.options.extensionUrl,
+        this.options.walletConfig,
+      );
+
+      await allPermissionsPage.openAllPermissions();
+      await allPermissionsPage.openEditNetworksForWebsite(
+        this.options.standConfig.standUrl,
+      );
+      await allPermissionsPage.openEditNetworksPage();
+
+      const editNetworksPage = new EditNetworksTab(this.page);
+      await editNetworksPage.uncheckAllNetworks();
+      await editNetworksPage.selectNetwork(networkName);
+      await editNetworksPage.updateNetworks();
     });
   }
 

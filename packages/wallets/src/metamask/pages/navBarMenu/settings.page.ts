@@ -1,5 +1,5 @@
 import { Locator, Page, test } from '@playwright/test';
-import { CommonWalletConfig } from '../../wallets.constants';
+import { CommonWalletConfig } from '../../../wallets.constants';
 
 export class SettingsPage {
   tabBarMenu: Locator;
@@ -18,10 +18,6 @@ export class SettingsPage {
       .getByRole('button')
       .getByText('Experimental');
 
-    // Experimental page locators
-    this.inputNetworksForEachSiteToggle = this.page
-      .getByTestId('experimental-setting-toggle-request-queue')
-      .locator('input');
     this.selectNetworksForEachSiteToggle =
       this.inputNetworksForEachSiteToggle.locator('..');
   }
@@ -33,24 +29,6 @@ export class SettingsPage {
           this.walletConfig.EXTENSION_START_PATH +
           '#settings',
       );
-    });
-  }
-
-  async setupNetworkChangingSetting() {
-    await test.step('Check toggle state', async () => {
-      await this.openSettings();
-      await this.experimentalTabButton.click();
-
-      if (await this.inputNetworksForEachSiteToggle.isVisible()) {
-        const toggleState =
-          await this.inputNetworksForEachSiteToggle.getAttribute('value');
-
-        if (toggleState === 'true') {
-          await test.step('Turn off the toggle of the setting network changing', async () => {
-            await this.selectNetworksForEachSiteToggle.click();
-          });
-        }
-      }
     });
   }
 }
