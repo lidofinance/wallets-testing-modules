@@ -29,7 +29,7 @@ export class BitgetPage implements WalletPage<WalletConnectTypes.EOA> {
       await this.page.goto(this.options.extensionUrl + '/welcome.html');
       try {
         await this.page.waitForSelector('text=Welcome to Bitget Wallet', {
-          timeout: 10000,
+          timeout: 5000,
         });
         const firstTime =
           (await this.page
