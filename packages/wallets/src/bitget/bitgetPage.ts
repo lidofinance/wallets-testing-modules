@@ -27,12 +27,19 @@ export class BitgetPage implements WalletPage<WalletConnectTypes.EOA> {
       // added explicit route to /welcome.html due to unexpected first time route from /home.html to /welcome.html - page is close
       this.page = await this.options.browserContext.newPage();
       await this.page.goto(this.options.extensionUrl + '/welcome.html');
-      await this.page.waitForSelector('text=Welcome to Bitget Wallet');
-      const firstTime =
-        (await this.page
-          .locator("button:has-text('Import a wallet')")
-          .count()) > 0;
-      if (firstTime) await this.firstTimeSetup();
+      try {
+        await this.page.waitForSelector('text=Welcome to Bitget Wallet', {
+          timeout: 10000,
+        });
+        const firstTime =
+          (await this.page
+            .locator("button:has-text('Import a wallet')")
+            .count()) > 0;
+        if (firstTime) await this.firstTimeSetup();
+      } catch {
+        // wallet installed
+      }
+      await this.page.getByText('Start exploring').click();
     });
   }
 
