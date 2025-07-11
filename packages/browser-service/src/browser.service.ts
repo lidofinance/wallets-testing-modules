@@ -30,7 +30,7 @@ type BrowserServiceOptions = {
   networkConfig: NetworkConfig;
   accountConfig: AccountConfig;
   walletConfig: CommonWalletConfig;
-  nodeConfig: NodeConfig;
+  nodeConfig?: NodeConfig;
   standUrl?: string;
   browserOptions?: BrowserOptions;
 };
