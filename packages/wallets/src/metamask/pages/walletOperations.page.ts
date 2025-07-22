@@ -89,6 +89,11 @@ export class WalletOperationPage {
   }
 
   async confirmTransaction(setAggressiveGas?: boolean) {
+    if (
+      await this.page.getByTestId("We've noticed multiple requests").isVisible()
+    ) {
+      await this.page.locator('button:has-text("Cancel")').click();
+    }
     if (setAggressiveGas) {
       await this.editGasFeeButton.click();
       await this.page.mouse.move(1, 1);
