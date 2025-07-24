@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "feat/anvil-accs",
+        "channel": "anvil-accs",
+        "prerelease": "anvil-accs"
       }
     ]
   }
