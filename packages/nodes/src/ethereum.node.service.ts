@@ -40,6 +40,7 @@ export class EthereumNodeService {
       `--balance=${this.options.defaultBalance.toString()}`,
       '--block-time=2',
       "--derivation-path=m/44'/60'/2020'/0/0",
+      '--accounts=30',
       `--port=${this.port}`,
       `--host=${this.host}`,
     ];
