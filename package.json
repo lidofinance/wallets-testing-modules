@@ -41,7 +41,7 @@
     "branches": [
       "main",
       {
-        "name": "develop",
+        "name": "feat/increase-node-accounts",
         "channel": "alpha",
         "prerelease": "alpha"
       }
