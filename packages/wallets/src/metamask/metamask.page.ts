@@ -11,7 +11,6 @@ import {
   PopoverElements,
   AccountMenu,
 } from './pages/elements';
-import { getAddress } from 'viem';
 import { isPopularMainnetNetwork, isPopularTestnetNetwork } from './helper';
 import { EditNetworksTab } from './pages/navBarMenu';
 import { AllPermissionsPage } from './pages/navBarMenu';
@@ -254,10 +253,14 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
       await this.navigate();
       await this.header.optionsMenuButton.click();
       await this.optionsMenu.menuAccountDetailsButton.click();
-      const address =
-        await this.popoverElements.accountDetailAddressLabel.textContent();
+      await this.page.locator('button:has-text("Details")').click();
+      const address = await this.page
+        .getByTestId('address-copy-button-text')
+        .last()
+        .locator('..')
+        .textContent();
       await this.page.close();
-      return getAddress(address).toLowerCase();
+      return address.replace('Copy address', '').toLowerCase();
     });
   }
 
