@@ -58,7 +58,7 @@ export class OnboardingPage {
       await this.metricAgreeButton.click();
       await this.completeButton.click();
       await this.pinExtensionDoneButton.click();
-      await this.page.waitForURL('**/home.html#unlock');
+      await this.page.waitForURL('**/home.html#');
     });
   }
 

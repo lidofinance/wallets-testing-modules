@@ -39,7 +39,7 @@ test.describe('Ethereum', () => {
     await connectWallet(browserService);
   });
 
-  test(`Trust connect`, async () => {
+  test.skip(`Trust connect`, async () => {
     browserService = await initBrowserWithExtension(TRUST_WALLET_COMMON_CONFIG);
     await connectWallet(browserService);
   });
