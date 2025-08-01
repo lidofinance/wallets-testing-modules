@@ -52,6 +52,7 @@ export class WalletOperationPage {
   }
 
   async cancelAllTxInQueue() {
+    await this.rejectMultiplyRequestNotice();
     test.step('Cancel all tx in queue', async () => {
       //Is there is any tx in queue.
       try {
@@ -70,8 +71,20 @@ export class WalletOperationPage {
       }
     });
   }
+  async rejectMultiplyRequestNotice() {
+    try {
+      await this.page.getByTestId("We've noticed multiple requests").waitFor({
+        state: 'visible',
+        timeout: 1000,
+      });
+    } catch (er) {
+      return;
+    }
+    await this.page.locator('button:has-text("Cancel")').click();
+  }
 
   async cancelTransaction() {
+    await this.rejectMultiplyRequestNotice();
     try {
       await this.cancelButton.click();
     } catch {
@@ -80,6 +93,7 @@ export class WalletOperationPage {
   }
 
   async confirmTransactionOfTokenApproval() {
+    await this.rejectMultiplyRequestNotice();
     await test.step('Click "Use default" button in case if it exist', async () => {
       // todo: im not sure this step is needed now
       if (await this.page.locator('text=Use default').isVisible())
@@ -89,11 +103,7 @@ export class WalletOperationPage {
   }
 
   async confirmTransaction(setAggressiveGas?: boolean) {
-    if (
-      await this.page.getByTestId("We've noticed multiple requests").isVisible()
-    ) {
-      await this.page.locator('button:has-text("Cancel")').click();
-    }
+    await this.rejectMultiplyRequestNotice();
     if (setAggressiveGas) {
       await this.editGasFeeButton.click();
       await this.page.mouse.move(1, 1);
