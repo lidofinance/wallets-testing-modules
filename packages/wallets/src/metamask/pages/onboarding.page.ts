@@ -6,7 +6,8 @@ export class OnboardingPage {
   termsOfUseScrollButton: Locator;
   termsCheckboxButton: Locator;
   termsOfUseAgreeButton: Locator;
-  importWalletButton: Locator;
+  iHaveExistingWalletButton: Locator;
+  importWalletOptionBtn: Locator;
   metricAgreeButton: Locator;
   secretPhraseTextArea: Locator;
   secretPhraseImportButton: Locator;
@@ -29,7 +30,12 @@ export class OnboardingPage {
     );
     this.termsCheckboxButton = this.page.locator('#terms-of-use__checkbox');
 
-    this.importWalletButton = this.page.getByTestId('onboarding-import-wallet');
+    this.iHaveExistingWalletButton = this.page.getByTestId(
+      'onboarding-import-wallet',
+    );
+    this.importWalletOptionBtn = this.page.getByTestId(
+      'onboarding-import-with-srp-button',
+    );
     this.metricAgreeButton = this.page.getByTestId('metametrics-i-agree');
     this.secretPhraseTextArea = this.page.getByTestId(
       'srp-input-import__srp-note',
@@ -51,7 +57,8 @@ export class OnboardingPage {
     await test.step('First time wallet setup (v2)', async () => {
       await this.getStartedButton.click();
       await this.confirmTermsOfOnboarding();
-      await this.importWalletButton.click();
+      await this.iHaveExistingWalletButton.click();
+      await this.importWalletOptionBtn.click();
       await this.fillSecretPhrase(this.accountConfig.SECRET_PHRASE);
       await this.secretPhraseImportButton.click();
       await this.createPassword(this.accountConfig.PASSWORD);
