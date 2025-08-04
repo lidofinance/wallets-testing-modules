@@ -54,7 +54,9 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     await test.step('Navigate to metamask Home page', async () => {
       await this.initLocators();
       await this.homePage.goto();
-      await this.header.appHeaderLogo.waitFor({ state: 'visible' });
+      await this.header.appHeaderLogo
+        .or(this.loginPage.passwordInput)
+        .waitFor({ state: 'visible' });
       await this.popoverElements.closeConnectingProblemPopover();
       await this.loginPage.unlock();
 
