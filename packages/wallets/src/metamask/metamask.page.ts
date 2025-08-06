@@ -255,14 +255,14 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     return await test.step('Get current wallet address', async () => {
       await this.navigate();
       await this.settingsMenu.openAccountSettings();
-      await this.page.locator('button:has-text("Details")').click();
+      await this.page.getByTestId('account-details-row-address').click();
       const address = await this.page
         .getByTestId('address-copy-button-text')
         .last()
         .locator('..')
         .textContent();
       await this.page.close();
-      return address.replace('Copy address', '').toLowerCase();
+      return address.replace(/account \d/, '').toLowerCase();
     });
   }
 

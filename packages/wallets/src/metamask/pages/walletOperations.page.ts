@@ -71,6 +71,7 @@ export class WalletOperationPage {
       }
     });
   }
+
   async rejectMultiplyRequestNotice() {
     try {
       await this.page.getByTestId("We've noticed multiple requests").waitFor({
