@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "feat/mm-change-network",
+        "channel": "alpha-mm-change-network",
+        "prerelease": "alpha-mm-change-network"
       }
     ]
   }

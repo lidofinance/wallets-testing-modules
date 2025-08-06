@@ -79,7 +79,7 @@ export interface WalletPage<T extends WalletConnectType> {
     isClosePage?: boolean,
   ): Promise<void>;
 
-  changeNetwork?(networkName: string): Promise<void>;
+  changeNetwork?(networkName: string, standUrl?: string): Promise<void>;
 
   changeWalletAccountByName?(
     accountName: string,

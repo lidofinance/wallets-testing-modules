@@ -31,7 +31,7 @@ type BrowserServiceOptions = {
   accountConfig: AccountConfig;
   walletConfig: CommonWalletConfig;
   nodeConfig?: NodeConfig;
-  standUrl?: string;
+  standUrl: string;
   browserOptions?: BrowserOptions;
 };
 
@@ -86,7 +86,6 @@ export class BrowserService {
     } else {
       await this.setup();
       await this.walletPage.setupNetwork(this.options.networkConfig);
-      await this.walletPage.changeNetwork(this.options.networkConfig.chainName);
       await this.browserContextService.closePages();
     }
   }
@@ -162,6 +161,9 @@ export class BrowserService {
       extensionUrl: extension.url,
       accountConfig: this.options.accountConfig,
       walletConfig: this.options.walletConfig,
+      standConfig: {
+        standUrl: this.options.standUrl,
+      },
     });
 
     switch (this.options.walletConfig.WALLET_TYPE) {
