@@ -65,7 +65,15 @@ export class OkxPage implements WalletPage<WalletConnectTypes.EOA> {
     await test.step('Navigate to OKX', async () => {
       await this.initLocators();
       await this.goto();
-      await this.page.waitForLoadState('load');
+
+      await test.step('Wait for page is loaded', async () => {
+        await this.page.waitForLoadState('load');
+        if (await this.page.getByRole('img', { name: 'okx' }).isVisible())
+          await this.page
+            .getByRole('img', { name: 'okx' })
+            .waitFor({ state: 'hidden', timeout: 30000 });
+      });
+
       await this.loginPage.unlock();
       await this.walletOperations.cancelAllTxInQueue();
     });
