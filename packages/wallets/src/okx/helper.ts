@@ -10,6 +10,7 @@ const incorrectNetworkNames = new Map<string, string>([
   ['Mantle Mainnet', 'Mantle'],
   ['Scroll Mainnet', 'Scroll'],
   ['Mode', 'Mode Network'],
+  ['Soneieum Testnet Minato', 'Soneieum Minato Testnet'],
 ]);
 
 const OkxIncludedNetwork = [

@@ -65,6 +65,7 @@ export class OkxPage implements WalletPage<WalletConnectTypes.EOA> {
     await test.step('Navigate to OKX', async () => {
       await this.initLocators();
       await this.goto();
+      await this.page.waitForLoadState('load');
       await this.loginPage.unlock();
       await this.walletOperations.cancelAllTxInQueue();
     });
