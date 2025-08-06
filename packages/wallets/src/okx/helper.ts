@@ -11,6 +11,7 @@ const incorrectNetworkNames = new Map<string, string>([
   ['Scroll Mainnet', 'Scroll'],
   ['Mode', 'Mode Network'],
   ['Soneium Testnet Minato', 'Soneium Minato Testnet'],
+  ['Avalanche Network C-Chain', 'Avalanche C'],
 ]);
 
 const OkxIncludedNetwork = [
@@ -25,6 +26,7 @@ const OkxIncludedNetwork = [
   'Mode Network',
   'Zircuit',
   'Soneium Minato Testnet',
+  'Avalanche C',
 ];
 
 /** Check network name and return correct name suited for OKX Wallet*/
