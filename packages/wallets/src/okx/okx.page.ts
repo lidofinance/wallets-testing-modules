@@ -193,6 +193,7 @@ export class OkxPage implements WalletPage<WalletConnectTypes.EOA> {
   async cancelTx(page: Page) {
     await test.step('Cancel TX', async () => {
       await new WalletOperations(page).cancelTxButton.click();
+      await page.waitForEvent('close', { timeout: 30000 });
     });
   }
 
