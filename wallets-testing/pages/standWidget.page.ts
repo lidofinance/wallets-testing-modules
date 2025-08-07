@@ -43,7 +43,7 @@ export class StandWidgetPage implements WidgetPage {
       'ethAvailableToStake',
     );
     this.termsCheckbox = this.page.locator('input[type=checkbox]');
-    this.copyWcUrlBtn = this.page.locator('.wcm-action-btn');
+    this.copyWcUrlBtn = this.page.getByTestId('copy-wc2-uri');
     this.closeAccountModalBtn = this.page
       .locator('div[role="dialog"] button')
       .nth(0);
@@ -93,6 +93,9 @@ export class StandWidgetPage implements WidgetPage {
       }
       case WalletConnectTypes.WC: {
         await walletButton.click();
+        await this.page
+          .getByTestId('wui-qr-code')
+          .waitFor({ state: 'visible' });
         await this.copyWcUrlBtn.click();
         await this.walletPage.connectWallet(
           await this.page.evaluate(() => navigator.clipboard.readText()),

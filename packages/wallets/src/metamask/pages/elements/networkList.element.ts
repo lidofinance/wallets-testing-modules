@@ -2,12 +2,13 @@ import { Locator, Page, test } from '@playwright/test';
 import { NetworkSetting } from './networkSetting.element';
 import { NetworkConfig } from '../../../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
+import { SettingsElement } from './settings.element';
 
 export class NetworkList {
   logger = new ConsoleLogger(`MetaMask. ${NetworkList.name}`);
+  settings: SettingsElement;
   networkSetting: NetworkSetting;
 
-  networkListButton: Locator;
   dialogSection: Locator;
   addCustomNetworkButton: Locator;
   networkDisplayCloseBtn: Locator;
@@ -18,9 +19,9 @@ export class NetworkList {
   showTestnetButton: Locator;
 
   constructor(public page: Page) {
+    this.settings = new SettingsElement(this.page);
     this.networkSetting = new NetworkSetting(this.page);
 
-    this.networkListButton = this.page.getByTestId('network-display');
     this.dialogSection = this.page.getByRole('dialog');
     this.addCustomNetworkButton = this.dialogSection
       .getByRole('button')
@@ -91,7 +92,7 @@ export class NetworkList {
 
   async addNetworkManually(networkConfig: NetworkConfig) {
     await test.step('Open the form to add network manually', async () => {
-      await this.networkListButton.click();
+      await this.settings.openNetworksSettings();
     });
 
     if (
@@ -111,7 +112,7 @@ export class NetworkList {
   }
 
   async addPopularTestnetNetwork(networkConfig: NetworkConfig) {
-    await this.networkListButton.click();
+    await this.settings.openNetworksSettings();
     if (
       await this.dialogSection.getByTestId(networkConfig.chainName).isHidden()
     ) {
@@ -121,7 +122,7 @@ export class NetworkList {
   }
 
   async addPopularNetwork(networkName: string) {
-    await this.networkListButton.click();
+    await this.settings.openNetworksSettings();
     const networkListText = await this.getNetworkListText();
     if (networkListText.includes(networkName)) {
       await this.clickToNetworkItemButton(networkName);
@@ -129,7 +130,7 @@ export class NetworkList {
       await test.step(`Add popular network "${networkName}"`, async () => {
         await this.networkDisplayCloseBtn.click();
         await test.step(`Open the form to add the popular network (${networkName})`, async () => {
-          await this.networkListButton.click();
+          await this.settings.openNetworksSettings();
         });
         await test.step(`Add the "${networkName}" network`, async () => {
           await this.dialogSection

@@ -2,14 +2,15 @@ import { NetworkConfig, WalletConnectTypes } from '../wallets.constants';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { expect } from '@playwright/test';
 import { test, Page } from '@playwright/test';
-import { HomePage, LoginPage, SettingsPage } from './pages';
+import { HomePage, LoginPage } from './pages';
 import {
   OnboardingPage,
   WalletOperationPage,
   Header,
-  OptionsMenu,
+  SettingsElement,
   PopoverElements,
   AccountMenu,
+  NetworkList,
 } from './pages/elements';
 import { getAddress } from 'viem';
 import { isPopularMainnetNetwork, isPopularTestnetNetwork } from './helper';
@@ -21,7 +22,8 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
   loginPage: LoginPage;
   walletOperation: WalletOperationPage;
   onboardingPage: OnboardingPage;
-  optionsMenu: OptionsMenu;
+  settingsMenu: SettingsElement;
+  networkList: NetworkList;
   popoverElements: PopoverElements;
   accountMenu: AccountMenu;
 
@@ -35,13 +37,14 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
       this.options.extensionUrl,
       this.options.walletConfig,
     );
+    this.networkList = new NetworkList(this.page);
     this.loginPage = new LoginPage(this.page, this.options.accountConfig);
     this.walletOperation = new WalletOperationPage(this.page);
     this.onboardingPage = new OnboardingPage(
       this.page,
       this.options.accountConfig,
     );
-    this.optionsMenu = new OptionsMenu(this.page);
+    this.settingsMenu = new SettingsElement(this.page);
     this.popoverElements = new PopoverElements(this.page);
     this.accountMenu = new AccountMenu(this.page);
   }
@@ -54,7 +57,7 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
       await this.popoverElements.closeConnectingProblemPopover();
       await this.loginPage.unlock();
 
-      if (await this.header.networkListButton.isVisible()) {
+      if (await this.header.accountMenuButton.isVisible()) {
         await this.popoverElements.closePopover();
         await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
       }
@@ -65,16 +68,12 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     await test.step('Setup', async () => {
       // added explicit route to #onboarding due to unexpected first time route from /home.html to /onboarding ---> page is close
       await this.navigate();
-      if (!(await this.header.networkListButton.isVisible())) {
+      if (!(await this.header.accountMenuButton.isVisible())) {
         await this.onboardingPage.firstTimeSetup();
+        await this.loginPage.unlock();
         await this.popoverElements.closePopover();
         await this.popoverElements.closeConnectingProblemPopover();
         await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
-        await new SettingsPage(
-          await this.options.browserContext.newPage(),
-          this.options.extensionUrl,
-          this.options.walletConfig,
-        ).setupNetworkChangingSetting(); // need to make it possible to change the wallet network
       }
     });
   }
@@ -82,8 +81,8 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
   async changeNetwork(networkName: string) {
     await test.step(`Change Metamask network to ${networkName}`, async () => {
       await this.navigate();
-      await this.header.networkListButton.click();
-      await this.header.networkList.clickToNetworkItemButton(networkName);
+      await this.settingsMenu.openNetworksSettings();
+      await this.networkList.clickToNetworkItemButton(networkName);
       if (networkName === 'Linea') {
         await this.popoverElements.closePopover(); //Linea network require additional confirmation
       }
@@ -93,19 +92,19 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
 
   async setupNetwork(networkConfig: NetworkConfig) {
     await test.step(`Setup "${networkConfig.chainName}" Network`, async () => {
-      await this.header.networkListButton.click();
+      await this.settingsMenu.openNetworksSettings();
       if (
-        await this.header.networkList.isNetworkExist(
+        await this.networkList.isNetworkExist(
           networkConfig.chainName,
           networkConfig.rpcUrl,
           networkConfig.chainId,
         )
       ) {
-        await this.header.networkList.clickToNetworkItemButton(
+        await this.networkList.clickToNetworkItemButton(
           networkConfig.chainName,
         );
       } else {
-        await this.header.networkList.networkDisplayCloseBtn.click();
+        await this.networkList.networkDisplayCloseBtn.click();
         await this.addNetwork(networkConfig);
       }
     });
@@ -115,17 +114,15 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     await test.step(`Add new network "${networkConfig.chainName}"`, async () => {
       await this.navigate();
       if (await isPopularMainnetNetwork(networkConfig.chainName)) {
-        await this.header.networkList.addPopularNetwork(
-          networkConfig.chainName,
-        );
+        await this.networkList.addPopularNetwork(networkConfig.chainName);
         if (networkConfig.rpcUrl) {
           await this.navigate();
-          await this.header.networkList.addNetworkManually(networkConfig);
+          await this.networkList.addNetworkManually(networkConfig);
         }
       } else if (await isPopularTestnetNetwork(networkConfig.chainName)) {
-        await this.header.networkList.addPopularTestnetNetwork(networkConfig);
+        await this.networkList.addPopularTestnetNetwork(networkConfig);
       } else {
-        await this.header.networkList.addNetworkManually(networkConfig);
+        await this.networkList.addNetworkManually(networkConfig);
         await this.changeNetwork(networkConfig.chainName);
       }
       if (isClosePage) await this.page.close();
@@ -236,8 +233,7 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
   async getWalletAddress() {
     return await test.step('Get current wallet address', async () => {
       await this.navigate();
-      await this.header.optionsMenuButton.click();
-      await this.optionsMenu.menuAccountDetailsButton.click();
+      await this.settingsMenu.openAccountSettings();
       const address =
         await this.popoverElements.accountDetailAddressLabel.textContent();
       await this.page.close();
