@@ -34,7 +34,7 @@ export class EthereumNodeService {
     this.port = options.port || 8545;
   }
 
-  private startAnvil(rpcUrl: string) {
+  private startAnvil(rpcUrl: string, options?: string[]) {
     const args = [
       `--fork-url=${rpcUrl}`,
       `--balance=${this.options.defaultBalance.toString()}`,
@@ -43,6 +43,7 @@ export class EthereumNodeService {
       "--derivation-path=m/44'/60'/2020'/0/0",
       `--port=${this.port}`,
       `--host=${this.host}`,
+      ...(options ?? []),
     ];
     if (this.options.chainId) args.push(`--chain-id=${this.options.chainId}`);
     const anvilProcess = spawn('anvil', args, { stdio: 'pipe' });
@@ -65,7 +66,7 @@ export class EthereumNodeService {
     return anvilProcess;
   }
 
-  async startNode() {
+  async startNode(options?: string[]) {
     if (this.state) return;
 
     const rpcUrl = this.options.rpcUrl;
@@ -89,7 +90,7 @@ export class EthereumNodeService {
     }
 
     this.logger.debug('Starting Anvil node...');
-    const process = this.startAnvil(rpcUrl);
+    const process = this.startAnvil(rpcUrl, options);
     const nodeUrl = `http://${this.host}:${this.port}`;
 
     const isAnvilReady = await this.waitForAnvilReady(nodeUrl);
