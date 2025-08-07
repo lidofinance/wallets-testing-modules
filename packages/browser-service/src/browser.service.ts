@@ -24,6 +24,7 @@ import { ConsoleLogger } from '@nestjs/common';
 
 type NodeConfig = {
   rpcUrlToMock: string; // example: '**/api/rpc?chainId=1'
+  runOptions?: string[];
 };
 
 type BrowserServiceOptions = {
@@ -98,7 +99,9 @@ export class BrowserService {
       rpcUrl: this.options.networkConfig.rpcUrl,
       defaultBalance: 100,
     });
-    await this.ethereumNodeService.startNode();
+    await this.ethereumNodeService.startNode(
+      this.options.nodeConfig.runOptions,
+    );
     const account = this.ethereumNodeService.getAccount();
     await this.setup();
 
@@ -129,11 +132,9 @@ export class BrowserService {
       this.options.walletConfig.LATEST_STABLE_DOWNLOAD_LINK,
     );
 
-    const contextDataDir =
-      !this.ethereumNodeService?.state &&
-      `${DEFAULT_BROWSER_CONTEXT_DIR_NAME}_${
-        mnemonicToAccount(this.options.accountConfig.SECRET_PHRASE).address
-      }_${this.options.walletConfig.WALLET_NAME}`;
+    const contextDataDir = `${DEFAULT_BROWSER_CONTEXT_DIR_NAME}_${
+      mnemonicToAccount(this.options.accountConfig.SECRET_PHRASE).address
+    }_isFork-${this.isFork}_${this.options.walletConfig.WALLET_NAME}`;
     this.browserContextService = new BrowserContextService(extensionPath, {
       contextDataDir,
       browserOptions: this.options.browserOptions,
