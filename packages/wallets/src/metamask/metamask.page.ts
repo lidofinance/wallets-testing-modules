@@ -136,12 +136,6 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     await test.step('Import key', async () => {
       await this.navigate();
 
-      // Remove me when MM to be more stable
-      do {
-        await this.page.reload();
-        await this.popoverElements.closePopover();
-      } while (!(await this.header.accountMenuButton.isVisible()));
-
       await this.header.accountMenuButton.click();
       await this.accountMenu.addAccountWithKey(key);
     });
