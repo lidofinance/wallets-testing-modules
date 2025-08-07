@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "feat/anvil-accs",
-        "channel": "anvil-accs",
-        "prerelease": "anvil-accs"
+        "name": "feat/updateNode",
+        "channel": "updateNode",
+        "prerelease": "updateNode"
       }
     ]
   }
