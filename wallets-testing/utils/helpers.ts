@@ -21,6 +21,7 @@ export async function initBrowserWithExtension(
     },
     browserOptions: {
       slowMo: 200,
+      cookies: MATOMO_EVENT_TEST_COOKIE,
     },
     standUrl: widgetConfig.url,
   });
@@ -65,3 +66,15 @@ export async function waitForTextContent(locator: Locator) {
     });
   });
 }
+
+const MATOMO_EVENT_TEST_COOKIE = [
+  {
+    name: 'meta-info',
+    value: 'test',
+    domain: '.lido.fi',
+    path: '/',
+    maxAge: 86400,
+    sameSite: 'Lax',
+    secure: true,
+  },
+];
