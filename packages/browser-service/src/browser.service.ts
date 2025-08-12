@@ -9,7 +9,10 @@ import {
   Extension,
   ExtensionService,
 } from '@lidofinance/wallets-testing-extensions';
-import { EthereumNodeService } from '@lidofinance/wallets-testing-nodes';
+import {
+  EthereumNodeService,
+  EthereumNodeServiceOptions,
+} from '@lidofinance/wallets-testing-nodes';
 import {
   DEFAULT_BROWSER_CONTEXT_DIR_NAME,
   WALLET_PAGES,
@@ -22,16 +25,11 @@ import { mnemonicToAccount } from 'viem/accounts';
 import { test } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
 
-type NodeConfig = {
-  rpcUrlToMock: string; // example: '**/api/rpc?chainId=1'
-  runOptions?: string[];
-};
-
 type BrowserServiceOptions = {
   networkConfig: NetworkConfig;
   accountConfig: AccountConfig;
   walletConfig: CommonWalletConfig;
-  nodeConfig: NodeConfig;
+  nodeConfig?: EthereumNodeServiceOptions;
   standUrl?: string;
   browserOptions?: BrowserOptions;
 };
@@ -94,14 +92,8 @@ export class BrowserService {
 
   async setupWithNode() {
     this.isFork = true;
-    this.ethereumNodeService = new EthereumNodeService({
-      chainId: this.options.networkConfig.chainId,
-      rpcUrl: this.options.networkConfig.rpcUrl,
-      defaultBalance: 100,
-    });
-    await this.ethereumNodeService.startNode(
-      this.options.nodeConfig.runOptions,
-    );
+    this.ethereumNodeService = new EthereumNodeService(this.options.nodeConfig);
+    await this.ethereumNodeService.startNode();
     const account = this.ethereumNodeService.getAccount();
     await this.setup();
 

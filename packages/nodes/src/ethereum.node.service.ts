@@ -21,8 +21,15 @@ import { execSync } from 'node:child_process';
 export class EthereumNodeService {
   private readonly logger = new ConsoleLogger(EthereumNodeService.name);
   private readonly privateKeys: string[] = [];
-  private readonly port: number;
   private readonly host = '127.0.0.1';
+
+  // anvil run params
+  private readonly port: number;
+  private readonly defaultBalance: number;
+  private readonly accountsLength: number;
+  private readonly derivationPath: string;
+  private readonly blockTime: number;
+  private readonly runOptions: string[];
 
   state?: {
     nodeProcess: ReturnType<typeof spawn>;
@@ -32,20 +39,25 @@ export class EthereumNodeService {
 
   constructor(private options: EthereumNodeServiceOptions) {
     this.port = options.port || 8545;
+    this.defaultBalance = options.defaultBalance || 100;
+    this.accountsLength = options.accountsLength || 30;
+    this.blockTime = options.blockTime || 2;
+    this.derivationPath = options.derivationPath || "m/44'/60'/2020'/0/0";
+    this.runOptions = options.runOptions;
   }
 
-  private startAnvil(rpcUrl: string, options?: string[]) {
+  private startAnvil() {
     const args = [
-      `--fork-url=${rpcUrl}`,
-      `--balance=${this.options.defaultBalance.toString()}`,
-      '--block-time=2',
-      '--accounts=30',
-      "--derivation-path=m/44'/60'/2020'/0/0",
-      `--port=${this.port}`,
       `--host=${this.host}`,
-      ...(options ?? []),
+      `--fork-url=${this.options.rpcUrl}`,
+      `--port=${this.port}`,
+      `--balance=${this.defaultBalance}`,
+      `--block-time=${this.blockTime}`,
+      `--accounts=${this.accountsLength}`,
+      `--derivation-path=${this.derivationPath}`,
+      ...(this.runOptions ?? []),
     ];
-    if (this.options.chainId) args.push(`--chain-id=${this.options.chainId}`);
+
     const anvilProcess = spawn('anvil', args, { stdio: 'pipe' });
 
     anvilProcess.stdout.once('data', (data: Buffer) => {
@@ -66,7 +78,7 @@ export class EthereumNodeService {
     return anvilProcess;
   }
 
-  async startNode(options?: string[]) {
+  async startNode() {
     if (this.state) return;
 
     const rpcUrl = this.options.rpcUrl;
@@ -90,7 +102,7 @@ export class EthereumNodeService {
     }
 
     this.logger.debug('Starting Anvil node...');
-    const process = this.startAnvil(rpcUrl, options);
+    const process = this.startAnvil();
     const nodeUrl = `http://${this.host}:${this.port}`;
 
     const isAnvilReady = await this.waitForAnvilReady(nodeUrl);
