@@ -36,6 +36,6 @@
     "viem": "^2.28.4"
   },
   "peerDependencies": {
-    "@playwright/test": "^1.54.2"
+    "@playwright/test": "^1.51.1"
   }
 }

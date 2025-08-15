@@ -37,6 +37,6 @@
     "rxjs": "^7.5.6"
   },
   "peerDependencies": {
-    "@playwright/test": "^1.54.2"
+    "@playwright/test": "^1.51.1"
   }
 }
