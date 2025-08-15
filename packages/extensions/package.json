@@ -39,6 +39,6 @@
     "@types/unzipper": "^0.10.5"
   },
   "peerDependencies": {
-    "@playwright/test": "^1.51.1"
+    "@playwright/test": "^1.54.2"
   }
 }
