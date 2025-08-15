@@ -81,9 +81,10 @@ export class NetworkList {
 
     try {
       // By default no rpc label below network Name
-      const elements = this.page.getByTestId(
-        `network-rpc-name-button-0x${chainId.toString(16)}`,
-      );
+      const buttonPrefix = 'network-rpc-name-button-';
+      const elements = this.page
+        .getByTestId(`${buttonPrefix}0x${chainId.toString(16)}`)
+        .or(this.page.getByTestId(`${buttonPrefix}eip155:${chainId}`));
       return rpcUrl.includes(await elements.textContent({ timeout: 1000 }));
     } catch (Error) {
       return false;
