@@ -1,4 +1,5 @@
 const MMPopularNetworks = [
+  'Ethereum Mainnet',
   'zkSync Era Mainnet',
   'OP Mainnet',
   'Arbitrum One',

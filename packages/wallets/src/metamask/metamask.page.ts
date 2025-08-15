@@ -12,8 +12,9 @@ import {
   AccountMenu,
   NetworkList,
 } from './pages/elements';
-import { getAddress } from 'viem';
 import { isPopularMainnetNetwork, isPopularTestnetNetwork } from './helper';
+import { EditNetworksTab } from './pages/navBarMenu';
+import { AllPermissionsPage } from './pages/navBarMenu';
 
 export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
   page: Page | undefined;
@@ -53,7 +54,9 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     await test.step('Navigate to metamask Home page', async () => {
       await this.initLocators();
       await this.homePage.goto();
-      await this.header.appHeaderLogo.waitFor({ state: 'visible' });
+      await this.header.appHeaderLogo
+        .or(this.loginPage.passwordInput)
+        .waitFor({ state: 'visible' });
       await this.popoverElements.closeConnectingProblemPopover();
       await this.loginPage.unlock();
 
@@ -78,14 +81,14 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async changeNetwork(networkName: string) {
-    await test.step(`Change Metamask network to ${networkName}`, async () => {
+  // should be used only after connection to dapp after v12.10.4
+  async changeNetwork(networkName: string, standUrl?: string) {
+    await test.step(`Change network to ${networkName}`, async () => {
       await this.navigate();
-      await this.settingsMenu.openNetworksSettings();
-      await this.networkList.clickToNetworkItemButton(networkName);
-      if (networkName === 'Linea') {
-        await this.popoverElements.closePopover(); //Linea network require additional confirmation
-      }
+      await this.changeNetworkForDapp(
+        standUrl || this.options.standConfig.standUrl,
+        networkName,
+      );
       await this.page.close();
     });
   }
@@ -123,9 +126,27 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
         await this.networkList.addPopularTestnetNetwork(networkConfig);
       } else {
         await this.networkList.addNetworkManually(networkConfig);
-        await this.changeNetwork(networkConfig.chainName);
       }
       if (isClosePage) await this.page.close();
+    });
+  }
+
+  async changeNetworkForDapp(standUrl: string, networkName: string) {
+    await test.step(`Change network for ${standUrl} to ${networkName}`, async () => {
+      const allPermissionsPage = new AllPermissionsPage(
+        this.page,
+        this.options.extensionUrl,
+        this.options.walletConfig,
+      );
+
+      await allPermissionsPage.openAllPermissions();
+      await allPermissionsPage.openEditNetworksForWebsite(standUrl);
+      await allPermissionsPage.openEditNetworksPage();
+
+      const editNetworksPage = new EditNetworksTab(this.page);
+      await editNetworksPage.uncheckAllNetworks();
+      await editNetworksPage.selectNetwork(networkName);
+      await editNetworksPage.updateNetworks();
     });
   }
 
@@ -234,10 +255,14 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     return await test.step('Get current wallet address', async () => {
       await this.navigate();
       await this.settingsMenu.openAccountSettings();
-      const address =
-        await this.popoverElements.accountDetailAddressLabel.textContent();
+      await this.page.getByTestId('account-details-row-address').click();
+      const address = await this.page
+        .getByTestId('address-copy-button-text')
+        .last()
+        .locator('..')
+        .textContent();
       await this.page.close();
-      return getAddress(address).toLowerCase();
+      return address.replace(/account \d/, '').toLowerCase();
     });
   }
 

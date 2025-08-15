@@ -1,5 +1,5 @@
 import { Locator, Page, test } from '@playwright/test';
-import { CommonWalletConfig } from '../../wallets.constants';
+import { CommonWalletConfig } from '../../../wallets.constants';
 
 export class SettingsPage {
   tabBarMenu: Locator;
@@ -18,10 +18,6 @@ export class SettingsPage {
       .getByRole('button')
       .getByText('Experimental');
 
-    // Experimental page locators
-    this.inputNetworksForEachSiteToggle = this.page
-      .getByTestId('experimental-setting-toggle-request-queue')
-      .locator('input');
     this.selectNetworksForEachSiteToggle =
       this.inputNetworksForEachSiteToggle.locator('..');
   }

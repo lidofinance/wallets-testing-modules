@@ -3,6 +3,7 @@ import { NetworkSetting } from './networkSetting.element';
 import { NetworkConfig } from '../../../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 import { SettingsElement } from './settings.element';
+import { isPopularMainnetNetwork, isPopularTestnetNetwork } from '../../helper';
 
 export class NetworkList {
   logger = new ConsoleLogger(`MetaMask. ${NetworkList.name}`);
@@ -59,13 +60,7 @@ export class NetworkList {
   }
 
   async openModalNetworkEdit(chainId: any) {
-    const hexChainId = chainId.toString(16);
-    const testIdPrefix = 'network-list-item-options-button-';
-    // or locator used for different MM versions from latest and LATEST_STABLE_DOWNLOAD_LINK
-    const modalNetworkEditButton = this.dialogSection
-      .getByTestId(`${testIdPrefix}0x${hexChainId}`) // old stable version
-      .or(this.dialogSection.getByTestId(`${testIdPrefix}eip155:${chainId}`)); // new stable version
-    await modalNetworkEditButton.click();
+    await this.getNetworkEditButton(chainId).click();
     await this.editNetworkButton.click();
   }
 
@@ -74,19 +69,25 @@ export class NetworkList {
     rpcUrl: string,
     chainId: number,
   ): Promise<boolean> {
-    const existNetworkByName = this.dialogSection.getByTestId(networkName);
-    if (await existNetworkByName.isHidden()) {
-      return false;
-    }
-
-    try {
-      // By default no rpc label below network Name
-      const elements = this.page.getByTestId(
-        `network-rpc-name-button-0x${chainId.toString(16)}`,
-      );
-      return rpcUrl.includes(await elements.textContent({ timeout: 1000 }));
-    } catch (Error) {
-      return false;
+    if (
+      (await isPopularMainnetNetwork(networkName)) ||
+      (await isPopularTestnetNetwork(networkName))
+    ) {
+      // If the network is popular, we need to check if the network has additional installed our rpc
+      // if our rpc is not installed - we install rpc later
+      try {
+        // By default no rpc label below network Name
+        return rpcUrl.includes(
+          await this.getNetworkRpcDropdown(chainId).textContent({
+            timeout: 1000,
+          }),
+        );
+      } catch (Error) {
+        return false;
+      }
+    } else {
+      // If the network is not popular, we need to check only the network exists
+      return this.getNetworkEditButton(chainId).isVisible();
     }
   }
 
@@ -157,5 +158,20 @@ export class NetworkList {
       });
     }
     await this.page.close();
+  }
+
+  private getNetworkEditButton(chainId: number) {
+    const testIdPrefix = 'network-list-item-options-button-';
+    // or locator used for different MM versions from latest and LATEST_STABLE_DOWNLOAD_LINK
+    return this.dialogSection
+      .getByTestId(`${testIdPrefix}0x${chainId.toString(16)}`) // old stable version
+      .or(this.dialogSection.getByTestId(`${testIdPrefix}eip155:${chainId}`)); // last MM version
+  }
+
+  private getNetworkRpcDropdown(chainId: number) {
+    const buttonPrefix = 'network-rpc-name-button-';
+    return this.page
+      .getByTestId(`${buttonPrefix}0x${chainId.toString(16)}`) // old stable version
+      .or(this.page.getByTestId(`${buttonPrefix}eip155:${chainId}`)); // last MM version
   }
 }
