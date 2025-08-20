@@ -42,8 +42,8 @@
       "main",
       {
         "name": "stable/mm-12.10.4",
-        "channel": "mm-12.10.4",
-        "prerelease": "mm-12.10.4"
+        "channel": "mm12.10.4",
+        "prerelease": "mm12.10.4"
       }
     ]
   }

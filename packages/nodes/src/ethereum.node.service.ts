@@ -17,7 +17,6 @@ import {
   ServiceUnreachableError,
 } from './node.constants';
 import { execSync } from 'node:child_process';
-// import { JsonRpcProvider } from '@ethersproject/providers/src.ts/json-rpc-provider';
 
 export class EthereumNodeService {
   private readonly logger = new ConsoleLogger(EthereumNodeService.name);
@@ -198,10 +197,10 @@ export class EthereumNodeService {
         await tx.wait();
       }
     } catch {
-      // если нет transfersEnabled/enableTransfers — пропускаем
+      // if no  transfersEnabled/enableTransfers - just skip
     }
 
-    // mint
+    // mint impersonated erc20 token
     const tx = await tokenAsCtrl.generateTokens(account.address, amountWei);
     await tx.wait();
 
