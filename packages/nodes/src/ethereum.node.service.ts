@@ -197,7 +197,7 @@ export class EthereumNodeService {
         await tx.wait();
       }
     } catch {
-      // if no  transfersEnabled/enableTransfers - just skip
+      // if no transfersEnabled/enableTransfers - just skip
     }
 
     // mint impersonated erc20 token
