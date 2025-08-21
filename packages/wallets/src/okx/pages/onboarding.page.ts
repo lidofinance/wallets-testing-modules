@@ -1,8 +1,9 @@
-import { Locator, Page, test } from '@playwright/test';
+import { FrameLocator, Locator, Page, test } from '@playwright/test';
 import { AccountConfig } from '../../wallets.constants';
 
 export class OnboardingPage {
   importWalletButton: Locator;
+  iframeLocator: FrameLocator;
   seedPhraseSelect: Locator;
   seedPhraseInputs: Locator;
   confirmSeedPhraseButton: Locator;
@@ -21,15 +22,20 @@ export class OnboardingPage {
       'button:has-text("Import wallet")',
     );
     this.seedPhraseSelect = this.page.getByText('Seed phrase');
-    this.seedPhraseInputs = this.page.locator(
+    this.iframeLocator = this.page.locator('iframe').first().contentFrame();
+    this.seedPhraseInputs = this.iframeLocator.locator(
       'div[data-testid="okd-popup"] >> input',
     );
-    this.confirmSeedPhraseButton = this.page.locator(
+    this.confirmSeedPhraseButton = this.iframeLocator.locator(
       'button:has-text("Confirm")',
     );
-    this.nextButton = this.page.locator('button:has-text("Next")');
-    this.passwordInput = this.page.locator('input[data-testid="okd-input"]');
-    this.confirmButton = this.page.locator('button:has-text("Confirm")');
+    this.nextButton = this.iframeLocator.locator('button:has-text("Next")');
+    this.passwordInput = this.iframeLocator.locator(
+      'input[data-testid="okd-input"]',
+    );
+    this.confirmButton = this.iframeLocator.locator(
+      'button:has-text("Confirm")',
+    );
     this.startJourneyButton = this.page.locator(
       "button:has-text('Start your Web3 journey')",
     );
