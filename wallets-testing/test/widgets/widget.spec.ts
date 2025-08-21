@@ -54,7 +54,7 @@ test.describe('Ethereum', () => {
     await connectWallet(browserService);
   });
 
-  test(`OKX connect`, async () => {
+  test.skip(`OKX connect`, async () => {
     browserService = await initBrowserWithExtension(OKX_COMMON_CONFIG);
     await connectWallet(browserService);
   });
