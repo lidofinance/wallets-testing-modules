@@ -17,6 +17,7 @@ export class OnboardingPage {
   createPasswordSubmit: Locator;
   completeButton: Locator;
   pinExtensionDoneButton: Locator;
+  downloadAppContinueButton: Locator;
 
   constructor(public page: Page, public accountConfig: AccountConfig) {
     this.getStartedButton = this.page.getByTestId(
@@ -51,6 +52,9 @@ export class OnboardingPage {
     this.createPasswordSubmit = this.page.getByTestId('create-password-submit');
     this.completeButton = this.page.getByTestId('onboarding-complete-done');
     this.pinExtensionDoneButton = this.page.getByTestId('pin-extension-done');
+    this.downloadAppContinueButton = this.page.getByTestId(
+      'download-app-continue',
+    );
   }
 
   async firstTimeSetup() {
@@ -64,6 +68,7 @@ export class OnboardingPage {
       await this.createPassword(this.accountConfig.PASSWORD);
       await this.metricAgreeButton.click();
       await this.completeButton.click();
+      await this.downloadAppContinueButton.click();
       await this.pinExtensionDoneButton.click();
       await this.page.waitForURL('**/home.html#');
     });
