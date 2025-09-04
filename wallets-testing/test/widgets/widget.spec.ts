@@ -39,6 +39,7 @@ test.describe('Ethereum', () => {
     await connectWallet(browserService);
   });
 
+  // skip due to side panel
   test.skip(`Trust connect`, async () => {
     browserService = await initBrowserWithExtension(TRUST_WALLET_COMMON_CONFIG);
     await connectWallet(browserService);
@@ -59,7 +60,8 @@ test.describe('Ethereum', () => {
     await connectWallet(browserService);
   });
 
-  test(`Bitget connect`, async () => {
+  // skip due to side panel
+  test.skip(`Bitget connect`, async () => {
     browserService = await initBrowserWithExtension(BITGET_COMMON_CONFIG);
     await connectWallet(browserService);
   });
