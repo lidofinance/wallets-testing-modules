@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "feat/add-pg-reporter",
+        "channel": "alpha-pg-reporter",
+        "prerelease": "alpha-pg-reporter"
       }
     ]
   }
