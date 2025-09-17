@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "stable/mm-12.10.4",
-        "channel": "metamask-12.10.4",
-        "prerelease": "metamask-12.10.4"
+        "name": "feat/slack-reporter",
+        "channel": "slack-reporter",
+        "prerelease": "slack-reporter"
       }
     ]
   }
