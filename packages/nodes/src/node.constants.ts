@@ -13,11 +13,6 @@ export type EthereumNodeServiceOptions = {
   runOptions?: string[];
 };
 
-type OptionsAccount = {
-  secretKey: string;
-  balance: number | string;
-};
-
 export type Account = {
   address: string;
   secretKey: string;
