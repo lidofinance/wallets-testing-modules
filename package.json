@@ -42,8 +42,8 @@
       "main",
       {
         "name": "stable/mm-12.10.4",
-        "channel": "metamask-12.10.4",
-        "prerelease": "metamask-12.10.4"
+        "channel": "meta-12.10.4",
+        "prerelease": "meta-12.10.4"
       }
     ]
   }
