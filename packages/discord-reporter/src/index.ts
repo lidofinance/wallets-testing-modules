@@ -171,25 +171,17 @@ class DiscordReporter implements Reporter {
       description: this.options.customDescription,
     };
 
-    const isFailure =
-      (result.status === 'failed' ||
-        result.status === 'timedout' ||
-        result.status === 'interrupted') &&
-      this.failedTestCount > 0;
-
     const tasks: Promise<any>[] = [];
     if (this.options.discordWebhookUrl)
-      tasks.push(this.sendDiscord(discordEmbed, isFailure));
-    if (this.options.slackWebhookUrl)
-      tasks.push(this.sendSlack(slackEmbed, isFailure));
+      tasks.push(this.sendDiscord(discordEmbed));
+    if (this.options.slackWebhookUrl) tasks.push(this.sendSlack(slackEmbed));
     await Promise.allSettled(tasks);
   }
 
-  async sendDiscord(embed: Embed, isFailure: boolean) {
+  async sendDiscord(embed: Embed) {
     if (!this.options.discordWebhookUrl) return;
-
     const mention =
-      isFailure && this.options.discordDutyTag
+      this.failedTestCount > 0 && this.options.discordDutyTag
         ? `<@${this.options.discordDutyTag}> please take a look at the test results`
         : undefined;
 
@@ -205,9 +197,10 @@ class DiscordReporter implements Reporter {
     }
   }
 
-  async sendSlack(embed: Embed, isFailure: boolean) {
+  async sendSlack(embed: Embed) {
     if (!this.options.slackWebhookUrl) return;
-    const payload = this.buildSlackPayload(embed, isFailure);
+
+    const payload = this.buildSlackPayload(embed);
     try {
       await this.postJson(this.options.slackWebhookUrl, payload);
       this.logger.log('Slack message sent');
@@ -216,9 +209,9 @@ class DiscordReporter implements Reporter {
     }
   }
 
-  private buildSlackPayload(embed: Embed, isFailure: boolean) {
+  private buildSlackPayload(embed: Embed) {
     const slackMention =
-      isFailure && this.options.slackDutyTag
+      this.failedTestCount > 0 && this.options.slackDutyTag
         ? `<@${this.options.slackDutyTag}> please take a look at the test results`
         : undefined;
 
@@ -266,7 +259,7 @@ class DiscordReporter implements Reporter {
           {
             type: 'button',
             text: { type: 'plain_text', text: 'View GitHub Run', emoji: true },
-            style: !isFailure ? 'primary' : 'danger',
+            style: this.failedTestCount > 0 ? 'danger' : 'primary',
             url: embed.url,
           },
         ],
