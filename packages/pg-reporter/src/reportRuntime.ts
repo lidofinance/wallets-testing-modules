@@ -72,7 +72,7 @@ export class ReporterRuntime {
     const rootSuite = suite
       .entries()
       .find(
-        (suite) => !runBeginOptions.skipProjects.includes(suite.title),
+        (suite) => !runBeginOptions.skipProjects?.includes(suite.title),
       ) as Suite;
 
     if (!rootSuite) {

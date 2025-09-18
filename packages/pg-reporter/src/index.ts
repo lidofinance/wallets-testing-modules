@@ -277,7 +277,7 @@ export default class PgReporter implements Reporter {
     const rootSuite = suite
       .entries()
       .find(
-        (suite) => !this.options.skipProjects.includes(suite.title),
+        (suite) => !this.options.skipProjects?.includes(suite.title),
       ) as Suite;
     this.projectName = rootSuite.title;
 
@@ -318,7 +318,7 @@ export default class PgReporter implements Reporter {
   }
 
   onTestEnd(test: TestCase, result: TestResult) {
-    if (this.options.skipProjects.includes(test.parent.project().name)) {
+    if (this.options.skipProjects?.includes(test.parent.project().name)) {
       return;
     }
 
