@@ -34,12 +34,17 @@ type ReporterOptions = {
   customTitle?: string;
   customDescription?: string;
   ciRunUrl?: string;
-  discordWebhookUrl: string;
+
+  // Discord
+  discordWebhookUrl?: string;
   discordDutyTag?: string;
+
+  // Slack
+  slackWebhookUrl?: string;
+  slackDutyTag?: string;
 };
 
 type Status = {
-  content?: string;
   color: number;
   title: string;
 };
@@ -74,79 +79,45 @@ class DiscordReporter implements Reporter {
   constructor(options: ReporterOptions) {
     this.options = options;
     this.enabled = (options.enabled ?? '').trim().toLowerCase() === 'true';
-
     if (!this.enabled) return;
-    console.info('Discord Reporter is enabled');
 
-    if (!this.options.discordWebhookUrl) {
+    if (!this.options.discordWebhookUrl && !this.options.slackWebhookUrl) {
       this.logger.error(
-        'discordWebhookUrl is not defined in environment variables',
+        'Neither discordWebhookUrl nor slackWebhookUrl provided',
       );
       this.enabled = false;
       return;
     }
 
     this.resultToStatus = {
-      passed: {
-        content: undefined,
-        color: GREEN,
-        title: '🧘 Testing Completed!',
-      },
+      passed: { color: GREEN, title: '🧘 Testing Completed!' },
       failed: {
-        content:
-          this.options.discordDutyTag &&
-          `<@${this.options.discordDutyTag}> please take a look at the test results`,
         color: RED,
         title: `${testStatusToEmoji.failed} Testing Failed!`,
       },
       timedout: {
-        content: undefined,
         color: RED,
         title: `${testStatusToEmoji.failed} Testing Failed!`,
       },
       interrupted: {
-        content: undefined,
         color: RED,
         title: `${testStatusToEmoji.failed} Testing Failed!`,
       },
     };
   }
 
-  async sendDiscordWebhook(payload: WebhookPayload) {
-    try {
-      const response = await axios.post(
-        this.options.discordWebhookUrl,
-        payload,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-      this.logger.log(`Discord message successfully sent: ${response.status}`);
-    } catch (error: any) {
-      this.logger.error(`Error while discord message sent: ${error?.message}`);
-    }
-  }
-
   onTestEnd(test: TestCase, result: TestResult) {
     if (!this.enabled) return;
     switch (result.status) {
       case 'passed':
-        if (result.retry > 0) {
-          this.flakyTestCount = (this.flakyTestCount ?? 0) + 1;
-        } else {
-          this.passedTestCount++;
-        }
+        if (result.retry > 0) this.flakyTestCount++;
+        else this.passedTestCount++;
         break;
       case 'failed':
       case 'timedOut':
-      case 'interrupted': {
-        if (result.retry === test.retries) {
-          this.failedTestCount++;
-        }
+      case 'interrupted':
+        if (result.retry === test.retries) this.failedTestCount++;
         break;
-      }
       case 'skipped':
         this.skippedTestCount++;
         break;
@@ -155,64 +126,165 @@ class DiscordReporter implements Reporter {
 
   async onEnd(result: FullResult) {
     if (!this.enabled) return;
-    const duration = this.formatDuration(result.duration);
 
-    const payload: WebhookPayload = {
-      content: this.resultToStatus[result.status].content,
-      embeds: [
+    const duration = this.formatDuration(result.duration);
+    const status = this.resultToStatus[result.status as keyof ResultToStatus];
+    const ciUrl = this.options.ciRunUrl?.trim();
+    const viewLinkLine = ciUrl ? `• View [GitHub Run](${ciUrl})` : '';
+
+    const discordEmbed: Embed = {
+      title: `${this.options.customTitle || ''} ${status.title} `.trim(),
+      description: `${
+        this.options.customDescription || 'Here are the test run results:'
+      }${viewLinkLine ? `\n${viewLinkLine}` : ''}`,
+      color: status.color,
+      fields: [
         {
-          title: `${this.resultToStatus[result.status].title} ${
-            this.options.customTitle || ''
-          }`,
-          description:
-            (this.options.customDescription ||
-              'Here are the test run results:') +
-            `\n - View [GitHub Run](${this.options.ciRunUrl})`,
-          color: this.resultToStatus[result.status].color,
-          fields: [
-            {
-              name: `${testStatusToEmoji.passed} Passed`,
-              value: `${this.passedTestCount}`,
-              inline: true,
-            },
-            {
-              name: `${testStatusToEmoji.failed} Failed`,
-              value: `${this.failedTestCount}`,
-              inline: true,
-            },
-            { name: '', value: '', inline: true }, // just empty column
-            {
-              name: `${testStatusToEmoji.skipped} Skipped`,
-              value: `${this.skippedTestCount}`,
-              inline: true,
-            },
-            {
-              name: `${testStatusToEmoji.flaky} Flaky`,
-              value: `${this.flakyTestCount}`,
-              inline: true,
-            },
-            { name: '', value: '', inline: true }, // just empty column
-            {
-              name: '⏳ Run Time',
-              value: `${duration}`,
-              inline: false,
-            },
-          ],
-          url: this.options.ciRunUrl,
+          name: `${testStatusToEmoji.passed} Passed`,
+          value: String(this.passedTestCount),
+          inline: true,
         },
+        {
+          name: `${testStatusToEmoji.failed} Failed`,
+          value: String(this.failedTestCount),
+          inline: true,
+        },
+        { name: '', value: '', inline: true },
+        {
+          name: `${testStatusToEmoji.skipped} Skipped`,
+          value: String(this.skippedTestCount),
+          inline: true,
+        },
+        {
+          name: `${testStatusToEmoji.flaky} Flaky`,
+          value: String(this.flakyTestCount),
+          inline: true,
+        },
+        { name: '', value: '', inline: true },
+        { name: '⏳ Run Time', value: duration, inline: false },
       ],
+      url: ciUrl || undefined,
     };
 
-    await this.sendDiscordWebhook(payload);
+    const slackEmbed: Embed = {
+      ...discordEmbed,
+      description: this.options.customDescription,
+    };
+
+    const tasks: Promise<any>[] = [];
+    if (this.options.discordWebhookUrl)
+      tasks.push(this.sendDiscord(discordEmbed));
+    if (this.options.slackWebhookUrl) tasks.push(this.sendSlack(slackEmbed));
+    await Promise.allSettled(tasks);
   }
 
-  private formatDuration(durationMs: number): string {
-    const totalSeconds = Math.floor(durationMs / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
+  async sendDiscord(embed: Embed) {
+    if (!this.options.discordWebhookUrl) return;
+    const mention =
+      this.failedTestCount > 0 && this.options.discordDutyTag
+        ? `<@${this.options.discordDutyTag}> please take a look at the test results`
+        : undefined;
 
-    return `${hours} hours ${minutes} minutes ${seconds} seconds`;
+    const payload: WebhookPayload = {
+      content: mention,
+      embeds: [embed],
+    };
+    try {
+      await this.postJson(this.options.discordWebhookUrl, payload);
+      this.logger.log('Discord message sent');
+    } catch (e: any) {
+      this.logger.error(`Discord send error: ${e?.message}`);
+    }
+  }
+
+  async sendSlack(embed: Embed) {
+    if (!this.options.slackWebhookUrl) return;
+
+    const payload = this.buildSlackPayload(embed);
+    try {
+      await this.postJson(this.options.slackWebhookUrl, payload);
+      this.logger.log('Slack message sent');
+    } catch (e: any) {
+      this.logger.error(`Slack send error: ${e?.message}`);
+    }
+  }
+
+  private buildSlackPayload(embed: Embed) {
+    const slackMention =
+      this.failedTestCount > 0 && this.options.slackDutyTag
+        ? `<@${this.options.slackDutyTag}> please take a look at the test results`
+        : undefined;
+
+    const colorHex = this.toSlackHex(embed.color);
+    const title = (embed.title || '').trim();
+
+    const fields = (embed.fields || [])
+      .filter((f) => f.name?.trim() || f.value?.trim())
+      .map((f) => `*${f.name}:* ${f.value}`);
+
+    const blocks: any[] = [];
+
+    if (slackMention) {
+      blocks.push({
+        type: 'section',
+        text: { type: 'mrkdwn', text: slackMention },
+      });
+    }
+
+    if (title) {
+      blocks.push({
+        type: 'header',
+        text: { type: 'plain_text', text: title },
+      });
+    }
+
+    if (embed.description) {
+      blocks.push({
+        type: 'section',
+        text: { type: 'mrkdwn', text: embed.description },
+      });
+    }
+
+    if (fields.length) {
+      blocks.push({
+        type: 'section',
+        fields: fields.map((t) => ({ type: 'mrkdwn', text: t })),
+      });
+    }
+
+    if (embed.url) {
+      blocks.push({
+        type: 'actions',
+        elements: [
+          {
+            type: 'button',
+            text: { type: 'plain_text', text: 'View GitHub Run', emoji: true },
+            style: this.failedTestCount > 0 ? 'danger' : 'primary',
+            url: embed.url,
+          },
+        ],
+      });
+    }
+
+    return { attachments: [{ color: colorHex, blocks }] };
+  }
+
+  private formatDuration(ms: number): string {
+    const s = Math.floor(ms / 1000);
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    return `${h} hours ${m} minutes ${sec} seconds`;
+  }
+
+  private async postJson(url: string, payload: any) {
+    return axios.post(url, payload, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  private toSlackHex(n: number) {
+    return '#' + (n >>> 0).toString(16).padStart(6, '0');
   }
 }
 
