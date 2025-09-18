@@ -62,7 +62,7 @@ export class ReporterRuntime {
     suite: Suite,
     runBeginOptions?: { skipProjects?: string[] },
   ) {
-    // Reset for new run
+    // Reset for new test run
     this.testCases.clear();
     this.suiteSummaries.clear();
 
