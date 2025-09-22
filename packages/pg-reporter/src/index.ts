@@ -424,11 +424,21 @@ export default class PgReporter implements Reporter {
 
   private async pushMetricsToPushgateway() {
     try {
+      if (
+        !this.options.env ||
+        !this.options.appName ||
+        !this.options.network ||
+        !this.branchName
+      ) {
+        throw new Error(
+          `Missing required options for Pushgateway: env: ${this.options.env}, appName: ${this.options.appName}, network: ${this.options.network}`,
+        );
+      }
       await this.pushgateway.pushAdd({
         jobName: this.jobName,
         groupings: {
           env: this.options.env,
-          projectName: this.projectName || 'undefined project',
+          projectName: this.options.appName,
           branchName: this.branchName,
           network: this.options.network,
           testTags: this.options.testTags || '-',
