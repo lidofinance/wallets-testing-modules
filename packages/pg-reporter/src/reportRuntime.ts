@@ -1,3 +1,5 @@
+import path from 'path';
+
 import {
   FullConfig,
   Suite,
@@ -44,6 +46,7 @@ export interface TestRunSummary {
 export class ReporterRuntime {
   public startTime: number;
   public projectName: string;
+  private pwConfig: FullConfig;
 
   private testCases = new Map<string, TestCaseInfo>();
   private suiteSummaries = new Map<string, SuiteSummary>();
@@ -67,6 +70,7 @@ export class ReporterRuntime {
     this.suiteSummaries.clear();
 
     this.startTime = Date.now();
+    this.pwConfig = config;
 
     // Ищем rootSuite, исключая skipProjects
     const rootSuite = suite
@@ -249,18 +253,12 @@ export class ReporterRuntime {
 
   private extractSuiteName(test: TestCase): string {
     const testPath = test.location?.file || '';
+    const relativePathToTestFile = path.relative(
+      this.pwConfig.rootDir,
+      testPath,
+    );
 
-    if (!testPath) {
-      return test.parent.project().name;
-    }
-
-    const pathParts = testPath.split('/');
-
-    if (pathParts.length > 1) {
-      return pathParts[pathParts.length - 2];
-    }
-
-    return test.parent.project().name;
+    return path.dirname(relativePathToTestFile);
   }
 
   private calculateSuiteSummaries() {
