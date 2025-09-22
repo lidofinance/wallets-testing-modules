@@ -100,6 +100,12 @@ export class BrowserService {
     });
     await this.ethereumNodeService.startNode();
     const account = this.ethereumNodeService.getAccount();
+    await this.ethereumNodeService.setErc20Balance(
+      account,
+      '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
+      0,
+      50,
+    );
     await this.setup();
 
     if (!(await this.walletPage.isWalletAddressExist(account.address))) {

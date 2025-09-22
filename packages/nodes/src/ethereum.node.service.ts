@@ -17,6 +17,8 @@ import {
   Account,
 } from './node.constants';
 import { execSync } from 'node:child_process';
+import { createTestClient, http } from 'viem';
+import { foundry } from 'viem/chains';
 
 export class EthereumNodeService {
   private readonly logger = new ConsoleLogger(EthereumNodeService.name);
@@ -42,6 +44,8 @@ export class EthereumNodeService {
       "--derivation-path=m/44'/60'/2020'/0/0",
       `--port=${this.port}`,
       `--host=${this.host}`,
+      '--timeout=5000',
+      '--retries=10',
     ];
     if (this.options.chainId) args.push(`--chain-id=${this.options.chainId}`);
     const anvilProcess = spawn('anvil', args, { stdio: 'pipe' });
@@ -142,11 +146,17 @@ export class EthereumNodeService {
 
     const value = BigNumber.from(balance).mul(decimals);
 
-    await provider.send('anvil_setStorageAt', [
-      tokenAddress,
-      slot,
-      utils.hexZeroPad(value.toHexString(), 32),
-    ]);
+    const client = createTestClient({
+      chain: foundry,
+      mode: 'anvil',
+      transport: http('http://127.0.0.1:8545'),
+    });
+    await client.setStorageAt({
+      address: tokenAddress as `0x${string}`,
+      index: slot as `0x${string}`,
+      value: utils.hexZeroPad(value.toHexString(), 32) as `0x${string}`,
+    });
+
     const balanceAfter = await contract.balanceOf(account.address);
     return balanceAfter.div(decimals);
   }
