@@ -269,17 +269,13 @@ export default class PgReporter implements Reporter {
 
   async onBegin(config: FullConfig, suite: Suite) {
     this.reportRuntime.handleRunBegin(config, suite, {
+      appName: this.options.appName,
       skipProjects: this.options.skipProjects,
     });
     this.startTime = Date.now();
     this.pwVersion = config.version;
     this.runName = this.getRunName();
-    const rootSuite = suite
-      .entries()
-      .find(
-        (suite) => !this.options.skipProjects?.includes(suite.title),
-      ) as Suite;
-    this.projectName = rootSuite.title;
+    this.projectName = this.options.appName;
 
     this.testRunStartTimeGauge.set({ runName: this.runName }, this.startTime);
 

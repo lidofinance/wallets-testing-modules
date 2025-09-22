@@ -1,4 +1,5 @@
 export interface ReportOptions {
+  appName: string;
   env: string;
   runName: string;
   pushgatewayOptions: {

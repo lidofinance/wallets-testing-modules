@@ -43,6 +43,11 @@ export interface TestRunSummary {
   successRate: number;
 }
 
+export interface RunOptions {
+  appName: string;
+  skipProjects?: string[];
+}
+
 export class ReporterRuntime {
   public startTime: number;
   public projectName: string;
@@ -60,11 +65,7 @@ export class ReporterRuntime {
     successRate: 0,
   };
 
-  handleRunBegin(
-    config: FullConfig,
-    suite: Suite,
-    runBeginOptions?: { skipProjects?: string[] },
-  ) {
+  handleRunBegin(config: FullConfig, suite: Suite, options: RunOptions) {
     // Reset for new test run
     this.testCases.clear();
     this.suiteSummaries.clear();
@@ -75,26 +76,9 @@ export class ReporterRuntime {
     // Ищем rootSuite, исключая skipProjects
     const rootSuite = suite
       .entries()
-      .find(
-        (suite) => !runBeginOptions.skipProjects?.includes(suite.title),
-      ) as Suite;
+      .find((suite) => !options.skipProjects?.includes(suite.title)) as Suite;
 
-    if (!rootSuite) {
-      console.warn('No root suite found, using default values');
-      this.projectName = 'unknown';
-      this.summary = {
-        total: 0,
-        passed: 0,
-        failed: 0,
-        skipped: 0,
-        flaky: 0,
-        broken: 0,
-        successRate: 0,
-      };
-      return;
-    }
-
-    this.projectName = rootSuite.title;
+    this.projectName = options.appName;
 
     // Проверяем, что метод allTests существует
     const totalTests =
