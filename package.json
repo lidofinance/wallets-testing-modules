@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "fork-setting",
+        "channel": "alpha-fork-setting",
+        "prerelease": "alpha-fork-setting"
       }
     ]
   }
