@@ -17,8 +17,6 @@ import {
   ServiceUnreachableError,
 } from './node.constants';
 import { execSync } from 'node:child_process';
-import { createTestClient, http } from 'viem';
-import { foundry } from 'viem/chains';
 
 export class EthereumNodeService {
   private readonly logger = new ConsoleLogger(EthereumNodeService.name);
@@ -156,18 +154,12 @@ export class EthereumNodeService {
 
     const value = BigNumber.from(balance).mul(decimals);
 
-    const client = createTestClient({
-      chain: foundry,
-      mode: 'anvil',
-      transport: http('http://127.0.0.1:8545'),
-    });
-    await client.setStorageAt({
-      address: tokenAddress as `0x${string}`,
-      index: slot as `0x${string}`,
-      value: utils.hexZeroPad(value.toHexString(), 32) as `0x${string}`,
-    });
+    await this.provider.send('anvil_setStorageAt', [
+      tokenAddress,
+      slot,
+      utils.hexZeroPad(value.toHexString(), 32),
+    ]);
 
-    await client.mine({ blocks: 1 });
     const balanceAfter = await contract.balanceOf(account.address);
     return balanceAfter.div(decimals);
   }
