@@ -29,6 +29,7 @@ export default class PgReporter implements Reporter {
   private register: Registry;
   private pushgateway: Pushgateway<any>;
   private jobName: string;
+  private rootSuiteName: string;
 
   // common labels
   private pwVersion: string;
@@ -258,6 +259,7 @@ export default class PgReporter implements Reporter {
 
   async onBegin(config: FullConfig, suite: Suite) {
     this.reportRuntime.handleRunBegin(config, suite);
+    this.rootSuiteName = suite.suites[0].title;
     this.startTime = Date.now();
     this.pwVersion = config.version;
     this.runName = this.getRunName();
@@ -409,7 +411,7 @@ export default class PgReporter implements Reporter {
 
   private async pushMetricsToPushgateway() {
     if (
-      (!process.env.CI && !this.options.env) ||
+      (process.env.CI && !this.options.env) ||
       !this.options.appName ||
       !this.options.network
     ) {
@@ -428,6 +430,7 @@ export default class PgReporter implements Reporter {
           env: process.env.CI ? this.options.env : 'development',
           appName: this.options.appName,
           network: this.options.network,
+          rootSuite: this.rootSuiteName,
           testTags: this.options.testTags || '-',
         },
       });
