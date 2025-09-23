@@ -282,10 +282,14 @@ export class ReporterRuntime {
     });
 
     suiteStats.forEach((suite) => {
-      suite.successRate =
-        suite.total > 0
-          ? ((suite.passed + suite.skipped) / suite.total) * 100
-          : 0;
+      const { total, passed, skipped } = suite;
+      const effectiveTotal = total - skipped;
+
+      if (effectiveTotal <= 0) {
+        suite.successRate = -1;
+      } else {
+        suite.successRate = (passed / effectiveTotal) * 100;
+      }
       this.suiteSummaries.set(`${suite.projectName}:${suite.suiteName}`, suite);
     });
   }
