@@ -242,7 +242,9 @@ export class ReporterRuntime {
       testPath,
     );
 
-    return path.dirname(relativePathToTestFile);
+    const testsPath = path.dirname(relativePathToTestFile);
+    if (testsPath === '.') return relativePathToTestFile;
+    return testsPath;
   }
 
   private calculateSuiteSummaries() {
