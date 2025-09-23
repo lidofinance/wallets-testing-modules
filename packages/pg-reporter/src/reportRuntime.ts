@@ -43,14 +43,8 @@ export interface TestRunSummary {
   successRate: number;
 }
 
-export interface RunOptions {
-  appName: string;
-  skipProjects?: string[];
-}
-
 export class ReporterRuntime {
   public startTime: number;
-  public projectName: string;
   private pwConfig: FullConfig;
 
   private testCases = new Map<string, TestCaseInfo>();
@@ -65,7 +59,7 @@ export class ReporterRuntime {
     successRate: 0,
   };
 
-  handleRunBegin(config: FullConfig, suite: Suite, options: RunOptions) {
+  handleRunBegin(config: FullConfig, suite: Suite) {
     // Reset for new test run
     this.testCases.clear();
     this.suiteSummaries.clear();
@@ -73,18 +67,9 @@ export class ReporterRuntime {
     this.startTime = Date.now();
     this.pwConfig = config;
 
-    // Ищем rootSuite, исключая skipProjects
-    const rootSuite = suite
-      .entries()
-      .find((suite) => !options.skipProjects?.includes(suite.title)) as Suite;
-
-    this.projectName = options.appName;
-
     // Проверяем, что метод allTests существует
     const totalTests =
-      typeof rootSuite.allTests === 'function'
-        ? rootSuite.allTests().length
-        : 0;
+      typeof suite.allTests === 'function' ? suite.allTests().length : 0;
 
     this.summary = {
       total: totalTests,

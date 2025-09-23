@@ -13,6 +13,7 @@ import { format } from 'date-fns';
 import { ConsoleLogger } from '@nestjs/common';
 import { ReporterRuntime } from './reportRuntime';
 import { ReportOptions } from './types';
+import { toKebab } from './utils';
 
 export default class PgReporter implements Reporter {
   private reportRuntime: ReporterRuntime;
@@ -30,10 +31,8 @@ export default class PgReporter implements Reporter {
   private jobName: string;
 
   // common labels
-  private projectName: string;
   private pwVersion: string;
   private runName: string;
-  private branchName: string;
 
   // project metrics
   private successRate: Gauge;
@@ -67,8 +66,8 @@ export default class PgReporter implements Reporter {
 
   constructor(options: ReportOptions) {
     this.options = options;
+    this.options.appName = toKebab(this.options.appName);
     this.logger = new ConsoleLogger('pgReport');
-    this.branchName = process.env.CI ? this.getBranchName() : 'local-new';
     this.reportRuntime = new ReporterRuntime();
 
     this.register = new Registry();
@@ -78,16 +77,6 @@ export default class PgReporter implements Reporter {
     this.initSuiteMetrics();
     this.initRunMetrics();
     this.initTestMetrics();
-  }
-
-  private getBranchName(): string {
-    const branchName =
-      process.env.GITHUB_HEAD_REF ||
-      process.env.TEST_BRANCH ||
-      process.env.GH_BRANCH_REF_NAME ||
-      'none';
-
-    return branchName.replace('/', '-');
   }
 
   private initPushgatewayClient() {
@@ -268,14 +257,10 @@ export default class PgReporter implements Reporter {
   }
 
   async onBegin(config: FullConfig, suite: Suite) {
-    this.reportRuntime.handleRunBegin(config, suite, {
-      appName: this.options.appName,
-      skipProjects: this.options.skipProjects,
-    });
+    this.reportRuntime.handleRunBegin(config, suite);
     this.startTime = Date.now();
     this.pwVersion = config.version;
     this.runName = this.getRunName();
-    this.projectName = this.options.appName;
 
     this.testRunStartTimeGauge.set({ runName: this.runName }, this.startTime);
 
@@ -423,23 +408,25 @@ export default class PgReporter implements Reporter {
   }
 
   private async pushMetricsToPushgateway() {
+    if (
+      (!process.env.CI && !this.options.env) ||
+      !this.options.appName ||
+      !this.options.network
+    ) {
+      throw new Error(
+        `Missing required options for Pushgateway: env: ${this.options.env}, appName: ${this.options.appName}, network: ${this.options.network}`,
+      );
+    }
+    if (!process.env.CI && this.options.env === 'prod') {
+      this.logger.error(`Wrong env for CI: ${this.options.env}`);
+      return;
+    }
     try {
-      if (
-        !this.options.env ||
-        !this.options.appName ||
-        !this.options.network ||
-        !this.branchName
-      ) {
-        throw new Error(
-          `Missing required options for Pushgateway: env: ${this.options.env}, appName: ${this.options.appName}, network: ${this.options.network}`,
-        );
-      }
       await this.pushgateway.pushAdd({
         jobName: this.jobName,
         groupings: {
-          env: this.options.env,
-          projectName: this.options.appName,
-          branchName: this.branchName,
+          env: process.env.CI ? this.options.env : 'development',
+          appName: this.options.appName,
           network: this.options.network,
           testTags: this.options.testTags || '-',
         },
