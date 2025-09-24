@@ -54,9 +54,9 @@ export class EthereumNodeService {
       `--fork-url=${this.options.rpcUrl}`,
       `--port=${this.port}`,
       `--balance=${this.defaultBalance}`,
+      `--block-time=${this.blockTime}`,
       `--accounts=${this.accountsLength}`,
       `--derivation-path=${this.derivationPath}`,
-      '--blockTime=2',
       ...(this.runOptions ?? []),
     ];
 
