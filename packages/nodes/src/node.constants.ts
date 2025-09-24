@@ -6,6 +6,11 @@ export type EthereumNodeServiceOptions = {
   rpcUrlToMock: string;
   port?: number;
   defaultBalance?: number;
+  tokens?: {
+    address: string;
+    mappingSlot: any;
+    name: string;
+  }[];
   accountsLength?: number;
   derivationPath?: string;
   blockTime?: number;

@@ -8,6 +8,7 @@ import {
   BrowserContext,
   Page,
   Request,
+  test,
 } from '@playwright/test';
 import { BigNumber, Contract, providers, utils } from 'ethers';
 import {
@@ -123,6 +124,21 @@ export class EthereumNodeService {
     this.state = { nodeProcess: process, nodeUrl, accounts };
   }
 
+  async setupDefaultTokenBalances() {
+    if (this.options.tokens) {
+      for (const token of this.options.tokens) {
+        await test.step(`Setup balance ${this.defaultBalance} ${token.name}`, async () => {
+          await this.setErc20Balance(
+            this.getAccount(),
+            token.address,
+            token.mappingSlot,
+            this.defaultBalance,
+          );
+        });
+      }
+    }
+  }
+
   getAccount(index = 0): Account {
     return this.state?.accounts[index];
   }
@@ -137,7 +153,7 @@ export class EthereumNodeService {
   async setErc20Balance(
     account: Account,
     tokenAddress: string,
-    mappingSlot: number,
+    mappingSlot: any,
     balance: number, // ether value
   ): Promise<BigNumber> {
     if (!this.state) throw new Error('Node not ready');
@@ -160,6 +176,7 @@ export class EthereumNodeService {
       slot,
       utils.hexZeroPad(value.toHexString(), 32),
     ]);
+
     const balanceAfter = await contract.balanceOf(account.address);
     return balanceAfter.div(decimals);
   }

@@ -94,6 +94,7 @@ export class BrowserService {
     this.isFork = true;
     this.ethereumNodeService = new EthereumNodeService(this.options.nodeConfig);
     await this.ethereumNodeService.startNode();
+    await this.ethereumNodeService.setupDefaultTokenBalances();
     const account = this.ethereumNodeService.getAccount();
     await this.setup();
 
