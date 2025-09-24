@@ -56,6 +56,7 @@ export class EthereumNodeService {
       `--balance=${this.defaultBalance}`,
       `--accounts=${this.accountsLength}`,
       `--derivation-path=${this.derivationPath}`,
+      '--blockTime=2',
       ...(this.runOptions ?? []),
     ];
 
