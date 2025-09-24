@@ -121,7 +121,9 @@ export class EthereumNodeService {
     }));
 
     this.state = { nodeProcess: process, nodeUrl, accounts };
+  }
 
+  async setupDefaultTokenBalances() {
     if (this.options.tokens) {
       for (const token of this.options.tokens) {
         await test.step(`Setup balance ${this.defaultBalance} ${token.name}`, async () => {
@@ -150,7 +152,7 @@ export class EthereumNodeService {
   async setErc20Balance(
     account: Account,
     tokenAddress: string,
-    mappingSlot: number,
+    mappingSlot: any,
     balance: number, // ether value
   ): Promise<BigNumber> {
     if (!this.state) throw new Error('Node not ready');

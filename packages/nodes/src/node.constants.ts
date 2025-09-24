@@ -8,7 +8,7 @@ export type EthereumNodeServiceOptions = {
   defaultBalance?: number;
   tokens?: {
     address: string;
-    mappingSlot: number;
+    mappingSlot: any;
     name: string;
   }[];
   accountsLength?: number;
