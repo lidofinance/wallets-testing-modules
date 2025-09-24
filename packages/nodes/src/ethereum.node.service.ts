@@ -8,6 +8,7 @@ import {
   BrowserContext,
   Page,
   Request,
+  test,
 } from '@playwright/test';
 import { BigNumber, Contract, providers, utils } from 'ethers';
 import {
@@ -120,6 +121,19 @@ export class EthereumNodeService {
     }));
 
     this.state = { nodeProcess: process, nodeUrl, accounts };
+
+    if (this.options.tokens) {
+      for (const token of this.options.tokens) {
+        await test.step(`Setup balance ${this.defaultBalance} ${token.name}`, async () => {
+          await this.setErc20Balance(
+            this.getAccount(),
+            token.address,
+            token.mappingSlot,
+            this.defaultBalance,
+          );
+        });
+      }
+    }
   }
 
   getAccount(index = 0): Account {
