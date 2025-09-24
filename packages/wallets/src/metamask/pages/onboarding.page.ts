@@ -40,7 +40,7 @@ export class OnboardingPage {
     await test.step('First time wallet setup', async () => {
       await this.confirmTermsOfOnboarding();
       await this.importWalletButton.click();
-      await this.metricAgreeButton.click();
+      await this.page.getByTestId('metametrics-no-thanks').click();
       await this.fillSecretPhrase(this.accountConfig.SECRET_PHRASE);
       await this.secretPhraseImportButton.click();
       await this.createPassword(this.accountConfig.PASSWORD);
