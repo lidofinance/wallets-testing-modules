@@ -117,7 +117,7 @@ export class ReporterRuntime {
     testCase.error = result.error?.message;
 
     testCase.flakyHistory.push(result.status);
-    testCase.isFlaky = testCase.isFlaky || this.isTestFlaky(testCase);
+    testCase.isFlaky = this.isTestFlaky(testCase);
 
     if (result.status === 'failed' && result.retry === testCase.maxRetries) {
       const errorMessage = result.error?.message || '';

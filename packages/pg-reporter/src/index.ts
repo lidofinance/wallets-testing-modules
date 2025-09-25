@@ -8,7 +8,6 @@ import {
 } from '@playwright/test/reporter';
 import { Counter, Gauge, Histogram, Pushgateway, Registry } from 'prom-client';
 import { v4 as uuidv4 } from 'uuid';
-import * as os from 'os';
 import { format } from 'date-fns';
 import { ConsoleLogger } from '@nestjs/common';
 import { ReporterRuntime } from './reportRuntime';
@@ -32,7 +31,6 @@ export default class PgReporter implements Reporter {
   private rootSuiteName: string;
 
   // common labels
-  private pwVersion: string;
   private runName: string;
 
   // project metrics
@@ -53,10 +51,6 @@ export default class PgReporter implements Reporter {
 
   // run metrics
   private testRunDurationGauge: Gauge;
-  private testRunStartTimeGauge: Gauge;
-  private testRunStartEndTimeGauge: Gauge;
-  private runEnvInfoGauge: Gauge;
-  private runInfoGauge: Gauge;
   private runStatusGauge: Gauge;
   private runTotalTestGauge: Gauge;
   private runSuccessGauge: Gauge;
@@ -150,44 +144,10 @@ export default class PgReporter implements Reporter {
       registers: [this.register],
     });
 
-    this.runEnvInfoGauge = new Gauge({
-      name: 'test_run_env_info',
-      help: 'Test run env info',
-      labelNames: [
-        'runName',
-        'osName',
-        'osVersion',
-        'nodejsVersion',
-        'pwVersion',
-      ],
-      registers: [this.register],
-    });
-
-    this.runInfoGauge = new Gauge({
-      name: 'test_run_info',
-      help: 'Test run info',
-      labelNames: ['runName', 'githubUrl'],
-      registers: [this.register],
-    });
-
     this.testRunDurationGauge = new Gauge({
       name: 'test_run_duration',
       help: 'test run duration in milliseconds',
       labelNames: ['runName', 'suiteTag'],
-      registers: [this.register],
-    });
-
-    this.testRunStartTimeGauge = new Gauge({
-      name: 'test_run_start_time',
-      help: 'test run start time in milliseconds',
-      labelNames: ['runName'],
-      registers: [this.register],
-    });
-
-    this.testRunStartEndTimeGauge = new Gauge({
-      name: 'test_run_start_end_time_counter',
-      help: 'Test run start and end time counter',
-      labelNames: ['runName'],
       registers: [this.register],
     });
 
@@ -259,44 +219,15 @@ export default class PgReporter implements Reporter {
 
   async onBegin(config: FullConfig, suite: Suite) {
     this.reportRuntime.handleRunBegin(config, suite);
-    this.rootSuiteName = suite.suites[0].title;
     this.startTime = Date.now();
-    this.pwVersion = config.version;
     this.runName = this.getRunName();
 
-    this.testRunStartTimeGauge.set({ runName: this.runName }, this.startTime);
-
-    this.testRunStartEndTimeGauge.set({ runName: this.runName }, 1);
-    this.runStatusGauge.set(
-      {
-        runName: this.runName,
-        status: 'in progress',
-      },
-      1,
-    );
-    this.runEnvInfoGauge.set(
-      {
-        runName: this.runName,
-        osName: os.type(),
-        osVersion: os.release(),
-        nodejsVersion: process.version,
-        pwVersion: this.pwVersion,
-      },
-      1,
-    );
-    const githubUrl = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
-    this.runInfoGauge.set(
-      {
-        runName: this.runName,
-        githubUrl: githubUrl,
-      },
-      1,
-    );
     this.logger.log(`Initial push of metrics for the run: ${this.runName}`);
     await this.pushMetricsToPushgateway();
   }
 
   onTestBegin(test: TestCase): void {
+    this.rootSuiteName = test.parent.project().name;
     this.reportRuntime.handleTestBegin(test);
   }
 
@@ -369,8 +300,6 @@ export default class PgReporter implements Reporter {
     this.setSuccessRate();
     this.setSuiteMetrics();
 
-    this.testRunStartEndTimeGauge.set({ runName: this.runName }, 0);
-
     const duration = Date.now() - result.startTime.getTime();
 
     this.testRunDurationGauge.set(
@@ -383,13 +312,6 @@ export default class PgReporter implements Reporter {
       duration,
     );
 
-    this.runStatusGauge.set(
-      {
-        runName: this.runName,
-        status: 'in progress',
-      },
-      0,
-    );
     this.runStatusGauge.set(
       {
         runName: this.runName,
