@@ -8,6 +8,10 @@ export interface ReportOptions {
     url: string;
     cookie: string;
   };
+  grafanaOptions: {
+    url: string;
+    apiKey: string;
+  };
   network: string;
   testTags?: string;
 }

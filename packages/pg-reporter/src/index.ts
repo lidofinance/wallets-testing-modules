@@ -13,6 +13,7 @@ import { ConsoleLogger } from '@nestjs/common';
 import { ReporterRuntime } from './reportRuntime';
 import { ReportOptions } from './types';
 import { toKebab } from './utils';
+import { GrafanaClient } from './grafanaClient';
 
 export default class PgReporter implements Reporter {
   private reportRuntime: ReporterRuntime;
@@ -20,6 +21,7 @@ export default class PgReporter implements Reporter {
   // report options
   private options: ReportOptions;
   private logger: ConsoleLogger;
+  private grafanaClient: GrafanaClient;
 
   // run properties
   private startTime: number;
@@ -64,6 +66,11 @@ export default class PgReporter implements Reporter {
     this.options.appName = toKebab(this.options.appName);
     this.logger = new ConsoleLogger('pgReport');
     this.reportRuntime = new ReporterRuntime();
+
+    this.grafanaClient = new GrafanaClient({
+      baseUrl: this.options.grafanaOptions.url,
+      apiKey: this.options.grafanaOptions.apiKey,
+    });
 
     this.register = new Registry();
     this.jobName = 'widget_pw_metrics';
@@ -322,6 +329,17 @@ export default class PgReporter implements Reporter {
     );
 
     await this.pushMetricsToPushgateway();
+    await this.grafanaClient.addAnnotation({
+      time: Date.now(),
+      tags: [
+        `app:${this.options.appName}`,
+        `env:${this.options.env}`,
+        `tag:${this.options.testTags}`,
+        `rootSuite${this.rootSuiteName}`,
+        `network:${this.options.network}`,
+      ],
+      text: this.runName,
+    });
   }
 
   private getRunName() {
