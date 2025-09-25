@@ -10,5 +10,4 @@ export interface ReportOptions {
   };
   network: string;
   testTags?: string;
-  skipProjects?: string[];
 }

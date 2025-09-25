@@ -221,18 +221,19 @@ export default class PgReporter implements Reporter {
     this.reportRuntime.handleRunBegin(config, suite);
     this.startTime = Date.now();
     this.runName = this.getRunName();
-
-    this.logger.log(`Initial push of metrics for the run: ${this.runName}`);
-    await this.pushMetricsToPushgateway();
   }
 
   onTestBegin(test: TestCase): void {
-    this.rootSuiteName = test.parent.project().name;
-    this.reportRuntime.handleTestBegin(test);
+    const project = test.parent.project();
+    if (project.metadata?.role !== 'hook') {
+      this.rootSuiteName = test.parent.project().name;
+      this.reportRuntime.handleTestBegin(test);
+    }
   }
 
   onTestEnd(test: TestCase, result: TestResult) {
-    if (this.options.skipProjects?.includes(test.parent.project().name)) {
+    const project = test.parent.project();
+    if (project.metadata?.role === 'hook') {
       return;
     }
 
