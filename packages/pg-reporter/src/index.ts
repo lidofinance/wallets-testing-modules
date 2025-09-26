@@ -332,10 +332,11 @@ export default class PgReporter implements Reporter {
     await this.grafanaClient.addAnnotation({
       time: Date.now(),
       tags: [
+        'playwright:tests',
         `app:${this.options.appName}`,
         `env:${this.options.env}`,
         `tag:${this.options.testTags}`,
-        `rootSuite${this.rootSuiteName}`,
+        `rootSuite:${this.rootSuiteName}`,
         `network:${this.options.network}`,
       ],
       text: this.runName,
