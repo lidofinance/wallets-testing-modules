@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "feat/add-new-chat-pkg",
-        "channel": "alpha-chat-reporter",
-        "prerelease": "alpha-chat-reporter"
+        "name": "develop",
+        "channel": "alpha",
+        "prerelease": "alpha"
       }
     ]
   }
