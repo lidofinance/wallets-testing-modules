@@ -3,26 +3,35 @@ import { spawn } from 'child_process';
 import net from 'net';
 import axios from 'axios';
 import {
-  Request,
   APIRequestContext,
   APIResponse,
   BrowserContext,
   Page,
+  Request,
+  test,
 } from '@playwright/test';
-import { providers, utils, BigNumber, Contract } from 'ethers';
+import { BigNumber, Contract, providers, utils } from 'ethers';
 import {
+  Account,
+  ERC20_SHORT_ABI,
   EthereumNodeServiceOptions,
   ServiceUnreachableError,
-  ERC20_SHORT_ABI,
-  Account,
 } from './node.constants';
 import { execSync } from 'node:child_process';
 
 export class EthereumNodeService {
   private readonly logger = new ConsoleLogger(EthereumNodeService.name);
+  private provider: any;
   private readonly privateKeys: string[] = [];
-  private readonly port: number;
   private readonly host = '127.0.0.1';
+
+  // anvil run params
+  private readonly port: number;
+  private readonly defaultBalance: number;
+  private readonly accountsLength: number;
+  private readonly derivationPath: string;
+  private readonly blockTime: number;
+  private readonly runOptions: string[];
 
   state?: {
     nodeProcess: ReturnType<typeof spawn>;
@@ -32,18 +41,25 @@ export class EthereumNodeService {
 
   constructor(private options: EthereumNodeServiceOptions) {
     this.port = options.port || 8545;
+    this.defaultBalance = options.defaultBalance || 100;
+    this.accountsLength = options.accountsLength || 30;
+    this.blockTime = options.blockTime || 2;
+    this.derivationPath = options.derivationPath || "m/44'/60'/2020'/0/0";
+    this.runOptions = options.runOptions;
   }
 
-  private startAnvil(rpcUrl: string) {
+  private startAnvil() {
     const args = [
-      `--fork-url=${rpcUrl}`,
-      `--balance=${this.options.defaultBalance.toString()}`,
-      '--block-time=2',
-      "--derivation-path=m/44'/60'/2020'/0/0",
-      `--port=${this.port}`,
       `--host=${this.host}`,
+      `--fork-url=${this.options.rpcUrl}`,
+      `--port=${this.port}`,
+      `--balance=${this.defaultBalance}`,
+      `--block-time=${this.blockTime}`,
+      `--accounts=${this.accountsLength}`,
+      `--derivation-path=${this.derivationPath}`,
+      ...(this.runOptions ?? []),
     ];
-    if (this.options.chainId) args.push(`--chain-id=${this.options.chainId}`);
+
     const anvilProcess = spawn('anvil', args, { stdio: 'pipe' });
 
     anvilProcess.stdout.once('data', (data: Buffer) => {
@@ -88,7 +104,7 @@ export class EthereumNodeService {
     }
 
     this.logger.debug('Starting Anvil node...');
-    const process = this.startAnvil(rpcUrl);
+    const process = this.startAnvil();
     const nodeUrl = `http://${this.host}:${this.port}`;
 
     const isAnvilReady = await this.waitForAnvilReady(nodeUrl);
@@ -98,8 +114,8 @@ export class EthereumNodeService {
       throw new Error('Anvil did not start');
     }
 
-    const provider = new providers.JsonRpcProvider(nodeUrl);
-    const addresses = await provider.listAccounts();
+    this.provider = new providers.JsonRpcProvider(nodeUrl);
+    const addresses = await this.provider.listAccounts();
     const accounts: Account[] = addresses.map((address, index) => ({
       address,
       secretKey: this.privateKeys?.[index] || '',
@@ -108,27 +124,40 @@ export class EthereumNodeService {
     this.state = { nodeProcess: process, nodeUrl, accounts };
   }
 
+  async setupDefaultTokenBalances() {
+    if (this.options.tokens) {
+      for (const token of this.options.tokens) {
+        await test.step(`Setup balance ${this.defaultBalance} ${token.name}`, async () => {
+          await this.setErc20Balance(
+            this.getAccount(),
+            token.address,
+            token.mappingSlot,
+            this.defaultBalance,
+          );
+        });
+      }
+    }
+  }
+
   getAccount(index = 0): Account {
     return this.state?.accounts[index];
   }
 
   async getBalance(account: Account): Promise<string | undefined> {
     if (!this.state) return undefined;
-    const provider = new providers.JsonRpcProvider(this.state.nodeUrl);
-    const balance = await provider.getBalance(account.address);
+    const balance = await this.provider.getBalance(account.address);
     return utils.formatEther(balance);
   }
 
+  // set erc20 balance with mappingSlot
   async setErc20Balance(
     account: Account,
     tokenAddress: string,
-    mappingSlot: number,
-    balance: number,
+    mappingSlot: any,
+    balance: number, // ether value
   ): Promise<BigNumber> {
     if (!this.state) throw new Error('Node not ready');
-
-    const provider = new providers.JsonRpcProvider(this.state.nodeUrl);
-    const contract = new Contract(tokenAddress, ERC20_SHORT_ABI, provider);
+    const contract = new Contract(tokenAddress, ERC20_SHORT_ABI, this.provider);
     const decimals = BigNumber.from(10).pow(await contract.decimals());
     const mappingSlotHex = BigNumber.from(mappingSlot).toHexString();
 
@@ -142,19 +171,64 @@ export class EthereumNodeService {
 
     const value = BigNumber.from(balance).mul(decimals);
 
-    await provider.send('anvil_setStorageAt', [
+    await this.provider.send('anvil_setStorageAt', [
       tokenAddress,
       slot,
       utils.hexZeroPad(value.toHexString(), 32),
     ]);
+
     const balanceAfter = await contract.balanceOf(account.address);
+    return balanceAfter.div(decimals);
+  }
+
+  // set erc20 balance with no mappingSlot
+  async setErc20BalanceImpersonate(
+    tokenAbi: any[],
+    tokenAddress: string,
+    account: Account,
+    amount: number, // ether value
+  ): Promise<string> {
+    const erc20Token = new Contract(tokenAddress, tokenAbi, this.provider);
+
+    // decimals & amount -> wei
+    const decimals: number = await erc20Token.decimals();
+    const amountWei = utils.parseUnits(amount.toString(), decimals);
+
+    const controllerAddress: string = await erc20Token.controller();
+
+    // impersonate + gas
+    await this.provider.send('anvil_impersonateAccount', [controllerAddress]);
+    await this.provider.send('anvil_setBalance', [
+      controllerAddress,
+      '0x3635C9ADC5DEA00000', // ~1000 ETH
+    ]);
+
+    const ctrlSigner = this.provider.getSigner(controllerAddress);
+    const tokenAsCtrl = erc20Token.connect(ctrlSigner);
+
+    // enable transfers if possible & disabled
+    try {
+      const enabled: boolean = await tokenAsCtrl.transfersEnabled();
+      if (!enabled) {
+        const tx = await tokenAsCtrl.enableTransfers(true);
+        await tx.wait();
+      }
+    } catch {
+      // if no transfersEnabled/enableTransfers - just skip
+    }
+
+    // mint impersonated erc20 token
+    const tx = await tokenAsCtrl.generateTokens(account.address, amountWei);
+    await tx.wait();
+
+    const balanceAfter = await erc20Token.balanceOf(account.address);
     return balanceAfter.div(decimals);
   }
 
   private async waitForAnvilReady(
     rpcUrl: string,
     {
-      timeoutMs = 30000,
+      timeoutMs = 300000,
       delayMs = 500,
     }: { timeoutMs?: number; delayMs?: number } = {},
   ): Promise<boolean> {

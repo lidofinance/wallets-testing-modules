@@ -3,7 +3,8 @@ export * from './wallets.constants';
 
 // export EOA WalletConnectType
 export * from './coin98';
-export * from './metamask';
+export * from './metamask/metamask-latest';
+export * from './metamask/metamask-stable';
 export * from './trustwallet';
 export * from './coinbase';
 export * from './exodus';

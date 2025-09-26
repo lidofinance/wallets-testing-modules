@@ -3,15 +3,19 @@ export const ERC20_SHORT_ABI =
 
 export type EthereumNodeServiceOptions = {
   rpcUrl: string;
+  rpcUrlToMock: string;
   port?: number;
-  chainId?: number;
-  defaultBalance: number;
-  accounts?: OptionsAccount[];
-};
-
-type OptionsAccount = {
-  secretKey: string;
-  balance: number | string;
+  defaultBalance?: number;
+  tokens?: {
+    address: string;
+    mappingSlot: any;
+    name: string;
+  }[];
+  accountsLength?: number;
+  derivationPath?: string;
+  blockTime?: number;
+  // options
+  runOptions?: string[];
 };
 
 export type Account = {

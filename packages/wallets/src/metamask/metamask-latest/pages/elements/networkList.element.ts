@@ -1,8 +1,8 @@
 import { Locator, Page, test } from '@playwright/test';
-import { NetworkSetting } from './networkSetting.element';
-import { NetworkConfig } from '../../../wallets.constants';
+import { NetworkConfig } from '../../../../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 import { SettingsElement } from './settings.element';
+import { NetworkSetting } from './networkSetting.element';
 
 export class NetworkList {
   logger = new ConsoleLogger(`MetaMask. ${NetworkList.name}`);

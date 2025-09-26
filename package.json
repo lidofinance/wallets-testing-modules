@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "feat/mm-versions",
+        "channel": "mm-version",
+        "prerelease": "mm-version"
       }
     ]
   }

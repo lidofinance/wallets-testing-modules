@@ -1,5 +1,5 @@
 import { Locator, Page, test } from '@playwright/test';
-import { CommonWalletConfig } from '../../wallets.constants';
+import { CommonWalletConfig } from '../../../wallets.constants';
 
 export class SettingsPage {
   tabBarMenu: Locator;

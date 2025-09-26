@@ -1,5 +1,5 @@
 import { Locator, Page, test } from '@playwright/test';
-import { AccountConfig } from '../../wallets.constants';
+import { AccountConfig } from '../../../wallets.constants';
 
 export class LoginPage {
   passwordInput: Locator;
