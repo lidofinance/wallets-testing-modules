@@ -1,5 +1,5 @@
 import { Locator, Page, test } from '@playwright/test';
-import { AccountConfig } from '../../wallets.constants';
+import { AccountConfig } from '../../../wallets.constants';
 
 export class OnboardingPage {
   getStartedButton: Locator;
@@ -59,8 +59,8 @@ export class OnboardingPage {
 
   async firstTimeSetup() {
     await test.step('First time wallet setup (v2)', async () => {
-      await this.getStartedButton.click();
-      await this.confirmTermsOfOnboarding();
+      // await this.getStartedButton.click();
+      // await this.confirmTermsOfOnboarding();
       await this.iHaveExistingWalletButton.click();
       await this.importWalletOptionBtn.click();
       await this.fillSecretPhrase(this.accountConfig.SECRET_PHRASE);
@@ -74,17 +74,17 @@ export class OnboardingPage {
     });
   }
 
-  async confirmTermsOfOnboarding() {
-    await test.step('Confirm terms before onboarding', async () => {
-      await this.termsOfUseScrollButton.click();
-      while (
-        !(await this.page.locator('.mm-checkbox__input--checked').isVisible())
-      ) {
-        await this.termsCheckboxButton.click();
-      }
-      await this.termsOfUseAgreeButton.click();
-    });
-  }
+  // async confirmTermsOfOnboarding() {
+  //   await test.step('Confirm terms before onboarding', async () => {
+  //     await this.termsOfUseScrollButton.click();
+  //     while (
+  //       !(await this.page.locator('.mm-checkbox__input--checked').isVisible())
+  //     ) {
+  //       await this.termsCheckboxButton.click();
+  //     }
+  //     await this.termsOfUseAgreeButton.click();
+  //   });
+  // }
 
   async fillSecretPhrase(secretPhrase: string) {
     await test.step('Fill onboarding secret phrase field', async () => {
