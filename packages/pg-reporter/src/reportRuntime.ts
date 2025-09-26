@@ -67,7 +67,6 @@ export class ReporterRuntime {
     this.startTime = Date.now();
     this.pwConfig = config;
 
-    // Проверяем, что метод allTests существует
     const totalTests =
       typeof suite.allTests === 'function' ? suite.allTests().length : 0;
 
