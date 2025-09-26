@@ -1,5 +1,5 @@
 import { Locator, Page, test } from '@playwright/test';
-import { NetworkConfig } from '../../../wallets.constants';
+import { NetworkConfig } from '../../../../wallets.constants';
 
 export class NetworkSetting {
   dialogSection: Locator;

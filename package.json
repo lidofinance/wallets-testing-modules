@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "stable/mm-12.10.4",
-        "channel": "meta-2-12.10.4",
-        "prerelease": "meta-2-12.10.4"
+        "name": "feat/mm-versions",
+        "channel": "mm-version",
+        "prerelease": "mm-version"
       }
     ]
   }
