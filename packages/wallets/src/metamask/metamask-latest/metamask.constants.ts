@@ -3,7 +3,7 @@ import {
   WalletConnectTypes,
 } from '../../wallets.constants';
 
-export const METAMASK_LATEST_COMMON_CONFIG: CommonWalletConfig = {
+export const METAMASK_COMMON_CONFIG: CommonWalletConfig = {
   WALLET_NAME: 'metamask',
   EXTENSION_WALLET_NAME: 'metamask',
   CONNECTED_WALLET_NAME: 'MetaMask',

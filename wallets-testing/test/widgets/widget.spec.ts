@@ -8,7 +8,7 @@ import {
   CTRL_COMMON_CONFIG,
   WC_SAFE_COMMON_CONFIG,
   IFRAME_SAFE_COMMON_CONFIG,
-  METAMASK_LATEST_COMMON_CONFIG,
+  METAMASK_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import { test } from '@playwright/test';
 import {
@@ -23,7 +23,7 @@ test.describe('Ethereum', () => {
 
   test(`Metamask connect and stake`, async () => {
     browserService = await initBrowserWithExtension(
-      METAMASK_LATEST_COMMON_CONFIG,
+      METAMASK_COMMON_CONFIG,
       true,
     );
     await stake(browserService, '50');

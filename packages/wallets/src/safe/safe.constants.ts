@@ -1,9 +1,9 @@
 import { CommonWalletConfig, WalletConnectTypes } from '../wallets.constants';
-import { METAMASK_LATEST_COMMON_CONFIG } from '../metamask';
+import { METAMASK_COMMON_CONFIG } from '../metamask';
 
 export const WC_SAFE_COMMON_CONFIG: CommonWalletConfig = {
   WALLET_NAME: 'safeWc',
-  EXTENSION_WALLET_NAME: METAMASK_LATEST_COMMON_CONFIG.EXTENSION_WALLET_NAME,
+  EXTENSION_WALLET_NAME: METAMASK_COMMON_CONFIG.EXTENSION_WALLET_NAME,
   CONNECTED_WALLET_NAME: 'WalletConnect',
   STORE_EXTENSION_ID: 'nkbihfbeogaeaoehlefnkodbefgpgknn',
   CONNECT_BUTTON_NAME: 'WalletConnect',
@@ -14,7 +14,7 @@ export const WC_SAFE_COMMON_CONFIG: CommonWalletConfig = {
 
 export const IFRAME_SAFE_COMMON_CONFIG: CommonWalletConfig = {
   WALLET_NAME: 'safeIframe',
-  EXTENSION_WALLET_NAME: METAMASK_LATEST_COMMON_CONFIG.EXTENSION_WALLET_NAME,
+  EXTENSION_WALLET_NAME: METAMASK_COMMON_CONFIG.EXTENSION_WALLET_NAME,
   CONNECTED_WALLET_NAME: 'Safe',
   STORE_EXTENSION_ID: 'nkbihfbeogaeaoehlefnkodbefgpgknn',
   CONNECT_BUTTON_NAME: '', // auto connection
