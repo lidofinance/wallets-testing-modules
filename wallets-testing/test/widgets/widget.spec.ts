@@ -7,8 +7,8 @@ import {
   BITGET_COMMON_CONFIG,
   CTRL_COMMON_CONFIG,
   WC_SAFE_COMMON_CONFIG,
-  METAMASK_COMMON_CONFIG,
   IFRAME_SAFE_COMMON_CONFIG,
+  METAMASK_COMMON_CONFIG,
 } from '@lidofinance/wallets-testing-wallets';
 import { test } from '@playwright/test';
 import {

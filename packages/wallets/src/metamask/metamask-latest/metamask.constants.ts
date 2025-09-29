@@ -1,4 +1,7 @@
-import { CommonWalletConfig, WalletConnectTypes } from '../wallets.constants';
+import {
+  CommonWalletConfig,
+  WalletConnectTypes,
+} from '../../wallets.constants';
 
 export const METAMASK_COMMON_CONFIG: CommonWalletConfig = {
   WALLET_NAME: 'metamask',
@@ -7,10 +10,8 @@ export const METAMASK_COMMON_CONFIG: CommonWalletConfig = {
   CONNECT_BUTTON_NAME: 'MetaMask',
   STORE_EXTENSION_ID: 'nkbihfbeogaeaoehlefnkodbefgpgknn',
   WALLET_TYPE: WalletConnectTypes.EOA,
-  // MetaMask removed the experimental "Select networks for each site" feature,
-  // which broke the unsupported chain tests flow.
-  // Use this version if you need to handle unsupported chain tests.
-  // https://github.com/MetaMask/metamask-extension/releases/tag/v12.11.0
+  // Metamask stable version
+  // https://github.com/MetaMask/metamask-extension/releases/tag/v12.10.4
   LATEST_STABLE_DOWNLOAD_LINK: null,
   EXTENSION_START_PATH: '/home.html',
 };

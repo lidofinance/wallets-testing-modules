@@ -5,6 +5,7 @@ import {
   CtrlPage,
   ExodusPage,
   MetamaskPage,
+  MetamaskStablePage,
   OkxPage,
   SafeIframePage,
   SafeWcPage,
@@ -12,6 +13,7 @@ import {
 } from '@lidofinance/wallets-testing-wallets';
 
 export const WALLET_PAGES = {
+  metamaskStable: MetamaskStablePage,
   metamask: MetamaskPage,
   okx: OkxPage,
   coin98: Coin98,

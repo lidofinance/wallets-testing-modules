@@ -9,7 +9,10 @@ import {
   Extension,
   ExtensionService,
 } from '@lidofinance/wallets-testing-extensions';
-import { EthereumNodeService } from '@lidofinance/wallets-testing-nodes';
+import {
+  EthereumNodeService,
+  EthereumNodeServiceOptions,
+} from '@lidofinance/wallets-testing-nodes';
 import {
   DEFAULT_BROWSER_CONTEXT_DIR_NAME,
   WALLET_PAGES,
@@ -22,15 +25,11 @@ import { mnemonicToAccount } from 'viem/accounts';
 import { test } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
 
-type NodeConfig = {
-  rpcUrlToMock: string; // example: '**/api/rpc?chainId=1'
-};
-
 type BrowserServiceOptions = {
   networkConfig: NetworkConfig;
   accountConfig: AccountConfig;
   walletConfig: CommonWalletConfig;
-  nodeConfig?: NodeConfig;
+  nodeConfig?: EthereumNodeServiceOptions;
   standUrl?: string;
   browserOptions?: BrowserOptions;
 };
@@ -93,12 +92,9 @@ export class BrowserService {
 
   async setupWithNode() {
     this.isFork = true;
-    this.ethereumNodeService = new EthereumNodeService({
-      chainId: this.options.networkConfig.chainId,
-      rpcUrl: this.options.networkConfig.rpcUrl,
-      defaultBalance: 100,
-    });
+    this.ethereumNodeService = new EthereumNodeService(this.options.nodeConfig);
     await this.ethereumNodeService.startNode();
+    await this.ethereumNodeService.setupDefaultTokenBalances();
     const account = this.ethereumNodeService.getAccount();
     await this.setup();
 
@@ -129,11 +125,9 @@ export class BrowserService {
       this.options.walletConfig.LATEST_STABLE_DOWNLOAD_LINK,
     );
 
-    const contextDataDir =
-      !this.ethereumNodeService?.state &&
-      `${DEFAULT_BROWSER_CONTEXT_DIR_NAME}_${
-        mnemonicToAccount(this.options.accountConfig.SECRET_PHRASE).address
-      }_${this.options.walletConfig.WALLET_NAME}`;
+    const contextDataDir = `${DEFAULT_BROWSER_CONTEXT_DIR_NAME}_${
+      mnemonicToAccount(this.options.accountConfig.SECRET_PHRASE).address
+    }_isFork-${this.isFork}_${this.options.walletConfig.WALLET_NAME}`;
     this.browserContextService = new BrowserContextService(extensionPath, {
       contextDataDir,
       browserOptions: this.options.browserOptions,

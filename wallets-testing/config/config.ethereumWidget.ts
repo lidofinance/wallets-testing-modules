@@ -6,7 +6,7 @@ import { configService } from './config.service';
 
 export interface WidgetConfig {
   url: string;
-  nodeUrl: string;
+  rpcUrlToMock: string;
   name: string;
   network: NetworkConfig;
   stakeContract: string;
@@ -15,7 +15,7 @@ export interface WidgetConfig {
 
 const ETHEREUM_WIDGET_CONFIG: WidgetConfig = {
   url: 'https://stake.lido.fi',
-  nodeUrl: '**/api/rpc?chainId=1',
+  rpcUrlToMock: '**/api/rpc?chainId=1',
   name: 'ethereum',
   network: {
     ...NETWORKS_CONFIG.mainnet.ETHEREUM,
@@ -29,7 +29,7 @@ const ETHEREUM_WIDGET_CONFIG: WidgetConfig = {
 
 const HOODI_WIDGET_CONFIG: WidgetConfig = {
   url: 'https://stake-hoodi.testnet.fi',
-  nodeUrl: '',
+  rpcUrlToMock: '',
   name: 'hoodi',
   network: {
     ...NETWORKS_CONFIG.testnet.ETHEREUM_HOODI,

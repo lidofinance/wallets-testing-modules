@@ -9,8 +9,8 @@ test.describe('Ethereum node', () => {
   test.beforeEach(async () => {
     const widgetConfig = getWidgetConfig['Ethereum Mainnet'];
     ethereumNodeService = new EthereumNodeService({
-      chainId: widgetConfig.network.chainId,
       rpcUrl: widgetConfig.network.rpcUrl,
+      rpcUrlToMock: widgetConfig.rpcUrlToMock,
       defaultBalance: 1000,
     });
   });

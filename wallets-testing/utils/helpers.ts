@@ -17,7 +17,8 @@ export async function initBrowserWithExtension(
     },
     walletConfig: walletConfig,
     nodeConfig: {
-      rpcUrlToMock: widgetConfig.nodeUrl,
+      rpcUrl: widgetConfig.network.rpcUrl,
+      rpcUrlToMock: widgetConfig.rpcUrlToMock,
     },
     browserOptions: {
       slowMo: 200,

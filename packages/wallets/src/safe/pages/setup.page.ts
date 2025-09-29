@@ -105,6 +105,7 @@ export class SetupPage {
       try {
         const [connectWalletPage] = await Promise.all([
           this.page.context().waitForEvent('page', { timeout: 5000 }),
+
           this.page
             .getByText(
               this.extensionPage.options.walletConfig.EXTENSION_WALLET_NAME,
