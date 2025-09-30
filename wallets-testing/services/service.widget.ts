@@ -1,7 +1,12 @@
 import { getWidgetConfig, WidgetConfig } from '../config';
 import { expect, test } from '@playwright/test';
 import { BrowserService } from '@lidofinance/browser-service';
-import { WIDGET_PAGE, WidgetPage } from '../pages';
+import {
+  tokenToWithdraw,
+  tokenToWrap,
+  WIDGET_PAGE,
+  WidgetPage,
+} from '../pages';
 import { waitForTextContent } from '../utils/helpers';
 import { WalletConnectTypes } from '@lidofinance/wallets-testing-wallets';
 
@@ -54,9 +59,23 @@ export class WidgetService {
   }
 
   // Function not tested with walletConnectTypes.WC
-  async doWrapping(txAmount: string) {
+  async doWrapping(txAmount: string, token: tokenToWrap) {
     await test.step('Do wrapping', async () => {
-      await this.widgetPage.wrapStETH(txAmount);
+      await this.widgetPage.wrap(txAmount, token);
+    });
+  }
+
+  // Function not tested with walletConnectTypes.WC
+  async doUnwrapping(txAmount: string) {
+    await test.step('Do unwrapping', async () => {
+      await this.widgetPage.unwrap(txAmount);
+    });
+  }
+
+  // Function not tested with walletConnectTypes.WC
+  async doWithdrawal(txAmount: string, token: tokenToWithdraw) {
+    await test.step('Do withdrawal request', async () => {
+      await this.widgetPage.request(txAmount, token);
     });
   }
 }

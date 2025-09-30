@@ -11,6 +11,7 @@ export interface WidgetConfig {
   network: NetworkConfig;
   stakeContract: string;
   wrapContract?: string;
+  withdrawalContract: string;
 }
 
 const ETHEREUM_WIDGET_CONFIG: WidgetConfig = {
@@ -25,6 +26,7 @@ const ETHEREUM_WIDGET_CONFIG: WidgetConfig = {
   },
   stakeContract: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
   wrapContract: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
+  withdrawalContract: '0x889edC2eDab5f40e902b864aD4d7AdE8E412F9B1',
 };
 
 const HOODI_WIDGET_CONFIG: WidgetConfig = {
@@ -39,6 +41,7 @@ const HOODI_WIDGET_CONFIG: WidgetConfig = {
   },
   stakeContract: '0x3508A952176b3c15387C97BE809eaffB1982176a',
   wrapContract: '0x7E99eE3C66636DE415D2d7C880938F2f40f94De4',
+  withdrawalContract: '0xfe56573178f1bcdf53F01A6E9977670dcBBD9186',
 };
 
 export const getWidgetConfig = {

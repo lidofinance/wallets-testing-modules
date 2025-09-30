@@ -23,9 +23,9 @@ export class SetupPage {
       this.chainId === 1
         ? 'https://app.safe.global/welcome/accounts'
         : 'https://app.safe.protofire.io/welcome/accounts'; //Hoodi
-    this.saveCookiesSettingBtn = this.page.locator(
-      'button:has-text("Accept all")',
-    );
+    this.saveCookiesSettingBtn = this.page
+      .locator('button:has-text("Accept all")')
+      .or(this.page.locator('button:has-text("Save settings")')); // Protofire Safe
     this.connectWalletBtn = this.page.getByTestId('connect-wallet-btn').nth(0);
     this.accountCenter = this.page.getByTestId('open-account-center');
     this.safeAccount = this.page
