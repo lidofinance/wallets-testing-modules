@@ -23,9 +23,9 @@ export class SetupPage {
       this.chainId === 1
         ? 'https://app.safe.global/welcome/accounts'
         : 'https://app.safe.protofire.io/welcome/accounts'; //Hoodi
-    this.saveCookiesSettingBtn = this.page
-      .locator('button:has-text("Accept all")')
-      .or(this.page.locator('button:has-text("Save settings")')); // Protofire Safe
+    this.saveCookiesSettingBtn = this.page.locator(
+      'button:has-text("Save settings")',
+    );
     this.connectWalletBtn = this.page.getByTestId('connect-wallet-btn').nth(0);
     this.accountCenter = this.page.getByTestId('open-account-center');
     this.safeAccount = this.page
@@ -73,7 +73,6 @@ export class SetupPage {
 
   async connectWalletExtension() {
     await test.step('Connect MetaMask wallet', async () => {
-      await this.closeExtraPopup();
       await this.agreeCookiesSetting();
       await this.page.waitForTimeout(2000);
       await this.closeBeamerAnnouncementBanner();
@@ -99,7 +98,6 @@ export class SetupPage {
         }
         this.logger.log(`[Attempt ${attempt}] Connect wallet to Safe failed`);
         await this.page.reload();
-        await this.closeExtraPopup();
       }
 
       try {
@@ -117,21 +115,6 @@ export class SetupPage {
         // Expect the wallet is connected
       }
       await this.accountCenter.waitFor({ state: 'visible', timeout: 5000 });
-    });
-  }
-
-  async closeExtraPopup() {
-    await test.step('Close extra popup', async () => {
-      await this.closeSecurityNoticeBtn
-        .waitFor({ state: 'visible', timeout: 2000 })
-        .then(() => {
-          this.closeSecurityNoticeBtn.click();
-        })
-        .catch(() => {
-          this.logger.warn(
-            'Security Notice is not displayed (maybe need to remove it?)',
-          );
-        });
     });
   }
 

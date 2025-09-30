@@ -11,7 +11,7 @@ import { BrowserService } from '@lidofinance/browser-service';
 import { getWidgetConfig } from '../../config';
 import { tokenToWithdraw, tokenToWrap } from '../../pages';
 
-test.describe('Test widget Lido app of Safe wallet (iframe)', () => {
+test.describe('Test widget Lido app of Safe wallet (iframe) [Hoodi]', () => {
   let browserService: BrowserService;
 
   test.beforeAll(async () => {

@@ -43,7 +43,6 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
 
       await test.step('Setup RPC url', async () => {
         await this.navigate('envSetting');
-        await this.setupPage.closeExtraPopup();
         await this.settingPage.rpcUrlInput.fill(
           this.options.standConfig.rpcUrl,
         );
@@ -83,8 +82,6 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
     await this.initLocators(this.options.browserContext.pages()[0]);
     await this.navigate('lidoApp');
     await test.step('Open Lido app in the Safe', async () => {
-      await this.setupPage.closeExtraPopup();
-
       while (
         await this.setupPage.waitForVisible(
           this.setupPage.inAppContinueBtn,
