@@ -24,26 +24,26 @@ test.describe('Test widget Lido app of Safe wallet (iframe) [Hoodi]', () => {
   });
 
   test('Stake', async () => {
-    await stake(browserService, '0.005');
+    await stake(browserService, '0.0005');
   });
 
   test('Wrap stETH', async () => {
-    await wrap(browserService, '0.005', tokenToWrap.stETH);
+    await wrap(browserService, '0.0005', tokenToWrap.stETH);
   });
 
   test('Wrap ETH', async () => {
-    await wrap(browserService, '0.005', tokenToWrap.ETH);
+    await wrap(browserService, '0.0005', tokenToWrap.ETH);
   });
 
   test('Unwrap wstETH', async () => {
-    await unwrap(browserService, '0.005');
+    await unwrap(browserService, '0.0005');
   });
 
   test('Request Withdraw stETH', async () => {
-    await request(browserService, '0.005', tokenToWithdraw.stETH);
+    await request(browserService, '0.0005', tokenToWithdraw.stETH);
   });
 
   test('Request Withdraw wstETH', async () => {
-    await request(browserService, '0.005', tokenToWithdraw.wstETH);
+    await request(browserService, '0.0005', tokenToWithdraw.wstETH);
   });
 });
