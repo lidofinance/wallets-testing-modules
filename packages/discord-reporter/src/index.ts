@@ -82,9 +82,7 @@ class DiscordReporter implements Reporter {
     if (!this.enabled) return;
 
     if (!this.options.discordWebhookUrl && !this.options.slackWebhookUrl) {
-      this.logger.error(
-        'Neither discordWebhookUrl nor slackWebhookUrl provided',
-      );
+      this.logger.error('No discordWebhookUrl nor slackWebhookUrl provided');
       this.enabled = false;
       return;
     }
