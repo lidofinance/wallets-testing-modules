@@ -212,7 +212,7 @@ class DiscordReporter implements Reporter {
   private buildSlackPayload(embed: Embed) {
     const slackMention =
       this.failedTestCount > 0 && this.options.slackDutyTag
-        ? `<@${this.options.slackDutyTag}> please take a look at the test results`
+        ? `<!subteam^${this.options.slackDutyTag}> please take a look at the test results`
         : undefined;
 
     const colorHex = this.toSlackHex(embed.color);
