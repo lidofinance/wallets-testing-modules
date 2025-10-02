@@ -216,7 +216,7 @@ export class TransactionPage {
           if (actionParameters.length > 1) {
             actionInfo = actionInfo
               .locator(
-                '[data-testid="tx-row-title"] :text-matches("value|amounts")',
+                '[data-testid="tx-row-title"] :text-matches("value|amount")',
               )
               .locator('../../../..');
           }
