@@ -3,6 +3,7 @@ import { BrowserService } from '@lidofinance/browser-service';
 import { CommonWalletConfig } from '@lidofinance/wallets-testing-wallets';
 import { configService, getWidgetConfig, WidgetConfig } from '../config';
 import { WidgetService } from '../services';
+import { tokenToWithdraw, tokenToWrap } from '../pages';
 
 export async function initBrowserWithExtension(
   walletConfig: CommonWalletConfig,
@@ -43,13 +44,30 @@ export async function stake(browserService: BrowserService, txAmount: string) {
   await widgetService.doStaking(txAmount);
 }
 
-export async function wrapStETH(
+export async function wrap(
   browserService: BrowserService,
   txAmount: string,
+  token: tokenToWrap,
 ) {
   const widgetService = new WidgetService(browserService);
   await widgetService.connectWallet();
-  await widgetService.doWrapping(txAmount);
+  await widgetService.doWrapping(txAmount, token);
+}
+
+export async function unwrap(browserService: BrowserService, txAmount: string) {
+  const widgetService = new WidgetService(browserService);
+  await widgetService.connectWallet();
+  await widgetService.doUnwrapping(txAmount);
+}
+
+export async function request(
+  browserService: BrowserService,
+  txAmount: string,
+  token: tokenToWithdraw,
+) {
+  const widgetService = new WidgetService(browserService);
+  await widgetService.connectWallet();
+  await widgetService.doWithdrawal(txAmount, token);
 }
 
 export async function waitForTextContent(locator: Locator) {

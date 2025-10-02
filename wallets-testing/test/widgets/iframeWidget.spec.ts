@@ -2,14 +2,18 @@ import { test } from '@playwright/test';
 import { IFRAME_SAFE_COMMON_CONFIG } from '@lidofinance/wallets-testing-wallets';
 import {
   initBrowserWithExtension,
+  request,
   stake,
-  wrapStETH,
+  unwrap,
+  wrap,
 } from '../../utils/helpers';
 import { BrowserService } from '@lidofinance/browser-service';
 import { getWidgetConfig } from '../../config';
+import { tokenToWithdraw, tokenToWrap } from '../../pages';
 
-test.describe('Test widget Lido app of Safe wallet (iframe)', () => {
+test.describe('Test widget Lido app of Safe wallet (iframe) [Hoodi]', () => {
   let browserService: BrowserService;
+  const txAmount = '0.0005';
 
   test.beforeAll(async () => {
     const isFork = false;
@@ -21,10 +25,26 @@ test.describe('Test widget Lido app of Safe wallet (iframe)', () => {
   });
 
   test('Stake', async () => {
-    await stake(browserService, '0.005');
+    await stake(browserService, txAmount);
   });
 
-  test('Wrap', async () => {
-    await wrapStETH(browserService, '0.005');
+  test('Wrap stETH', async () => {
+    await wrap(browserService, txAmount, tokenToWrap.stETH);
+  });
+
+  test('Wrap ETH', async () => {
+    await wrap(browserService, txAmount, tokenToWrap.ETH);
+  });
+
+  test('Unwrap wstETH', async () => {
+    await unwrap(browserService, txAmount);
+  });
+
+  test('Request Withdraw stETH', async () => {
+    await request(browserService, txAmount, tokenToWithdraw.stETH);
+  });
+
+  test('Request Withdraw wstETH', async () => {
+    await request(browserService, txAmount, tokenToWithdraw.wstETH);
   });
 });

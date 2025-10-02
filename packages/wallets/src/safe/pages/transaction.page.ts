@@ -9,7 +9,9 @@ export class TransactionPage {
   transactionCardContent: Locator;
   contractExplorerUrl: Locator;
   tokenAmount: Locator;
+  continueTxBtn: Locator;
   executeTxBtn: Locator;
+  comboSubmitDropdown: Locator;
   finishTxBtn: Locator;
   switchNetworkBtn: Locator;
 
@@ -27,7 +29,11 @@ export class TransactionPage {
       .getByTestId('explorer-btn')
       .first();
     this.tokenAmount = this.transactionCardContent.getByTestId('token-amount');
-    this.executeTxBtn = this.page.getByTestId('execute-form-btn');
+    this.continueTxBtn = this.page.getByTestId('continue-sign-btn');
+    this.executeTxBtn = this.page
+      .getByTestId('execute-form-btn')
+      .or(this.page.getByTestId('combo-submit-execute'));
+    this.comboSubmitDropdown = this.page.getByTestId('combo-submit-dropdown');
     this.finishTxBtn = this.page.getByTestId('finish-transaction-btn');
     this.switchNetworkBtn = this.page.getByText('Switch to');
     this.allActionsList = this.page.getByTestId('all-actions');
@@ -47,32 +53,66 @@ export class TransactionPage {
       await this.allActionsList.waitFor({ timeout: 3000, state: 'visible' });
       isNeedToCheckAllActions = true;
     } catch {
+      // If only Execution action (without approval)
       const contractExplorerUrl = await this.contractExplorerUrl.getAttribute(
         'href',
       );
       const match = contractExplorerUrl.match(/address\/([^/\s]+)/);
-      expect(match[1]).toEqual(expectedAddress);
+      expect(
+        match[1],
+        'The displayed contract must compare with the correct address',
+      ).toEqual(expectedAddress);
     }
 
+    // If the tx has 2 actions (Approval and Execution)
     if (isNeedToCheckAllActions) {
       const actions = await this.actionItem.all();
-      for (const action of actions) {
-        await test.step(`Check address of "${await action.textContent()}" action`, async () => {
-          if ((await action.getAttribute('aria-expanded')) === 'false') {
-            await action.click();
-          }
-          const actionInfo = action.locator('../..');
-          const contractsUrls = await actionInfo
-            .getByTestId('explorer-btn')
-            .all();
-          const contractExplorerUrl = await contractsUrls[
-            contractsUrls.length - 1
-          ].getAttribute('href');
+      expect(
+        actions.length,
+        'Approve and Execution transactions (2 actions)',
+      ).toBe(2);
+      const approveAction = actions[0];
+      const txAction = actions[1];
 
-          const match = contractExplorerUrl.match(/address\/([^/\s]+)/);
-          expect(match[1]).toEqual(expectedAddress);
-        });
-      }
+      await test.step('Check address of Approve action', async () => {
+        if ((await approveAction.getAttribute('aria-expanded')) === 'false') {
+          await approveAction.click();
+        }
+
+        const actionInfo = approveAction
+          .locator('../..')
+          .locator('[data-testid="tx-row-title"]:has-text("spender")')
+          .locator('..');
+        const contractsUrls = await actionInfo
+          .getByTestId('explorer-btn')
+          .all();
+        const contractExplorerUrl = await contractsUrls[
+          contractsUrls.length - 1
+        ].getAttribute('href');
+
+        const match = contractExplorerUrl.match(/address\/([^/\s]+)/);
+        expect(
+          match[1],
+          'The displayed contract must compare with the correct address',
+        ).toEqual(expectedAddress);
+      });
+
+      await test.step('Check address of the Execution action', async () => {
+        if ((await txAction.getAttribute('aria-expanded')) === 'false') {
+          await txAction.click();
+        }
+        const actionInfo = txAction.locator('../..');
+        const contractExplorerUrl = await actionInfo
+          .getByTestId('explorer-btn')
+          .first()
+          .getAttribute('href');
+
+        const match = contractExplorerUrl.match(/address\/([^/\s]+)/);
+        expect(
+          match[1],
+          'The displayed contract must compare with the correct address',
+        ).toEqual(expectedAddress);
+      });
     }
   }
 
@@ -88,6 +128,25 @@ export class TransactionPage {
         ]);
         await this.extensionPage.confirmTx(extensionTxPage);
       }
+    });
+
+    // we need to do some steps depending on the UI displays
+    await test.step('Prepare the Safe Tx page for the transaction execution', async () => {
+      const result = await Promise.race([
+        this.executeTxBtn
+          .waitFor({ timeout: 5000, state: 'visible' })
+          .then(() => 'execute'),
+        this.continueTxBtn
+          .waitFor({ timeout: 5000, state: 'visible' })
+          .then(() => 'continue'),
+        this.comboSubmitDropdown
+          .waitFor({ timeout: 5000, state: 'visible' })
+          .then(() => 'dropdown'),
+      ]);
+
+      if (result == 'continue') await this.continueTxBtn.click();
+      if (result == 'continue' || result == 'dropdown')
+        await this.selectOptionToExecuteTx();
     });
 
     const [extensionTxPage] = await Promise.all([
@@ -137,11 +196,35 @@ export class TransactionPage {
       await this.allActionsList.waitFor({ timeout: 5000, state: 'visible' });
       isNeedToCheckAllActions = true;
     } catch {
-      expect(await this.tokenAmount.textContent()).toEqual(expectedAmount);
+      // continue
     }
 
+    // If only Execution action (without approval)
+    if (!isNeedToCheckAllActions) {
+      if (await this.tokenAmount.count()) {
+        expect(
+          await this.tokenAmount.textContent(),
+          "The displayed transaction amount must compare with the user's put amount",
+        ).toEqual(expectedAmount);
+      } else {
+        // unwrap tx - the only one execution action, but the tx amount displayed in the actions lists
+        const valueParam = await this.page
+          .getByTestId('tx-data-row')
+          .textContent();
+        expect(
+          String(new Big(valueParam).div(1e18)),
+          "The displayed transaction amount must compare with the user's put amount",
+        ).toEqual(expectedAmount);
+      }
+    }
+
+    // If the tx has 2 actions (Approval and Execution)
     if (isNeedToCheckAllActions) {
       const actions = await this.actionItem.all();
+      expect(
+        actions.length,
+        'Approve and Execution transactions (2 actions)',
+      ).toBe(2);
       for (const action of actions) {
         await test.step(`Check amount of "${await action.textContent()}" action`, async () => {
           if ((await action.getAttribute('aria-expanded')) === 'false') {
@@ -154,16 +237,24 @@ export class TransactionPage {
 
           if (actionParameters.length > 1) {
             actionInfo = actionInfo
-              .locator('[data-testid="tx-row-title"]:has-text("value")')
-              .locator('..');
+              .locator(
+                '[data-testid="tx-row-title"] :text-matches("value|amount")',
+              )
+              .locator('../../../..');
           }
 
-          const valueParam = await actionInfo
-            .getByTestId('tx-data-row')
-            .textContent();
+          const txAmountValue = parseFloat(
+            (await actionInfo.getByTestId('tx-data-row').textContent()).replace(
+              /[[\]]/g,
+              '',
+            ),
+          );
 
           // Safe UI displays the BigInt type of tx value (100000000000), and we need to convert to before matching
-          expect(String(new Big(valueParam).div(1e18))).toEqual(expectedAmount);
+          expect(
+            String(new Big(txAmountValue).div(1e18)),
+            "The displayed transaction amount must compare with the user's put amount",
+          ).toEqual(expectedAmount);
         });
       }
     }
@@ -201,5 +292,13 @@ export class TransactionPage {
       );
       await expect(this.transactionFailBanner).not.toBeVisible();
     }
+  }
+
+  private async selectOptionToExecuteTx() {
+    await this.comboSubmitDropdown.click();
+    await this.page
+      .getByTestId('combo-submit-popover')
+      .getByText('Execute')
+      .click();
   }
 }

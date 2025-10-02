@@ -2,6 +2,16 @@ import { Locator, Page } from '@playwright/test';
 import { WalletPage } from '@lidofinance/wallets-testing-wallets';
 import { WidgetConfig } from '../config';
 
+export enum tokenToWrap {
+  ETH = 'ETH',
+  stETH = 'stETH',
+}
+
+export enum tokenToWithdraw {
+  stETH = 'stETH',
+  wstETH = 'wstETH',
+}
+
 export interface WidgetPage {
   page: Page;
   walletPage: WalletPage<any>;
@@ -16,7 +26,7 @@ export interface WidgetPage {
   providerName: Locator;
   ethAvailableToStakeValue: Locator;
   termsCheckbox: Locator;
-  copyWcUrlBtn: Locator;
+  copyWcUrlBtn?: Locator; // EOA, WC+Safe
   closeAccountModalBtn: Locator;
 
   goto?(path?: string): Promise<void>;
@@ -25,7 +35,11 @@ export interface WidgetPage {
 
   stake(txAmount: string): Promise<void>;
 
-  wrapStETH?(txAmount: string): Promise<void>;
+  wrap?(txAmount: string, token: tokenToWrap): Promise<void>;
+
+  unwrap?(txAmount: string): Promise<void>;
+
+  request?(txAmount: string, token: tokenToWithdraw): Promise<void>;
 
   getWalletButtonByName?(walletButtonName: string): Promise<Locator>;
 
