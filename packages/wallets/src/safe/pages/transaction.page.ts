@@ -203,6 +203,7 @@ export class TransactionPage {
     // If the tx has 2 actions (Approval and Execution)
     if (isNeedToCheckAllActions) {
       const actions = await this.actionItem.all();
+      expect(actions.length, 'Approve and Execution transactions').toBe(2);
       for (const action of actions) {
         await test.step(`Check amount of "${await action.textContent()}" action`, async () => {
           if ((await action.getAttribute('aria-expanded')) === 'false') {
