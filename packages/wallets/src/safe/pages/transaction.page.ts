@@ -58,13 +58,19 @@ export class TransactionPage {
         'href',
       );
       const match = contractExplorerUrl.match(/address\/([^/\s]+)/);
-      expect(match[1]).toEqual(expectedAddress);
+      expect(
+        match[1],
+        'The displayed contract must compare with the correct address',
+      ).toEqual(expectedAddress);
     }
 
     // If the tx has 2 actions (Approval and Execution)
     if (isNeedToCheckAllActions) {
       const actions = await this.actionItem.all();
-      expect(actions.length, 'Approve and Execution transactions').toBe(2);
+      expect(
+        actions.length,
+        'Approve and Execution transactions (2 actions)',
+      ).toBe(2);
       const approveAction = actions[0];
       const txAction = actions[1];
 
@@ -85,7 +91,10 @@ export class TransactionPage {
         ].getAttribute('href');
 
         const match = contractExplorerUrl.match(/address\/([^/\s]+)/);
-        expect(match[1]).toEqual(expectedAddress);
+        expect(
+          match[1],
+          'The displayed contract must compare with the correct address',
+        ).toEqual(expectedAddress);
       });
 
       await test.step('Check address of the Execution action', async () => {
@@ -99,7 +108,10 @@ export class TransactionPage {
           .getAttribute('href');
 
         const match = contractExplorerUrl.match(/address\/([^/\s]+)/);
-        expect(match[1]).toEqual(expectedAddress);
+        expect(
+          match[1],
+          'The displayed contract must compare with the correct address',
+        ).toEqual(expectedAddress);
       });
     }
   }
@@ -190,20 +202,29 @@ export class TransactionPage {
     // If only Execution action (without approval)
     if (!isNeedToCheckAllActions) {
       if (await this.tokenAmount.count()) {
-        expect(await this.tokenAmount.textContent()).toEqual(expectedAmount);
+        expect(
+          await this.tokenAmount.textContent(),
+          "The displayed transaction amount must compare with the user's put amount",
+        ).toEqual(expectedAmount);
       } else {
         // unwrap tx - the only one execution action, but the tx amount displayed in the actions lists
         const valueParam = await this.page
           .getByTestId('tx-data-row')
           .textContent();
-        expect(String(new Big(valueParam).div(1e18))).toEqual(expectedAmount);
+        expect(
+          String(new Big(valueParam).div(1e18)),
+          "The displayed transaction amount must compare with the user's put amount",
+        ).toEqual(expectedAmount);
       }
     }
 
     // If the tx has 2 actions (Approval and Execution)
     if (isNeedToCheckAllActions) {
       const actions = await this.actionItem.all();
-      expect(actions.length, 'Approve and Execution transactions').toBe(2);
+      expect(
+        actions.length,
+        'Approve and Execution transactions (2 actions)',
+      ).toBe(2);
       for (const action of actions) {
         await test.step(`Check amount of "${await action.textContent()}" action`, async () => {
           if ((await action.getAttribute('aria-expanded')) === 'false') {
@@ -230,9 +251,10 @@ export class TransactionPage {
           );
 
           // Safe UI displays the BigInt type of tx value (100000000000), and we need to convert to before matching
-          expect(String(new Big(txAmountValue).div(1e18))).toEqual(
-            expectedAmount,
-          );
+          expect(
+            String(new Big(txAmountValue).div(1e18)),
+            "The displayed transaction amount must compare with the user's put amount",
+          ).toEqual(expectedAmount);
         });
       }
     }
