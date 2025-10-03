@@ -45,7 +45,7 @@ test.describe('Ethereum', () => {
     await connectWallet(browserService);
   });
 
-  test.skip(`Coinbase connect`, async () => {
+  test.only(`Coinbase connect`, async () => {
     browserService = await initBrowserWithExtension(COINBASE_COMMON_CONFIG);
     await connectWallet(browserService);
   });
