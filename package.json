@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "debug",
+        "channel": "debug-test",
+        "prerelease": "debug-test"
       }
     ]
   }
