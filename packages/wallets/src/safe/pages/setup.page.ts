@@ -44,6 +44,29 @@ export class SetupPage {
   async firstTimeSetupWallet() {
     return await test.step('First time Safe wallet setup', async () => {
       await this.page.goto(this.setupUrl);
+
+      try {
+        // will remove this in the future, when the Safe Labs page stops displaying before tests
+        await test.step('Accept terms of Safe Labs', async () => {
+          await this.page
+            .getByText(
+              'Starting October 15, 2025, Safe Labs GmbH ("Safe Labs" or "we") will offer the interface to your multi-signature wallet',
+            )
+            .waitFor({ state: 'visible', timeout: 2000 });
+          for (const checkbox of await this.page.getByRole('checkbox').all()) {
+            await checkbox.check();
+          }
+          await this.page
+            .locator('button:has-text("Accept terms & Continue")')
+            .click();
+        });
+      } catch {
+        // continue setup wallet
+        this.logger.warn(
+          'The Safe Labs page is not displayed. Maybe need to remove? (check prod, please)',
+        );
+      }
+
       await this.connectWalletExtension();
       try {
         await this.safeAccount.waitFor({ state: 'visible', timeout: 15000 });
