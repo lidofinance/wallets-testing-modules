@@ -19,11 +19,6 @@ const RED = 13959168;
 
 class SlackReporter implements Reporter {
   groups: string[] = [];
-  options: { outputFile: string };
-
-  constructor(options: { outputFile: string }) {
-    this.options = options;
-  }
 
   onTestEnd(test: TestCase, result: TestResult) {
     let walletVersion = '';
