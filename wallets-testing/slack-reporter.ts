@@ -47,7 +47,7 @@ class SlackReporter implements Reporter {
         this.groups.join('\n'),
         `⏳ *Run Time:* ${this.formatDuration(result.duration)}`,
       ],
-      url: 'https://google.com', //`${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
+      url: `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
       status: result.status,
     };
 
