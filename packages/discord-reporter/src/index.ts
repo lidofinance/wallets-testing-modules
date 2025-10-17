@@ -10,17 +10,12 @@ import { ConsoleLogger } from '@nestjs/common';
 const GREEN = 47872;
 const RED = 13959168;
 
-type EmbedField = {
-  name: string;
-  value: string;
-  inline?: boolean;
-};
-
-type Embed = {
+export type Embed = {
   title: string;
   description: string;
+  status: string;
   color: number;
-  fields: EmbedField[];
+  fields: string[];
   url?: string;
 };
 
@@ -34,6 +29,7 @@ type ReporterOptions = {
   customTitle?: string;
   customDescription?: string;
   ciRunUrl?: string;
+  listView?: boolean; // table view by default
 
   // Discord
   discordWebhookUrl?: string;
@@ -137,31 +133,14 @@ class DiscordReporter implements Reporter {
       }${viewLinkLine ? `\n${viewLinkLine}` : ''}`,
       color: status.color,
       fields: [
-        {
-          name: `${testStatusToEmoji.passed} Passed`,
-          value: String(this.passedTestCount),
-          inline: true,
-        },
-        {
-          name: `${testStatusToEmoji.failed} Failed`,
-          value: String(this.failedTestCount),
-          inline: true,
-        },
-        { name: '', value: '', inline: true },
-        {
-          name: `${testStatusToEmoji.skipped} Skipped`,
-          value: String(this.skippedTestCount),
-          inline: true,
-        },
-        {
-          name: `${testStatusToEmoji.flaky} Flaky`,
-          value: String(this.flakyTestCount),
-          inline: true,
-        },
-        { name: '', value: '', inline: true },
-        { name: '⏳ Run Time', value: duration, inline: false },
+        `${testStatusToEmoji.passed} *Passed:* ${this.passedTestCount}`,
+        `${testStatusToEmoji.failed} *Failed:* ${this.failedTestCount}`,
+        `${testStatusToEmoji.skipped} *Skipped:* ${this.skippedTestCount}`,
+        `${testStatusToEmoji.flaky} *Flaky:* ${this.flakyTestCount}`,
+        `⏳ *Run Time:* ${duration}`,
       ],
       url: ciUrl || undefined,
+      status: result.status,
     };
 
     const slackEmbed: Embed = {
@@ -209,16 +188,15 @@ class DiscordReporter implements Reporter {
 
   private buildSlackPayload(embed: Embed) {
     const slackMention =
-      this.failedTestCount > 0 && this.options.slackDutyTag
+      embed.status != 'passed' &&
+      embed.status != 'skipped' &&
+      this.options.slackDutyTag
         ? `<!subteam^${this.options.slackDutyTag}> please take a look at the test results`
         : undefined;
 
     const colorHex = this.toSlackHex(embed.color);
     const title = (embed.title || '').trim();
-
-    const fields = (embed.fields || [])
-      .filter((f) => f.name?.trim() || f.value?.trim())
-      .map((f) => `*${f.name}:* ${f.value}`);
+    const fields = embed.fields || [];
 
     const blocks: any[] = [];
 
@@ -244,10 +222,19 @@ class DiscordReporter implements Reporter {
     }
 
     if (fields.length) {
-      blocks.push({
-        type: 'section',
-        fields: fields.map((t) => ({ type: 'mrkdwn', text: t })),
-      });
+      if (this.options.listView) {
+        fields.map((t) =>
+          blocks.push({
+            type: 'section',
+            text: { type: 'mrkdwn', text: t },
+          }),
+        );
+      } else {
+        blocks.push({
+          type: 'section',
+          fields: fields.map((t) => ({ type: 'mrkdwn', text: t })),
+        });
+      }
     }
 
     if (embed.url) {
