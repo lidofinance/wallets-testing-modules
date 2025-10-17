@@ -69,6 +69,9 @@ jobs:
           WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
           NODE_OPTIONS: --max-old-space-size=4096
           SUITE: ${{ inputs.suite }}
+          REPORT_ENABLED: ${{ github.event_name == 'schedule' || inputs.notify }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_DUTY_TAG: 'S09HF5VRFKJ'
 
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
@@ -76,26 +79,3 @@ jobs:
           name: playwright-report
           path: wallets-testing/playwright-report/
           retention-days: 7
-
-      - name: Set embeds
-        if: ${{ always() }}
-        working-directory: wallets-testing
-        run: |
-          EMBEDS=$(cat embeds.json | jq -c .embeds)
-          echo "EMBEDS=$EMBEDS" >> $GITHUB_ENV
-
-      - name: Discord notification when fails (include mentions)
-        if: ${{ failure() && (github.event_name == 'schedule' || inputs.notify) }}
-        uses: lidofinance/action-discord@0.3.2
-        with:
-          args: "<@&1118836223495131167> please take a look at the test results"
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          DISCORD_EMBEDS: ${{ env.EMBEDS }}
-
-      - name: Discord notification when success
-        if: ${{ success() && (github.event_name == 'schedule' || inputs.notify) }}
-        uses: lidofinance/action-discord@0.3.2
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          DISCORD_EMBEDS: ${{ env.EMBEDS }}
