@@ -89,7 +89,9 @@ export class DiscordReporter {
     } else if (this.options.reportType == 'list') {
       fields.push({
         name: '',
-        value: this.runInfo.testNames.join('\n'),
+        value: Object.entries(this.runInfo.testNames)
+          .map(([, name]) => name)
+          .join('\n'),
         inline: false,
       });
     }

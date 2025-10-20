@@ -25,7 +25,7 @@ export type Embed = {
 };
 
 export type RunInfo = {
-  testNames: string[];
+  testNames: { [key: string]: string };
   testCount: {
     passed: number;
     failed: number;
@@ -60,7 +60,7 @@ class ChatReporter implements Reporter {
   private enabled: boolean;
 
   private runInfo: RunInfo = {
-    testNames: [],
+    testNames: {},
     testCount: {
       passed: 0,
       failed: 0,
@@ -109,9 +109,9 @@ class ChatReporter implements Reporter {
         ? ` (_v.${test.annotations[0].description}_)`
         : '';
 
-    this.runInfo.testNames.push(
-      `- ${testStatusToEmoji[result.status]} ${test.title} ${walletVersion}`,
-    );
+    this.runInfo.testNames[test.id] = `- ${testStatusToEmoji[result.status]} ${
+      test.title
+    } ${walletVersion}`;
   }
 
   async onEnd(result: FullResult) {

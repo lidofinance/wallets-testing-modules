@@ -71,11 +71,12 @@ export class SlackReporter {
   }
 
   private getMainContent() {
-    if (
-      this.options.reportType == 'list' &&
-      this.runInfo.testNames.length > 0
-    ) {
-      return [this.runInfo.testNames.join('\n')];
+    if (this.options.reportType == 'list') {
+      return [
+        Object.entries(this.runInfo.testNames)
+          .map(([, name]) => name)
+          .join('\n'),
+      ];
     }
 
     if (this.options.reportType == 'count') {
