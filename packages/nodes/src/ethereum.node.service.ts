@@ -358,6 +358,7 @@ export class EthereumNodeService {
   ): Promise<APIResponse | undefined> {
     let lastErr;
 
+    options.maxRetries = options.maxRetries || 1;
     options.timeout = 0;
     options.headers = {
       'Content-Type': 'application/json',
