@@ -16,7 +16,11 @@ import {
   NetworkList,
 } from './pages/elements';
 import { getAddress } from 'viem';
-import { isPopularMainnetNetwork, isPopularTestnetNetwork } from './helper';
+import {
+  getCorrectNetworkName,
+  isPopularMainnetNetwork,
+  isPopularTestnetNetwork,
+} from './helper';
 
 export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
   page: Page | undefined;
@@ -89,6 +93,7 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   async changeNetwork(networkName: string) {
+    networkName = getCorrectNetworkName(networkName);
     await test.step(`Change Metamask network to ${networkName}`, async () => {
       await this.navigate();
       await this.settingsMenu.openNetworksSettings();
@@ -101,6 +106,8 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   async setupNetwork(networkConfig: NetworkConfig) {
+    networkConfig.chainName = getCorrectNetworkName(networkConfig.chainName);
+
     await test.step(`Setup "${networkConfig.chainName}" Network`, async () => {
       await this.settingsMenu.openNetworksSettings();
       if (
@@ -121,6 +128,7 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   async addNetwork(networkConfig: NetworkConfig, isClosePage = false) {
+    networkConfig.chainName = getCorrectNetworkName(networkConfig.chainName);
     await test.step(`Add new network "${networkConfig.chainName}"`, async () => {
       await this.navigate();
       if (await isPopularMainnetNetwork(networkConfig.chainName)) {

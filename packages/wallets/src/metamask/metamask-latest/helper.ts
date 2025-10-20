@@ -1,12 +1,12 @@
 const MMPopularNetworks = [
-  'zkSync Era Mainnet',
-  'OP Mainnet',
-  'Arbitrum One',
-  'Polygon Mainnet',
-  'Base Mainnet',
-  'Binance Smart Chain',
+  'zkSync Era',
+  'OP',
+  'Arbitrum',
+  'Polygon',
+  'Base',
+  'BNB Chain',
   'Linea',
-  'Avalanche Network C-Chain',
+  'Avalanche',
 ];
 
 const MMPopularTestnetNetworks = ['Sepolia', 'Linea Sepolia'];
@@ -17,4 +17,25 @@ export async function isPopularMainnetNetwork(networkName: string) {
 
 export async function isPopularTestnetNetwork(networkName: string) {
   return MMPopularTestnetNetworks.includes(networkName);
+}
+
+const incorrectNetworkNames = new Map<string, string>([
+  ['Ethereum Mainnet', 'Ethereum'],
+  ['zkSync Era Mainnet', 'zkSync Era'],
+  ['OP Mainnet', 'OP'],
+  ['Polygon Mainnet', 'Polygon'],
+  ['Base Mainnet', 'Base'],
+  ['Binance Smart Chain', 'BNB Chain'],
+  ['Arbitrum One', 'Arbitrum'],
+  ['Avalanche Network C-Chain', 'Avalanche'],
+]);
+
+/** Check network name and return correct name suited for MM wallet*/
+export function getCorrectNetworkName(networkName: string) {
+  for (const [incorrectName, correctName] of incorrectNetworkNames.entries()) {
+    if (networkName === incorrectName) {
+      return correctName;
+    }
+  }
+  return networkName;
 }

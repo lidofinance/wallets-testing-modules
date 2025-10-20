@@ -59,8 +59,6 @@ export class OnboardingPage {
 
   async firstTimeSetup() {
     await test.step('First time wallet setup (v2)', async () => {
-      // await this.getStartedButton.click();
-      // await this.confirmTermsOfOnboarding();
       await this.iHaveExistingWalletButton.click();
       await this.importWalletOptionBtn.click();
       await this.fillSecretPhrase(this.accountConfig.SECRET_PHRASE);
@@ -68,23 +66,9 @@ export class OnboardingPage {
       await this.createPassword(this.accountConfig.PASSWORD);
       await this.metricAgreeButton.click();
       await this.completeButton.click();
-      await this.downloadAppContinueButton.click();
-      await this.pinExtensionDoneButton.click();
       await this.page.waitForURL('**/home.html#');
     });
   }
-
-  // async confirmTermsOfOnboarding() {
-  //   await test.step('Confirm terms before onboarding', async () => {
-  //     await this.termsOfUseScrollButton.click();
-  //     while (
-  //       !(await this.page.locator('.mm-checkbox__input--checked').isVisible())
-  //     ) {
-  //       await this.termsCheckboxButton.click();
-  //     }
-  //     await this.termsOfUseAgreeButton.click();
-  //   });
-  // }
 
   async fillSecretPhrase(secretPhrase: string) {
     await test.step('Fill onboarding secret phrase field', async () => {
