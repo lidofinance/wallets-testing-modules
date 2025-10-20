@@ -66,8 +66,9 @@ export class DiscordReporter {
   }
 
   private getMainContent() {
+    const fields = [];
     if (this.options.reportType == 'count') {
-      return [
+      fields.push(
         {
           name: `${testStatusToEmoji.passed} *Passed:*`,
           value: String(this.runInfo.testCount.passed),
@@ -90,19 +91,15 @@ export class DiscordReporter {
           inline: true,
         },
         { name: '', value: '', inline: true },
-      ];
+      );
     } else if (this.options.reportType == 'list') {
-      this.runInfo.testNames.map((text) => {
-        return [
-          {
-            name: '',
-            value: text,
-            inline: false,
-          },
-        ];
+      fields.push({
+        name: '',
+        value: this.runInfo.testNames.join('\n'),
+        inline: false,
       });
     }
 
-    return [];
+    return fields;
   }
 }
