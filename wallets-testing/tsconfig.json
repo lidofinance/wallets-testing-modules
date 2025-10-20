@@ -40,5 +40,8 @@
     {
       "path": "../packages/browser-service"
     },
+    {
+      "path": "../packages/chat-reporter"
+    }
   ]
 }
