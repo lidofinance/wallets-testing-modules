@@ -1,12 +1,6 @@
 import { ReporterOptions, RunInfo } from '../index';
-import {
-  formatDuration,
-  postJson,
-  resultToStatus,
-  testStatusToEmoji,
-} from '../utils/helpers';
+import { postJson, resultToStatus, testStatusToEmoji } from '../utils/helpers';
 import { ConsoleLogger } from '@nestjs/common';
-import { FullResult } from '@playwright/test/reporter';
 
 type AttachmentBlock = { color: string; blocks: any[] }; // See the blocks structure in the Slack documentation
 type SlackPayload = { attachments: AttachmentBlock[] };
@@ -17,10 +11,11 @@ export class SlackReporter {
 
   constructor(private options: ReporterOptions, private runInfo: RunInfo) {}
 
-  async send(payload: SlackPayload) {
+  async send() {
     if (!this.options.slackWebhookUrl) return;
 
     try {
+      const payload = this.getEmbed();
       await postJson(this.options.slackWebhookUrl, payload);
       this.logger.log('Slack message sent');
     } catch (e: any) {
@@ -28,9 +23,9 @@ export class SlackReporter {
     }
   }
 
-  getEmbed(result: FullResult): SlackPayload {
+  getEmbed(): SlackPayload {
     const ciUrl = this.options.ciRunUrl?.trim() || undefined;
-    const status = resultToStatus[result.status];
+    const status = resultToStatus[this.runInfo.status];
 
     const attachment: AttachmentBlock = {
       color: this.toSlackHex(status.color),
@@ -60,7 +55,7 @@ export class SlackReporter {
     // Test run duration block
     attachment.blocks.push(
       { type: 'divider' },
-      this.getTextBlock(`⏳ *Run Time:* ${formatDuration(result.duration)}`),
+      this.getTextBlock(`⏳ *Run Time:* ${this.runInfo.duration}`),
     );
 
     // Action button with GutHub link

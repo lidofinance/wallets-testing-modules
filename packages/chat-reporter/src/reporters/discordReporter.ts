@@ -1,11 +1,5 @@
 import { Embed, ReporterOptions, RunInfo } from '../index';
-import { FullResult } from '@playwright/test/reporter';
-import {
-  formatDuration,
-  postJson,
-  resultToStatus,
-  testStatusToEmoji,
-} from '../utils/helpers';
+import { postJson, resultToStatus, testStatusToEmoji } from '../utils/helpers';
 import { ConsoleLogger } from '@nestjs/common';
 
 type DiscordPayload = {
@@ -19,10 +13,11 @@ export class DiscordReporter {
 
   constructor(private options: ReporterOptions, private runInfo: RunInfo) {}
 
-  async send(payload: DiscordPayload) {
+  async send() {
     if (!this.options.discordWebhookUrl) return;
 
     try {
+      const payload = this.getEmbed();
       await postJson(this.options.discordWebhookUrl, payload);
       this.logger.log('Discord message sent');
     } catch (e: any) {
@@ -30,8 +25,8 @@ export class DiscordReporter {
     }
   }
 
-  getEmbed(result: FullResult): DiscordPayload {
-    const status = resultToStatus[result.status];
+  getEmbed(): DiscordPayload {
+    const status = resultToStatus[this.runInfo.status];
 
     const embed: Embed = {
       title: `${this.options.customTitle || ''} ${status.title}`.trim(),
@@ -39,17 +34,16 @@ export class DiscordReporter {
       color: status.color,
       fields: [],
       url: this.options.ciRunUrl?.trim() || undefined,
-      status: result.status,
+      status: this.runInfo.status,
     };
 
     // Main content
     embed.fields.push(...this.getMainContent());
 
     // Test run duration
-    const duration = formatDuration(result.duration);
     embed.fields.push({
       name: '⏳ *Run Time:*',
-      value: duration,
+      value: this.runInfo.duration,
       inline: true,
     });
 

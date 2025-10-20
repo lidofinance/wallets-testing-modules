@@ -7,7 +7,7 @@ import {
 import { ConsoleLogger } from '@nestjs/common';
 import { DiscordReporter } from './reporters/discordReporter';
 import { SlackReporter } from './reporters/slackReporter';
-import { testStatusToEmoji } from './utils/helpers';
+import { formatDuration, testStatusToEmoji } from './utils/helpers';
 
 export type EmbedField = {
   name?: string;
@@ -32,6 +32,9 @@ export type RunInfo = {
     flaky: number;
     skipped: number;
   };
+  duration: string;
+  status: string;
+  ciUrl: string;
 };
 
 export type ReporterOptions = {
@@ -54,8 +57,8 @@ class ChatReporter implements Reporter {
   logger = new ConsoleLogger(ChatReporter.name);
   private discordReporter: DiscordReporter;
   private slackReporter: SlackReporter;
-
   private enabled: boolean;
+
   private runInfo: RunInfo = {
     testNames: [],
     testCount: {
@@ -64,6 +67,9 @@ class ChatReporter implements Reporter {
       flaky: 0,
       skipped: 0,
     },
+    duration: '',
+    status: '',
+    ciUrl: '',
   };
 
   constructor(options: ReporterOptions) {
@@ -73,6 +79,8 @@ class ChatReporter implements Reporter {
       this.enabled = false;
     }
     if (!this.enabled) return;
+
+    this.runInfo.ciUrl = options.ciRunUrl;
 
     this.discordReporter = new DiscordReporter(options, this.runInfo);
     this.slackReporter = new SlackReporter(options, this.runInfo);
@@ -108,15 +116,12 @@ class ChatReporter implements Reporter {
 
   async onEnd(result: FullResult) {
     if (!this.enabled) return;
+    this.runInfo.duration = formatDuration(result.duration);
+    this.runInfo.status = result.status;
+
     const tasks: Promise<any>[] = [];
-
-    // Send to Discord
-    const discordEmbed = this.discordReporter.getEmbed(result);
-    tasks.push(this.discordReporter.send(discordEmbed));
-
-    // Send to Slack
-    const slackEmbed = this.slackReporter.getEmbed(result);
-    tasks.push(this.slackReporter.send(slackEmbed));
+    tasks.push(this.discordReporter.send());
+    tasks.push(this.slackReporter.send());
 
     await Promise.allSettled(tasks);
   }
