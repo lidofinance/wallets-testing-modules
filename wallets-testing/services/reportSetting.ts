@@ -47,7 +47,7 @@ export class ReportersSettings {
       this.reporters.consoleReporter,
     ];
 
-    if (!process.env.CI) {
+    if (process.env.CI) {
       reporterConfig.push(
         this.reporters.githubReporter,
         this.reporters.chatReporter,
