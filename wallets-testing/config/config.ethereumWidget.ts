@@ -45,6 +45,6 @@ const HOODI_WIDGET_CONFIG: WidgetConfig = {
 };
 
 export const getWidgetConfig = {
-  'Ethereum Mainnet': ETHEREUM_WIDGET_CONFIG,
+  Ethereum: ETHEREUM_WIDGET_CONFIG,
   'Ethereum Hoodi': HOODI_WIDGET_CONFIG,
 };
