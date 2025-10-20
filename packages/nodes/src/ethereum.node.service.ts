@@ -358,7 +358,6 @@ export class EthereumNodeService {
   ): Promise<APIResponse | undefined> {
     let lastErr;
 
-    options.maxRetries = options.maxRetries || 1;
     options.timeout = 0;
     options.headers = {
       'Content-Type': 'application/json',
@@ -372,9 +371,6 @@ export class EthereumNodeService {
         return await request.fetch(urlOrRequest, options);
       } catch (err) {
         lastErr = err as { message: string };
-        this.logger.warn(
-          `[fetchSafety] Attempt ${tryCount + 1} failed: ${lastErr.message}`,
-        );
       }
     }
 
