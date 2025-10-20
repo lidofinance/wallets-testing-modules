@@ -106,7 +106,7 @@ class ChatReporter implements Reporter {
 
     const walletVersion =
       test.annotations.length > 0 && test.annotations[0].description
-        ? ` (_v.${test.annotations[0].description}_)`
+        ? ` \`(_v.${test.annotations[0].description}_)\``
         : '';
 
     this.runInfo.testNames[test.id] = `- ${testStatusToEmoji[result.status]} ${
