@@ -6,7 +6,6 @@ export class AccountMenu {
   importAccountButton: Locator;
   privateKeyInput: Locator;
   importAccountConfirmButton: Locator;
-  accountListAddress: Locator;
   backButton: Locator;
   importError: Locator;
 
@@ -22,7 +21,6 @@ export class AccountMenu {
     this.importAccountConfirmButton = this.page.getByTestId(
       'import-account-confirm-button',
     );
-    this.accountListAddress = this.page.getByTestId('account-list-address');
     this.backButton = this.page.getByLabel('Back');
     this.importError = this.page.getByText(
       'KeyringController - The account you are trying to import is a duplicate',
@@ -43,16 +41,6 @@ export class AccountMenu {
       await this.accountListModal
         .getByText(`${addressStart}...${addressEnd}`)
         .click();
-    });
-  }
-
-  async getListOfAddress() {
-    return test.step('Get all exists accounts', async () => {
-      const listOfAddressText = [];
-      for (const address of await this.accountListAddress.all()) {
-        listOfAddressText.push(await address.textContent());
-      }
-      return listOfAddressText;
     });
   }
 
