@@ -106,20 +106,18 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   async setupNetwork(networkConfig: NetworkConfig) {
-    networkConfig.chainName = getCorrectNetworkName(networkConfig.chainName);
+    const correctChainName = getCorrectNetworkName(networkConfig.chainName);
 
-    await test.step(`Setup "${networkConfig.chainName}" Network`, async () => {
+    await test.step(`Setup "${correctChainName}" Network`, async () => {
       await this.settingsMenu.openNetworksSettings();
       if (
         await this.networkList.isNetworkExist(
-          networkConfig.chainName,
+          correctChainName,
           networkConfig.rpcUrl,
           networkConfig.chainId,
         )
       ) {
-        await this.networkList.clickToNetworkItemButton(
-          networkConfig.chainName,
-        );
+        await this.networkList.clickToNetworkItemButton(correctChainName);
       } else {
         await this.networkList.networkDisplayCloseBtn.click();
         await this.addNetwork(networkConfig);
@@ -128,20 +126,21 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   async addNetwork(networkConfig: NetworkConfig, isClosePage = false) {
-    networkConfig.chainName = getCorrectNetworkName(networkConfig.chainName);
-    await test.step(`Add new network "${networkConfig.chainName}"`, async () => {
+    const correctChainName = getCorrectNetworkName(networkConfig.chainName);
+
+    await test.step(`Add new network "${correctChainName}"`, async () => {
       await this.navigate();
-      if (await isPopularMainnetNetwork(networkConfig.chainName)) {
-        await this.networkList.addPopularNetwork(networkConfig.chainName);
+      if (await isPopularMainnetNetwork(correctChainName)) {
+        await this.networkList.addPopularNetwork(correctChainName);
         if (networkConfig.rpcUrl) {
           await this.navigate();
           await this.networkList.addNetworkManually(networkConfig);
         }
-      } else if (await isPopularTestnetNetwork(networkConfig.chainName)) {
+      } else if (await isPopularTestnetNetwork(correctChainName)) {
         await this.networkList.addPopularTestnetNetwork(networkConfig);
       } else {
         await this.networkList.addNetworkManually(networkConfig);
-        await this.changeNetwork(networkConfig.chainName);
+        await this.changeNetwork(correctChainName);
       }
       if (isClosePage) await this.page.close();
     });

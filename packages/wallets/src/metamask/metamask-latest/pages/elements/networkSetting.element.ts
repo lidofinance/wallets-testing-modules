@@ -1,5 +1,6 @@
 import { Locator, Page, test } from '@playwright/test';
 import { NetworkConfig } from '../../../../wallets.constants';
+import { getCorrectNetworkName } from '../../helper';
 
 export class NetworkSetting {
   dialogSection: Locator;
@@ -66,9 +67,11 @@ export class NetworkSetting {
   }
 
   async addCustomNetwork(networkConfig: NetworkConfig) {
+    const correctChainName = getCorrectNetworkName(networkConfig.chainName);
+
     await test.step('Fill the network fields', async () => {
       await test.step('Fill the network name', async () => {
-        await this.networkNameInput.fill(networkConfig.chainName);
+        await this.networkNameInput.fill(correctChainName);
       });
       await test.step('Fill the network rpc', async () => {
         await this.addRpcDropDown.click();

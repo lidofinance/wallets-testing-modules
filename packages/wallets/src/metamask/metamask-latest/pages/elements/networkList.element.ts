@@ -3,6 +3,7 @@ import { NetworkConfig } from '../../../../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 import { SettingsElement } from './settings.element';
 import { NetworkSetting } from './networkSetting.element';
+import { getCorrectNetworkName } from '../../helper';
 
 export class NetworkList {
   logger = new ConsoleLogger(`MetaMask. ${NetworkList.name}`);
@@ -90,13 +91,13 @@ export class NetworkList {
   }
 
   async addNetworkManually(networkConfig: NetworkConfig) {
+    const correctChainName = getCorrectNetworkName(networkConfig.chainName);
+
     await test.step('Open the form to add network manually', async () => {
       await this.settings.openNetworksSettings();
     });
 
-    if (
-      await this.networkItemText.getByText(networkConfig.chainName).isVisible()
-    ) {
+    if (await this.networkItemText.getByText(correctChainName).isVisible()) {
       await this.openModalNetworkEdit(networkConfig.chainId);
       await this.networkSetting.addRpcForNetwork(
         networkConfig.rpcUrl,
@@ -111,13 +112,13 @@ export class NetworkList {
   }
 
   async addPopularTestnetNetwork(networkConfig: NetworkConfig) {
+    const correctChainName = getCorrectNetworkName(networkConfig.chainName);
+
     await this.settings.openNetworksSettings();
-    if (
-      await this.dialogSection.getByTestId(networkConfig.chainName).isHidden()
-    ) {
+    if (await this.dialogSection.getByTestId(correctChainName).isHidden()) {
       await this.showTestnetButton.click();
     }
-    await this.dialogSection.getByTestId(networkConfig.chainName).click();
+    await this.dialogSection.getByTestId(correctChainName).click();
   }
 
   async addPopularNetwork(networkName: string) {
