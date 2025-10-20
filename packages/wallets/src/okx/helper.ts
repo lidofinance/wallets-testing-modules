@@ -1,12 +1,7 @@
 import { BrowserContext } from '@playwright/test';
 
 const incorrectNetworkNames = new Map<string, string>([
-  ['Ethereum Mainnet', 'Ethereum'],
-  ['zkSync Era Mainnet', 'zkSync Era'],
-  ['OP Mainnet', 'Optimism'],
-  ['Polygon Mainnet', 'Polygon'],
-  ['Base Mainnet', 'Base'],
-  ['Binance Smart Chain', 'BNB Chain'],
+  ['OP', 'Optimism'],
   ['Mantle Mainnet', 'Mantle'],
   ['Scroll Mainnet', 'Scroll'],
   ['Mode', 'Mode Network'],

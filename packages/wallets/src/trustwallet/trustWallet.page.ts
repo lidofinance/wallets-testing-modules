@@ -10,7 +10,6 @@ import {
   LoginPage,
 } from './pages';
 import { closeUnnecessaryPages } from '../okx/helper';
-import { getCorrectNetworkName } from './helper';
 
 export class TrustWalletPage implements WalletPage<WalletConnectTypes.EOA> {
   logger = new ConsoleLogger(TrustWalletPage.name);
@@ -78,10 +77,9 @@ export class TrustWalletPage implements WalletPage<WalletConnectTypes.EOA> {
 
   /** Checks the is installed the needed network and add new network to wallet (if needed) */
   async setupNetwork(networkConfig: NetworkConfig) {
-    const correctChainName = getCorrectNetworkName(networkConfig.chainName);
     await test.step(`Setup "${networkConfig.chainName}" Network`, async () => {
       await this.navigate();
-      if (!(await this.homePage.isNetworkExists(correctChainName))) {
+      if (!(await this.homePage.isNetworkExists(networkConfig.chainName))) {
         await this.addNetwork(networkConfig);
       }
     });
@@ -89,7 +87,6 @@ export class TrustWalletPage implements WalletPage<WalletConnectTypes.EOA> {
 
   /** Change network in the wallet */
   async changeNetwork(networkName: string) {
-    networkName = getCorrectNetworkName(networkName);
     await this.navigate();
     await this.homePage.changeNetwork(networkName);
     await this.page.close();
