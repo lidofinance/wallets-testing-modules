@@ -9,7 +9,7 @@ type DiscordPayload = {
 
 export class DiscordReporter {
   logger = new ConsoleLogger(DiscordReporter.name);
-  dutyMention = `<@${this.options.discordDutyTag}> please take a look at the test results`;
+  private dutyMention = `<@${this.options.discordDutyTag}> please take a look at the test results`;
 
   constructor(private options: ReporterOptions, private runInfo: RunInfo) {}
 

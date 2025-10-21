@@ -7,7 +7,7 @@ type SlackPayload = { attachments: AttachmentBlock[] };
 
 export class SlackReporter {
   logger = new ConsoleLogger(SlackReporter.name);
-  dutyMention = `<!subteam^${this.options.slackDutyTag}> please take a look at the test results`;
+  private dutyMention = `<!subteam^${this.options.slackDutyTag}> please take a look at the test results`;
 
   constructor(private options: ReporterOptions, private runInfo: RunInfo) {}
 
