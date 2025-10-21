@@ -16,7 +16,11 @@ import {
   AccountMenu,
 } from './pages/elements';
 import { getAddress } from 'viem';
-import { isPopularMainnetNetwork, isPopularTestnetNetwork } from './helper';
+import {
+  getCorrectNetworkName,
+  isPopularMainnetNetwork,
+  isPopularTestnetNetwork,
+} from './helper';
 
 export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
   page: Page | undefined;
@@ -84,6 +88,7 @@ export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   async changeNetwork(networkName: string) {
+    networkName = getCorrectNetworkName(networkName);
     await test.step(`Change Metamask network to ${networkName}`, async () => {
       await this.navigate();
       await this.header.networkListButton.click();
@@ -96,17 +101,18 @@ export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   async setupNetwork(networkConfig: NetworkConfig) {
-    await test.step(`Setup "${networkConfig.chainName}" Network`, async () => {
+    const correctNetworkName = getCorrectNetworkName(networkConfig.chainName);
+    await test.step(`Setup "${correctNetworkName}" Network`, async () => {
       await this.header.networkListButton.click();
       if (
         await this.header.networkList.isNetworkExist(
-          networkConfig.chainName,
+          correctNetworkName,
           networkConfig.rpcUrl,
           networkConfig.chainId,
         )
       ) {
         await this.header.networkList.clickToNetworkItemButton(
-          networkConfig.chainName,
+          correctNetworkName,
         );
       } else {
         await this.header.networkList.networkDisplayCloseBtn.click();
@@ -116,21 +122,20 @@ export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   async addNetwork(networkConfig: NetworkConfig, isClosePage = false) {
-    await test.step(`Add new network "${networkConfig.chainName}"`, async () => {
+    const correctNetworkName = getCorrectNetworkName(networkConfig.chainName);
+    await test.step(`Add new network "${correctNetworkName}"`, async () => {
       await this.navigate();
-      if (await isPopularMainnetNetwork(networkConfig.chainName)) {
-        await this.header.networkList.addPopularNetwork(
-          networkConfig.chainName,
-        );
+      if (await isPopularMainnetNetwork(correctNetworkName)) {
+        await this.header.networkList.addPopularNetwork(correctNetworkName);
         if (networkConfig.rpcUrl) {
           await this.navigate();
           await this.header.networkList.addNetworkManually(networkConfig);
         }
-      } else if (await isPopularTestnetNetwork(networkConfig.chainName)) {
+      } else if (await isPopularTestnetNetwork(correctNetworkName)) {
         await this.header.networkList.addPopularTestnetNetwork(networkConfig);
       } else {
         await this.header.networkList.addNetworkManually(networkConfig);
-        await this.changeNetwork(networkConfig.chainName);
+        await this.changeNetwork(correctNetworkName);
       }
       if (isClosePage) await this.page.close();
     });

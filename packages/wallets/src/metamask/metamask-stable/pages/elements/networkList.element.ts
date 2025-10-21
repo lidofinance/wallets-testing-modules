@@ -2,6 +2,7 @@ import { Locator, Page, test } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
 import { NetworkConfig } from '../../../../wallets.constants';
 import { NetworkSetting } from './networkSetting.element';
+import { getCorrectNetworkName } from '../../helper';
 
 export class NetworkList {
   logger = new ConsoleLogger(`MetaMask. ${NetworkList.name}`);
@@ -95,7 +96,9 @@ export class NetworkList {
     });
 
     if (
-      await this.networkItemText.getByText(networkConfig.chainName).isVisible()
+      await this.networkItemText
+        .getByText(getCorrectNetworkName(networkConfig.chainName))
+        .isVisible()
     ) {
       await this.openModalNetworkEdit(networkConfig.chainId);
       await this.networkSetting.addRpcForNetwork(
@@ -113,11 +116,15 @@ export class NetworkList {
   async addPopularTestnetNetwork(networkConfig: NetworkConfig) {
     await this.networkListButton.click();
     if (
-      await this.dialogSection.getByTestId(networkConfig.chainName).isHidden()
+      await this.dialogSection
+        .getByTestId(getCorrectNetworkName(networkConfig.chainName))
+        .isHidden()
     ) {
       await this.showTestnetButton.click();
     }
-    await this.dialogSection.getByTestId(networkConfig.chainName).click();
+    await this.dialogSection
+      .getByTestId(getCorrectNetworkName(networkConfig.chainName))
+      .click();
   }
 
   async addPopularNetwork(networkName: string) {

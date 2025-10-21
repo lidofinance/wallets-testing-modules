@@ -254,23 +254,8 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async isWalletAddressExist(address: string) {
-    return await test.step(`Checking to the wallet address ${address} is exist`, async () => {
-      await this.navigate();
-      await this.header.accountMenuButton.click();
-      const listOfAddress = await this.accountMenu.getListOfAddress();
-
-      const addressStart = address.slice(0, 7).toLowerCase();
-      const addressEnd = address.slice(-5).toLowerCase();
-
-      const isExist = listOfAddress.some(
-        (listAddress) =>
-          listAddress.toLowerCase().startsWith(addressStart) &&
-          listAddress.toLowerCase().endsWith(addressEnd),
-      );
-      await this.page.close();
-      return isExist;
-    });
+  async isWalletAddressExist() {
+    return false; // mm v-13.5.0 doesn't display addresses in the wallet list
   }
 
   async changeWalletAccountByName(accountName: string, isClosePage = true) {

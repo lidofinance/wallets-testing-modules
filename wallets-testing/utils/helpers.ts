@@ -8,7 +8,7 @@ import { tokenToWithdraw, tokenToWrap } from '../pages';
 export async function initBrowserWithExtension(
   walletConfig: CommonWalletConfig,
   isFork = false,
-  widgetConfig: WidgetConfig = getWidgetConfig['Ethereum Mainnet'],
+  widgetConfig: WidgetConfig = getWidgetConfig['Ethereum'],
 ) {
   const browserService = new BrowserService({
     networkConfig: widgetConfig.network,

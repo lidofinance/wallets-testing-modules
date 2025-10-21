@@ -12,7 +12,6 @@ export class NetworkList {
   dialogSection: Locator;
   addCustomNetworkButton: Locator;
   networkDisplayCloseBtn: Locator;
-  networkItemBtn: Locator;
   networkItemText: Locator;
   editNetworkButton: Locator;
   approveAddNetworkButton: Locator;

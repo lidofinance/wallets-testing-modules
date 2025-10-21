@@ -1,12 +1,12 @@
 const MMPopularNetworks = [
-  'zkSync Era Mainnet',
-  'OP Mainnet',
-  'Arbitrum One',
-  'Polygon Mainnet',
-  'Base Mainnet',
-  'Binance Smart Chain',
+  'zkSync Era',
+  'OP',
+  'Arbitrum',
+  'Polygon',
+  'Base',
+  'BNB Chain',
   'Linea',
-  'Avalanche Network C-Chain',
+  'Avalanche',
 ];
 
 const MMPopularTestnetNetworks = ['Sepolia', 'Linea Sepolia'];

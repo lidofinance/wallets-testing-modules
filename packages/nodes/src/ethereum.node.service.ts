@@ -371,9 +371,6 @@ export class EthereumNodeService {
         return await request.fetch(urlOrRequest, options);
       } catch (err) {
         lastErr = err as { message: string };
-        this.logger.warn(
-          `[fetchSafety] Attempt ${tryCount + 1} failed: ${lastErr.message}`,
-        );
       }
     }
 
