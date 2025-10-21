@@ -55,8 +55,8 @@ export type ReporterOptions = {
 
 class ChatReporter implements Reporter {
   logger = new ConsoleLogger(ChatReporter.name);
-  private discordReporter: DiscordReporter;
-  private slackReporter: SlackReporter;
+  public discordReporter: DiscordReporter;
+  public slackReporter: SlackReporter;
   private enabled: boolean;
 
   private runInfo: RunInfo = {
@@ -119,9 +119,12 @@ class ChatReporter implements Reporter {
     this.runInfo.duration = formatDuration(result.duration);
     this.runInfo.status = result.status;
 
+    const discordPayload = this.discordReporter.getEmbed();
+    const slackPayload = this.slackReporter.getEmbed();
+
     const tasks: Promise<any>[] = [];
-    tasks.push(this.discordReporter.send());
-    tasks.push(this.slackReporter.send());
+    tasks.push(this.discordReporter.send(discordPayload));
+    tasks.push(this.slackReporter.send(slackPayload));
 
     await Promise.allSettled(tasks);
   }

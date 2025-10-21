@@ -13,11 +13,11 @@ export class DiscordReporter {
 
   constructor(private options: ReporterOptions, private runInfo: RunInfo) {}
 
-  async send() {
+  // Send message to chat. Need to put the correct payload data
+  async send(payload: DiscordPayload): Promise<void> {
     if (!this.options.discordWebhookUrl) return;
 
     try {
-      const payload = this.getEmbed();
       await postJson(this.options.discordWebhookUrl, payload);
       this.logger.log('Discord message sent');
     } catch (e: any) {
@@ -25,6 +25,7 @@ export class DiscordReporter {
     }
   }
 
+  // Build payload from the test run data located in the this.runInfo
   getEmbed(): DiscordPayload {
     const status = resultToStatus[this.runInfo.status];
 
