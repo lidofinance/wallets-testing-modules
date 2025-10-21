@@ -1,0 +1,130 @@
+import {
+  FullResult,
+  Reporter,
+  TestCase,
+  TestResult,
+} from '@playwright/test/reporter';
+import { ConsoleLogger } from '@nestjs/common';
+import { DiscordReporter } from './reporters/discordReporter';
+import { SlackReporter } from './reporters/slackReporter';
+import { formatDuration, testStatusToEmoji } from './utils/helpers';
+
+export type EmbedField = {
+  name?: string;
+  value: string;
+  inline?: boolean;
+};
+
+export type Embed = {
+  title: string;
+  description: string;
+  status: string;
+  color: number;
+  fields: EmbedField[];
+  url?: string;
+};
+
+export type RunInfo = {
+  testNames: { [key: string]: string };
+  testCount: {
+    passed: number;
+    failed: number;
+    flaky: number;
+    skipped: number;
+  };
+  duration: string;
+  status: string;
+  ciUrl: string;
+};
+
+export type ReporterOptions = {
+  enabled: string;
+  customTitle?: string;
+  customDescription?: string;
+  ciRunUrl?: string;
+  reportType: 'count' | 'list';
+
+  // Discord
+  discordWebhookUrl?: string;
+  discordDutyTag?: string;
+
+  // Slack
+  slackWebhookUrl?: string;
+  slackDutyTag?: string;
+};
+
+class ChatReporter implements Reporter {
+  logger = new ConsoleLogger(ChatReporter.name);
+  private discordReporter: DiscordReporter;
+  private slackReporter: SlackReporter;
+  private enabled: boolean;
+
+  private runInfo: RunInfo = {
+    testNames: {},
+    testCount: {
+      passed: 0,
+      failed: 0,
+      flaky: 0,
+      skipped: 0,
+    },
+    duration: '',
+    status: '',
+    ciUrl: '',
+  };
+
+  constructor(options: ReporterOptions) {
+    this.enabled = (options.enabled ?? '').trim().toLowerCase() === 'true';
+    if (!options.discordWebhookUrl && !options.slackWebhookUrl) {
+      this.logger.error('No discordWebhookUrl nor slackWebhookUrl provided');
+      this.enabled = false;
+    }
+    if (!this.enabled) return;
+
+    this.runInfo.ciUrl = options.ciRunUrl;
+
+    this.discordReporter = new DiscordReporter(options, this.runInfo);
+    this.slackReporter = new SlackReporter(options, this.runInfo);
+  }
+
+  onTestEnd(test: TestCase, result: TestResult) {
+    if (!this.enabled) return;
+
+    switch (result.status) {
+      case 'passed':
+        if (result.retry > 0) this.runInfo.testCount.flaky++;
+        else this.runInfo.testCount.passed++;
+        break;
+      case 'failed':
+      case 'timedOut':
+      case 'interrupted':
+        if (result.retry === test.retries) this.runInfo.testCount.failed++;
+        break;
+      case 'skipped':
+        this.runInfo.testCount.skipped++;
+        break;
+    }
+
+    const walletVersion =
+      test.annotations.length > 0 && test.annotations[0].description
+        ? ` \`(_v.${test.annotations[0].description}_)\``
+        : '';
+
+    this.runInfo.testNames[test.id] = `- ${testStatusToEmoji[result.status]} ${
+      test.title
+    } ${walletVersion}`;
+  }
+
+  async onEnd(result: FullResult) {
+    if (!this.enabled) return;
+    this.runInfo.duration = formatDuration(result.duration);
+    this.runInfo.status = result.status;
+
+    const tasks: Promise<any>[] = [];
+    tasks.push(this.discordReporter.send());
+    tasks.push(this.slackReporter.send());
+
+    await Promise.allSettled(tasks);
+  }
+}
+
+export default ChatReporter;

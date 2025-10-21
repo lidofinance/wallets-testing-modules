@@ -1,5 +1,5 @@
 {
-  "name": "@lidofinance/discord-reporter",
+  "name": "@lidofinance/chat-reporter",
   "version": "0.0.0",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
