@@ -11,11 +11,11 @@ export class SlackReporter {
 
   constructor(private options: ReporterOptions, private runInfo: RunInfo) {}
 
-  async send() {
+  // Send message to chat. Need to put the correct payload data
+  async send(payload: SlackPayload) {
     if (!this.options.slackWebhookUrl) return;
 
     try {
-      const payload = this.getEmbed();
       await postJson(this.options.slackWebhookUrl, payload);
       this.logger.log('Slack message sent');
     } catch (e: any) {
@@ -23,6 +23,7 @@ export class SlackReporter {
     }
   }
 
+  // Build payload from the test run data located in the this.runInfo
   getEmbed(): SlackPayload {
     const ciUrl = this.options.ciRunUrl?.trim() || undefined;
     const status = resultToStatus[this.runInfo.status];
