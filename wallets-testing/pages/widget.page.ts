@@ -27,7 +27,7 @@ export interface WidgetPage {
   ethAvailableToStakeValue: Locator;
   termsCheckbox: Locator;
   copyWcUrlBtn?: Locator; // EOA, WC+Safe
-  closeAccountModalBtn: Locator;
+  closeModalBtn: Locator;
 
   goto?(path?: string): Promise<void>;
 
@@ -41,9 +41,11 @@ export interface WidgetPage {
 
   request?(txAmount: string, token: tokenToWithdraw): Promise<void>;
 
+  claim?(): Promise<void>;
+
   getWalletButtonByName?(walletButtonName: string): Promise<Locator>;
 
   waitForPage(timeout?: number): Promise<Page>;
 
-  closeAccountModal(): Promise<void>;
+  closeModal(): Promise<void>;
 }

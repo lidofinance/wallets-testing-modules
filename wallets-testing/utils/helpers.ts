@@ -70,6 +70,12 @@ export async function request(
   await widgetService.doWithdrawal(txAmount, token);
 }
 
+export async function claim(browserService: BrowserService) {
+  const widgetService = new WidgetService(browserService);
+  await widgetService.connectWallet();
+  await widgetService.doClaiming();
+}
+
 export async function waitForTextContent(locator: Locator) {
   return await locator.evaluate(async (element) => {
     return new Promise<string>((resolve) => {

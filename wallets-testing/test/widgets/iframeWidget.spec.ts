@@ -1,6 +1,7 @@
 import { test } from '@playwright/test';
 import { IFRAME_SAFE_COMMON_CONFIG } from '@lidofinance/wallets-testing-wallets';
 import {
+  claim,
   initBrowserWithExtension,
   request,
   stake,
@@ -46,5 +47,9 @@ test.describe('Test widget Lido app of Safe wallet (iframe) [Hoodi]', () => {
 
   test('Request Withdraw wstETH', async () => {
     await request(browserService, txAmount, tokenToWithdraw.wstETH);
+  });
+
+  test('Claim', async () => {
+    await claim(browserService);
   });
 });

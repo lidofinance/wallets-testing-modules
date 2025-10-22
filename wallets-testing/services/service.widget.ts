@@ -46,7 +46,7 @@ export class WidgetService {
       expect(await this.widgetPage.providerName.textContent()).toContain(
         this.browserService.walletConfig.CONNECTED_WALLET_NAME,
       );
-      await this.widgetPage.closeAccountModal();
+      await this.widgetPage.closeModal();
     });
   }
 
@@ -76,6 +76,13 @@ export class WidgetService {
   async doWithdrawal(txAmount: string, token: tokenToWithdraw) {
     await test.step('Do withdrawal request', async () => {
       await this.widgetPage.request(txAmount, token);
+    });
+  }
+
+  // Function not tested with walletConnectTypes.WC
+  async doClaiming() {
+    await test.step('Do claiming', async () => {
+      await this.widgetPage.claim();
     });
   }
 }
