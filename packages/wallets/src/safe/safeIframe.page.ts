@@ -89,7 +89,7 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
             this.setupPage.inAppContinueBtn,
             2000,
           );
-          await this.setupPage.inAppContinueBtn.click();
+          await this.setupPage.inAppContinueBtn.click({ timeout: 2000 });
         } catch {
           if (
             await this.page
