@@ -7,22 +7,11 @@ import {
 import { ConsoleLogger } from '@nestjs/common';
 import { DiscordReporter } from './reporters/discordReporter';
 import { SlackReporter } from './reporters/slackReporter';
-import { formatDuration, testStatusToEmoji } from './utils/helpers';
-
-export type EmbedField = {
-  name?: string;
-  value: string;
-  inline?: boolean;
-};
-
-export type Embed = {
-  title: string;
-  description: string;
-  status: string;
-  color: number;
-  fields: EmbedField[];
-  url?: string;
-};
+import {
+  formatDuration,
+  resultToStatus,
+  testStatusToEmoji,
+} from './utils/helpers';
 
 export type RunInfo = {
   testNames: { [key: string]: string };
@@ -32,9 +21,9 @@ export type RunInfo = {
     flaky: number;
     skipped: number;
   };
-  duration: string;
-  status: string;
   ciUrl: string;
+  duration?: string;
+  status?: { color: number; title: string };
 };
 
 export type ReporterOptions = {
@@ -58,19 +47,7 @@ class ChatReporter implements Reporter {
   public discordReporter: DiscordReporter;
   public slackReporter: SlackReporter;
   private enabled: boolean;
-
-  private runInfo: RunInfo = {
-    testNames: {},
-    testCount: {
-      passed: 0,
-      failed: 0,
-      flaky: 0,
-      skipped: 0,
-    },
-    duration: '',
-    status: '',
-    ciUrl: '',
-  };
+  private runInfo: RunInfo;
 
   constructor(options: ReporterOptions) {
     this.enabled = (options.enabled ?? '').trim().toLowerCase() === 'true';
@@ -80,7 +57,16 @@ class ChatReporter implements Reporter {
     }
     if (!this.enabled) return;
 
-    this.runInfo.ciUrl = options.ciRunUrl;
+    this.runInfo = {
+      ciUrl: options.ciRunUrl?.trim() || undefined,
+      testNames: {},
+      testCount: {
+        passed: 0,
+        failed: 0,
+        flaky: 0,
+        skipped: 0,
+      },
+    };
 
     this.discordReporter = new DiscordReporter(options, this.runInfo);
     this.slackReporter = new SlackReporter(options, this.runInfo);
@@ -106,7 +92,7 @@ class ChatReporter implements Reporter {
 
     const walletVersion =
       test.annotations.length > 0 && test.annotations[0].description
-        ? ` \`(_v.${test.annotations[0].description}_)\``
+        ? ` \`(v.${test.annotations[0].description})\``
         : '';
 
     this.runInfo.testNames[test.id] = `- ${testStatusToEmoji[result.status]} ${
@@ -117,7 +103,7 @@ class ChatReporter implements Reporter {
   async onEnd(result: FullResult) {
     if (!this.enabled) return;
     this.runInfo.duration = formatDuration(result.duration);
-    this.runInfo.status = result.status;
+    this.runInfo.status = resultToStatus[result.status];
 
     const discordPayload = this.discordReporter.getEmbed();
     const slackPayload = this.slackReporter.getEmbed();

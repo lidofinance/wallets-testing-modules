@@ -1,6 +1,20 @@
-import { Embed, ReporterOptions, RunInfo } from '../index';
-import { postJson, resultToStatus, testStatusToEmoji } from '../utils/helpers';
+import { ReporterOptions, RunInfo } from '../index';
+import { postJson, testStatusToEmoji } from '../utils/helpers';
 import { ConsoleLogger } from '@nestjs/common';
+
+export type EmbedField = {
+  name: string;
+  value: string;
+  inline: boolean;
+};
+
+export type Embed = {
+  title: string;
+  description?: string;
+  color?: number;
+  fields: EmbedField[];
+  url?: string;
+};
 
 type DiscordPayload = {
   content?: string;
@@ -27,15 +41,14 @@ export class DiscordReporter {
 
   // Build payload from the test run data located in the this.runInfo
   getEmbed(): DiscordPayload {
-    const status = resultToStatus[this.runInfo.status];
-
     const embed: Embed = {
-      title: `${this.options.customTitle || ''} ${status.title}`.trim(),
+      title: `${this.options.customTitle || ''} ${
+        this.runInfo.status.title
+      }`.trim(),
       description: this.options.customDescription,
-      color: status.color,
+      color: this.runInfo.status.color,
       fields: [],
-      url: this.options.ciRunUrl?.trim() || undefined,
-      status: this.runInfo.status,
+      url: this.runInfo.ciUrl,
     };
 
     // Main content

@@ -1,5 +1,5 @@
 import { ReporterOptions, RunInfo } from '../index';
-import { postJson, resultToStatus, testStatusToEmoji } from '../utils/helpers';
+import { postJson, testStatusToEmoji } from '../utils/helpers';
 import { ConsoleLogger } from '@nestjs/common';
 
 type AttachmentBlock = { color: string; blocks: any[] }; // See the blocks structure in the Slack documentation
@@ -25,11 +25,8 @@ export class SlackReporter {
 
   // Build payload from the test run data located in the this.runInfo
   getEmbed(): SlackPayload {
-    const ciUrl = this.options.ciRunUrl?.trim() || undefined;
-    const status = resultToStatus[this.runInfo.status];
-
     const attachment: AttachmentBlock = {
-      color: this.toSlackHex(status.color),
+      color: this.toSlackHex(this.runInfo.status.color),
       blocks: [],
     };
 
@@ -39,7 +36,9 @@ export class SlackReporter {
     }
 
     // Title block
-    const title = `${this.options.customTitle || ''} ${status.title}`.trim();
+    const title = `${this.options.customTitle || ''} ${
+      this.runInfo.status.title
+    }`.trim();
     if (title) attachment.blocks.push(this.getHeaderBlock(title));
 
     // Description block
@@ -60,7 +59,8 @@ export class SlackReporter {
     );
 
     // Action button with GutHub link
-    if (ciUrl) attachment.blocks.push(this.getActionBtnBlock(ciUrl));
+    if (this.runInfo.ciUrl)
+      attachment.blocks.push(this.getActionBtnBlock(this.runInfo.ciUrl));
 
     return {
       attachments: [attachment],
