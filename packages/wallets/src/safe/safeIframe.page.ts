@@ -82,14 +82,25 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
     await this.initLocators(this.options.browserContext.pages()[0]);
     await this.navigate('lidoApp');
     await test.step('Open Lido app in the Safe', async () => {
-      while (
-        await this.setupPage.waitForVisible(
-          this.setupPage.inAppContinueBtn,
-          5000,
-        )
-      ) {
-        await this.setupPage.inAppContinueBtn.click();
-        await this.page.waitForTimeout(1000);
+      let isWidgetOpen = false;
+      while (!isWidgetOpen) {
+        try {
+          await this.setupPage.waitForVisible(
+            this.setupPage.inAppContinueBtn,
+            2000,
+          );
+          await this.setupPage.inAppContinueBtn.click({ timeout: 2000 });
+        } catch {
+          if (
+            await this.page
+              .locator('iframe')
+              .first()
+              .contentFrame()
+              .getByText('Stake Ether')
+              .isVisible()
+          )
+            isWidgetOpen = true;
+        }
       }
     });
   }

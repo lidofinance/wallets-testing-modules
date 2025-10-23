@@ -17,6 +17,7 @@ export class IframeWidgetPage implements WidgetPage {
   wrapTabBtn: Locator;
   unwrapSwitcherBtn: Locator;
   withdrawTabBtn: Locator;
+  claimSwitcherBtn: Locator;
 
   connectBtn: Locator;
   stakeInput: Locator;
@@ -28,7 +29,7 @@ export class IframeWidgetPage implements WidgetPage {
   ethAvailableToStakeValue: Locator;
   termsCheckbox: Locator;
   copyWcUrlBtn: Locator;
-  closeAccountModalBtn: Locator;
+  closeModalBtn: Locator;
   tokenDropDown: Locator;
 
   wrapInput: Locator;
@@ -43,6 +44,11 @@ export class IframeWidgetPage implements WidgetPage {
   requestSubmitBtn: Locator;
   enabledRequestBtn: Locator;
 
+  rdyToClaimCount: Locator;
+  claimList: Locator;
+  rdyToClaimCheckboxes: Locator;
+  claimSubmitBtn: Locator;
+
   constructor(
     browserService: BrowserService,
     public widgetConfig: WidgetConfig,
@@ -54,6 +60,7 @@ export class IframeWidgetPage implements WidgetPage {
     this.wrapTabBtn = this.app.getByTestId('navWrap');
     this.unwrapSwitcherBtn = this.app.getByTestId('Unwrap-switch');
     this.withdrawTabBtn = this.app.getByTestId('navWithdrawals');
+    this.claimSwitcherBtn = this.app.getByTestId('Claim-switch');
 
     this.connectBtn = this.app
       .getByRole('button')
@@ -68,9 +75,7 @@ export class IframeWidgetPage implements WidgetPage {
     this.providerName = this.app.locator('div[data-testid="providerName"]');
     this.ethAvailableToStakeValue = this.app.getByTestId('ethAvailableToStake');
     this.termsCheckbox = this.app.getByRole('checkbox');
-    this.closeAccountModalBtn = this.app
-      .locator('div[role="dialog"] button')
-      .nth(0);
+    this.closeModalBtn = this.app.locator('div[role="dialog"] button').nth(0);
 
     this.wrapInput = this.app.getByTestId('wrapInput');
     this.tokenDropDown = this.app.getByTestId('drop-down').locator('../..');
@@ -90,6 +95,11 @@ export class IframeWidgetPage implements WidgetPage {
     this.enabledRequestBtn = this.app.locator(
       'button[data-testid="requestButton"]:not([disabled])',
     );
+
+    this.rdyToClaimCount = this.app.getByTestId('rdyToClaimCount');
+    this.claimList = this.app.getByTestId('claimList');
+    this.rdyToClaimCheckboxes = this.claimList.getByTestId('requestCheckbox');
+    this.claimSubmitBtn = this.app.getByTestId('claimButton');
   }
 
   async connectWallet() {
@@ -243,12 +253,55 @@ export class IframeWidgetPage implements WidgetPage {
       .waitFor({ state: 'visible', timeout: 90000 });
   }
 
+  async claim() {
+    await test.step('Open Claim tab', async () => {
+      await this.withdrawTabBtn.click();
+      await this.claimSwitcherBtn.click();
+    });
+
+    const rdyToClaim = Number(await this.rdyToClaimCount.textContent());
+    await test.step('Check the count of Ready to claim requests', async () => {
+      test.skip(
+        rdyToClaim < 1,
+        'Skip the test if no one request is ready to claim',
+      );
+    });
+
+    await test.step('Choose request for claiming', async () => {
+      await this.uncheckAllClaimRequests();
+      await this.rdyToClaimCheckboxes.first().locator('..').click();
+    });
+
+    await test.step('Click to Claim submit button', async () => {
+      await this.claimSubmitBtn.click();
+    });
+
+    await this.walletPage.assertReceiptAddress(
+      this.page,
+      this.widgetConfig.withdrawalContract,
+    );
+
+    await this.walletPage.confirmTx(this.page, true);
+    await this.app
+      .getByText('Claiming operation was successful')
+      .waitFor({ state: 'visible', timeout: 90000 });
+
+    await test.step('Check the count of ready to claim requests', async () => {
+      await this.closeModal();
+      const updRdyToClaim = Number(await this.rdyToClaimCount.textContent());
+      expect(
+        updRdyToClaim,
+        `The rdyToClaim requests count (${rdyToClaim}) should be reduced after successful tx (${updRdyToClaim})`,
+      ).toBe(rdyToClaim - 1);
+    });
+  }
+
   async waitForPage(timeout?: number) {
     return this.page.context().waitForEvent('page', { timeout: timeout });
   }
 
-  async closeAccountModal() {
-    await this.closeAccountModalBtn.click();
+  async closeModal() {
+    await this.closeModalBtn.click();
   }
 
   private async clickToTermsCheckbox() {
@@ -261,5 +314,19 @@ export class IframeWidgetPage implements WidgetPage {
     await this.app
       .getByText('Stake Ether')
       .waitFor({ timeout: 15000, state: 'visible' });
+  }
+
+  private async uncheckAllClaimRequests() {
+    await test.step('Uncheck all claim requests', async () => {
+      await this.rdyToClaimCheckboxes.first().waitFor({ state: 'attached' });
+      await this.rdyToClaimCheckboxes.evaluateAll(async (checkboxes) => {
+        for (const checkbox of checkboxes) {
+          const input = checkbox as HTMLInputElement;
+          if (input.checked) {
+            input.click();
+          }
+        }
+      });
+    });
   }
 }

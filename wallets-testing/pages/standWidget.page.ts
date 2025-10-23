@@ -21,7 +21,7 @@ export class StandWidgetPage implements WidgetPage {
   ethAvailableToStakeValue: Locator;
   termsCheckbox: Locator;
   copyWcUrlBtn: Locator;
-  closeAccountModalBtn: Locator;
+  closeModalBtn: Locator;
 
   constructor(
     browserService: BrowserService,
@@ -44,9 +44,7 @@ export class StandWidgetPage implements WidgetPage {
     );
     this.termsCheckbox = this.page.locator('input[type=checkbox]');
     this.copyWcUrlBtn = this.page.getByTestId('copy-wc2-uri');
-    this.closeAccountModalBtn = this.page
-      .locator('div[role="dialog"] button')
-      .nth(0);
+    this.closeModalBtn = this.page.locator('div[role="dialog"] button').nth(0);
   }
 
   async goto(path?: string) {
@@ -63,8 +61,8 @@ export class StandWidgetPage implements WidgetPage {
     return this.page.context().waitForEvent('page', { timeout: timeout });
   }
 
-  async closeAccountModal() {
-    await this.closeAccountModalBtn.click();
+  async closeModal() {
+    await this.closeModalBtn.click();
   }
 
   async connectWallet() {
