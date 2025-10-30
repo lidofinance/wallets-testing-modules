@@ -68,7 +68,7 @@ jobs:
           WALLET_SECRET_PHRASE: ${{ secrets.WALLET_SECRET_PHRASE }}
           WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
           NODE_OPTIONS: --max-old-space-size=4096
-          SUITE: ${{ inputs.suite }}
+          SUITE: ${{ inputs.suite || 'tx-init_mainnet' }}
 
           # Reporter settings
           REPORT_ENABLED: ${{ github.event_name == 'schedule' || inputs.notify }}
