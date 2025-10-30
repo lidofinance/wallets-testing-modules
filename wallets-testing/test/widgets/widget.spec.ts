@@ -22,57 +22,75 @@ test.describe('Ethereum', () => {
   let browserService: BrowserService;
 
   test(`Metamask connect and stake`, async () => {
-    browserService = await initBrowserWithExtension(
-      METAMASK_COMMON_CONFIG,
-      true,
-    );
+    browserService = await initBrowserWithExtension({
+      walletConfig: METAMASK_COMMON_CONFIG,
+      isFork: true,
+    });
     await stake(browserService, '50');
   });
 
   test(`Coin98 connect`, async () => {
-    browserService = await initBrowserWithExtension(COIN98_COMMON_CONFIG);
+    browserService = await initBrowserWithExtension({
+      walletConfig: COIN98_COMMON_CONFIG,
+    });
     await connectWallet(browserService);
   });
 
   test(`Exodus connect`, async () => {
-    browserService = await initBrowserWithExtension(EXODUS_COMMON_CONFIG);
+    browserService = await initBrowserWithExtension({
+      walletConfig: EXODUS_COMMON_CONFIG,
+    });
     await connectWallet(browserService);
   });
 
   // skip due to side panel
   test.skip(`Trust connect`, async () => {
-    browserService = await initBrowserWithExtension(TRUST_WALLET_COMMON_CONFIG);
+    browserService = await initBrowserWithExtension({
+      walletConfig: TRUST_WALLET_COMMON_CONFIG,
+    });
     await connectWallet(browserService);
   });
 
   test.skip(`Coinbase connect`, async () => {
-    browserService = await initBrowserWithExtension(COINBASE_COMMON_CONFIG);
+    browserService = await initBrowserWithExtension({
+      walletConfig: COINBASE_COMMON_CONFIG,
+    });
     await connectWallet(browserService);
   });
 
   test.skip(`Ctrl connect`, async () => {
-    browserService = await initBrowserWithExtension(CTRL_COMMON_CONFIG);
+    browserService = await initBrowserWithExtension({
+      walletConfig: CTRL_COMMON_CONFIG,
+    });
     await connectWallet(browserService);
   });
 
   test.skip(`OKX connect`, async () => {
-    browserService = await initBrowserWithExtension(OKX_COMMON_CONFIG);
+    browserService = await initBrowserWithExtension({
+      walletConfig: OKX_COMMON_CONFIG,
+    });
     await connectWallet(browserService);
   });
 
   // skip due to side panel
   test.skip(`Bitget connect`, async () => {
-    browserService = await initBrowserWithExtension(BITGET_COMMON_CONFIG);
+    browserService = await initBrowserWithExtension({
+      walletConfig: BITGET_COMMON_CONFIG,
+    });
     await connectWallet(browserService);
   });
 
   test('WC+Safe connect (with MM)', async () => {
-    browserService = await initBrowserWithExtension(WC_SAFE_COMMON_CONFIG);
+    browserService = await initBrowserWithExtension({
+      walletConfig: WC_SAFE_COMMON_CONFIG,
+    });
     await connectWallet(browserService);
   });
 
   test('Safe IframeApp connect (with MM)', async () => {
-    browserService = await initBrowserWithExtension(IFRAME_SAFE_COMMON_CONFIG);
+    browserService = await initBrowserWithExtension({
+      walletConfig: IFRAME_SAFE_COMMON_CONFIG,
+    });
     await connectWallet(browserService);
   });
 

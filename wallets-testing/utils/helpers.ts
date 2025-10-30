@@ -5,11 +5,17 @@ import { configService, getWidgetConfig, WidgetConfig } from '../config';
 import { WidgetService } from '../services';
 import { tokenToWithdraw, tokenToWrap } from '../pages';
 
-export async function initBrowserWithExtension(
-  walletConfig: CommonWalletConfig,
+type initBrowserOptions = {
+  walletConfig: CommonWalletConfig;
+  isFork?: boolean;
+  widgetConfig?: WidgetConfig;
+};
+
+export async function initBrowserWithExtension({
+  walletConfig,
   isFork = false,
-  widgetConfig: WidgetConfig = getWidgetConfig['Ethereum'],
-) {
+  widgetConfig = getWidgetConfig['Ethereum'],
+}: initBrowserOptions) {
   const browserService = new BrowserService({
     networkConfig: widgetConfig.network,
     accountConfig: {

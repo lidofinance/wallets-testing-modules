@@ -155,6 +155,9 @@ export class IframeWidgetPage implements WidgetPage {
       this.widgetConfig.stakeContract,
     );
 
+    // Skip next steps, because on the mainnet we need to check only tx initialization (without execution)
+    if (this.widgetConfig.network.chainId == 1) return;
+
     await this.walletPage.confirmTx(this.page, true);
     await this.app
       .getByText('Staking operation was successful.')
@@ -187,6 +190,9 @@ export class IframeWidgetPage implements WidgetPage {
       this.widgetConfig.wrapContract,
     );
 
+    // Skip next steps, because on the mainnet we need to check only tx initialization (without execution)
+    if (this.widgetConfig.network.chainId == 1) return;
+
     await this.walletPage.confirmTx(this.page, true);
     await this.app
       .getByText('Wrapping operation was successful.')
@@ -214,6 +220,9 @@ export class IframeWidgetPage implements WidgetPage {
       this.page,
       this.widgetConfig.wrapContract,
     );
+
+    // Skip next steps, because on the mainnet we need to check only tx initialization (without execution)
+    if (this.widgetConfig.network.chainId == 1) return;
 
     await this.walletPage.confirmTx(this.page, true);
     await this.app
@@ -246,6 +255,9 @@ export class IframeWidgetPage implements WidgetPage {
       this.page,
       this.widgetConfig.withdrawalContract,
     );
+
+    // Skip next steps, because on the mainnet we need to check only tx initialization (without execution)
+    if (this.widgetConfig.network.chainId == 1) return;
 
     await this.walletPage.confirmTx(this.page, true);
     await this.app
@@ -280,6 +292,9 @@ export class IframeWidgetPage implements WidgetPage {
       this.page,
       this.widgetConfig.withdrawalContract,
     );
+
+    // Skip next steps, because on the mainnet we need to check only tx initialization (without execution)
+    if (this.widgetConfig.network.chainId == 1) return;
 
     await this.walletPage.confirmTx(this.page, true);
     await this.app
