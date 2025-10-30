@@ -27,11 +27,10 @@ test.describe('Test widget Lido app of Safe wallet (iframe)', () => {
       };
 
   test.beforeAll(async () => {
-    browserService = await initBrowserWithExtension(
-      IFRAME_SAFE_COMMON_CONFIG,
-      false,
-      config.widgetConfig,
-    );
+    browserService = await initBrowserWithExtension({
+      walletConfig: IFRAME_SAFE_COMMON_CONFIG,
+      widgetConfig: config.widgetConfig,
+    });
   });
 
   test(`Stake ${config.caseName}`, async () => {
