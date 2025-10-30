@@ -1,5 +1,6 @@
 name: Test widget's tx with Safe Iframe
 on:
+  pull_request:
   workflow_dispatch:
     inputs:
       notify:
@@ -61,7 +62,7 @@ jobs:
             echo -e "🚀 Running \033[1;34m$SUITE\033[0m tests"
             xvfb-run --auto-servernum -- yarn test:iframe-mainnet
           else
-            echo -e "The SUITE \033[1;34m$SUITE\033[0m tests"
+            echo -e "The suite \033[1;34m$SUITE\033[0m does not exist"
           fi
         working-directory: wallets-testing
         env:

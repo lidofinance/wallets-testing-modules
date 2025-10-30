@@ -1,4 +1,4 @@
-name: Test wallets on the ETH Widget
+name: Test widgets and wallets integration
 on:
   pull_request:
   workflow_dispatch:
