@@ -16,13 +16,11 @@ test.describe('Test widget Lido app of Safe wallet (iframe)', () => {
   let browserService: BrowserService;
   const config = String(process.env.SUITE).includes('mainnet')
     ? {
-        isFork: false,
         txAmount: '0.000001',
         widgetConfig: getWidgetConfig['Ethereum'],
         caseName: 'transaction initialization', // Check only tx initialization on the mainnet (without execution)
       }
     : {
-        isFork: false,
         txAmount: '0.0005',
         widgetConfig: getWidgetConfig['Ethereum Hoodi'],
         caseName: 'transaction execution', // Check transaction execution
@@ -31,7 +29,7 @@ test.describe('Test widget Lido app of Safe wallet (iframe)', () => {
   test.beforeAll(async () => {
     browserService = await initBrowserWithExtension(
       IFRAME_SAFE_COMMON_CONFIG,
-      config.isFork,
+      false,
       config.widgetConfig,
     );
   });
