@@ -1,10 +1,10 @@
-name: Test widgets and wallets integration
+name: Test wallets on the ETH Widget
 on:
   pull_request:
   workflow_dispatch:
     inputs:
       notify:
-        description: 'Notify about test results to the discord channel'
+        description: 'Notify about test results to the chat'
         required: false
         default: false
         type: boolean

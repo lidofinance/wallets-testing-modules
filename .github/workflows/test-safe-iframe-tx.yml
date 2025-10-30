@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       notify:
-        description: 'Notify about test results to the discord channel'
+        description: 'Notify about test results to the chat'
         required: false
         default: false
         type: boolean
