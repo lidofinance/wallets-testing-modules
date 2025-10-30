@@ -58,11 +58,9 @@ jobs:
           if [[ "$SUITE" == "tx-exec_hoodi" ]]; then
             echo -e "🚀 Running \033[1;34m$SUITE\033[0m tests"
             xvfb-run --auto-servernum -- yarn test:iframe-hoodi
-          elif [[ "$SUITE"  == "tx-init_mainnet" ]]; then
+          else
             echo -e "🚀 Running \033[1;34m$SUITE\033[0m tests"
             xvfb-run --auto-servernum -- yarn test:iframe-mainnet
-          else
-            echo -e "The suite \033[1;34m$SUITE\033[0m does not exist"
           fi
         working-directory: wallets-testing
         env:
