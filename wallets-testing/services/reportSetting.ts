@@ -1,4 +1,5 @@
 import { ReporterDescription } from '@playwright/test';
+import { IS_MAINNET, IS_SAFE_TESTING } from '../config';
 
 export interface ReporterOptions {
   app: {
@@ -25,7 +26,9 @@ export class ReportersSettings {
         {
           enabled: process.env.REPORT_ENABLED,
           customTitle: `${this.options.app.emojiPrefix} ${this.options.app.name}`,
-          customDescription: ``,
+          customDescription: IS_SAFE_TESTING
+            ? `• Layer: \`${IS_MAINNET ? 'mainnet`' : 'testnet'}\``
+            : '',
           ciRunUrl: `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
           reportType: 'list',
 

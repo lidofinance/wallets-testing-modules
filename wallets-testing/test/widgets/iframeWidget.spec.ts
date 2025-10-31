@@ -9,22 +9,17 @@ import {
   wrap,
 } from '../../utils/helpers';
 import { BrowserService } from '@lidofinance/browser-service';
-import { getWidgetConfig } from '../../config';
+import { getWidgetConfig, IS_MAINNET } from '../../config';
 import { tokenToWithdraw, tokenToWrap } from '../../pages';
 
 test.describe('Test widget Lido app of Safe wallet (iframe)', () => {
   let browserService: BrowserService;
-  const config = String(process.env.SUITE).includes('mainnet')
-    ? {
-        txAmount: '0.000001',
-        widgetConfig: getWidgetConfig['Ethereum'],
-        caseName: 'transaction initialization', // Check only tx initialization on the mainnet (without execution)
-      }
-    : {
-        txAmount: '0.0005',
-        widgetConfig: getWidgetConfig['Ethereum Hoodi'],
-        caseName: 'transaction execution', // Check transaction execution
-      };
+  const config = {
+    txAmount: IS_MAINNET ? '0.000001' : '0.0005',
+    widgetConfig: getWidgetConfig[IS_MAINNET ? 'Ethereum' : 'Ethereum Hoodi'],
+    // Mainnet -> Check only tx initialization || Hoodi -> Check full tx execution
+    caseName: `transaction ${IS_MAINNET ? 'initialization' : 'execution'}`,
+  };
 
   test.beforeAll(async () => {
     browserService = await initBrowserWithExtension({

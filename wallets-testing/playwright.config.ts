@@ -1,10 +1,13 @@
 import type { PlaywrightTestConfig } from '@playwright/test';
 import { ReporterOptions, ReportersSettings } from './services';
+import { IS_SAFE_TESTING } from './config';
 
 const wtmReporter: ReporterOptions = {
   app: {
-    name: '[ETH Widget] Wallets testing', // DONT CHANGE THIS NAME, PLS!
-    emojiPrefix: '📘',
+    name: `[ETH Widget] ${
+      IS_SAFE_TESTING ? 'Safe Iframe testing' : 'Wallets testing'
+    }`, // DONT CHANGE THIS NAME, PLS!
+    emojiPrefix: IS_SAFE_TESTING ? '🤖' : '📘',
   },
 };
 
