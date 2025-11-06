@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "feat/extend-node-service",
+        "channel": "extend-node-service",
+        "prerelease": "extend-node-service"
       }
     ]
   }
