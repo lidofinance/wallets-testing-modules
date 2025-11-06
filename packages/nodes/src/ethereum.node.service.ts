@@ -48,6 +48,11 @@ export class EthereumNodeService {
     this.runOptions = options.runOptions;
   }
 
+  // extended usage only
+  public getProvider(): providers.JsonRpcProvider {
+    return this.provider;
+  }
+
   private startAnvil() {
     const args = [
       `--host=${this.host}`,
