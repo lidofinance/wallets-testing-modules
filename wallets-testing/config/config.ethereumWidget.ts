@@ -48,3 +48,8 @@ export const getWidgetConfig = {
   Ethereum: ETHEREUM_WIDGET_CONFIG,
   'Ethereum Hoodi': HOODI_WIDGET_CONFIG,
 };
+
+export const IS_SAFE_TESTING = String(process.env.GITHUB_WORKFLOW).includes(
+  'Safe',
+);
+export const IS_MAINNET = String(process.env.SUITE).includes('mainnet');

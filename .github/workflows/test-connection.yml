@@ -4,19 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       notify:
-        description: 'Notify about test results to the discord channel'
+        description: 'Notify about test results to the chat'
         required: false
         default: false
         type: boolean
-      suite:
-        description: 'Test suite to run tests'
-        required: false
-        default: wallet-connection
-        type: choice
-        options:
-          - wallet-connection
-          - hoodi-safe-iframe-tx-exec
-          - mainnet-safe-iframe-tx-init
   schedule:
      - cron: '0 */6 * * *'
 
@@ -56,32 +47,20 @@ jobs:
 
       - name: Run wallets tests
         run: |
-          if [[ "$SUITE" == "hoodi-safe-iframe-tx-exec" ]]; then
-            echo -e "🚀 Running \033[1;34mhoodi-safe-iframe\033[0m tests"
-            xvfb-run --auto-servernum -- yarn test:iframe-hoodi
-          elif [[ "$SUITE"  == "mainnet-safe-iframe-tx-init" ]]; then
-            echo -e "🚀 Running \033[1;34mmainnet-safe-iframe-tx-init\033[0m tests"
-            xvfb-run --auto-servernum -- yarn test:iframe-mainnet
-          else
             echo -e "🚀 Running \033[1;34mwallet-connection\033[0m tests"
-            xvfb-run --auto-servernum -- yarn test:widgets
-          fi
+            xvfb-run --auto-servernum -- yarn test:wallets
         working-directory: wallets-testing
         env:
           RPC_URL_TOKEN: ${{ secrets.RPC_URL_TOKEN }}
           WALLET_SECRET_PHRASE: ${{ secrets.WALLET_SECRET_PHRASE }}
           WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
           NODE_OPTIONS: --max-old-space-size=4096
-          SUITE: ${{ inputs.suite }}
 
           # Reporter settings
           REPORT_ENABLED: ${{ github.event_name == 'schedule' || inputs.notify }}
           # Slack reporter
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_DUTY_TAG: 'S09HF5VRFKJ'
-          # Discord reporter
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK }}
-          DISCORD_DUTY_TAG: '&1118836223495131167'
 
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}

@@ -1,0 +1,84 @@
+name: Test widget's tx with Safe Iframe
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      notify:
+        description: 'Notify about test results to the chat'
+        required: false
+        default: false
+        type: boolean
+      suite:
+        description: 'Test suite to run tests'
+        required: false
+        default: tx-init_mainnet
+        type: choice
+        options:
+          - tx-exec_hoodi
+          - tx-init_mainnet
+  schedule:
+    - cron: '0 12 * * *'
+
+jobs:
+  test:
+    name: Testing
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run lint
+        run: yarn lint
+
+      - name: Build Components
+        run: yarn build
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+
+      - name: Install Playwright Browsers
+        run: yarn playwright install chromium --with-deps
+
+      - name: Run wallets tests
+        run: |
+          if [[ "$SUITE" == "tx-exec_hoodi" ]]; then
+            echo -e "🚀 Running \033[1;34mtx-exec_hoodi\033[0m tests"
+            xvfb-run --auto-servernum -- yarn test:iframe-hoodi
+          else
+            echo -e "🚀 Running \033[1;34mtx-init_mainnet\033[0m tests"
+            xvfb-run --auto-servernum -- yarn test:iframe-mainnet
+          fi
+        working-directory: wallets-testing
+        env:
+          RPC_URL_TOKEN: ${{ secrets.RPC_URL_TOKEN }}
+          WALLET_SECRET_PHRASE: ${{ secrets.WALLET_SECRET_PHRASE }}
+          WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}
+          NODE_OPTIONS: --max-old-space-size=4096
+          SUITE: ${{ inputs.suite || 'tx-init_mainnet' }}
+
+          # Reporter settings
+          REPORT_ENABLED: ${{ github.event_name == 'schedule' || inputs.notify }}
+          # Slack reporter
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_DUTY_TAG: 'S09HF5VRFKJ'
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: playwright-report
+          path: wallets-testing/playwright-report/
+          retention-days: 7
