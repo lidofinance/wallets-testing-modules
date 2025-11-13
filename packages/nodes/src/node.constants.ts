@@ -16,6 +16,7 @@ export type EthereumNodeServiceOptions = {
   blockTime?: number;
   // options
   runOptions?: string[];
+  warmUpCallback?: CallableFunction;
 };
 
 export type Account = {

@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "feat/add-warup-for-fork",
+        "channel": "alpha-warmup",
+        "prerelease": "alpha-warmup"
       }
     ]
   }

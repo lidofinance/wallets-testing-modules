@@ -119,6 +119,12 @@ export class EthereumNodeService {
       throw new Error('Anvil did not start');
     }
 
+    if (this.options.warmUpCallback) {
+      this.logger.debug('Running warm-up callback...');
+      await this.options.warmUpCallback();
+      this.logger.debug('Warm-up callback completed.');
+    }
+
     this.provider = new providers.JsonRpcProvider(nodeUrl);
     const addresses = await this.provider.listAccounts();
     const accounts: Account[] = addresses.map((address, index) => ({
