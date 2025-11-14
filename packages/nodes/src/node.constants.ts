@@ -17,6 +17,7 @@ export type EthereumNodeServiceOptions = {
   // options
   runOptions?: string[];
   warmUpCallback?: CallableFunction;
+  useExternalFork?: boolean;
 };
 
 export type Account = {

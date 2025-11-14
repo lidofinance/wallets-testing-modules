@@ -8,7 +8,6 @@ import {
   BrowserContext,
   Page,
   Request,
-  test,
 } from '@playwright/test';
 import { BigNumber, Contract, providers, utils } from 'ethers';
 import {
@@ -18,6 +17,8 @@ import {
   ServiceUnreachableError,
 } from './node.constants';
 import { execSync } from 'node:child_process';
+import path from 'node:path';
+import fs from 'node:fs';
 
 export class EthereumNodeService {
   private readonly logger = new ConsoleLogger(EthereumNodeService.name);
@@ -32,9 +33,10 @@ export class EthereumNodeService {
   private readonly derivationPath: string;
   private readonly blockTime: number;
   private readonly runOptions: string[];
+  public readonly localForkConfigPath: string;
 
   state?: {
-    nodeProcess: ReturnType<typeof spawn>;
+    nodeProcess: ReturnType<typeof spawn | typeof undefined>;
     nodeUrl: string;
     accounts: Account[];
   };
@@ -46,11 +48,33 @@ export class EthereumNodeService {
     this.blockTime = options.blockTime || 2;
     this.derivationPath = options.derivationPath || "m/44'/60'/2020'/0/0";
     this.runOptions = options.runOptions;
+    this.localForkConfigPath = 'local_fork_config.json';
   }
 
   // extended usage only
   public getProvider(): providers.JsonRpcProvider {
     return this.provider;
+  }
+
+  loadDataFromConfig() {
+    try {
+      const configPath = path.resolve(process.cwd(), this.localForkConfigPath);
+      if (!fs.existsSync(configPath)) {
+        this.logger.warn(`local_fork_config.json not found at ${configPath}`);
+        return this.privateKeys;
+      }
+      const raw = fs.readFileSync(configPath, 'utf8');
+      const json = JSON.parse(raw);
+      if (Array.isArray(json?.private_keys)) {
+        this.privateKeys.push(...json.private_keys);
+      } else {
+        this.logger.warn('private_keys not found in local_fork_config.json');
+      }
+    } catch (e) {
+      // @ts-expect-error e message
+      this.logger.error(`Failed to read local_fork_config.json: ${e.message}`);
+    }
+    return this.privateKeys;
   }
 
   private startAnvil() {
@@ -62,17 +86,11 @@ export class EthereumNodeService {
       `--block-time=${this.blockTime}`,
       `--accounts=${this.accountsLength}`,
       `--derivation-path=${this.derivationPath}`,
+      '--config-out=local_fork_config.json',
       ...(this.runOptions ?? []),
     ];
 
     const anvilProcess = spawn('anvil', args, { stdio: 'pipe' });
-
-    anvilProcess.stdout.once('data', (data: Buffer) => {
-      const text = data.toString();
-
-      const keyMatches = [...text.matchAll(/\(\d+\)\s+(0x[a-fA-F0-9]{64})/g)];
-      keyMatches.forEach((match) => this.privateKeys.push(match[1]));
-    });
 
     anvilProcess.stderr.on('data', (data) => {
       this.logger.error(`[Anvil STDERR] ${data}`);
@@ -87,37 +105,42 @@ export class EthereumNodeService {
 
   async startNode() {
     if (this.state) return;
+    const nodeUrl = `http://${this.host}:${this.port}`;
+    let process;
 
-    const rpcUrl = this.options.rpcUrl;
-    if (!rpcUrl) throw new Error('RPC URL is required');
+    if (!this.options.useExternalFork) {
+      const rpcUrl = this.options.rpcUrl;
+      if (!rpcUrl) throw new Error('RPC URL is required');
 
-    // Ensure port is free in case it wasn't released properly
-    if (!(await this.ensurePortAvailable(this.port))) {
-      this.logger.warn(
-        `Port ${this.port} already in use. Cleaning up before restart...`,
-      );
-      try {
-        execSync(`kill -9 $(lsof -ti:${this.port})`, {
-          stdio: 'ignore',
-          shell: '/bin/bash',
-        });
-      } catch (e) {
-        throw new Error(
-          `Failed to kill process on port ${this.port}: ${e.toString()}`,
+      // Ensure port is free in case it wasn't released properly
+      if (!(await this.ensurePortAvailable(this.port))) {
+        this.logger.warn(
+          `Port ${this.port} already in use. Cleaning up before restart...`,
         );
+        try {
+          execSync(`kill -9 $(lsof -ti:${this.port})`, {
+            stdio: 'ignore',
+            shell: '/bin/bash',
+          });
+        } catch (e) {
+          throw new Error(
+            `Failed to kill process on port ${this.port}: ${e.toString()}`,
+          );
+        }
+      }
+
+      this.logger.debug('Starting Anvil node...');
+      process = this.startAnvil();
+
+      const isAnvilReady = await this.waitForAnvilReady(nodeUrl);
+
+      if (!isAnvilReady) {
+        process.kill('SIGKILL');
+        throw new Error('Anvil did not start');
       }
     }
 
-    this.logger.debug('Starting Anvil node...');
-    const process = this.startAnvil();
-    const nodeUrl = `http://${this.host}:${this.port}`;
-
-    const isAnvilReady = await this.waitForAnvilReady(nodeUrl);
-
-    if (!isAnvilReady) {
-      process.kill('SIGKILL');
-      throw new Error('Anvil did not start');
-    }
+    this.loadDataFromConfig();
 
     if (this.options.warmUpCallback) {
       this.logger.debug('Running warm-up callback...');
@@ -138,14 +161,12 @@ export class EthereumNodeService {
   async setupDefaultTokenBalances() {
     if (this.options.tokens) {
       for (const token of this.options.tokens) {
-        await test.step(`Setup balance ${this.defaultBalance} ${token.name}`, async () => {
-          await this.setErc20Balance(
-            this.getAccount(),
-            token.address,
-            token.mappingSlot,
-            this.defaultBalance,
-          );
-        });
+        await this.setErc20Balance(
+          this.getAccount(),
+          token.address,
+          token.mappingSlot,
+          this.defaultBalance,
+        );
       }
     }
   }
@@ -155,7 +176,6 @@ export class EthereumNodeService {
   }
 
   async getBalance(account: Account): Promise<string | undefined> {
-    if (!this.state) return undefined;
     const balance = await this.provider.getBalance(account.address);
     return utils.formatEther(balance);
   }
@@ -391,6 +411,10 @@ export class EthereumNodeService {
   }
 
   async stopNode(): Promise<void> {
+    if (this.options.useExternalFork) {
+      this.logger.log('Using external fork. Skipping node stop.');
+      return;
+    }
     if (this.state) {
       this.logger.log('Stopping Node...');
       const nodeProcess = this.state.nodeProcess;
