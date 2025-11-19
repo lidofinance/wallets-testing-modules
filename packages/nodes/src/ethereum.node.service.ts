@@ -142,18 +142,18 @@ export class EthereumNodeService {
 
     this.loadDataFromConfig();
 
-    if (this.options.warmUpCallback) {
-      this.logger.debug('Running warm-up callback...');
-      await this.options.warmUpCallback();
-      this.logger.debug('Warm-up callback completed.');
-    }
-
     this.provider = new providers.JsonRpcProvider(nodeUrl);
     const addresses = await this.provider.listAccounts();
     const accounts: Account[] = addresses.map((address, index) => ({
       address,
       secretKey: this.privateKeys?.[index] || '',
     }));
+
+    if (this.options.warmUpCallback) {
+      this.logger.debug('Running warm-up callback...');
+      await this.options.warmUpCallback();
+      this.logger.debug('Warm-up callback completed.');
+    }
 
     this.state = { nodeProcess: process, nodeUrl, accounts };
   }
