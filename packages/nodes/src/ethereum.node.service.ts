@@ -109,6 +109,7 @@ export class EthereumNodeService {
     let process;
 
     if (!this.options.useExternalFork) {
+      this.logger.debug('Using local Anvil node...');
       const rpcUrl = this.options.rpcUrl;
       if (!rpcUrl) throw new Error('RPC URL is required');
 
@@ -139,6 +140,7 @@ export class EthereumNodeService {
         throw new Error('Anvil did not start');
       }
     }
+    this.logger.log(`Ethereum node is running at ${nodeUrl}`);
 
     // Load private keys after node is ready
     this.loadDataFromConfig();
@@ -364,6 +366,15 @@ export class EthereumNodeService {
           };
         }
       };
+
+      if (Array.isArray(parsed)) {
+        const responses = await Promise.all(parsed.map(proxyRequest));
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(responses),
+        });
+      }
 
       const singleResponse = await proxyRequest(parsed);
       return route.fulfill({
