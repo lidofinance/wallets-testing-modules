@@ -179,6 +179,7 @@ export class EthereumNodeService {
   }
 
   async getBalance(account: Account): Promise<string | undefined> {
+    if (!this.state) return undefined;
     const balance = await this.provider.getBalance(account.address);
     return utils.formatEther(balance);
   }
@@ -366,15 +367,6 @@ export class EthereumNodeService {
           };
         }
       };
-
-      if (Array.isArray(parsed)) {
-        const responses = await Promise.all(parsed.map(proxyRequest));
-        return route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify(responses),
-        });
-      }
 
       const singleResponse = await proxyRequest(parsed);
       return route.fulfill({
