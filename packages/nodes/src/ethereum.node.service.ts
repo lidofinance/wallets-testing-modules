@@ -140,6 +140,7 @@ export class EthereumNodeService {
       }
     }
 
+    // Load private keys after node is ready
     this.loadDataFromConfig();
 
     this.provider = new providers.JsonRpcProvider(nodeUrl);
