@@ -35,6 +35,15 @@ export async function initBrowserWithExtension({
   });
 
   await browserService.initWalletSetup(isFork);
+
+  // We abort this request because we need to reduce the request count to the Elliptic api
+  await browserService
+    .getBrowserContextPage()
+    .context()
+    .route(new RegExp('.*/api/validation\\?.*'), async (route) => {
+      await route.abort();
+    });
+
   return browserService;
 }
 
