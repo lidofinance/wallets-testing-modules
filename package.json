@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "feat/add-flag-for-send-failed",
+        "channel": "alpha-failed-flag",
+        "prerelease": "alpha-failed-flag"
       }
     ]
   }
