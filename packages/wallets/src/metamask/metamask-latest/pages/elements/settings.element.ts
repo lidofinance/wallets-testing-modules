@@ -19,7 +19,7 @@ export class SettingsElement {
 
   async open() {
     await test.step('Open settings menu', async () => {
-      await this.settingsMenu.click();
+      await this.settingsMenu.click({ force: true });
     });
   }
 
