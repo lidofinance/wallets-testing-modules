@@ -27,7 +27,7 @@ export class ReportersSettings {
           enabled: process.env.REPORT_ENABLED,
           customTitle: `${this.options.app.emojiPrefix} ${this.options.app.name}`,
           customDescription: IS_SAFE_TESTING
-            ? `• Layer: \`${IS_MAINNET ? 'mainnet`' : 'testnet'}\``
+            ? `• Layer: \`${IS_MAINNET ? 'mainnet' : 'testnet'}\``
             : '',
           ciRunUrl: `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
           reportType: 'list',
