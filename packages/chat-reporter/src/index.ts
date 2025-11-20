@@ -32,6 +32,7 @@ export type ReporterOptions = {
   customDescription?: string;
   ciRunUrl?: string;
   reportType: 'count' | 'list';
+  onlyFailed: boolean;
 
   // Discord
   discordWebhookUrl?: string;
@@ -49,16 +50,16 @@ class ChatReporter implements Reporter {
   private enabled: boolean;
   private runInfo: RunInfo;
 
-  constructor(options: ReporterOptions) {
-    this.enabled = (options.enabled ?? '').trim().toLowerCase() === 'true';
-    if (!options.discordWebhookUrl && !options.slackWebhookUrl) {
+  constructor(private options: ReporterOptions) {
+    this.enabled = (this.options.enabled ?? '').trim().toLowerCase() === 'true';
+    if (!this.options.discordWebhookUrl && !this.options.slackWebhookUrl) {
       this.logger.error('No discordWebhookUrl nor slackWebhookUrl provided');
       this.enabled = false;
     }
     if (!this.enabled) return;
 
     this.runInfo = {
-      ciUrl: options.ciRunUrl?.trim() || undefined,
+      ciUrl: this.options.ciRunUrl?.trim() || undefined,
       testNames: {},
       testCount: {
         passed: 0,
@@ -68,8 +69,8 @@ class ChatReporter implements Reporter {
       },
     };
 
-    this.discordReporter = new DiscordReporter(options, this.runInfo);
-    this.slackReporter = new SlackReporter(options, this.runInfo);
+    this.discordReporter = new DiscordReporter(this.options, this.runInfo);
+    this.slackReporter = new SlackReporter(this.options, this.runInfo);
   }
 
   onTestEnd(test: TestCase, result: TestResult) {
@@ -102,6 +103,13 @@ class ChatReporter implements Reporter {
 
   async onEnd(result: FullResult) {
     if (!this.enabled) return;
+
+    if (this.options.onlyFailed && this.runInfo.testCount.failed === 0) {
+      this.logger.log(
+        'No failed tests detected, skipping chat report sending.',
+      );
+      return;
+    }
     this.runInfo.duration = formatDuration(result.duration);
     this.runInfo.status = resultToStatus[result.status];
 
