@@ -32,7 +32,7 @@ export type ReporterOptions = {
   customDescription?: string;
   ciRunUrl?: string;
   reportType: 'count' | 'list';
-  onlyFailed: boolean;
+  failuresOnly: boolean;
 
   // Discord
   discordWebhookUrl?: string;
@@ -104,7 +104,7 @@ class ChatReporter implements Reporter {
   async onEnd(result: FullResult) {
     if (!this.enabled) return;
 
-    if (this.options.onlyFailed && this.runInfo.testCount.failed === 0) {
+    if (this.options.failuresOnly && this.runInfo.testCount.failed === 0) {
       this.logger.log(
         'No failed tests detected, skipping chat report sending.',
       );
