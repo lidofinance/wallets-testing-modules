@@ -65,6 +65,15 @@ export class OkxPage implements WalletPage<WalletConnectTypes.EOA> {
     await test.step('Navigate to OKX', async () => {
       await this.initLocators();
       await this.goto();
+
+      await test.step('Wait for page is loaded', async () => {
+        await this.page.waitForLoadState('load');
+        if (await this.page.getByRole('img', { name: 'okx' }).isVisible())
+          await this.page
+            .getByRole('img', { name: 'okx' })
+            .waitFor({ state: 'hidden', timeout: 30000 });
+      });
+
       await this.loginPage.unlock();
       await this.walletOperations.cancelAllTxInQueue();
     });
@@ -192,6 +201,7 @@ export class OkxPage implements WalletPage<WalletConnectTypes.EOA> {
   async cancelTx(page: Page) {
     await test.step('Cancel TX', async () => {
       await new WalletOperations(page).cancelTxButton.click();
+      await page.waitForEvent('close', { timeout: 30000 });
     });
   }
 

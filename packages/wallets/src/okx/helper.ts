@@ -5,6 +5,8 @@ const incorrectNetworkNames = new Map<string, string>([
   ['Mantle Mainnet', 'Mantle'],
   ['Scroll Mainnet', 'Scroll'],
   ['Mode', 'Mode Network'],
+  ['Soneium Testnet Minato', 'Soneium Minato Testnet'],
+  ['Avalanche Network C-Chain', 'Avalanche C'],
 ]);
 
 const OkxIncludedNetwork = [
@@ -18,6 +20,8 @@ const OkxIncludedNetwork = [
   'Scroll',
   'Mode Network',
   'Zircuit',
+  'Soneium Minato Testnet',
+  'Avalanche C',
 ];
 
 /** Check network name and return correct name suited for OKX Wallet*/
@@ -39,6 +43,6 @@ export async function closeUnnecessaryPages(browserContext: BrowserContext) {
 
 /** Before AddNetwork() we check the network is included in wallet or not*/
 export async function isNeedAddNetwork(network: string) {
-  const networkName = await getCorrectNetworkName(network);
+  const networkName = getCorrectNetworkName(network);
   return !OkxIncludedNetwork.includes(networkName);
 }
