@@ -20,8 +20,9 @@ import { execSync } from 'node:child_process';
 import path from 'node:path';
 import fs from 'node:fs';
 
+const logger = new ConsoleLogger('EthereumNodeService');
+
 export class EthereumNodeService {
-  private readonly logger = new ConsoleLogger(EthereumNodeService.name);
   private provider: any;
   private readonly privateKeys: string[] = [];
   private readonly host = '127.0.0.1';
@@ -60,7 +61,7 @@ export class EthereumNodeService {
     try {
       const configPath = path.resolve(process.cwd(), this.localForkConfigPath);
       if (!fs.existsSync(configPath)) {
-        this.logger.warn(`local_fork_config.json not found at ${configPath}`);
+        logger.warn(`local_fork_config.json not found at ${configPath}`);
         return this.privateKeys;
       }
       const raw = fs.readFileSync(configPath, 'utf8');
@@ -68,11 +69,11 @@ export class EthereumNodeService {
       if (Array.isArray(json?.private_keys)) {
         this.privateKeys.push(...json.private_keys);
       } else {
-        this.logger.warn('private_keys not found in local_fork_config.json');
+        logger.warn('private_keys not found in local_fork_config.json');
       }
     } catch (e) {
       // @ts-expect-error e message
-      this.logger.error(`Failed to read local_fork_config.json: ${e.message}`);
+      logger.error(`Failed to read local_fork_config.json: ${e.message}`);
     }
     return this.privateKeys;
   }
@@ -96,11 +97,11 @@ export class EthereumNodeService {
     anvilProcess.stdout.on('data', () => {});
 
     anvilProcess.stderr.on('data', (data) => {
-      this.logger.error(`[Anvil STDERR] ${data}`);
+      logger.error(`[Anvil STDERR] ${data}`);
     });
 
     anvilProcess.on('close', (code) => {
-      this.logger.warn(`[Anvil Closed] Code ${code}`);
+      logger.warn(`[Anvil Closed] Code ${code}`);
     });
 
     return anvilProcess;
@@ -112,28 +113,19 @@ export class EthereumNodeService {
     let process;
 
     if (!this.options.useExternalFork) {
-      this.logger.debug('Using local Anvil node...');
+      logger.debug('Using local Anvil node...');
       const rpcUrl = this.options.rpcUrl;
       if (!rpcUrl) throw new Error('RPC URL is required');
 
       // Ensure port is free in case it wasn't released properly
       if (!(await this.ensurePortAvailable(this.port))) {
-        this.logger.warn(
+        logger.warn(
           `Port ${this.port} already in use. Cleaning up before restart...`,
         );
-        try {
-          execSync(`kill -9 $(lsof -ti:${this.port})`, {
-            stdio: 'ignore',
-            shell: '/bin/bash',
-          });
-        } catch (e) {
-          throw new Error(
-            `Failed to kill process on port ${this.port}: ${e.toString()}`,
-          );
-        }
+        await EthereumNodeService.forceStopNode(this.port);
       }
 
-      this.logger.debug('Starting Anvil node...');
+      logger.debug('Starting Anvil node...');
       process = this.startAnvil();
 
       const isAnvilReady = await this.waitForAnvilReady(nodeUrl);
@@ -143,7 +135,7 @@ export class EthereumNodeService {
         throw new Error('Anvil did not start');
       }
     }
-    this.logger.log(`Ethereum node is running at ${nodeUrl}`);
+    logger.log(`Ethereum node is running at ${nodeUrl}`);
 
     // Load private keys after node is ready
     this.loadDataFromConfig();
@@ -156,9 +148,9 @@ export class EthereumNodeService {
     }));
 
     if (this.options.warmUpCallback) {
-      this.logger.debug('Running warm-up callback...');
+      logger.debug('Running warm-up callback...');
       await this.options.warmUpCallback();
-      this.logger.debug('Warm-up callback completed.');
+      logger.debug('Warm-up callback completed.');
     }
 
     this.state = { nodeProcess: process, nodeUrl, accounts };
@@ -274,7 +266,7 @@ export class EthereumNodeService {
 
     // Wait until node responds to eth_blockNumber
     while (Date.now() - start < timeoutMs) {
-      this.logger.debug(`Trying to send eth_blockNumber...`);
+      logger.debug(`Trying to send eth_blockNumber...`);
       try {
         const res = await axios.post(
           rpcUrl,
@@ -297,7 +289,7 @@ export class EthereumNodeService {
 
         if (isHealthy) return isHealthy;
       } catch (error: any) {
-        this.logger.warn(`RPC error: ${error?.message || 'Unknown error'}`);
+        logger.warn(`RPC error: ${error?.message || 'Unknown error'}`);
       }
 
       await new Promise((resolve) => setTimeout(resolve, delayMs));
@@ -322,11 +314,11 @@ export class EthereumNodeService {
     url: string,
     contextOrPage: BrowserContext | Page,
   ): Promise<void> {
-    this.logger.debug(`[mockRoute] Registered for URL: ${url}`);
+    logger.debug(`[mockRoute] Registered for URL: ${url}`);
 
     await contextOrPage.route(url, async (route) => {
       if (!this.state) {
-        this.logger.warn(`[mockRoute] No active node state`);
+        logger.warn(`[mockRoute] No active node state`);
         return route.continue();
       }
       const postDataRaw = route.request().postData();
@@ -337,7 +329,7 @@ export class EthereumNodeService {
       try {
         parsed = JSON.parse(postDataRaw);
       } catch (err) {
-        this.logger.error(`[mockRoute] JSON parse error`, err);
+        logger.error(`[mockRoute] JSON parse error`, err);
         return route.continue();
       }
 
@@ -403,7 +395,7 @@ export class EthereumNodeService {
       }
     }
 
-    this.logger.error(`[fetchSafety] Failed after 3 attempts`, lastErr);
+    logger.error(`[fetchSafety] Failed after 3 attempts`, lastErr);
 
     if (
       lastErr &&
@@ -419,11 +411,11 @@ export class EthereumNodeService {
 
   async stopNode(): Promise<void> {
     if (this.options.useExternalFork) {
-      this.logger.log('Using external fork. Skipping node stop.');
+      logger.log('Using external fork. Skipping node stop.');
       return;
     }
     if (this.state) {
-      this.logger.log('Stopping Node...');
+      logger.log('Stopping Node...');
       const nodeProcess = this.state.nodeProcess;
 
       const processExited = new Promise<void>((resolve, reject) => {
@@ -447,12 +439,27 @@ export class EthereumNodeService {
       try {
         await this.waitUntilPortIsFree(this.port);
       } catch (err) {
-        this.logger.warn(
+        logger.warn(
           `Timeout while waiting for port ${this.port} to be released`,
         );
       }
 
       this.state = undefined;
+    }
+  }
+
+  static async forceStopNode(port: number): Promise<void> {
+    try {
+      logger.warn(`Port ${port} used. Killing process...`);
+      execSync(`kill -9 $(lsof -ti:${port})`, {
+        stdio: 'ignore',
+        shell: '/bin/bash',
+      });
+      logger.log(`Successfully killed process on port ${port}`);
+    } catch (e) {
+      throw new Error(
+        `Failed to kill process on port ${port}: ${e.toString()}`,
+      );
     }
   }
 
