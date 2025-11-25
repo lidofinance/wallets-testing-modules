@@ -159,6 +159,7 @@ export class EthereumNodeService {
   async setupDefaultTokenBalances() {
     if (this.options.tokens) {
       for (const token of this.options.tokens) {
+        logger.log(`Setup balance ${this.defaultBalance} ${token.name}`);
         await this.setErc20Balance(
           this.getAccount(),
           token.address,
