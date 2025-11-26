@@ -61,8 +61,9 @@ export class EthereumNodeService {
     try {
       const configPath = path.resolve(process.cwd(), this.localForkConfigPath);
       if (!fs.existsSync(configPath)) {
-        logger.warn(`${this.localForkConfigPath} not found at ${configPath}`);
-        return this.privateKeys;
+        throw new Error(
+          `${this.localForkConfigPath} not found at ${configPath}`,
+        );
       }
       const raw = fs.readFileSync(configPath, 'utf8');
       const json = JSON.parse(raw);
@@ -96,7 +97,7 @@ export class EthereumNodeService {
     const anvilProcess = spawn('anvil', args, { stdio: 'pipe' });
 
     // DONT REMOVE THIS: prevents process from hanging on some platforms
-    // eslint-disable-next-line @typescript-eslint/no-empty-function 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     anvilProcess.stdout.on('data', () => {});
 
     anvilProcess.stderr.on('data', (data) => {
