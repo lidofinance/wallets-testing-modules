@@ -61,7 +61,7 @@ export class EthereumNodeService {
     try {
       const configPath = path.resolve(process.cwd(), this.localForkConfigPath);
       if (!fs.existsSync(configPath)) {
-        logger.warn(`local_fork_config.json not found at ${configPath}`);
+        logger.warn(`${this.localForkConfigPath} not found at ${configPath}`);
         return this.privateKeys;
       }
       const raw = fs.readFileSync(configPath, 'utf8');
@@ -69,13 +69,15 @@ export class EthereumNodeService {
       if (Array.isArray(json?.private_keys)) {
         this.privateKeys.push(...json.private_keys);
       } else {
-        logger.warn('private_keys not found in local_fork_config.json');
+        logger.warn(`private_keys not found in ${this.localForkConfigPath}`);
       }
+      return this.privateKeys;
     } catch (e) {
-      // @ts-expect-error e message
-      logger.error(`Failed to read local_fork_config.json: ${e.message}`);
+      throw new Error(
+        // @ts-expect-error e message
+        `Failed to read ${this.localForkConfigPath}: ${e.message}`,
+      );
     }
-    return this.privateKeys;
   }
 
   private startAnvil() {
@@ -87,7 +89,7 @@ export class EthereumNodeService {
       `--block-time=${this.blockTime}`,
       `--accounts=${this.accountsLength}`,
       `--derivation-path=${this.derivationPath}`,
-      '--config-out=local_fork_config.json',
+      `--config-out=${this.localForkConfigPath}`,
       ...(this.runOptions ?? []),
     ];
 
