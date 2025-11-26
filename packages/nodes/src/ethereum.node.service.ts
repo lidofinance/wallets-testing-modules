@@ -95,7 +95,8 @@ export class EthereumNodeService {
 
     const anvilProcess = spawn('anvil', args, { stdio: 'pipe' });
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    // DONT REMOVE THIS: prevents process from hanging on some platforms
+    // eslint-disable-next-line @typescript-eslint/no-empty-function 
     anvilProcess.stdout.on('data', () => {});
 
     anvilProcess.stderr.on('data', (data) => {
