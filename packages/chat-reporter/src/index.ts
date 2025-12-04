@@ -26,12 +26,18 @@ export type RunInfo = {
   status?: { color: number; title: string };
 };
 
+export enum ReportType {
+  count = 'count',
+  short = 'short',
+  list = 'list',
+}
+
 export type ReporterOptions = {
   enabled: string;
   customTitle?: string;
   customDescription?: string;
   ciRunUrl?: string;
-  reportType: 'count' | 'list' | 'short';
+  reportType: ReportType;
   failuresOnly: boolean;
   tag?: string;
 

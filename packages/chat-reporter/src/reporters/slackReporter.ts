@@ -1,4 +1,4 @@
-import { ReporterOptions, RunInfo } from '../index';
+import { ReporterOptions, ReportType, RunInfo } from '../index';
 import { postJson, testStatusToEmoji } from '../utils/helpers';
 import { ConsoleLogger } from '@nestjs/common';
 
@@ -42,7 +42,10 @@ export class SlackReporter {
     if (title) attachment.blocks.push(this.getHeaderBlock(title));
 
     // Description block
-    if (this.options.customDescription && this.options.reportType !== 'short')
+    if (
+      this.options.customDescription &&
+      this.options.reportType !== ReportType.short
+    )
       attachment.blocks.push(
         this.getTextBlock(this.options.customDescription),
         { type: 'divider' },
@@ -72,7 +75,7 @@ export class SlackReporter {
   }
 
   private getMainContent() {
-    if (this.options.reportType == 'list') {
+    if (this.options.reportType == ReportType.list) {
       return [
         Object.entries(this.runInfo.testNames)
           .map(([, name]) => name)
@@ -80,7 +83,7 @@ export class SlackReporter {
       ];
     }
 
-    if (this.options.reportType == 'count') {
+    if (this.options.reportType == ReportType.count) {
       return [
         `${testStatusToEmoji.passed} *Passed:* ${this.runInfo.testCount.passed}`,
         `${testStatusToEmoji.failed} *Failed:* ${this.runInfo.testCount.failed}`,
@@ -89,7 +92,7 @@ export class SlackReporter {
       ];
     }
 
-    if (this.options.reportType == 'short') {
+    if (this.options.reportType == ReportType.short) {
       const result: string[] = [];
       if (this.runInfo.testCount.passed > 0)
         result.push(
@@ -115,7 +118,7 @@ export class SlackReporter {
 
   private getHeaderBlock(title: string) {
     const resultTitle =
-      this.options.reportType === 'short' && this.options.tag
+      this.options.reportType === ReportType.short && this.options.tag
         ? `@${this.options.tag} ${title}`
         : title;
     return {
@@ -136,7 +139,7 @@ export class SlackReporter {
 
   private getContentBlocks(fields: string[]) {
     const blocks = [];
-    if (this.options.reportType == 'list') {
+    if (this.options.reportType == ReportType.list) {
       fields.map((t) =>
         blocks.push({
           type: 'section',
@@ -144,8 +147,8 @@ export class SlackReporter {
         }),
       );
     } else if (
-      this.options.reportType == 'count' ||
-      this.options.reportType == 'short'
+      this.options.reportType == ReportType.count ||
+      this.options.reportType == ReportType.short
     ) {
       blocks.push({
         type: 'section',

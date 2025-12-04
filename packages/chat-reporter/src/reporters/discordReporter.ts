@@ -1,4 +1,4 @@
-import { ReporterOptions, RunInfo } from '../index';
+import { ReporterOptions, ReportType, RunInfo } from '../index';
 import { postJson, testStatusToEmoji } from '../utils/helpers';
 import { ConsoleLogger } from '@nestjs/common';
 
@@ -75,7 +75,7 @@ export class DiscordReporter {
 
   private getMainContent() {
     const fields = [];
-    if (this.options.reportType == 'count') {
+    if (this.options.reportType == ReportType.count) {
       fields.push(
         {
           name: `${testStatusToEmoji.passed} *Passed:*`,
@@ -100,7 +100,7 @@ export class DiscordReporter {
         },
         { name: '', value: '', inline: true },
       );
-    } else if (this.options.reportType == 'list') {
+    } else if (this.options.reportType == ReportType.list) {
       fields.push({
         name: '',
         value: Object.entries(this.runInfo.testNames)

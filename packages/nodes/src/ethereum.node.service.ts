@@ -316,12 +316,12 @@ export class EthereumNodeService {
   }
 
   async mockRoute(
-    url: string,
+    url: string[],
     contextOrPage: BrowserContext | Page,
   ): Promise<void> {
     logger.debug(`[mockRoute] Registered for URL: ${url}`);
 
-    await contextOrPage.route(url, async (route) => {
+    await contextOrPage.route(new RegExp(url.join('|')), async (route) => {
       if (!this.state) {
         logger.warn(`[mockRoute] No active node state`);
         return route.continue();
