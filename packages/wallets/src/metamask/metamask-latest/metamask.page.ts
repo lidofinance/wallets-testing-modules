@@ -272,7 +272,7 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async ensureAccount(secretKey: Hex) {
+  async ensureAccount() {
     throw new Error('Function not implemented');
   }
 }
