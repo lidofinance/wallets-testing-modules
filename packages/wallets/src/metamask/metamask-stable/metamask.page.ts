@@ -289,4 +289,23 @@ export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
       if (isClosePage) await this.page.close();
     });
   }
+
+  async ensureAccount(account: { address: string; secretKey: string }) {
+    await test.step(`Ensure wallet account ${account.address} is active`, async () => {
+      const currentWalletAddress = await this.getWalletAddress();
+      const current = currentWalletAddress.toLowerCase();
+      const target = account.address.toLowerCase();
+
+      if (current === target) return;
+
+      const isExist = await this.isWalletAddressExist(target);
+
+      if (isExist) {
+        await this.changeWalletAccountByAddress(target, true);
+      } else {
+        await this.importKey(account.secretKey);
+        await this.page?.close();
+      }
+    });
+  }
 }

@@ -90,4 +90,9 @@ export interface WalletPage<T extends WalletConnectType> {
     isClosePage?: boolean,
   ): Promise<void>;
   isWalletAddressExist?(address: string): Promise<boolean>;
+
+  ensureAccount?(account: {
+    address: string;
+    secretKey: string;
+  }): Promise<void>;
 }
