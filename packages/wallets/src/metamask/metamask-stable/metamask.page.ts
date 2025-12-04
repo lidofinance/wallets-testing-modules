@@ -290,6 +290,19 @@ export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
+  /**
+   * The `ensureAccount()` function makes sure the given EOA account
+   * is selected in the wallet extension.
+   *
+   * It checks the current wallet address and:
+   * - does nothing if it already equals `account.address`;
+   * - otherwise switches to the existing account by address
+   *   or imports it using `secretKey`.
+   *
+   * Note:
+   * - Call `disconnectWallet()` in the dApp **before** `ensureAccount()`.
+   * - Call `connectWallet()` in the dApp **after** `ensureAccount()`.
+   */
   async ensureAccount(account: { address: string; secretKey: string }) {
     await test.step(`Ensure wallet account ${account.address} is active`, async () => {
       const currentWalletAddress = await this.getWalletAddress();
