@@ -15,12 +15,13 @@ import {
   PopoverElements,
   AccountMenu,
 } from './pages/elements';
-import { getAddress } from 'viem';
+import { getAddress, Hex } from 'viem';
 import {
   getCorrectNetworkName,
   isPopularMainnetNetwork,
   isPopularTestnetNetwork,
 } from './helper';
+import { privateKeyToAccount } from 'viem/accounts';
 
 export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
   page: Page | undefined;
@@ -303,7 +304,8 @@ export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
    * - Call `disconnectWallet()` in the dApp **before** `ensureAccount()`.
    * - Call `connectWallet()` in the dApp **after** `ensureAccount()`.
    */
-  async ensureAccount(account: { address: string; secretKey: string }) {
+  async ensureAccount(secretKey: Hex) {
+    const account = privateKeyToAccount(secretKey);
     await test.step(`Ensure wallet account ${account.address} is active`, async () => {
       const currentWalletAddress = await this.getWalletAddress();
       const current = currentWalletAddress.toLowerCase();
@@ -316,7 +318,7 @@ export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
       if (isExist) {
         await this.changeWalletAccountByAddress(target, true);
       } else {
-        await this.importKey(account.secretKey);
+        await this.importKey(secretKey);
         await this.page?.close();
       }
     });

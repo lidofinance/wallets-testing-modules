@@ -7,6 +7,7 @@ import {
   WalletConnectType,
   WalletConnectTypes,
 } from './wallets.constants';
+import { Hex } from 'viem';
 
 /** Required options to manage wallet */
 export interface WalletPageOptions {
@@ -91,8 +92,5 @@ export interface WalletPage<T extends WalletConnectType> {
   ): Promise<void>;
   isWalletAddressExist?(address: string): Promise<boolean>;
 
-  ensureAccount?(account: {
-    address: string;
-    secretKey: string;
-  }): Promise<void>;
+  ensureAccount?(secretKey: Hex): Promise<void>;
 }
