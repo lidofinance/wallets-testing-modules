@@ -31,8 +31,9 @@ export type ReporterOptions = {
   customTitle?: string;
   customDescription?: string;
   ciRunUrl?: string;
-  reportType: 'count' | 'list';
+  reportType: 'count' | 'list' | 'short';
   failuresOnly: boolean;
+  tag?: string;
 
   // Discord
   discordWebhookUrl?: string;

@@ -42,7 +42,7 @@ export class SlackReporter {
     if (title) attachment.blocks.push(this.getHeaderBlock(title));
 
     // Description block
-    if (this.options.customDescription)
+    if (this.options.customDescription && this.options.reportType !== 'short')
       attachment.blocks.push(
         this.getTextBlock(this.options.customDescription),
         { type: 'divider' },
@@ -89,13 +89,41 @@ export class SlackReporter {
       ];
     }
 
+    if (this.options.reportType == 'short') {
+      const result: string[] = [];
+      if (this.runInfo.testCount.passed > 0)
+        result.push(
+          `${testStatusToEmoji.passed} *Passed:* ${this.runInfo.testCount.passed}`,
+        );
+      if (this.runInfo.testCount.failed > 0)
+        result.push(
+          `${testStatusToEmoji.failed} *Failed:* ${this.runInfo.testCount.failed}`,
+        );
+      if (this.runInfo.testCount.skipped > 0)
+        result.push(
+          `${testStatusToEmoji.skipped} *Skipped:* ${this.runInfo.testCount.skipped}`,
+        );
+      if (this.runInfo.testCount.flaky > 0)
+        result.push(
+          `${testStatusToEmoji.flaky} *Flaky:* ${this.runInfo.testCount.flaky}`,
+        );
+      return result;
+    }
+
     return [];
   }
 
   private getHeaderBlock(title: string) {
+    const resultTitle =
+      this.options.reportType === 'short' && this.options.tag
+        ? `@${this.options.tag} ${title}`
+        : title;
     return {
       type: 'header',
-      text: { type: 'plain_text', text: title },
+      text: {
+        type: 'plain_text',
+        text: resultTitle,
+      },
     };
   }
 
@@ -115,7 +143,10 @@ export class SlackReporter {
           text: { type: 'mrkdwn', text: t },
         }),
       );
-    } else if (this.options.reportType == 'count') {
+    } else if (
+      this.options.reportType == 'count' ||
+      this.options.reportType == 'short'
+    ) {
       blocks.push({
         type: 'section',
         fields: fields.map((t) => ({ type: 'mrkdwn', text: t })),
