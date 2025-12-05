@@ -49,7 +49,7 @@ export interface WalletPage<T extends WalletConnectType> {
 
   setup(): Promise<void>;
 
-  importKey(secretKey: Hex): Promise<void>;
+  importKey(secretKey: string): Promise<void>;
 
   connectWallet(
     param?: T extends WalletConnectTypes.EOA ? Page : string,
