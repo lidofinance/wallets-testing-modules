@@ -155,8 +155,8 @@ export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
    * - Call `disconnectWallet()` in the dApp **before** `importKey()`.
    * - Call `connectWallet()` in the dApp **after** `importKey()`.
    */
-  async importKey(secretKey: Hex) {
-    const account = privateKeyToAccount(secretKey);
+  async importKey(secretKey: string) {
+    const account = privateKeyToAccount(<Hex>secretKey);
     await test.step(`Import Key for ${account.address}`, async () => {
       const currentWalletAddress = await this.getWalletAddress();
       const current = currentWalletAddress.toLowerCase();
