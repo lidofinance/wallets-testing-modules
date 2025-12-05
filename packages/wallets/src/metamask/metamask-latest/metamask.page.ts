@@ -15,7 +15,7 @@ import {
   AccountMenu,
   NetworkList,
 } from './pages/elements';
-import { getAddress, Hex } from 'viem';
+import { getAddress } from 'viem';
 import { isPopularMainnetNetwork, isPopularTestnetNetwork } from './helper';
 
 export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
@@ -270,9 +270,5 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
       await this.page.waitForTimeout(2000);
       if (isClosePage) await this.page.close();
     });
-  }
-
-  async ensureAccount() {
-    throw new Error('Function not implemented');
   }
 }

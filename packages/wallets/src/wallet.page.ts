@@ -49,7 +49,7 @@ export interface WalletPage<T extends WalletConnectType> {
 
   setup(): Promise<void>;
 
-  importKey(key: string): Promise<void>;
+  importKey(secretKey: Hex): Promise<void>;
 
   connectWallet(
     param?: T extends WalletConnectTypes.EOA ? Page : string,
@@ -91,6 +91,4 @@ export interface WalletPage<T extends WalletConnectType> {
     isClosePage?: boolean,
   ): Promise<void>;
   isWalletAddressExist?(address: string): Promise<boolean>;
-
-  ensureAccount?(secretKey: Hex): Promise<void>;
 }
