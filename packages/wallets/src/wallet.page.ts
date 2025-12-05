@@ -7,7 +7,6 @@ import {
   WalletConnectType,
   WalletConnectTypes,
 } from './wallets.constants';
-import { Hex } from 'viem';
 
 /** Required options to manage wallet */
 export interface WalletPageOptions {
