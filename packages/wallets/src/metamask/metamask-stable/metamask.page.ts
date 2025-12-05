@@ -15,12 +15,13 @@ import {
   PopoverElements,
   AccountMenu,
 } from './pages/elements';
-import { getAddress } from 'viem';
+import { getAddress, Hex } from 'viem';
 import {
   getCorrectNetworkName,
   isPopularMainnetNetwork,
   isPopularTestnetNetwork,
 } from './helper';
+import { privateKeyToAccount } from 'viem/accounts';
 
 export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
   page: Page | undefined;
@@ -141,12 +142,36 @@ export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async importKey(key: string) {
-    await test.step('Import key', async () => {
-      await this.navigate();
+  /**
+   * The `importKey()` function makes sure the given EOA account
+   * is selected in the wallet extension.
+   *
+   * It checks the current wallet address and:
+   * - does nothing if it already equals `account.address`;
+   * - otherwise switches to the existing account by address
+   *   or imports it using `secretKey`.
+   *
+   * Note:
+   * - Call `disconnectWallet()` in the dApp **before** `importKey()`.
+   * - Call `connectWallet()` in the dApp **after** `importKey()`.
+   */
+  async importKey(secretKey: string) {
+    const account = privateKeyToAccount(<Hex>secretKey);
+    await test.step(`Import Key for ${account.address}`, async () => {
+      const currentWalletAddress = await this.getWalletAddress();
+      const current = currentWalletAddress.toLowerCase();
+      const target = account.address.toLowerCase();
 
-      await this.header.accountMenuButton.click();
-      await this.accountMenu.addAccountWithKey(key);
+      if (current === target) return;
+
+      const isExist = await this.isWalletAddressExist(target);
+
+      if (isExist) {
+        await this.changeWalletAccountByAddress(target, true);
+      } else {
+        await this.importKey(secretKey);
+        await this.page.close();
+      }
     });
   }
 

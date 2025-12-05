@@ -48,7 +48,7 @@ export interface WalletPage<T extends WalletConnectType> {
 
   setup(): Promise<void>;
 
-  importKey(key: string): Promise<void>;
+  importKey(secretKey: string): Promise<void>;
 
   connectWallet(
     param?: T extends WalletConnectTypes.EOA ? Page : string,
