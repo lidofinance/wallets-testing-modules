@@ -1,4 +1,4 @@
-import { ReporterOptions, RunInfo } from '../index';
+import { ReporterOptions, ReportType, RunInfo } from '../index';
 import { postJson, testStatusToEmoji } from '../utils/helpers';
 import { ConsoleLogger } from '@nestjs/common';
 
@@ -42,7 +42,10 @@ export class SlackReporter {
     if (title) attachment.blocks.push(this.getHeaderBlock(title));
 
     // Description block
-    if (this.options.customDescription)
+    if (
+      this.options.customDescription &&
+      this.options.reportType !== ReportType.short
+    )
       attachment.blocks.push(
         this.getTextBlock(this.options.customDescription),
         { type: 'divider' },
@@ -72,7 +75,7 @@ export class SlackReporter {
   }
 
   private getMainContent() {
-    if (this.options.reportType == 'list') {
+    if (this.options.reportType == ReportType.list) {
       return [
         Object.entries(this.runInfo.testNames)
           .map(([, name]) => name)
@@ -80,7 +83,7 @@ export class SlackReporter {
       ];
     }
 
-    if (this.options.reportType == 'count') {
+    if (this.options.reportType == ReportType.count) {
       return [
         `${testStatusToEmoji.passed} *Passed:* ${this.runInfo.testCount.passed}`,
         `${testStatusToEmoji.failed} *Failed:* ${this.runInfo.testCount.failed}`,
@@ -89,13 +92,41 @@ export class SlackReporter {
       ];
     }
 
+    if (this.options.reportType == ReportType.short) {
+      const result: string[] = [];
+      if (this.runInfo.testCount.passed > 0)
+        result.push(
+          `${testStatusToEmoji.passed} *Passed:* ${this.runInfo.testCount.passed}`,
+        );
+      if (this.runInfo.testCount.failed > 0)
+        result.push(
+          `${testStatusToEmoji.failed} *Failed:* ${this.runInfo.testCount.failed}`,
+        );
+      if (this.runInfo.testCount.skipped > 0)
+        result.push(
+          `${testStatusToEmoji.skipped} *Skipped:* ${this.runInfo.testCount.skipped}`,
+        );
+      if (this.runInfo.testCount.flaky > 0)
+        result.push(
+          `${testStatusToEmoji.flaky} *Flaky:* ${this.runInfo.testCount.flaky}`,
+        );
+      return result;
+    }
+
     return [];
   }
 
   private getHeaderBlock(title: string) {
+    const resultTitle =
+      this.options.reportType === ReportType.short && this.options.tag
+        ? `@${this.options.tag} ${title}`
+        : title;
     return {
       type: 'header',
-      text: { type: 'plain_text', text: title },
+      text: {
+        type: 'plain_text',
+        text: resultTitle,
+      },
     };
   }
 
@@ -108,14 +139,17 @@ export class SlackReporter {
 
   private getContentBlocks(fields: string[]) {
     const blocks = [];
-    if (this.options.reportType == 'list') {
+    if (this.options.reportType == ReportType.list) {
       fields.map((t) =>
         blocks.push({
           type: 'section',
           text: { type: 'mrkdwn', text: t },
         }),
       );
-    } else if (this.options.reportType == 'count') {
+    } else if (
+      this.options.reportType == ReportType.count ||
+      this.options.reportType == ReportType.short
+    ) {
       blocks.push({
         type: 'section',
         fields: fields.map((t) => ({ type: 'mrkdwn', text: t })),

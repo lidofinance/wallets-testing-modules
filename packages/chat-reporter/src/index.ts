@@ -26,13 +26,20 @@ export type RunInfo = {
   status?: { color: number; title: string };
 };
 
+export enum ReportType {
+  count = 'count',
+  short = 'short',
+  list = 'list',
+}
+
 export type ReporterOptions = {
   enabled: string;
   customTitle?: string;
   customDescription?: string;
   ciRunUrl?: string;
-  reportType: 'count' | 'list';
+  reportType: ReportType;
   failuresOnly: boolean;
+  tag?: string;
 
   // Discord
   discordWebhookUrl?: string;
