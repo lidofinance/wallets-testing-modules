@@ -25,7 +25,6 @@
     "@lidofinance/wallets-testing-extensions": "*",
     "@lidofinance/wallets-testing-nodes": "*",
     "@lidofinance/wallets-testing-wallets": "*",
-    "@lidofinance/wallets-testing-widgets": "*",
     "@lidofinance/chat-reporter": "*",
     "@nestjs/common": "^10.0.0",
     "reflect-metadata": "^0.1.13",
