@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "anvil-logs",
+        "channel": "anvil-logs",
+        "prerelease": "anvil-logs"
       }
     ]
   }
