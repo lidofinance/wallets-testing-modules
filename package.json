@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "fix/fix-importKey",
+        "channel": "fix-mm-importKey",
+        "prerelease": "fix-mm-importKey"
       }
     ]
   }
