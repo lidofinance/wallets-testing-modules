@@ -172,7 +172,6 @@ export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
         await this.navigate();
         await this.header.accountMenuButton.click();
         await this.accountMenu.addAccountWithKey(secretKey);
-        await this.page.close();
       }
     });
   }
