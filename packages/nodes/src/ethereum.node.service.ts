@@ -97,19 +97,18 @@ export class EthereumNodeService {
     const anvilProcess = spawn('anvil', args, { stdio: 'pipe' });
 
     let stream: WriteStream;
-    if (this.options.forkLog?.enabled && this.options.forkLog?.logFilePath) {
-      fs.mkdirSync(this.options.forkLog?.logFilePath, { recursive: true });
+    if (this.options.forkLog?.enabled && this.options.forkLog?.logToFile) {
+      fs.mkdirSync('anvil-log/', { recursive: true });
 
       const stamp = new Date().toISOString().replace(/[:.]/g, '-');
       const fileName = `anvil-log-${stamp}.log`;
-      const filePath = path.join(this.options.forkLog?.logFilePath, fileName);
+      const filePath = path.join('anvil-log/', fileName);
       stream = fs.createWriteStream(filePath, {
         flags: 'w',
       });
     }
 
     // DONT REMOVE THIS: prevents process from hanging on some platforms
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     anvilProcess.stdout.on('data', (data) => {
       if (!this.options.forkLog?.enabled) return;
       if (this.options.forkLog?.logToConsole) {

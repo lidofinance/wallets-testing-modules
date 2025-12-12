@@ -15,12 +15,13 @@ import {
   PopoverElements,
   AccountMenu,
 } from './pages/elements';
-import { getAddress } from 'viem';
+import { getAddress, Hex } from 'viem';
 import {
   getCorrectNetworkName,
   isPopularMainnetNetwork,
   isPopularTestnetNetwork,
 } from './helper';
+import { privateKeyToAccount } from 'viem/accounts';
 
 export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
   page: Page | undefined;
@@ -78,11 +79,16 @@ export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
         await this.popoverElements.closePopover();
         await this.popoverElements.closeConnectingProblemPopover();
         await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
-        await new SettingsPage(
-          await this.options.browserContext.newPage(),
-          this.options.extensionUrl,
-          this.options.walletConfig,
-        ).setupNetworkChangingSetting(); // need to make it possible to change the wallet network
+
+        await test.step('Setup special wallet settings', async () => {
+          const settingPage = new SettingsPage(
+            await this.options.browserContext.newPage(),
+            this.options.extensionUrl,
+            this.options.walletConfig,
+          );
+          await settingPage.setupNetworkChangingSetting(); // need to make it possible to change the wallet network
+          await settingPage.disableSmartTransaction();
+        });
       }
     });
   }
@@ -141,12 +147,31 @@ export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async importKey(key: string) {
-    await test.step('Import key', async () => {
-      await this.navigate();
+  // Fast import by default; set withChecks=true to reuse an existing account if present.
+  async importKey(secretKey: string, withChecks = false) {
+    const account = privateKeyToAccount(<Hex>secretKey);
 
+    await test.step(`Import Key for ${account.address}`, async () => {
+      const target = account.address.toLowerCase();
+
+      if (withChecks) {
+        const currentWalletAddress = await this.getWalletAddress();
+        const current = currentWalletAddress.toLowerCase();
+
+        if (current === target) return;
+
+        const isExist = await this.isWalletAddressExist(target);
+
+        if (isExist) {
+          await this.changeWalletAccountByAddress(target, true);
+          return;
+        }
+      }
+
+      // Fast path: always import the key via UI
+      await this.navigate();
       await this.header.accountMenuButton.click();
-      await this.accountMenu.addAccountWithKey(key);
+      await this.accountMenu.addAccountWithKey(secretKey);
     });
   }
 
