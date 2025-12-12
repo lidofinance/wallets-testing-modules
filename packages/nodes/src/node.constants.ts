@@ -18,6 +18,11 @@ export type EthereumNodeServiceOptions = {
   runOptions?: string[];
   warmUpCallback?: CallableFunction;
   useExternalFork?: boolean;
+  forkLog?: {
+    enabled?: boolean;
+    logToFile?: boolean;
+    logToConsole?: boolean;
+  };
 };
 
 export type Account = {

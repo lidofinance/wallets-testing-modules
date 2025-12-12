@@ -18,7 +18,7 @@ import {
 } from './node.constants';
 import { execSync } from 'node:child_process';
 import path from 'node:path';
-import fs from 'node:fs';
+import fs, { WriteStream } from 'node:fs';
 
 const logger = new ConsoleLogger('EthereumNodeService');
 
@@ -96,16 +96,40 @@ export class EthereumNodeService {
 
     const anvilProcess = spawn('anvil', args, { stdio: 'pipe' });
 
+    let stream: WriteStream;
+    if (this.options.forkLog?.enabled && this.options.forkLog?.logToFile) {
+      fs.mkdirSync('anvil-log/', { recursive: true });
+
+      const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const fileName = `anvil-log-${stamp}.log`;
+      const filePath = path.join('anvil-log/', fileName);
+      stream = fs.createWriteStream(filePath, {
+        flags: 'w',
+      });
+    }
+
     // DONT REMOVE THIS: prevents process from hanging on some platforms
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    anvilProcess.stdout.on('data', () => {});
+    anvilProcess.stdout.on('data', (data) => {
+      if (!this.options.forkLog?.enabled) return;
+      if (this.options.forkLog?.logToConsole) {
+        logger.debug(`[Anvil logs] ${data}`);
+      }
+      if (stream) {
+        stream.write(`[${new Date().toISOString()}] ${data.toString()}`);
+      }
+    });
 
     anvilProcess.stderr.on('data', (data) => {
       logger.error(`[Anvil STDERR] ${data}`);
+      if (stream) stream.write(`[${new Date().toISOString()}] ${data}`);
     });
 
     anvilProcess.on('close', (code) => {
       logger.warn(`[Anvil Closed] Code ${code}`);
+      if (stream)
+        stream.write(
+          `[${new Date().toISOString()}] Anvil Closed with code ${code}`,
+        );
     });
 
     return anvilProcess;
