@@ -142,36 +142,31 @@ export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  /**
-   * The `importKey()` function makes sure the given EOA account
-   * is selected in the wallet extension.
-   *
-   * It checks the current wallet address and:
-   * - does nothing if it already equals `account.address`;
-   * - otherwise switches to the existing account by address
-   *   or imports it using `secretKey`.
-   *
-   * Note:
-   * - Call `disconnectWallet()` in the dApp **before** `importKey()`.
-   * - Call `connectWallet()` in the dApp **after** `importKey()`.
-   */
-  async importKey(secretKey: string) {
+  // Fast import by default; set withChecks=true to reuse an existing account if present.
+  async importKey(secretKey: string, withChecks = false) {
     const account = privateKeyToAccount(<Hex>secretKey);
+
     await test.step(`Import Key for ${account.address}`, async () => {
-      const currentWalletAddress = await this.getWalletAddress();
-      const current = currentWalletAddress.toLowerCase();
       const target = account.address.toLowerCase();
 
-      if (current === target) return;
+      if (withChecks) {
+        const currentWalletAddress = await this.getWalletAddress();
+        const current = currentWalletAddress.toLowerCase();
 
-      const isExist = await this.isWalletAddressExist(target);
+        if (current === target) return;
 
-      if (isExist) {
-        await this.changeWalletAccountByAddress(target, true);
-      } else {
-        await this.importKey(secretKey);
-        await this.page.close();
+        const isExist = await this.isWalletAddressExist(target);
+
+        if (isExist) {
+          await this.changeWalletAccountByAddress(target, true);
+          return;
+        }
       }
+
+      // Fast path: always import the key via UI
+      await this.navigate();
+      await this.header.accountMenuButton.click();
+      await this.accountMenu.addAccountWithKey(secretKey);
     });
   }
 
