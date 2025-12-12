@@ -42,8 +42,8 @@
       "main",
       {
         "name": "anvil-logs",
-        "channel": "anvil-logs",
-        "prerelease": "anvil-logs"
+        "channel": "mm-disable-st",
+        "prerelease": "mm-disable-st"
       }
     ]
   }

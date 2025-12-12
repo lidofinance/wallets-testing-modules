@@ -20,7 +20,7 @@ export type EthereumNodeServiceOptions = {
   useExternalFork?: boolean;
   forkLog?: {
     enabled?: boolean;
-    logFilePath?: string;
+    logToFile?: boolean;
     logToConsole?: boolean;
   };
 };
