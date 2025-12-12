@@ -78,11 +78,16 @@ export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
         await this.popoverElements.closePopover();
         await this.popoverElements.closeConnectingProblemPopover();
         await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
-        await new SettingsPage(
-          await this.options.browserContext.newPage(),
-          this.options.extensionUrl,
-          this.options.walletConfig,
-        ).setupNetworkChangingSetting(); // need to make it possible to change the wallet network
+
+        await test.step('Setup special wallet settings', async () => {
+          const settingPage = new SettingsPage(
+            await this.options.browserContext.newPage(),
+            this.options.extensionUrl,
+            this.options.walletConfig,
+          );
+          await settingPage.setupNetworkChangingSetting(); // need to make it possible to change the wallet network
+          await settingPage.disableSmartTransaction();
+        });
       }
     });
   }
