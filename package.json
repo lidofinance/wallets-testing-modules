@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "fix/up-viem",
+        "channel": "fix-up-viem",
+        "prerelease": "fix-up-viem"
       }
     ]
   }
