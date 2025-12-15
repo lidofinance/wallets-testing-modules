@@ -4,9 +4,13 @@ import { CommonWalletConfig } from '../../../wallets.constants';
 export class SettingsPage {
   tabBarMenu: Locator;
   experimentalTabButton: Locator;
+  advancedTabButton: Locator;
 
   inputNetworksForEachSiteToggle: Locator;
   selectNetworksForEachSiteToggle: Locator;
+
+  inputSmartTransactionToggle: Locator;
+  selectSmartTransactionToggle: Locator;
 
   constructor(
     public page: Page,
@@ -17,6 +21,9 @@ export class SettingsPage {
     this.experimentalTabButton = this.tabBarMenu
       .getByRole('button')
       .getByText('Experimental');
+    this.advancedTabButton = this.tabBarMenu
+      .getByRole('button')
+      .getByText('Advanced');
 
     // Experimental page locators
     this.inputNetworksForEachSiteToggle = this.page
@@ -24,6 +31,13 @@ export class SettingsPage {
       .locator('input');
     this.selectNetworksForEachSiteToggle =
       this.inputNetworksForEachSiteToggle.locator('..');
+
+    //Advanced page locators
+    this.inputSmartTransactionToggle = this.page
+      .getByTestId('advanced-setting-enable-smart-transactions')
+      .locator('input');
+    this.selectSmartTransactionToggle =
+      this.inputSmartTransactionToggle.locator('..');
   }
 
   async openSettings() {
@@ -37,7 +51,7 @@ export class SettingsPage {
   }
 
   async setupNetworkChangingSetting() {
-    await test.step('Check toggle state', async () => {
+    await test.step('Disable Network Changing toggle', async () => {
       await this.openSettings();
       await this.experimentalTabButton.click();
 
@@ -48,6 +62,25 @@ export class SettingsPage {
         if (toggleState === 'true') {
           await test.step('Turn off the toggle of the setting network changing', async () => {
             await this.selectNetworksForEachSiteToggle.click();
+          });
+        }
+      }
+    });
+  }
+
+  async disableSmartTransaction() {
+    await test.step('Disable Smart Transaction toggle', async () => {
+      await this.openSettings();
+      await this.advancedTabButton.click();
+
+      if (await this.inputSmartTransactionToggle.isVisible()) {
+        const toggleState = await this.inputSmartTransactionToggle.getAttribute(
+          'value',
+        );
+
+        if (toggleState === 'true') {
+          await test.step('Turn off the toggle of the Smart Transaction', async () => {
+            await this.selectSmartTransactionToggle.click();
           });
         }
       }
