@@ -80,10 +80,7 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
       await this.navigate();
       if (!(await this.header.accountMenuButton.isVisible())) {
         await this.onboardingPage.firstTimeSetup();
-        await this.loginPage.unlock();
-        await this.popoverElements.closePopover();
-        await this.popoverElements.closeConnectingProblemPopover();
-        await this.walletOperation.cancelAllTxInQueue(); // reject all tx in queue if exist
+        await this.navigate();
       }
     });
   }

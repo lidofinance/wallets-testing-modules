@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "anvil-logs",
-        "channel": "mm-disable-st",
-        "prerelease": "mm-disable-st"
+        "name": "develop",
+        "channel": "alpha",
+        "prerelease": "alpha"
       }
     ]
   }
