@@ -69,7 +69,7 @@ export class OnboardingPage {
       await this.createPassword(this.accountConfig.PASSWORD);
       await this.metricAgreeButton.click();
       await this.completeButton.click();
-      await this.page.waitForURL('**/home.html#');
+      await this.page.close();
     });
   }
 
