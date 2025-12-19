@@ -78,6 +78,7 @@ export class OnboardingPage {
       let attempts = 3;
       while (attempts >= 0) {
         attempts--;
+
         await this.secretPhraseTextArea.pressSequentially(secretPhrase, {
           delay: 10,
         });
