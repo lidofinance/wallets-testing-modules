@@ -10,6 +10,7 @@ export class OnboardingPage {
   importWalletOptionBtn: Locator;
   metricAgreeButton: Locator;
   secretPhraseTextArea: Locator;
+  clearSecretPhraseButton: Locator;
   secretPhraseImportButton: Locator;
   createPasswordInput: Locator;
   confirmPasswordInput: Locator;
@@ -41,6 +42,9 @@ export class OnboardingPage {
     this.secretPhraseTextArea = this.page.getByTestId(
       'srp-input-import__srp-note',
     );
+    this.clearSecretPhraseButton = this.page.getByRole('button', {
+      name: 'Clear all',
+    });
     this.secretPhraseImportButton = this.page.getByTestId('import-srp-confirm');
     this.createPasswordInput = this.page.getByTestId(
       'create-password-new-input',
@@ -62,7 +66,6 @@ export class OnboardingPage {
       await this.iHaveExistingWalletButton.click();
       await this.importWalletOptionBtn.click();
       await this.fillSecretPhrase(this.accountConfig.SECRET_PHRASE);
-      await this.secretPhraseImportButton.click();
       await this.createPassword(this.accountConfig.PASSWORD);
       await this.metricAgreeButton.click();
       await this.completeButton.click();
@@ -72,7 +75,25 @@ export class OnboardingPage {
 
   async fillSecretPhrase(secretPhrase: string) {
     await test.step('Fill onboarding secret phrase field', async () => {
-      await this.secretPhraseTextArea.pressSequentially(secretPhrase);
+      let attempts = 3;
+      while (attempts >= 0) {
+        attempts--;
+        await this.secretPhraseTextArea.pressSequentially(secretPhrase, {
+          delay: 10,
+        });
+
+        if (await this.secretPhraseImportButton.isDisabled()) {
+          await this.clearSecretPhraseButton.click();
+          if (attempts == 0)
+            throw new Error(
+              'Failed to fill the secret phrase after 3 attempts',
+            );
+          continue;
+        }
+
+        await this.secretPhraseImportButton.click();
+        break;
+      }
     });
   }
 
