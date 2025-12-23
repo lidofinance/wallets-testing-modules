@@ -81,7 +81,7 @@ export class BrowserContextService {
     }
 
     let attemptsToLaunchPersistentContext = 2;
-    while (attemptsToLaunchPersistentContext > 0) {
+    while (attemptsToLaunchPersistentContext >= 0) {
       try {
         this.browserContext = await chromium.launchPersistentContext(
           browserContextPath,
@@ -95,7 +95,7 @@ export class BrowserContextService {
           attemptsToLaunchPersistentContext--;
           continue;
         }
-        this.logger.debug(`Error with launchPersistentContext: ${er}`);
+        throw new Error(`Error with launchPersistentContext: ${er}`);
       }
       break;
     }
