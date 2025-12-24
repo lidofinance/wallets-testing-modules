@@ -9,7 +9,7 @@ import { DiscordReporter } from './reporters/discordReporter';
 import { SlackReporter } from './reporters/slackReporter';
 import {
   formatDuration,
-  resultToStatus,
+  getResultMessageStatus,
   testStatusToEmoji,
 } from './utils/helpers';
 
@@ -118,10 +118,7 @@ class ChatReporter implements Reporter {
       return;
     }
     this.runInfo.duration = formatDuration(result.duration);
-    this.runInfo.status =
-      result.status == 'passed' && this.runInfo.testCount.flaky > 0
-        ? resultToStatus['flaky']
-        : resultToStatus[result.status];
+    this.runInfo.status = getResultMessageStatus(result.status, this.runInfo);
 
     const discordPayload = this.discordReporter.getEmbed();
     const slackPayload = this.slackReporter.getEmbed();
