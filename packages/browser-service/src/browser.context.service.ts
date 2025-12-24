@@ -80,10 +80,23 @@ export class BrowserContextService {
       });
     }
 
-    this.browserContext = await chromium.launchPersistentContext(
-      browserContextPath,
-      this.options.browserOptions,
-    );
+    let attemptsLeft = 3;
+    while (attemptsLeft > 0) {
+      try {
+        this.browserContext = await chromium.launchPersistentContext(
+          browserContextPath,
+          {
+            ...this.options.browserOptions,
+            timeout: 5000,
+          },
+        );
+        break;
+      } catch (er) {
+        attemptsLeft--;
+        if (attemptsLeft == 0)
+          throw new Error(`Failed to launch persistent context: ${er}`);
+      }
+    }
 
     this.browserContext.on('page', async (page) => {
       page.once('crash', () => this.logger.error(`Page ${page.url()} crashed`));
