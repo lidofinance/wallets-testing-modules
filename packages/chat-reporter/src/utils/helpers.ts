@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const GREEN = 47872;
 const RED = 13959168;
+const ORANGE = 16753920;
 
 export const testStatusToEmoji = {
   passed: '✅',
@@ -17,6 +18,7 @@ export const resultToStatus = {
   failed: { color: RED, title: `❌ Failed!` },
   timedout: { color: RED, title: `❌ Failed!` },
   interrupted: { color: RED, title: `❌ Failed!` },
+  flaky: { color: ORANGE, title: '👀 Flaked!' },
 };
 
 export async function postJson(url: string, payload: any) {
