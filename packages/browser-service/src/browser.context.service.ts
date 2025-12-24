@@ -80,8 +80,8 @@ export class BrowserContextService {
       });
     }
 
-    let attemptsToLaunchPersistentContext = 2;
-    while (attemptsToLaunchPersistentContext >= 0) {
+    let attemptsLeft = 3;
+    while (attemptsLeft > 0) {
       try {
         this.browserContext = await chromium.launchPersistentContext(
           browserContextPath,
@@ -90,14 +90,12 @@ export class BrowserContextService {
             timeout: 5000,
           },
         );
+        break;
       } catch (er) {
-        if (attemptsToLaunchPersistentContext > 0) {
-          attemptsToLaunchPersistentContext--;
-          continue;
-        }
-        throw new Error(`Error with launchPersistentContext: ${er}`);
+        attemptsLeft--;
+        if (attemptsLeft == 0)
+          throw new Error(`Failed to launch persistent context: ${er}`);
       }
-      break;
     }
 
     this.browserContext.on('page', async (page) => {
