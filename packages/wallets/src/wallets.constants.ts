@@ -74,7 +74,7 @@ export const NETWORKS_CONFIG: {
       chainId: 1,
       chainName: 'Ethereum',
       tokenSymbol: 'ETH',
-      rpcUrl: 'https://rpc.ankr.com/eth',
+      rpcUrl: 'https://ethereum-rpc.publicnode.com',
       scan: 'https://etherscan.io/',
     },
     OPTIMISM: {
