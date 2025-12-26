@@ -32,8 +32,12 @@ export function formatDuration(ms: number): string {
   const s = Math.floor(ms / 1000);
   const h = Math.floor(s / 3600);
   const m = Math.floor((s % 3600) / 60);
-  const sec = s % 60;
-  return `${h} hours ${m} minutes ${sec} seconds`;
+
+  const resultH = h > 0 ? h + ' h ' : '';
+  const resultM = m > 0 ? m + ' min ' : '';
+  const resultS = (s % 60) + ' sec';
+
+  return resultH + resultM + resultS;
 }
 
 export function getResultMessageStatus(runStatus: string, runInfo: RunInfo) {
