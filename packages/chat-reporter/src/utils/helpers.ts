@@ -30,9 +30,9 @@ export function formatDuration(ms: number): string {
   const h = Math.floor(s / 3600);
   const m = Math.floor((s % 3600) / 60);
 
-  const resultH = h > 0 ? h + 'h ' : '';
-  const resultM = m > 0 ? m + 'min ' : '';
-  const resultS = (s % 60) + 'sec';
+  const resultH = h > 0 ? h + ' h ' : '';
+  const resultM = m > 0 ? m + ' min ' : '';
+  const resultS = (s % 60) + ' sec';
 
   return resultH + resultM + resultS;
 }
