@@ -24,7 +24,9 @@ export class Coin98 implements WalletPage<WalletConnectTypes.EOA> {
     await test.step('Setup', async () => {
       await this.waitForAutomaticallyOpenedWalletPageAfterInstallation();
       await this.navigate();
-      const firstTime = await this.page.waitForSelector('text=Choose language');
+      const firstTime = await this.page.waitForSelector(
+        'text=Terms & Policies',
+      );
       if (firstTime) await this.firstTimeSetup();
     });
   }
@@ -32,8 +34,14 @@ export class Coin98 implements WalletPage<WalletConnectTypes.EOA> {
   async firstTimeSetup() {
     await test.step('First time setup', async () => {
       if (!this.page) throw "Page isn't ready";
-      await this.page.locator('button:has-text("Continue")').click();
-      await this.page.locator('button:has-text("Continue")').last().click();
+      await this.page
+        .getByText(
+          "I agree to Coin98 Wallet's Terms of Service & Privacy Policy",
+        )
+        .click();
+      await this.page.locator('button:has-text("Continue")').click(); // Terms page
+      await this.page.locator('button:has-text("Continue")').last().click(); // Language page
+      await this.page.locator('button:has-text("Continue")').last().click(); // Security page
       await this.page.waitForSelector('input[type=password]');
       await this.page.waitForTimeout(1000);
       const inputs = this.page.locator('input[type=password]');
