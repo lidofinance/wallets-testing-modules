@@ -7,6 +7,7 @@ import {
   LoginPage,
   OnboardingPage,
   WalletOperationPage,
+  SettingsPage,
 } from './pages';
 import {
   Header,
@@ -81,6 +82,15 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
       if (!(await this.header.accountMenuButton.isVisible())) {
         await this.onboardingPage.firstTimeSetup();
         await this.navigate();
+
+        await test.step('Setup special wallet settings', async () => {
+          const settingPage = new SettingsPage(
+            await this.options.browserContext.newPage(),
+            this.options.extensionUrl,
+            this.options.walletConfig,
+          );
+          await settingPage.enableFullSizeView();
+        });
       }
     });
   }

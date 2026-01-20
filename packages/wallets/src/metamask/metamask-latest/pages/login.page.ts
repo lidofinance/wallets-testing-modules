@@ -24,7 +24,7 @@ export class LoginPage {
       if (await this.passwordInput.isVisible()) {
         await this.passwordInput.fill(this.accountConfig.PASSWORD);
         await this.unlockButton.click();
-        await this.page.waitForURL('**/home.html#');
+        await this.page.waitForURL('**/home.html#/');
       }
     });
   }
