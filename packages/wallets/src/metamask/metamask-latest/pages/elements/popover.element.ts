@@ -8,7 +8,7 @@ export class PopoverElements {
   noThanksButton: Locator;
   switchToButton: Locator;
   accountDetailAddressLabel: Locator;
-  solanaPopupCloseBtn: Locator;
+  notNowBtn: Locator;
 
   connectingToMainnetPopover: Locator;
   connectingProblemPopover: Locator;
@@ -26,7 +26,7 @@ export class PopoverElements {
     this.accountDetailAddressLabel = this.page.locator(
       '//div[@data-testid="address-copy-button-text"]/preceding-sibling::p',
     );
-    this.solanaPopupCloseBtn = this.page.getByText('Not now');
+    this.notNowBtn = this.page.getByText('Not now');
 
     // Connecting Problem Popover
     this.connectingToMainnetPopover = this.page.getByText(
@@ -62,30 +62,16 @@ export class PopoverElements {
     await test.step('Close popover if it exists', async () => {
       if (!this.page) throw "Page isn't ready";
 
-      if (await this.solanaPopupCloseBtn.isVisible())
-        await this.solanaPopupCloseBtn.click();
-
-      if (await this.isPopoverVisible()) await this.popoverCloseButton.click();
-
-      if (await this.manageInSettingButton.isVisible())
-        await this.manageInSettingButton.click();
-
-      if (await this.notRightNowButton.isVisible())
-        await this.notRightNowButton.click();
-
-      if (await this.gotItButton.first().isVisible())
-        await this.gotItButton.first().click();
-
-      if (await this.noThanksButton.isVisible())
-        await this.noThanksButton.click();
+      if (await this.isPopoverVisible(this.notNowBtn, 3000))
+        await this.notNowBtn.click();
     });
   }
 
-  async isPopoverVisible() {
+  async isPopoverVisible(locator: Locator, timeout = 1000) {
     try {
-      await this.popoverCloseButton.waitFor({
+      await locator.waitFor({
         state: 'visible',
-        timeout: 1000,
+        timeout: timeout,
       });
       return true;
     } catch (error) {
