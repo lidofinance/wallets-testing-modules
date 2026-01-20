@@ -89,7 +89,7 @@ export const NETWORKS_CONFIG: {
       chainName: 'Soneium',
       tokenSymbol: 'ETH',
       rpcUrl: 'https://rpc.soneium.org/',
-      scan: 'https://soneium-minato.blockscout.com/',
+      scan: 'https://soneium.blockscout.com/',
     },
     UNICHAIN: {
       chainId: 130,
