@@ -15,7 +15,7 @@ import {
   PopoverElements,
   AccountMenu,
 } from './pages/elements';
-import { getAddress, Hex } from 'viem';
+import { getAddress } from 'viem';
 import {
   getCorrectNetworkName,
   isPopularMainnetNetwork,
@@ -149,7 +149,7 @@ export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
 
   // Fast import by default; set withChecks=true to reuse an existing account if present.
   async importKey(secretKey: string, withChecks = false) {
-    const account = privateKeyToAccount(<Hex>secretKey);
+    const account = privateKeyToAccount(`0x${secretKey}`);
 
     await test.step(`Import Key for ${account.address}`, async () => {
       const target = account.address.toLowerCase();
