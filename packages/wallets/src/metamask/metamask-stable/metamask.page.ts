@@ -149,7 +149,8 @@ export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
 
   // Fast import by default; set withChecks=true to reuse an existing account if present.
   async importKey(secretKey: string, withChecks = false) {
-    const account = privateKeyToAccount(`0x${secretKey}`);
+    const key = secretKey.startsWith('0x') ? secretKey : `0x${secretKey}`;
+    const account = privateKeyToAccount(key as `0x${string}`);
 
     await test.step(`Import Key for ${account.address}`, async () => {
       const target = account.address.toLowerCase();
