@@ -75,6 +75,7 @@ class ChatReporter implements Reporter {
         skipped: 0,
       },
     };
+    this.options.reportType = this.options.reportType || ReportType.count;
 
     this.discordReporter = new DiscordReporter(this.options, this.runInfo);
     this.slackReporter = new SlackReporter(this.options, this.runInfo);

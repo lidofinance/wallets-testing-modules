@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "fix/default-type-for-chat",
+        "channel": "alpha-default-type-for-chat",
+        "prerelease": "alpha-default-type-for-chat"
       }
     ]
   }
