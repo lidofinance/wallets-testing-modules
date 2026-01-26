@@ -103,9 +103,11 @@ class ChatReporter implements Reporter {
         ? ` \`(v.${test.annotations[0].description})\``
         : '';
 
-    this.runInfo.testNames[test.id] = `- ${testStatusToEmoji[result.status]} ${
-      test.title
-    } ${walletVersion}`;
+    const emojiStatus =
+      testStatusToEmoji[result.retry > 0 ? 'flaky' : result.status];
+    this.runInfo.testNames[
+      test.id
+    ] = `- ${emojiStatus} ${test.title} ${walletVersion}`;
   }
 
   async onEnd(result: FullResult) {

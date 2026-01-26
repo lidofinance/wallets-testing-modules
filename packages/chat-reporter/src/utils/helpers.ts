@@ -11,7 +11,7 @@ export const testStatusToEmoji = {
   timedOut: '❌',
   skipped: '⏸️',
   interrupted: '❌',
-  flaky: '🎲',
+  flaky: '✴️',
 };
 
 export const resultToStatus = {
