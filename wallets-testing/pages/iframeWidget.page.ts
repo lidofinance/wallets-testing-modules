@@ -187,7 +187,7 @@ export class IframeWidgetPage implements WidgetPage {
     await this.walletPage.assertTxAmount(this.page, txAmount);
     await this.walletPage.assertReceiptAddress(
       this.page,
-      this.widgetConfig.wrapContract,
+      this.widgetConfig.wrapContract[token],
     );
 
     // Skip next steps, because on the mainnet we need to check only tx initialization (without execution)
@@ -218,7 +218,7 @@ export class IframeWidgetPage implements WidgetPage {
     await this.walletPage.assertTxAmount(this.page, txAmount);
     await this.walletPage.assertReceiptAddress(
       this.page,
-      this.widgetConfig.wrapContract,
+      this.widgetConfig.wrapContract.stETH,
     );
 
     // Skip next steps, because on the mainnet we need to check only tx initialization (without execution)

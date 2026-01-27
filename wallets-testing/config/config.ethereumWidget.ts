@@ -10,7 +10,10 @@ export interface WidgetConfig {
   name: string;
   network: NetworkConfig;
   stakeContract: string;
-  wrapContract?: string;
+  wrapContract?: {
+    stETH: string;
+    ETH: string;
+  };
   withdrawalContract: string;
 }
 
@@ -25,7 +28,10 @@ const ETHEREUM_WIDGET_CONFIG: WidgetConfig = {
     )}`,
   },
   stakeContract: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
-  wrapContract: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
+  wrapContract: {
+    stETH: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
+    ETH: '0xa88f0329C2c4ce51ba3fc619BBf44efE7120Dd0d',
+  },
   withdrawalContract: '0x889edC2eDab5f40e902b864aD4d7AdE8E412F9B1',
 };
 
@@ -40,7 +46,10 @@ const HOODI_WIDGET_CONFIG: WidgetConfig = {
     )}`,
   },
   stakeContract: '0x3508A952176b3c15387C97BE809eaffB1982176a',
-  wrapContract: '0x7E99eE3C66636DE415D2d7C880938F2f40f94De4',
+  wrapContract: {
+    stETH: '0x7E99eE3C66636DE415D2d7C880938F2f40f94De4',
+    ETH: '0xf886BcC68b240316103fE8A12453Ce7831c2e835',
+  },
   withdrawalContract: '0xfe56573178f1bcdf53F01A6E9977670dcBBD9186',
 };
 
