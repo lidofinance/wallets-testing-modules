@@ -105,7 +105,9 @@ class ChatReporter implements Reporter {
         : '';
 
     const emojiStatus =
-      testStatusToEmoji[result.retry > 0 ? 'flaky' : result.status];
+      testStatusToEmoji[
+        result.retry > 0 && result.status == 'passed' ? 'flaky' : result.status
+      ];
     this.runInfo.testNames[
       test.id
     ] = `- ${emojiStatus} ${test.title} ${walletVersion}`;
