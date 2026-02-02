@@ -7,6 +7,7 @@ import {
   WalletConnectType,
   WalletConnectTypes,
 } from './wallets.constants';
+import { WCSessionRequest } from './walletConnect/wc.service';
 
 /** Required options to manage wallet */
 export interface WalletPageOptions {
@@ -56,8 +57,14 @@ export interface WalletPage<T extends WalletConnectType> {
 
   assertTxAmount(page: Page, expectedAmount: string): Promise<void>;
 
+  confirmTx(req: WCSessionRequest): Promise<void>;
   confirmTx(page: Page, setAggressiveGas?: boolean): Promise<void>;
 
+  cancelTx(
+    req: WCSessionRequest,
+    message?: string,
+    code?: number,
+  ): Promise<void>;
   cancelTx(page: Page): Promise<void>;
 
   approveTokenTx?(page: Page): Promise<void>;

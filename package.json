@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "feat/add-wc-wallet",
+        "channel": "alpha-add-wc-wallet",
+        "prerelease": "alpha-add-wc-wallet"
       }
     ]
   }
