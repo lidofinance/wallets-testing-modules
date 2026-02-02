@@ -11,6 +11,7 @@ import {
   SafeWcPage,
   TrustWalletPage,
 } from '@lidofinance/wallets-testing-wallets';
+import { WCSDKWallet } from '@lidofinance/wallets-testing-wallets/src/walletConnect/wc.service';
 
 export const WALLET_PAGES = {
   metamaskStable: MetamaskStablePage,
@@ -24,6 +25,7 @@ export const WALLET_PAGES = {
   bitget: BitgetPage,
   safeWc: SafeWcPage,
   safeIframe: SafeIframePage,
+  wcSDK: WCSDKWallet,
 };
 
 export const DEFAULT_BROWSER_CONTEXT_DIR_NAME = '.browser_context';

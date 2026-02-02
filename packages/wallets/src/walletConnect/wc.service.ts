@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import SignClient from '@walletconnect/sign-client';
 import { createPublicClient, createWalletClient, HDAccount, http } from 'viem';
 import { mainnet } from 'viem/chains';
@@ -22,9 +23,9 @@ export type WCSessionRequest = {
   };
 };
 
-export class WCTestWallet implements WalletPage<WalletConnectTypes.WC> {
+export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
   private client?: SignClient;
-  // @ts-error TS2564: Property 'walletClient' has no initializer and is not definitely assigned in the constructor.
+  // @ts-ignore
   private walletClient?: ReturnType<typeof createWalletClient>;
   private publicClient?: ReturnType<typeof createPublicClient>;
   private hdAccount: HDAccount;

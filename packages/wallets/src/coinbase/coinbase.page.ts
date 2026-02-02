@@ -3,6 +3,7 @@ import { WalletPage, WalletPageOptions } from '../wallet.page';
 import expect from 'expect';
 import { test, Page } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
+import { WCSessionRequest } from '../walletConnect/wc.service';
 
 export class CoinbasePage implements WalletPage<WalletConnectTypes.EOA> {
   logger = new ConsoleLogger(CoinbasePage.name);
@@ -134,10 +135,12 @@ export class CoinbasePage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async confirmTx(page: Page) {
+  async confirmTx(page: Page | WCSessionRequest) {
     await test.step('Confirm TX', async () => {
       await this.closeTransactionPopover();
-      await page.click('button[data-testid="request-confirm-button"]');
+      await (page as Page).click(
+        'button[data-testid="request-confirm-button"]',
+      );
     });
   }
 

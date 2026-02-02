@@ -10,6 +10,7 @@ import {
   LoginPage,
 } from './pages';
 import { closeUnnecessaryPages } from '../okx/helper';
+import { WCSessionRequest } from '../walletConnect/wc.service';
 
 export class TrustWalletPage implements WalletPage<WalletConnectTypes.EOA> {
   logger = new ConsoleLogger(TrustWalletPage.name);
@@ -132,18 +133,18 @@ export class TrustWalletPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   /** Confirm transaction */
-  async confirmTx(page: Page) {
+  async confirmTx(page: Page | WCSessionRequest) {
     await test.step('Confirm TX', async () => {
-      const txPage = new WalletOperations(page);
+      const txPage = new WalletOperations(page as Page);
       await expect(txPage.confirmBtn).toBeEnabled();
       await txPage.confirmBtn.click();
     });
   }
 
   /** Reject transaction */
-  async cancelTx(page: Page) {
+  async cancelTx(page: Page | WCSessionRequest) {
     await test.step('Cancel TX', async () => {
-      const txPage = new WalletOperations(page);
+      const txPage = new WalletOperations(page as Page);
       await expect(txPage.rejectBtn).toBeEnabled();
       await txPage.rejectBtn.click();
     });

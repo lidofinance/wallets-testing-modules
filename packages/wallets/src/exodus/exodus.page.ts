@@ -3,6 +3,7 @@ import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { test, Page } from '@playwright/test';
 import { OnboardingPage } from './pages';
 import { ConsoleLogger } from '@nestjs/common';
+import { WCSessionRequest } from '../walletConnect/wc.service';
 
 export class ExodusPage implements WalletPage<WalletConnectTypes.EOA> {
   logger = new ConsoleLogger(ExodusPage.name);
@@ -74,9 +75,9 @@ export class ExodusPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   /** Click `Confirm` button on the transaction `page` */
-  async confirmTx(page: Page) {
+  async confirmTx(page: Page | WCSessionRequest) {
     await test.step('Confirm TX', async () => {
-      await page.getByText('Confirm').click();
+      await (page as Page).getByText('Confirm').click();
     });
   }
 

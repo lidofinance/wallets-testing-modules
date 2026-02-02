@@ -53,7 +53,10 @@ type BrowserServiceOptions = {
 export class BrowserService {
   private logger = new ConsoleLogger(BrowserService.name);
   private walletPage: WalletPage<
-    WalletConnectTypes.WC | WalletConnectTypes.EOA | WalletConnectTypes.IFRAME
+    | WalletConnectTypes.WC
+    | WalletConnectTypes.WC_SDK
+    | WalletConnectTypes.EOA
+    | WalletConnectTypes.IFRAME
   >;
   private browserContextService: BrowserContextService;
   public ethereumNodeService: EthereumNodeService;
@@ -118,6 +121,11 @@ export class BrowserService {
   }
 
   async setup() {
+    if (this.options.walletConfig.WALLET_TYPE === WalletConnectTypes.WC_SDK) {
+      this.setWalletPage();
+      await this.walletPage.setup();
+      return;
+    }
     const extensionService = new ExtensionService();
 
     const extensionPath = await extensionService.getExtensionDirFromId(
@@ -128,6 +136,7 @@ export class BrowserService {
     const contextDataDir = `${DEFAULT_BROWSER_CONTEXT_DIR_NAME}_${
       mnemonicToAccount(this.options.accountConfig.SECRET_PHRASE).address
     }_isFork-${this.isFork}_${this.options.walletConfig.WALLET_NAME}`;
+
     this.browserContextService = new BrowserContextService(extensionPath, {
       contextDataDir,
       browserOptions: this.options.browserOptions,
@@ -160,6 +169,7 @@ export class BrowserService {
 
     switch (this.options.walletConfig.WALLET_TYPE) {
       case WalletConnectTypes.WC:
+      case WalletConnectTypes.WC_SDK:
       case WalletConnectTypes.IFRAME:
         this.walletPage = new WALLET_PAGES[
           this.options.walletConfig.WALLET_NAME

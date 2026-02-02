@@ -17,6 +17,7 @@ import {
 } from './helper';
 import { ConsoleLogger } from '@nestjs/common';
 import { WalletPageOptions } from '../wallet.page';
+import { WCSessionRequest } from '../walletConnect/wc.service';
 
 export class OkxPage implements WalletPage<WalletConnectTypes.EOA> {
   logger = new ConsoleLogger(OkxPage.name);
@@ -189,16 +190,16 @@ export class OkxPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   /** Cancel transaction */
-  async cancelTx(page: Page) {
+  async cancelTx(page: Page | WCSessionRequest) {
     await test.step('Cancel TX', async () => {
-      await new WalletOperations(page).cancelTxButton.click();
+      await new WalletOperations(page as Page).cancelTxButton.click();
     });
   }
 
   /** Confirm transaction */
-  async confirmTx(page: Page) {
+  async confirmTx(page: Page | WCSessionRequest) {
     await test.step('Confirm TX', async () => {
-      await new WalletOperations(page).confirmTxButton.click({
+      await new WalletOperations(page as Page).confirmTxButton.click({
         timeout: 30000, // sometimes button is disabled awaits rpc
       });
     });
