@@ -67,7 +67,9 @@ export interface WalletPage<T extends WalletConnectType> {
   ): Promise<void>;
   cancelTx(page: Page): Promise<void>;
 
-  approveTokenTx?(page: Page): Promise<void>;
+  approveTokenTx?(
+    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
+  ): Promise<void>;
 
   openLastTxInEthplorer?(txIndex?: number): Promise<Page>;
 
@@ -97,4 +99,7 @@ export interface WalletPage<T extends WalletConnectType> {
     isClosePage?: boolean,
   ): Promise<void>;
   isWalletAddressExist?(address: string): Promise<boolean>;
+
+  // WC SDK
+  nextRequest?(timeoutMs?: number): Promise<WCSessionRequest>;
 }

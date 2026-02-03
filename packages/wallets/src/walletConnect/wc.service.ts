@@ -1,15 +1,5 @@
 import SignClient from '@walletconnect/sign-client';
-import {
-  createPublicClient,
-  createWalletClient,
-  HDAccount,
-  http,
-  PublicClient,
-  WalletClient,
-  Transport,
-  Chain,
-  Account,
-} from 'viem';
+import { createPublicClient, createWalletClient, HDAccount, http } from 'viem';
 import { mnemonicToAccount } from 'viem/accounts';
 
 import { WalletPage, WalletPageOptions } from '../wallet.page';
@@ -144,10 +134,12 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     this.waiters = [];
   }
 
-  async nextRequest(
-    timeoutMs = this.options.walletConfig.walletConnectConfig
-      .requestHandleTimeoutMs,
-  ): Promise<WCSessionRequest> {
+  async nextRequest(timeoutMs?: number): Promise<WCSessionRequest> {
+    if (!timeoutMs) {
+      timeoutMs =
+        this.options.walletConfig.walletConnectConfig.requestHandleTimeoutMs;
+    }
+
     const queued = this.requestQueue.shift();
     if (queued) return queued;
 
@@ -171,7 +163,11 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     );
   }
 
-  async confirmTx(req: WCSessionRequest | Page): Promise<void> {
+  async confirmTx(req?: WCSessionRequest | Page): Promise<void> {
+    if (!req) {
+      req = await this.nextRequest();
+    }
+
     if (!this.isWCSessionRequest(req)) {
       throw new Error(
         'WC: confirmTx with Page parameter is not supported in WC wallet',
@@ -229,10 +225,13 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
   }
 
   async cancelTx(
-    req: WCSessionRequest | Page,
+    req?: WCSessionRequest | Page,
     message = 'User rejected the request',
     code = 4001,
   ): Promise<void> {
+    if (!req) {
+      req = await this.nextRequest();
+    }
     if (!this.isWCSessionRequest(req)) {
       throw new Error(
         'WC: confirmTx with Page parameter is not supported in WC wallet',
@@ -320,49 +319,14 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
   assertTxAmount(page: Page, expectedAmount: string): Promise<void> {
     throw new Error('Method not implemented.');
   }
-  approveTokenTx?(page: Page): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  openLastTxInEthplorer?(txIndex?: number): Promise<Page> {
-    throw new Error('Method not implemented.');
-  }
-  getTokenBalance?(tokenName: string): Promise<number> {
-    throw new Error('Method not implemented.');
-  }
-  confirmAddTokenToWallet?(page: Page): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
   assertReceiptAddress(page: Page, expectedAddress: string): Promise<void> {
     throw new Error('Method not implemented.');
   }
-  getWalletAddress?(): Promise<string> {
-    throw new Error('Method not implemented.');
-  }
-  setupNetwork?(networkConfig: NetworkConfig): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
+
   addNetwork(
     networkConfig: NetworkConfig,
     isClosePage?: boolean,
   ): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  changeNetwork?(networkName: string): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  changeWalletAccountByName?(
-    accountName: string,
-    isClosePage?: boolean,
-  ): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  changeWalletAccountByAddress?(
-    address: string,
-    isClosePage?: boolean,
-  ): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  isWalletAddressExist?(address: string): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
 }
