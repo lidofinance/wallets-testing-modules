@@ -10,6 +10,8 @@ import {
   Chain,
   Account,
 } from 'viem';
+import { mnemonicToAccount } from 'viem/accounts';
+
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import {
   NetworkConfig,
@@ -17,24 +19,7 @@ import {
   WCApproveNamespaces,
 } from '../wallets.constants';
 import { Page } from '@playwright/test';
-import { mnemonicToAccount } from 'viem/accounts';
-
-export declare enum CHAINS {
-  Mainnet = 1,
-  Holesky = 17000,
-  Hoodi = 560048,
-  Sepolia = 11155111,
-  Optimism = 10,
-  OptimismSepolia = 11155420,
-  Soneium = 1868,
-  SoneiumMinato = 1946,
-  Unichain = 130,
-  UnichainSepolia = 1301,
-}
-
-export declare const VIEM_CHAINS: {
-  [key in CHAINS]: Chain;
-};
+import { SUPPORTED_CHAINS } from './constants';
 
 export type WCSessionRequest = {
   topic: string;
@@ -50,8 +35,9 @@ export type WCSessionRequest = {
 
 export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
   private client?: SignClient;
-  private publicClient?: PublicClient<Transport, Chain, Account>;
-  private walletClient?: WalletClient<Transport, Chain, Account>;
+  // @ts-ignore
+  private publicClient?: ReturnType<typeof createPublicClient>;
+  private walletClient?: ReturnType<typeof createWalletClient>;
   private hdAccount: HDAccount;
 
   private requestQueue: WCSessionRequest[] = [];
@@ -100,13 +86,12 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
 
     this.walletClient = createWalletClient({
       account: this.hdAccount,
-      chain: VIEM_CHAINS[this.options.standConfig.chainId],
+      chain: SUPPORTED_CHAINS[this.options.standConfig.chainId],
       transport: http(this.options.standConfig.rpcUrl),
     });
 
-    // @ts-ignore
     this.publicClient = createPublicClient({
-      chain: VIEM_CHAINS[this.options.standConfig.chainId],
+      chain: SUPPORTED_CHAINS[this.options.standConfig.chainId],
       transport: http(this.options.standConfig.rpcUrl),
     });
     // Collect incoming requests into an async queue
