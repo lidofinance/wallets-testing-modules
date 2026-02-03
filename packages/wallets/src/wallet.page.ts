@@ -55,7 +55,10 @@ export interface WalletPage<T extends WalletConnectType> {
     param?: T extends WalletConnectTypes.EOA ? Page : string,
   ): Promise<void>;
 
-  assertTxAmount(page: Page, expectedAmount: string): Promise<void>;
+  assertTxAmount(
+    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
+    expectedAmount: string,
+  ): Promise<void>;
 
   confirmTx(req: WCSessionRequest): Promise<void>;
   confirmTx(page: Page, setAggressiveGas?: boolean): Promise<void>;
@@ -77,7 +80,10 @@ export interface WalletPage<T extends WalletConnectType> {
 
   confirmAddTokenToWallet?(page: Page): Promise<void>;
 
-  assertReceiptAddress(page: Page, expectedAddress: string): Promise<void>;
+  assertReceiptAddress(
+    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
+    expectedAddress: string,
+  ): Promise<void>;
 
   getWalletAddress?(): Promise<string>;
 

@@ -316,10 +316,10 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
   importKey(secretKey: string, withChecks?: boolean): Promise<void> {
     throw new Error('Method not implemented.');
   }
-  assertTxAmount(page: Page, expectedAmount: string): Promise<void> {
+  assertTxAmount(req: WCSessionRequest, expectedAmount: string): Promise<void> {
     throw new Error('Method not implemented.');
   }
-  assertReceiptAddress(page: Page, expectedAddress: string): Promise<void> {
+  assertReceiptAddress(req: WCSessionRequest, expectedAddress: string): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
