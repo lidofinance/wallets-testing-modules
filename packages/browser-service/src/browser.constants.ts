@@ -10,8 +10,8 @@ import {
   SafeIframePage,
   SafeWcPage,
   TrustWalletPage,
+  WCSDKWallet,
 } from '@lidofinance/wallets-testing-wallets';
-import { WCSDKWallet } from '@lidofinance/wallets-testing-wallets/src/walletConnect/wc.service';
 
 export const WALLET_PAGES = {
   metamaskStable: MetamaskStablePage,

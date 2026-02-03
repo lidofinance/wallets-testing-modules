@@ -122,6 +122,11 @@ export class BrowserService {
 
   async setup() {
     if (this.options.walletConfig.WALLET_TYPE === WalletConnectTypes.WC_SDK) {
+      this.browserContextService = new BrowserContextService(null, {
+        browserOptions: this.options.browserOptions,
+      });
+
+      await this.browserContextService.initBrowserContext();
       this.setWalletPage();
       await this.walletPage.setup();
       return;
@@ -157,6 +162,23 @@ export class BrowserService {
   }
 
   private setWalletPage() {
+    if (this.options.walletConfig.WALLET_TYPE === WalletConnectTypes.WC_SDK) {
+      this.walletPage = new WALLET_PAGES[this.options.walletConfig.WALLET_NAME](
+        {
+          browserContext: this.browserContextService.browserContext,
+          walletConfig: this.options.walletConfig,
+          standConfig: {
+            chainId: this.options.networkConfig.chainId,
+            standUrl: this.options.standUrl,
+            rpcUrl:
+              this.ethereumNodeService?.state.nodeUrl ||
+              this.options.networkConfig.rpcUrl,
+          },
+        },
+      );
+      return;
+    }
+
     const extension = new Extension(this.browserContextService.extensionId);
     const extensionWalletPage = new WALLET_PAGES[
       this.options.walletConfig.EXTENSION_WALLET_NAME
@@ -169,7 +191,6 @@ export class BrowserService {
 
     switch (this.options.walletConfig.WALLET_TYPE) {
       case WalletConnectTypes.WC:
-      case WalletConnectTypes.WC_SDK:
       case WalletConnectTypes.IFRAME:
         this.walletPage = new WALLET_PAGES[
           this.options.walletConfig.WALLET_NAME
