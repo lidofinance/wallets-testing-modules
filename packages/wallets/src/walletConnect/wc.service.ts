@@ -1,7 +1,15 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import SignClient from '@walletconnect/sign-client';
-import { createPublicClient, createWalletClient, HDAccount, http } from 'viem';
-import * as chains from 'viem/chains';
+import {
+  createPublicClient,
+  createWalletClient,
+  HDAccount,
+  http,
+  PublicClient,
+  WalletClient,
+  Transport,
+  Chain,
+  Account,
+} from 'viem';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import {
   NetworkConfig,
@@ -10,6 +18,23 @@ import {
 } from '../wallets.constants';
 import { Page } from '@playwright/test';
 import { mnemonicToAccount } from 'viem/accounts';
+
+export declare enum CHAINS {
+  Mainnet = 1,
+  Holesky = 17000,
+  Hoodi = 560048,
+  Sepolia = 11155111,
+  Optimism = 10,
+  OptimismSepolia = 11155420,
+  Soneium = 1868,
+  SoneiumMinato = 1946,
+  Unichain = 130,
+  UnichainSepolia = 1301,
+}
+
+export declare const VIEM_CHAINS: {
+  [key in CHAINS]: Chain;
+};
 
 export type WCSessionRequest = {
   topic: string;
@@ -25,9 +50,8 @@ export type WCSessionRequest = {
 
 export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
   private client?: SignClient;
-  // @ts-ignore
-  private walletClient?: ReturnType<typeof createWalletClient>;
-  private publicClient?: ReturnType<typeof createPublicClient>;
+  private publicClient?: PublicClient<Transport, Chain, Account>;
+  private walletClient?: WalletClient<Transport, Chain, Account>;
   private hdAccount: HDAccount;
 
   private requestQueue: WCSessionRequest[] = [];
@@ -68,9 +92,6 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
 
   async setup(): Promise<void> {
     if (this.client) return;
-    const chain = Object.values(chains).find(
-      (c) => c.id === this.options.standConfig.chainId,
-    );
 
     this.client = await SignClient.init({
       projectId: this.options.walletConfig.walletConnectConfig.projectId,
@@ -79,12 +100,13 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
 
     this.walletClient = createWalletClient({
       account: this.hdAccount,
-      chain,
+      chain: VIEM_CHAINS[this.options.standConfig.chainId],
       transport: http(this.options.standConfig.rpcUrl),
     });
 
+    // @ts-ignore
     this.publicClient = createPublicClient({
-      chain: chain as chains.Chain,
+      chain: VIEM_CHAINS[this.options.standConfig.chainId],
       transport: http(this.options.standConfig.rpcUrl),
     });
     // Collect incoming requests into an async queue
