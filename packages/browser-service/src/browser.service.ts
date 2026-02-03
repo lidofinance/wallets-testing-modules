@@ -167,6 +167,7 @@ export class BrowserService {
         {
           browserContext: this.browserContextService.browserContext,
           walletConfig: this.options.walletConfig,
+          accountConfig: this.options.accountConfig,
           standConfig: {
             chainId: this.options.networkConfig.chainId,
             standUrl: this.options.standUrl,

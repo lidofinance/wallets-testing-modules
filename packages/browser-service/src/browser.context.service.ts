@@ -113,10 +113,12 @@ export class BrowserContextService {
       await this.browserContext.addCookies(this.options.browserOptions.cookies);
     }
 
-    let [background] = this.browserContext.serviceWorkers();
-    if (!background)
-      background = await this.browserContext.waitForEvent('serviceworker');
-    this.extensionId = background.url().split('/')[2];
+    if (this.walletExtensionStartPath) {
+      let [background] = this.browserContext.serviceWorkers();
+      if (!background)
+        background = await this.browserContext.waitForEvent('serviceworker');
+      this.extensionId = background.url().split('/')[2];
+    }
   }
 
   async closePages() {
