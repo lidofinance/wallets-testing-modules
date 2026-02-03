@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import SignClient from '@walletconnect/sign-client';
 import { createPublicClient, createWalletClient, HDAccount, http } from 'viem';
-import { mainnet } from 'viem/chains';
+import * as chains from 'viem/chains';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import {
   NetworkConfig,
@@ -68,6 +68,9 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
 
   async setup(): Promise<void> {
     if (this.client) return;
+    const chain = Object.values(chains).find(
+      (c) => c.id === this.options.standConfig.chainId,
+    );
 
     this.client = await SignClient.init({
       projectId: this.options.walletConfig.walletConnectConfig.projectId,
@@ -76,12 +79,12 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
 
     this.walletClient = createWalletClient({
       account: this.hdAccount,
-      chain: mainnet,
+      chain,
       transport: http(this.options.standConfig.rpcUrl),
     });
 
     this.publicClient = createPublicClient({
-      chain: mainnet,
+      chain: chain as chains.Chain,
       transport: http(this.options.standConfig.rpcUrl),
     });
     // Collect incoming requests into an async queue
@@ -100,8 +103,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
 
     const [proposal] = await Promise.all([
       this.waitForProposalOnce(
-        this.options.walletConfig.walletConnectConfig.requestHandleTimeoutMs ||
-          30000,
+        this.options.walletConfig.walletConnectConfig.requestHandleTimeoutMs,
       ),
       this.client.core.pairing.pair({ uri }),
     ]);
