@@ -1,14 +1,14 @@
 import SignClient from '@walletconnect/sign-client';
 import { createPublicClient, createWalletClient, HDAccount, http } from 'viem';
 import { mnemonicToAccount } from 'viem/accounts';
-
+import { formatEther } from 'viem/utils';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import {
   NetworkConfig,
   WalletConnectTypes,
   WCApproveNamespaces,
 } from '../wallets.constants';
-import { Page } from '@playwright/test';
+import { Page, except } from '@playwright/test';
 import { SUPPORTED_CHAINS } from './constants';
 
 export type WCSessionRequest = {
@@ -316,11 +316,22 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
   importKey(secretKey: string, withChecks?: boolean): Promise<void> {
     throw new Error('Method not implemented.');
   }
-  assertTxAmount(req: WCSessionRequest, expectedAmount: string): Promise<void> {
-    throw new Error('Method not implemented.');
+
+  assertTxAmount(req: WCSessionRequest, expectedAmount: string): void {
+    const tx = this.getTx(req);
+
+    if (tx.method === 'eth_sendTransaction') {
+      const txAmount = formatEther(BigInt(tx.value));
+      expect(txAmount).toEqual(expectedAmount);
+    }
   }
-  assertReceiptAddress(req: WCSessionRequest, expectedAddress: string): Promise<void> {
-    throw new Error('Method not implemented.');
+
+  assertReceiptAddress(req: WCSessionRequest, expectedAddress: string): void {
+    const tx = this.getTx(req);
+
+    if (tx.method === 'eth_sendTransaction') {
+      expect(tx.to).toEqual(expectedAddress);
+    }
   }
 
   addNetwork(
