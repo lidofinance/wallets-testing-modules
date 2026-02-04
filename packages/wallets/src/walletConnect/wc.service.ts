@@ -1,7 +1,13 @@
 import SignClient from '@walletconnect/sign-client';
-import { createPublicClient, createWalletClient, HDAccount, http } from 'viem';
+import {
+  createPublicClient,
+  createWalletClient,
+  HDAccount,
+  http,
+  formatEther,
+} from 'viem';
 import { mnemonicToAccount } from 'viem/accounts';
-import { formatEther } from 'viem/utils';
+
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import {
   NetworkConfig,
@@ -253,6 +259,14 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     return req.params?.request?.params?.[index];
   }
 
+  getRequestInfo(req) {
+    const tx = this.getTx(req);
+    return {
+      method: req.params.request.method,
+      params: tx,
+    };
+  }
+
   private async waitForProposalOnce(timeoutMs: number) {
     if (!this.client) throw new Error('WC client not initialized');
 
@@ -318,19 +332,19 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
   }
 
   assertTxAmount(req: WCSessionRequest, expectedAmount: string): void {
-    const tx = this.getTx(req);
+    const requestInfo = this.getRequestInfo(req);
 
-    if (tx.method === 'eth_sendTransaction') {
-      const txAmount = formatEther(BigInt(tx.value));
+    if (requestInfo.method === 'eth_sendTransaction') {
+      const txAmount = formatEther(BigInt(requestInfo.params.value));
       expect(txAmount).toEqual(expectedAmount);
     }
   }
 
   assertReceiptAddress(req: WCSessionRequest, expectedAddress: string): void {
-    const tx = this.getTx(req);
+    const requestInfo = this.getRequestInfo(req);
 
-    if (tx.method === 'eth_sendTransaction') {
-      expect(tx.to).toEqual(expectedAddress);
+    if (requestInfo.method === 'eth_sendTransaction') {
+      expect(requestInfo.params.to).toEqual(expectedAddress);
     }
   }
 
