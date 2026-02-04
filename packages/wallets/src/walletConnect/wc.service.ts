@@ -8,7 +8,7 @@ import {
   WalletConnectTypes,
   WCApproveNamespaces,
 } from '../wallets.constants';
-import { Page, except } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 import { SUPPORTED_CHAINS } from './constants';
 
 export type WCSessionRequest = {
