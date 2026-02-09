@@ -25,7 +25,7 @@ export type WCSessionRequest = {
     chainId: string;
     request: {
       method: string;
-      params: any[];
+      params: any[] | any;
     };
   };
 };
