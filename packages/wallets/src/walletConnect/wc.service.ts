@@ -29,6 +29,12 @@ export type WCSessionRequest = {
   };
 };
 
+type WatchedToken = {
+  address: `0x${string}`;
+  symbol?: string;
+  decimals?: number;
+};
+
 export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
   private client?: SignClient;
   // @ts-ignore
@@ -38,6 +44,8 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
 
   private requestQueue: WCSessionRequest[] = [];
   private waiters: Array<(req: WCSessionRequest) => void> = [];
+  private watchedTokensByAccount: Map<string, WatchedToken[]> = new Map();
+
   page?: Page; // not used for WC wallet but required by interface
 
   constructor(public options: WalletPageOptions) {
@@ -64,6 +72,8 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
             'eth_signTypedData_v4',
             'wallet_switchEthereumChain',
             'wallet_addEthereumChain',
+            'wallet_watchAsset',
+            'wallet_getCapabilities',
           ],
           events: ['accountsChanged', 'chainChanged'],
         },
@@ -91,8 +101,27 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
       transport: http(this.options.standConfig.rpcUrl),
     });
     // Collect incoming requests into an async queue
-    this.client.on('session_request', (event) => {
+    this.client.on('session_request', async (event) => {
       const req = event as unknown as WCSessionRequest;
+      const method = req.params.request.method;
+
+      if (method === 'wallet_getCapabilities') {
+        console.log(
+          'Responding to wallet_getCapabilities with wallet_watchAsset support',
+        );
+        await this.client.respond({
+          topic: req.topic,
+          response: {
+            id: req.id,
+            jsonrpc: '2.0',
+            result: {
+              wallet_watchAsset: true,
+            },
+          },
+        });
+        return;
+      }
+
       console.log(`WC: session_request received: ${req.params.request.method}`);
       const waiter = this.waiters.shift();
       if (waiter) waiter(req);
@@ -225,6 +254,34 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
         topic: req.topic,
         response: { id: req.id, jsonrpc: '2.0', result: signature },
       });
+    } else if (method === 'wallet_watchAsset') {
+      console.log(
+        'Token watch request received, auto-approving for test purposes.',
+      );
+      const params = req.params.request.params?.[0];
+
+      const account = this.hdAccount.address.toLowerCase();
+
+      if (params?.type === 'ERC20' && params?.options?.address) {
+        const list = this.watchedTokensByAccount.get(account) ?? [];
+
+        list.push({
+          address: params.options.address.toLowerCase(),
+          symbol: params.options.symbol,
+          decimals: params.options.decimals,
+        });
+
+        this.watchedTokensByAccount.set(account, list);
+      }
+
+      await this.client.respond({
+        topic: req.topic,
+        response: {
+          id: req.id,
+          jsonrpc: '2.0',
+          result: true,
+        },
+      });
     } else {
       throw new Error(`WC: approveRequest unsupported method: ${method}`);
     }
@@ -325,6 +382,31 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
         events,
       },
     };
+  }
+
+  async getTokenBalance(tokenName: string): Promise<number> {
+    const contractAddress = this.watchedTokensByAccount
+      .get(this.hdAccount.address.toLowerCase())
+      ?.find((t) => t.symbol === tokenName)?.address;
+
+    if (!contractAddress) {
+      const balance = await this.publicClient.readContract({
+        address: contractAddress,
+        abi: [
+          {
+            name: 'balanceOf',
+            type: 'function',
+            stateMutability: 'view',
+            inputs: [{ name: 'owner', type: 'address' }],
+            outputs: [{ name: '', type: 'uint256' }],
+          },
+        ],
+        functionName: 'balanceOf',
+        args: [this.hdAccount.address],
+      });
+      return balance;
+    }
+    throw new Error(`Token ${tokenName} not found in watched tokens`);
   }
 
   importKey(secretKey: string, withChecks?: boolean): Promise<void> {
