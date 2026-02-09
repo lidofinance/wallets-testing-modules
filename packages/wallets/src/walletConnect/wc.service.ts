@@ -28,6 +28,7 @@ export type WCSessionRequest = {
       params: any[] | any;
     };
   };
+  processed: boolean; // custom field to track if request was handled
 };
 
 type WatchedToken = {
@@ -209,7 +210,10 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
         'WC: confirmTx with Page parameter is not supported in WC wallet',
       );
     }
-
+    if (req.processed) {
+      console.log('Request already processed');
+      return;
+    }
     if (!this.client) throw new Error('WC client not initialized');
 
     const method = req.params.request.method;
@@ -258,6 +262,8 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     } else {
       throw new Error(`WC: unsupported method: ${method}`);
     }
+
+    req.processed = true;
   }
 
   async confirmAddTokenToWallet(req?: WCSessionRequest): Promise<void> {
@@ -270,7 +276,10 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
         'WC: confirmAddTokenToWallet with Page parameter is not supported in WC wallet',
       );
     }
-
+    if (req.processed) {
+      console.log('Request already processed');
+      return;
+    }
     if (!this.client) throw new Error('WC client not initialized');
 
     const method = req.params.request.method;
@@ -306,6 +315,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
         result: true,
       },
     });
+    req.processed = true;
   }
 
   async cancelTx(
@@ -316,10 +326,15 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     if (!req) {
       req = await this.nextRequest();
     }
+
     if (!this.isWCSessionRequest(req)) {
       throw new Error(
-        'WC: confirmTx with Page parameter is not supported in WC wallet',
+        'WC: cancelTx with Page parameter is not supported in WC wallet',
       );
+    }
+    if (req.processed) {
+      console.log('Request already processed');
+      return;
     }
     if (!this.client) throw new Error('WC client not initialized');
 
@@ -331,6 +346,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
         error: { code, message },
       },
     });
+    req.processed = true;
   }
 
   getTx(req: WCSessionRequest, index = 0): any {
