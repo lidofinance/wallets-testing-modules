@@ -20,7 +20,7 @@ export const METAMASK_STABLE_COMMON_CONFIG: CommonWalletConfig = {
 export const WC_SDK_COMMON_CONFIG: CommonWalletConfig = {
   WALLET_NAME: 'wcSDK',
   EXTENSION_WALLET_NAME: 'wcSDK',
-  CONNECTED_WALLET_NAME: 'wcSDK',
+  CONNECTED_WALLET_NAME: 'WalletConnect',
   CONNECT_BUTTON_NAME: 'WalletConnect',
   STORE_EXTENSION_ID: 'nkbihfbeogaeaoehlefnkodbefgpgknn',
   WALLET_TYPE: WalletConnectTypes.WC_SDK,
