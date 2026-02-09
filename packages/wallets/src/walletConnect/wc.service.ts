@@ -259,7 +259,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
       console.log(
         'Token watch request received, auto-approving for test purposes.',
       );
-      const params = req.params.request.params?.[0];
+      const params = req.params.request.params;
 
       const account = this.hdAccount.address.toLowerCase();
 
@@ -390,7 +390,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
       .get(this.hdAccount.address.toLowerCase())
       ?.find((t) => t.symbol === tokenName)?.address;
 
-    if (!contractAddress) {
+    if (contractAddress) {
       const balance = await this.publicClient.readContract({
         address: contractAddress,
         abi: [
