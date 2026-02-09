@@ -5,6 +5,7 @@ import {
   HDAccount,
   http,
   formatEther,
+  formatUnits,
 } from 'viem';
 import { mnemonicToAccount } from 'viem/accounts';
 
@@ -404,7 +405,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
         functionName: 'balanceOf',
         args: [this.hdAccount.address],
       });
-      return balance;
+      return Number(formatUnits(balance, 18));
     }
     throw new Error(`Token ${tokenName} not found in watched tokens`);
   }
