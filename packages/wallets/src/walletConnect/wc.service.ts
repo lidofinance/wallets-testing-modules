@@ -255,37 +255,57 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
         topic: req.topic,
         response: { id: req.id, jsonrpc: '2.0', result: signature },
       });
-    } else if (method === 'wallet_watchAsset') {
-      console.log(
-        'Token watch request received, auto-approving for test purposes.',
-      );
-      const params = req.params.request.params;
-
-      const account = this.hdAccount.address.toLowerCase();
-
-      if (params?.type === 'ERC20' && params?.options?.address) {
-        const list = this.watchedTokensByAccount.get(account) ?? [];
-
-        list.push({
-          address: params.options.address.toLowerCase(),
-          symbol: params.options.symbol,
-          decimals: params.options.decimals,
-        });
-
-        this.watchedTokensByAccount.set(account, list);
-      }
-
-      await this.client.respond({
-        topic: req.topic,
-        response: {
-          id: req.id,
-          jsonrpc: '2.0',
-          result: true,
-        },
-      });
     } else {
-      throw new Error(`WC: approveRequest unsupported method: ${method}`);
+      throw new Error(`WC: unsupported method: ${method}`);
     }
+  }
+
+  async confirmAddTokenToWallet(req?: WCSessionRequest): Promise<void> {
+    if (!req) {
+      req = await this.nextRequest();
+    }
+
+    if (!this.isWCSessionRequest(req)) {
+      throw new Error(
+        'WC: confirmAddTokenToWallet with Page parameter is not supported in WC wallet',
+      );
+    }
+
+    if (!this.client) throw new Error('WC client not initialized');
+
+    const method = req.params.request.method;
+
+    if (method !== 'wallet_watchAsset') {
+      throw new Error(
+        `WC: unsupported method for confirm add token to wallet: ${method}`,
+      );
+    }
+
+    console.log('Try to add token to wallet');
+    const params = req.params.request.params;
+
+    const account = this.hdAccount.address.toLowerCase();
+
+    if (params?.type === 'ERC20' && params?.options?.address) {
+      const list = this.watchedTokensByAccount.get(account) ?? [];
+
+      list.push({
+        address: params.options.address.toLowerCase(),
+        symbol: params.options.symbol,
+        decimals: params.options.decimals,
+      });
+
+      this.watchedTokensByAccount.set(account, list);
+    }
+
+    await this.client.respond({
+      topic: req.topic,
+      response: {
+        id: req.id,
+        jsonrpc: '2.0',
+        result: true,
+      },
+    });
   }
 
   async cancelTx(

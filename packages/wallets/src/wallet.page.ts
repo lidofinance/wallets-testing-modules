@@ -78,7 +78,9 @@ export interface WalletPage<T extends WalletConnectType> {
 
   getTokenBalance?(tokenName: string): Promise<number>;
 
-  confirmAddTokenToWallet?(page: Page): Promise<void>;
+  confirmAddTokenToWallet?(
+    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
+  ): Promise<void>;
 
   assertReceiptAddress(
     page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
