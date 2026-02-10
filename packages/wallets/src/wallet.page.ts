@@ -60,15 +60,14 @@ export interface WalletPage<T extends WalletConnectType> {
     expectedAmount: string,
   ): Promise<void> | void;
 
-  confirmTx(req: WCSessionRequest): Promise<void>;
-  confirmTx(page: Page, setAggressiveGas?: boolean): Promise<void>;
+  confirmTx(
+    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
+    setAggressiveGas?: boolean,
+  ): Promise<void>;
 
   cancelTx(
-    req: WCSessionRequest,
-    message?: string,
-    code?: number,
+    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
   ): Promise<void>;
-  cancelTx(page: Page): Promise<void>;
 
   approveTokenTx?(
     page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,

@@ -3,7 +3,6 @@ import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { NetworkConfig, WalletConnectTypes } from '../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 import { SetupPage, SettingPage, TransactionPage } from './pages';
-import { WCSessionRequest } from '../walletConnect/wc.service';
 
 export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
   logger = new ConsoleLogger(SafeIframePage.name);
@@ -115,10 +114,10 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
     });
   }
 
-  async confirmTx(page: Page | WCSessionRequest) {
+  async confirmTx(page: Page) {
     await test.step('Confirm transaction', async () => {
       const transactionPage = new TransactionPage(
-        page as Page,
+        page,
         this.options.extensionPage,
       );
       await transactionPage.confirmTransaction();

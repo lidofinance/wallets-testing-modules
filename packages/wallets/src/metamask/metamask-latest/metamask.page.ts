@@ -18,7 +18,6 @@ import {
 } from './pages/elements';
 import { getAddress } from 'viem';
 import { isPopularMainnetNetwork, isPopularTestnetNetwork } from './helper';
-import { WCSessionRequest } from '../../walletConnect/wc.service';
 
 export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
   page: Page | undefined;
@@ -214,17 +213,15 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async confirmTx(page: Page | WCSessionRequest, setAggressiveGas?: boolean) {
+  async confirmTx(page: Page, setAggressiveGas?: boolean) {
     await test.step('Confirm TX', async () => {
-      await new WalletOperationPage(page as Page).confirmTransaction(
-        setAggressiveGas,
-      );
+      await new WalletOperationPage(page).confirmTransaction(setAggressiveGas);
     });
   }
 
-  async cancelTx(page: Page | WCSessionRequest) {
+  async cancelTx(page: Page) {
     await test.step('Reject TX', async () => {
-      await new WalletOperationPage(page as Page).cancelTransaction();
+      await new WalletOperationPage(page).cancelTransaction();
     });
   }
 

@@ -318,11 +318,9 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     req.processed = true;
   }
 
-  async cancelTx(
-    req?: WCSessionRequest | Page,
-    message = 'User rejected the request',
-    code = 4001,
-  ): Promise<void> {
+  async cancelTx(req?: WCSessionRequest): Promise<void> {
+    const message = 'User rejected the request';
+    const code = 4001;
     if (!req) {
       req = await this.nextRequest();
     }

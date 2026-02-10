@@ -2,7 +2,6 @@ import { WalletConnectTypes } from '../wallets.constants';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { test, Page } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
-import { WCSessionRequest } from '../walletConnect/wc.service';
 
 export class Coin98 implements WalletPage<WalletConnectTypes.EOA> {
   logger = new ConsoleLogger(Coin98.name);
@@ -138,9 +137,9 @@ export class Coin98 implements WalletPage<WalletConnectTypes.EOA> {
     throw new Error('Method not implemented.');
   }
 
-  async confirmTx(page: Page | WCSessionRequest) {
+  async confirmTx(page: Page) {
     await test.step('Confirm TX', async () => {
-      await (page as Page).click('button:has-text("Confirm")');
+      await page.click('button:has-text("Confirm")');
     });
   }
 

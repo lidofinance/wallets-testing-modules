@@ -22,7 +22,6 @@ import {
   isPopularTestnetNetwork,
 } from './helper';
 import { privateKeyToAccount } from 'viem/accounts';
-import { WCSessionRequest } from '../../walletConnect/wc.service';
 
 export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
   page: Page | undefined;
@@ -235,17 +234,15 @@ export class MetamaskStablePage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async confirmTx(page: Page | WCSessionRequest, setAggressiveGas?: boolean) {
+  async confirmTx(page: Page, setAggressiveGas?: boolean) {
     await test.step('Confirm TX', async () => {
-      await new WalletOperationPage(page as Page).confirmTransaction(
-        setAggressiveGas,
-      );
+      await new WalletOperationPage(page).confirmTransaction(setAggressiveGas);
     });
   }
 
-  async cancelTx(page: Page | WCSessionRequest) {
+  async cancelTx(page: Page) {
     await test.step('Reject TX', async () => {
-      await new WalletOperationPage(page as Page).cancelTransaction();
+      await new WalletOperationPage(page).cancelTransaction();
     });
   }
 
