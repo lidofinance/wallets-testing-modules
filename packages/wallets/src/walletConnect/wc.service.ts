@@ -45,6 +45,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
   private hdAccount: HDAccount;
 
   private requestQueue: WCSessionRequest[] = [];
+  private pendingRequests: WCSessionRequest[] = [];
   private waiters: Array<(req: WCSessionRequest) => void> = [];
   private watchedTokensByAccount: Map<string, WatchedToken[]> = new Map();
 
@@ -178,7 +179,10 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     }
 
     const queued = this.requestQueue.shift();
-    if (queued) return queued;
+    if (queued) {
+      this.pendingRequests.push(queued);
+      return queued;
+    }
 
     return await new Promise<WCSessionRequest>((resolve, reject) => {
       const t = setTimeout(() => {
@@ -189,6 +193,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
 
       this.waiters.push((req) => {
         clearTimeout(t);
+        this.pendingRequests.push(req);
         resolve(req);
       });
     });
@@ -264,6 +269,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     }
 
     req.processed = true;
+    this.pendingRequests = this.pendingRequests.filter((r) => r.id !== req.id);
   }
 
   async confirmAddTokenToWallet(req?: WCSessionRequest): Promise<void> {
@@ -316,6 +322,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
       },
     });
     req.processed = true;
+    this.pendingRequests = this.pendingRequests.filter((r) => r.id !== req.id);
   }
 
   async cancelTx(req?: WCSessionRequest): Promise<void> {
@@ -345,6 +352,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
       },
     });
     req.processed = true;
+    this.pendingRequests = this.pendingRequests.filter((r) => r.id !== req.id);
   }
 
   getTx(req: WCSessionRequest, index = 0): any {
@@ -470,5 +478,13 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     isClosePage?: boolean,
   ): Promise<void> {
     throw new Error('Method not implemented.');
+  }
+
+  async cancelAllTxRequests() {
+    while (this.requestQueue.length > 0 || this.pendingRequests.length > 0) {
+      const req =
+        this.requestQueue.shift() || this.pendingRequests.shift() || null;
+      if (req) await this.cancelTx(req);
+    }
   }
 }

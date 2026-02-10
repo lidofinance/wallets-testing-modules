@@ -109,4 +109,5 @@ export interface WalletPage<T extends WalletConnectType> {
 
   // WC SDK
   nextRequest?(timeoutMs?: number): Promise<WCSessionRequest>;
+  cancelAllTxRequests?(): Promise<void>;
 }
