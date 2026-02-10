@@ -205,7 +205,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     );
   }
 
-  async confirmTx(req?: WCSessionRequest | Page): Promise<void> {
+  async confirmTx(req?: WCSessionRequest): Promise<void> {
     if (!req) {
       req = await this.nextRequest();
     }
