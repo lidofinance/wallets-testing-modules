@@ -126,6 +126,7 @@ export class NetworkList {
     await this.dialogSection
       .getByTestId(getCorrectNetworkName(networkConfig.chainName))
       .click();
+    await this.page.close();
   }
 
   async addPopularNetwork(networkName: string) {

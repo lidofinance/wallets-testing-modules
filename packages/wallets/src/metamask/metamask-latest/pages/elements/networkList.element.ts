@@ -119,6 +119,7 @@ export class NetworkList {
       await this.showTestnetButton.click();
     }
     await this.dialogSection.getByTestId(networkConfig.chainName).click();
+    await this.page.close();
   }
 
   async addPopularNetwork(networkName: string) {
