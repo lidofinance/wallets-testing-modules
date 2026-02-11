@@ -74,10 +74,7 @@ export interface WalletPage<T extends WalletConnectType> {
 
   setupNetwork?(networkConfig: NetworkConfig): Promise<void>;
 
-  addNetwork(
-    networkConfig: NetworkConfig,
-    isClosePage?: boolean,
-  ): Promise<void>;
+  addNetwork(networkConfig: NetworkConfig): Promise<void>;
 
   changeNetwork?(networkName: string): Promise<void>;
 

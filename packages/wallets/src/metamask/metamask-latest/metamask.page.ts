@@ -127,7 +127,7 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async addNetwork(networkConfig: NetworkConfig, isClosePage = false) {
+  async addNetwork(networkConfig: NetworkConfig) {
     await test.step(`Add new network "${networkConfig.chainName}"`, async () => {
       await this.navigate();
       if (await isPopularMainnetNetwork(networkConfig.chainName)) {
@@ -142,7 +142,6 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
         await this.networkList.addNetworkManually(networkConfig);
         await this.changeNetwork(networkConfig.chainName);
       }
-      if (isClosePage) await this.page.close();
     });
   }
 

@@ -108,6 +108,7 @@ export class NetworkList {
       });
       await this.networkSetting.addCustomNetwork(networkConfig);
     }
+    await this.page.close();
   }
 
   async addPopularTestnetNetwork(networkConfig: NetworkConfig) {
