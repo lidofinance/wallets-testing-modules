@@ -6,6 +6,7 @@ import {
   http,
   formatEther,
   formatUnits,
+  Chain,
 } from 'viem';
 import { mnemonicToAccount } from 'viem/accounts';
 
@@ -16,7 +17,7 @@ import {
   WCApproveNamespaces,
 } from '../wallets.constants';
 import { Page, expect } from '@playwright/test';
-import { SUPPORTED_CHAINS } from './constants';
+import { SUPPORTED_CHAINS, buildChainFromNetwork } from './constants';
 
 export type WCSessionRequest = {
   topic: string;
@@ -48,6 +49,11 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
   private pendingRequests: WCSessionRequest[] = [];
   private waiters: Array<(req: WCSessionRequest) => void> = [];
   private watchedTokensByAccount: Map<string, WatchedToken[]> = new Map();
+
+  // network settings
+  private activeChainId: number;
+  private networksByChainId = new Map<number, NetworkConfig>();
+  private chainIdByName = new Map<string, number>();
 
   page?: Page; // not used for WC wallet but required by interface
 
@@ -475,11 +481,101 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     }
   }
 
-  addNetwork(
-    networkConfig: NetworkConfig,
-    isClosePage?: boolean,
-  ): Promise<void> {
-    throw new Error('Method not implemented.');
+  async setupNetwork(networkConfig: NetworkConfig): Promise<void> {
+    this.networksByChainId.set(networkConfig.chainId, networkConfig);
+    this.chainIdByName.set(
+      this.normalizeChainName(networkConfig.chainName),
+      networkConfig.chainId,
+    );
+  }
+
+  private getActiveSession() {
+    if (!this.client) throw new Error('WC client not initialized');
+    const sessions = this.client.session.getAll();
+    const session = sessions[0];
+    if (!session) throw new Error('No active WC session');
+    return session;
+  }
+
+  private normalizeChainName(name: string) {
+    return name.trim().toLowerCase();
+  }
+
+  async addNetwork(networkConfig: NetworkConfig): Promise<void> {
+    if (!this.client) throw new Error('WC client not initialized');
+
+    const session = this.getActiveSession();
+    const ns = session.namespaces?.eip155;
+    if (!ns) throw new Error('Session has no eip155 namespace');
+
+    const addr = this.hdAccount.address;
+    const newAccount = `eip155:${networkConfig.chainId}:${addr}`;
+
+    const nextNamespaces = {
+      ...session.namespaces,
+      eip155: {
+        accounts: Array.from(new Set([...(ns.accounts ?? []), newAccount])),
+        methods: ns.methods ?? [],
+        events: ns.events ?? [],
+      },
+    };
+
+    await this.client.update({
+      topic: session.topic,
+      namespaces: nextNamespaces,
+    });
+
+    this.networksByChainId.set(networkConfig.chainId, networkConfig);
+    this.chainIdByName.set(
+      this.normalizeChainName(networkConfig.chainName),
+      networkConfig.chainId,
+    );
+  }
+
+  private rebuildViemClients(chain: Chain) {
+    const net = this.networksByChainId.get(chain.id);
+    if (!net?.rpcUrl)
+      throw new Error(`No rpcUrl registered for chainId=${chain.id}`);
+
+    //@ts-ignore
+    this.walletClient = createWalletClient({
+      account: this.hdAccount,
+      chain,
+      transport: http(net.rpcUrl),
+    });
+
+    this.publicClient = createPublicClient({
+      chain,
+      transport: http(net.rpcUrl),
+    });
+
+    this.activeChainId = chain.id;
+  }
+
+  async changeNetwork(networkName: string): Promise<void> {
+    if (!this.client) throw new Error('WC client not initialized');
+
+    const normalized = this.normalizeChainName(networkName);
+    const chainId = this.chainIdByName.get(normalized);
+    const networkConfig = this.networksByChainId.get(chainId);
+
+    if (!chainId) {
+      const known = Array.from(this.chainIdByName.keys()).sort();
+      throw new Error(
+        `Unknown network "${networkName}". Registered networks: ${known.join(
+          ', ',
+        )}`,
+      );
+    }
+    const chain = buildChainFromNetwork(networkConfig);
+    this.rebuildViemClients(chain);
+
+    const session = this.getActiveSession();
+    await this.client.emit({
+      topic: session.topic,
+      chainId: `eip155:${chainId}`,
+      event: { name: 'chainChanged', data: `0x${chainId.toString(16)}` },
+    });
   }
 
   async cancelAllTxRequests() {

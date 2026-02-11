@@ -11,6 +11,7 @@ import {
   unichain,
   unichainSepolia,
 } from 'viem/chains';
+import { NetworkConfig } from '../wallets.constants';
 
 export const SUPPORTED_CHAINS: Record<number, Chain> = {
   1: mainnet as Chain,
@@ -24,3 +25,23 @@ export const SUPPORTED_CHAINS: Record<number, Chain> = {
   130: unichain as Chain,
   1301: unichainSepolia as Chain,
 };
+
+export function buildChainFromNetwork(network: NetworkConfig): Chain {
+  return {
+    id: network.chainId,
+    name: network.chainName,
+    nativeCurrency: {
+      name: network.tokenSymbol,
+      symbol: network.tokenSymbol,
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: [network.rpcUrl],
+      },
+      public: {
+        http: [network.rpcUrl],
+      },
+    },
+  } as const satisfies Chain;
+}

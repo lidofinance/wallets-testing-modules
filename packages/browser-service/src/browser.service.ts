@@ -87,8 +87,9 @@ export class BrowserService {
       await this.setupWithNode();
     } else {
       await this.setup();
+      await this.walletPage.setupNetwork(this.options.networkConfig);
+
       if (this.options.walletConfig.WALLET_TYPE !== WalletConnectTypes.WC_SDK) {
-        await this.walletPage.setupNetwork(this.options.networkConfig);
         await this.walletPage.changeNetwork(
           this.options.networkConfig.chainName,
         );
