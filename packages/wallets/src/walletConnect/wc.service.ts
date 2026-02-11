@@ -469,7 +469,9 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     const requestInfo = this.getRequestInfo(req);
 
     if (requestInfo.method === 'eth_sendTransaction') {
-      expect(requestInfo.params.to).toEqual(expectedAddress);
+      expect(requestInfo.params.to.toLowerCase()).toEqual(
+        expectedAddress.toLowerCase(),
+      );
     }
   }
 

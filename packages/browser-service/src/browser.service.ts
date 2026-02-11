@@ -105,6 +105,15 @@ export class BrowserService {
     const account = this.ethereumNodeService.getAccount();
     await this.setup();
 
+    if (this.options.walletConfig.WALLET_TYPE === WalletConnectTypes.WC_SDK) {
+      await this.ethereumNodeService.mockRoute(
+        this.options.nodeConfig.rpcUrlToMock,
+        this.browserContextService.browserContext,
+      );
+
+      return;
+    }
+
     if (!(await this.walletPage.isWalletAddressExist(account.address))) {
       await this.walletPage.importKey(account.secretKey);
     } else {
