@@ -534,20 +534,22 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
 
   private rebuildViemClients(chain: Chain) {
     const net = this.networksByChainId.get(chain.id);
-    if (!net?.rpcUrl)
-      throw new Error(`No rpcUrl registered for chainId=${chain.id}`);
+    if (net?.rpcUrl) {
+      //@ts-ignore
+      this.walletClient = createWalletClient({
+        account: this.hdAccount,
+        chain,
+        transport: http(net.rpcUrl),
+      });
 
-    //@ts-ignore
-    this.walletClient = createWalletClient({
-      account: this.hdAccount,
-      chain,
-      transport: http(net.rpcUrl),
-    });
-
-    this.publicClient = createPublicClient({
-      chain,
-      transport: http(net.rpcUrl),
-    });
+      this.publicClient = createPublicClient({
+        chain,
+        transport: http(net.rpcUrl),
+      });
+    } else {
+      this.walletClient = null;
+      this.publicClient = null;
+    }
 
     this.activeChainId = chain.id;
   }
@@ -567,7 +569,8 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
         )}`,
       );
     }
-    const chain = buildChainFromNetwork(networkConfig);
+    const chain =
+      SUPPORTED_CHAINS[chainId] ?? buildChainFromNetwork(networkConfig);
     this.rebuildViemClients(chain);
 
     const session = this.getActiveSession();
