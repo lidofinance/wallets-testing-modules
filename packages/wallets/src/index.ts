@@ -11,6 +11,7 @@ export * from './exodus';
 export * from './okx';
 export * from './bitget';
 export * from './ctrl';
+export * from './walletConnect/wc.service';
 
 // export WC and IFRAME WalletConnectTypes
 export * from './safe';

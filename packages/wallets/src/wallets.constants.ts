@@ -1,3 +1,12 @@
+export type WCApproveNamespaces = Record<
+  string,
+  {
+    accounts: string[];
+    methods: string[];
+    events: string[];
+  }
+>;
+
 export interface CommonWalletConfig {
   WALLET_NAME: string; // Name of the wallet being tested
   EXTENSION_WALLET_NAME: string; // Wallet name for install extension
@@ -7,16 +16,30 @@ export interface CommonWalletConfig {
   WALLET_TYPE: WalletConnectType;
   LATEST_STABLE_DOWNLOAD_LINK?: string; // Link to stable wallet extension version for test (optional)
   EXTENSION_START_PATH: string; // Start path for wallet setup
+  // Only for WalletConnect wallets via API @walletconnect/sign-client
+  walletConnectConfig?: {
+    projectId: string;
+    metadata?: {
+      name: string;
+      description: string;
+      url: string;
+      icons: string[];
+    };
+    namespaces?: WCApproveNamespaces;
+    requestHandleTimeoutMs?: number;
+  };
 }
 
 export enum WalletConnectTypes {
   EOA = 'EOA',
   WC = 'WC',
+  WC_SDK = 'WC_SDK',
   IFRAME = 'IFRAME',
 }
 
 export type WalletConnectType =
   | WalletConnectTypes.WC
+  | WalletConnectTypes.WC_SDK
   | WalletConnectTypes.EOA
   | WalletConnectTypes.IFRAME;
 
