@@ -1,10 +1,12 @@
-import { WCSDKWallet, WCSessionRequest } from '../wc.service';
+import { WCSessionRequest } from '../components';
+import { WCSDKWallet } from '../wc.service';
 
 export async function eth_sendTransaction(
   this: WCSDKWallet,
   req: WCSessionRequest,
 ) {
-  // @ts-expect-error - it will be work
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   const fees = await this.publicClient.estimateFeesPerGas();
   const value = req.params.request.params[0].value
     ? BigInt(req.params.request.params[0].value)

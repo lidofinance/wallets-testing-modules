@@ -1,4 +1,5 @@
-import { WCSDKWallet, WCSessionRequest } from '../wc.service';
+import { WCSessionRequest } from '../components';
+import { WCSDKWallet } from '../wc.service';
 
 export async function eth_signTypedData_v4(
   this: WCSDKWallet,

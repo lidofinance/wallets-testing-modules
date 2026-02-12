@@ -18,25 +18,17 @@ import {
 } from '../wallets.constants';
 import { expect } from '@playwright/test';
 import { SUPPORTED_CHAINS } from './constants';
-import { NetworkSettings, RequestManager } from './components';
+import {
+  NetworkSettings,
+  RequestManager,
+  WCSessionRequest,
+} from './components';
 import {
   eth_sendTransaction,
   eth_signTypedData_v4,
   wallet_watchAsset,
 } from './methods';
-
-export type WCSessionRequest = {
-  topic: string;
-  id: number;
-  params: {
-    chainId: string;
-    request: {
-      method: string;
-      params: any[] | any;
-    };
-  };
-  processed: boolean; // custom field to track if request was handled
-};
+import { wallet_getCapabilities } from './methods/wallet_getCapabilities';
 
 type WatchedToken = {
   address: `0x${string}`;
@@ -52,7 +44,8 @@ const handlers: Record<string, (req: WCSessionRequest) => Promise<void>> = {
 
 export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
   protected signClient?: SignClient;
-  // @ts-expect-error - it will be work
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   protected publicClient?: ReturnType<typeof createPublicClient>;
   protected walletClient?: ReturnType<typeof createWalletClient>;
   protected hdAccount: HDAccount;
@@ -70,12 +63,6 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
 
     this.options.walletConfig.walletConnectConfig = {
       requestHandleTimeoutMs: 30_000,
-      metadata: {
-        name: 'E2E Test Wallet',
-        description: 'WalletConnect test wallet for e2e',
-        url: 'https://example.wallet',
-        icons: ['https://example.wallet/icon.png'],
-      },
       namespaces: {
         eip155: {
           accounts: [
@@ -85,8 +72,6 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
             'eth_sendTransaction',
             'personal_sign',
             'eth_signTypedData_v4',
-            'wallet_switchEthereumChain',
-            'wallet_addEthereumChain',
             'wallet_watchAsset',
             'wallet_getCapabilities',
           ],
@@ -102,7 +87,6 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
 
     this.signClient = await SignClient.init({
       projectId: this.options.walletConfig.walletConnectConfig.projectId,
-      metadata: this.options.walletConfig.walletConnectConfig.metadata,
     });
 
     this.networkSettings = new NetworkSettings(this.signClient, this.hdAccount);
@@ -125,19 +109,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
       const method = req.params.request.method;
 
       if (method === 'wallet_getCapabilities') {
-        console.log(
-          'Responding to wallet_getCapabilities with wallet_watchAsset support',
-        );
-        await this.signClient.respond({
-          topic: req.topic,
-          response: {
-            id: req.id,
-            jsonrpc: '2.0',
-            result: {
-              wallet_watchAsset: true,
-            },
-          },
-        });
+        await wallet_getCapabilities.call(this, req);
         return;
       }
 
@@ -245,10 +217,23 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     this.requestManager.resolveRequest(req);
   }
 
+  async cancelAllTxRequests() {
+    while (
+      this.requestManager.queue.length > 0 ||
+      this.requestManager.pendings.length > 0
+    ) {
+      const req =
+        this.requestManager.queue.shift() ||
+        this.requestManager.pendings.shift() ||
+        null;
+      if (req) await this.cancelTx(req);
+    }
+  }
+
   private async waitForProposalOnce(timeoutMs: number) {
     if (!this.signClient) throw new Error('WC client not initialized');
 
-    return await new Promise<any>((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       const t = setTimeout(
         () =>
           reject(
@@ -383,19 +368,6 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     } else {
       this.walletClient = null;
       this.publicClient = null;
-    }
-  }
-
-  async cancelAllTxRequests() {
-    while (
-      this.requestManager.queue.length > 0 ||
-      this.requestManager.pendings.length > 0
-    ) {
-      const req =
-        this.requestManager.queue.shift() ||
-        this.requestManager.pendings.shift() ||
-        null;
-      if (req) await this.cancelTx(req);
     }
   }
 }

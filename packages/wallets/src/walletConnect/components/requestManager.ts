@@ -1,4 +1,15 @@
-import { WCSessionRequest } from '../wc.service';
+export type WCSessionRequest = {
+  topic: string;
+  id: number;
+  params: {
+    chainId: string;
+    request: {
+      method: string;
+      params: any[] | any;
+    };
+  };
+  processed: boolean; // custom field to track if request was handled
+};
 
 export class RequestManager {
   public queue: WCSessionRequest[] = [];

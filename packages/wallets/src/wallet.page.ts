@@ -7,7 +7,7 @@ import {
   WalletConnectType,
   WalletConnectTypes,
 } from './wallets.constants';
-import { WCSessionRequest } from './walletConnect/wc.service';
+import { WCSessionRequest } from './walletConnect/components';
 
 /** Required options to manage wallet */
 export interface WalletPageOptions {
