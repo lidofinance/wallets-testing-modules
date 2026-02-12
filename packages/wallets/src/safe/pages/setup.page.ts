@@ -9,6 +9,8 @@ export class SetupPage {
   connectWalletBtn: Locator;
   accountCenter: Locator;
   safeAccount: Locator;
+  addSafesBtn: Locator;
+  manageTrustedSafesBtn: Locator;
   setupUrl: string;
   closeSecurityNoticeBtn: Locator;
   inAppContinueBtn: Locator;
@@ -35,6 +37,8 @@ export class SetupPage {
         } Logo'])`,
       )
       .nth(0);
+    this.addSafesBtn = this.page.getByTestId('select-safes-button');
+    this.manageTrustedSafesBtn = this.page.getByTestId('add-more-safes-button');
     this.closeSecurityNoticeBtn = this.page.getByText('I understand');
     this.inAppContinueBtn = this.page.getByText('Continue');
 
@@ -68,13 +72,37 @@ export class SetupPage {
       }
 
       await this.connectWalletExtension();
-      try {
-        await this.safeAccount.waitFor({ state: 'visible', timeout: 15000 });
-      } catch {
-        this.logger.warn(
-          "Used wallet address doesn't have any accounts in Safe",
-        );
-      }
+
+      await test.step('Add trusted Safes', async () => {
+        try {
+          // If the button is visible, the trusted Safe is selected
+          await this.manageTrustedSafesBtn.waitFor({
+            state: 'visible',
+            timeout: 3000,
+          });
+        } catch {
+          await this.addSafesBtn.click();
+
+          try {
+            await this.safeAccount.waitFor({
+              state: 'visible',
+              timeout: 15000,
+            });
+          } catch {
+            this.logger.warn(
+              "Used wallet address doesn't have any accounts in Safe",
+            );
+          }
+
+          await this.safeAccount.click();
+          await this.page
+            .locator('h2:has-text("Manage trusted Safes")')
+            .locator('..')
+            .locator('button:has-text("Save")')
+            .click();
+        }
+      });
+
       await this.safeAccount.click();
       return this.page.url();
     });
