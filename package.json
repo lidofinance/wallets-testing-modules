@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "update-okx",
+        "channel": "alpha-update-okx",
+        "prerelease": "alpha-update-okx"
       }
     ]
   },
