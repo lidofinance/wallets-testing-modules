@@ -1,0 +1,32 @@
+import { WCSDKWallet, WCSessionRequest } from '../wc.service';
+
+export async function wallet_watchAsset(
+  this: WCSDKWallet,
+  req: WCSessionRequest,
+) {
+  console.log('Try to add token to wallet');
+  const params = req.params.request.params;
+
+  const account = this.hdAccount.address.toLowerCase();
+
+  if (params?.type === 'ERC20' && params?.options?.address) {
+    const list = this.watchedTokensByAccount.get(account) ?? [];
+
+    list.push({
+      address: params.options.address.toLowerCase(),
+      symbol: params.options.symbol,
+      decimals: params.options.decimals,
+    });
+
+    this.watchedTokensByAccount.set(account, list);
+  }
+
+  await this.signClient.respond({
+    topic: req.topic,
+    response: {
+      id: req.id,
+      jsonrpc: '2.0',
+      result: true,
+    },
+  });
+}

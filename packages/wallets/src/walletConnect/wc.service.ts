@@ -16,8 +16,14 @@ import {
   WalletConnectTypes,
   WCApproveNamespaces,
 } from '../wallets.constants';
-import { Page, expect } from '@playwright/test';
-import { SUPPORTED_CHAINS, buildChainFromNetwork } from './constants';
+import { expect } from '@playwright/test';
+import { SUPPORTED_CHAINS } from './constants';
+import { NetworkSettings, RequestManager } from './components';
+import {
+  eth_sendTransaction,
+  eth_signTypedData_v4,
+  wallet_watchAsset,
+} from './methods';
 
 export type WCSessionRequest = {
   topic: string;
@@ -38,24 +44,24 @@ type WatchedToken = {
   decimals?: number;
 };
 
-export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
-  private client?: SignClient;
-  // @ts-ignore
-  private publicClient?: ReturnType<typeof createPublicClient>;
-  private walletClient?: ReturnType<typeof createWalletClient>;
-  private hdAccount: HDAccount;
+const handlers: Record<string, (req: WCSessionRequest) => Promise<void>> = {
+  eth_sendTransaction: eth_sendTransaction,
+  eth_signTypedData_v4: eth_signTypedData_v4,
+  wallet_watchAsset: wallet_watchAsset,
+};
 
-  private requestQueue: WCSessionRequest[] = [];
-  private pendingRequests: WCSessionRequest[] = [];
-  private waiters: Array<(req: WCSessionRequest) => void> = [];
-  private watchedTokensByAccount: Map<string, WatchedToken[]> = new Map();
+export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
+  protected signClient?: SignClient;
+  // @ts-expect-error - it will be work
+  protected publicClient?: ReturnType<typeof createPublicClient>;
+  protected walletClient?: ReturnType<typeof createWalletClient>;
+  protected hdAccount: HDAccount;
+
+  protected watchedTokensByAccount: Map<string, WatchedToken[]> = new Map();
 
   // network settings
-  private activeChainId: number;
-  private networksByChainId = new Map<number, NetworkConfig>();
-  private chainIdByName = new Map<string, number>();
-
-  page?: Page; // not used for WC wallet but required by interface
+  private networkSettings: NetworkSettings;
+  private requestManager: RequestManager;
 
   constructor(public options: WalletPageOptions) {
     this.hdAccount = mnemonicToAccount(
@@ -92,12 +98,15 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
   }
 
   async setup(): Promise<void> {
-    if (this.client) return;
+    if (this.signClient) return;
 
-    this.client = await SignClient.init({
+    this.signClient = await SignClient.init({
       projectId: this.options.walletConfig.walletConnectConfig.projectId,
       metadata: this.options.walletConfig.walletConnectConfig.metadata,
     });
+
+    this.networkSettings = new NetworkSettings(this.signClient, this.hdAccount);
+    this.requestManager = new RequestManager();
 
     this.walletClient = createWalletClient({
       account: this.hdAccount,
@@ -109,8 +118,9 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
       chain: SUPPORTED_CHAINS[this.options.standConfig.chainId],
       transport: http(this.options.standConfig.rpcUrl),
     });
+
     // Collect incoming requests into an async queue
-    this.client.on('session_request', async (event) => {
+    this.signClient.on('session_request', async (event) => {
       const req = event as unknown as WCSessionRequest;
       const method = req.params.request.method;
 
@@ -118,7 +128,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
         console.log(
           'Responding to wallet_getCapabilities with wallet_watchAsset support',
         );
-        await this.client.respond({
+        await this.signClient.respond({
           topic: req.topic,
           response: {
             id: req.id,
@@ -132,21 +142,21 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
       }
 
       console.log(`WC: session_request received: ${req.params.request.method}`);
-      const waiter = this.waiters.shift();
+      const waiter = this.requestManager.waiters.shift();
       if (waiter) waiter(req);
-      else this.requestQueue.push(req);
+      else this.requestManager.queue.push(req);
     });
   }
 
   async connectWallet(uri: string): Promise<void> {
     await this.setup();
-    if (!this.client) throw new Error('WC client not initialized');
+    if (!this.signClient) throw new Error('WC client not initialized');
 
     const [proposal] = await Promise.all([
       this.waitForProposalOnce(
         this.options.walletConfig.walletConnectConfig.requestHandleTimeoutMs,
       ),
-      this.client.core.pairing.pair({ uri }),
+      this.signClient.core.pairing.pair({ uri }),
     ]);
     const { id, params } = proposal;
 
@@ -154,17 +164,17 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
       this.options.walletConfig.walletConnectConfig.namespaces ??
       this.buildNamespacesFromProposal(params);
 
-    const { acknowledged } = await this.client.approve({ id, namespaces });
+    const { acknowledged } = await this.signClient.approve({ id, namespaces });
     await acknowledged();
   }
 
   async disconnect(): Promise<void> {
-    if (!this.client) throw new Error('WC client not initialized');
+    if (!this.signClient) throw new Error('WC client not initialized');
 
-    const sessions = this.client.session.getAll();
+    const sessions = this.signClient.session.getAll();
     for (const sess of sessions) {
       console.log('WC: disconnecting session', sess.topic);
-      await this.client.disconnect({
+      await this.signClient.disconnect({
         topic: sess.topic,
         reason: {
           code: 6000,
@@ -172,10 +182,10 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
         },
       });
     }
-    await this.client.core.relayer.transportClose();
-    this.client = undefined;
-    this.requestQueue = [];
-    this.waiters = [];
+    await this.signClient.core.relayer.transportClose();
+    this.signClient = undefined;
+    this.requestManager.queue = [];
+    this.requestManager.waiters = [];
   }
 
   async nextRequest(timeoutMs?: number): Promise<WCSessionRequest> {
@@ -183,116 +193,27 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
       timeoutMs =
         this.options.walletConfig.walletConnectConfig.requestHandleTimeoutMs;
     }
-
-    const queued = this.requestQueue.shift();
-    if (queued) {
-      this.pendingRequests.push(queued);
-      return queued;
-    }
-
-    return await new Promise<WCSessionRequest>((resolve, reject) => {
-      const t = setTimeout(() => {
-        const idx = this.waiters.indexOf(resolve);
-        if (idx >= 0) this.waiters.splice(idx, 1);
-        reject(new Error(`WC: session_request timeout after ${timeoutMs}ms`));
-      }, timeoutMs);
-
-      this.waiters.push((req) => {
-        clearTimeout(t);
-        this.pendingRequests.push(req);
-        resolve(req);
-      });
-    });
-  }
-
-  isWCSessionRequest(x: any): x is WCSessionRequest {
-    return (
-      x && typeof x === 'object' && 'topic' in x && 'id' in x && 'params' in x
-    );
+    return this.requestManager.nextRequest(timeoutMs);
   }
 
   async confirmTx(req?: WCSessionRequest): Promise<void> {
-    if (!req) {
-      req = await this.nextRequest();
-    }
-
-    if (!this.isWCSessionRequest(req)) {
-      throw new Error(
-        'WC: confirmTx with Page parameter is not supported in WC wallet',
-      );
-    }
-    if (req.processed) {
-      console.log('Request already processed');
-      return;
-    }
-    if (!this.client) throw new Error('WC client not initialized');
+    req = await this.requestManager.validateRequest(req);
+    if (!this.signClient) throw new Error('WC client not initialized');
 
     const method = req.params.request.method;
-    if (method === 'eth_sendTransaction') {
-      const fees = await this.publicClient.estimateFeesPerGas();
-      const value = req.params.request.params[0].value
-        ? BigInt(req.params.request.params[0].value)
-        : undefined;
-      const hash = await this.walletClient.sendTransaction({
-        ...req.params.request.params[0],
-        value,
-        gas: BigInt(req.params.request.params[0].gas),
-        maxFeePerGas: fees.maxFeePerGas,
-        maxPriorityFeePerGas: fees.maxPriorityFeePerGas,
-      });
 
-      await this.client.respond({
-        topic: req.topic,
-        response: { id: req.id, jsonrpc: '2.0', result: hash },
-      });
-    } else if (method === 'eth_signTypedData_v4') {
-      const typed = req.params.request.params[1];
-      const typedData = typeof typed === 'string' ? JSON.parse(typed) : typed;
-
-      const signature = await this.walletClient.signTypedData({
-        account: this.hdAccount,
-        domain: {
-          ...typedData.domain,
-          chainId: Number(typedData.domain.chainId),
-        },
-        types: typedData.types,
-        primaryType: typedData.primaryType,
-        message: {
-          ...typedData.message,
-          value: BigInt(typedData.message.value),
-          nonce: BigInt(typedData.message.nonce),
-          deadline: BigInt(typedData.message.deadline),
-        },
-      });
-      console.log('Signature was created.');
-
-      await this.client.respond({
-        topic: req.topic,
-        response: { id: req.id, jsonrpc: '2.0', result: signature },
-      });
-    } else {
+    const handler = handlers[method];
+    if (!handler) {
       throw new Error(`WC: unsupported method: ${method}`);
     }
+    await handler.call(this, req);
 
-    req.processed = true;
-    this.pendingRequests = this.pendingRequests.filter((r) => r.id !== req.id);
+    this.requestManager.resolveRequest(req);
   }
 
   async confirmAddTokenToWallet(req?: WCSessionRequest): Promise<void> {
-    if (!req) {
-      req = await this.nextRequest();
-    }
-
-    if (!this.isWCSessionRequest(req)) {
-      throw new Error(
-        'WC: confirmAddTokenToWallet with Page parameter is not supported in WC wallet',
-      );
-    }
-    if (req.processed) {
-      console.log('Request already processed');
-      return;
-    }
-    if (!this.client) throw new Error('WC client not initialized');
+    req = await this.requestManager.validateRequest(req);
+    if (!this.signClient) throw new Error('WC client not initialized');
 
     const method = req.params.request.method;
 
@@ -302,79 +223,30 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
       );
     }
 
-    console.log('Try to add token to wallet');
-    const params = req.params.request.params;
+    await handlers[method].call(this, req);
 
-    const account = this.hdAccount.address.toLowerCase();
-
-    if (params?.type === 'ERC20' && params?.options?.address) {
-      const list = this.watchedTokensByAccount.get(account) ?? [];
-
-      list.push({
-        address: params.options.address.toLowerCase(),
-        symbol: params.options.symbol,
-        decimals: params.options.decimals,
-      });
-
-      this.watchedTokensByAccount.set(account, list);
-    }
-
-    await this.client.respond({
-      topic: req.topic,
-      response: {
-        id: req.id,
-        jsonrpc: '2.0',
-        result: true,
-      },
-    });
-    req.processed = true;
-    this.pendingRequests = this.pendingRequests.filter((r) => r.id !== req.id);
+    this.requestManager.resolveRequest(req);
   }
 
   async cancelTx(req?: WCSessionRequest): Promise<void> {
-    const message = 'User rejected the request';
-    const code = 4001;
-    if (!req) {
-      req = await this.nextRequest();
-    }
+    req = await this.requestManager.validateRequest(req);
 
-    if (!this.isWCSessionRequest(req)) {
-      throw new Error(
-        'WC: cancelTx with Page parameter is not supported in WC wallet',
-      );
-    }
-    if (req.processed) {
-      console.log('Request already processed');
-      return;
-    }
-    if (!this.client) throw new Error('WC client not initialized');
+    if (!this.signClient) throw new Error('WC client not initialized');
 
-    await this.client.respond({
+    await this.signClient.respond({
       topic: req.topic,
       response: {
         id: req.id,
         jsonrpc: '2.0',
-        error: { code, message },
+        error: { code: 4001, message: 'User rejected the request' },
       },
     });
-    req.processed = true;
-    this.pendingRequests = this.pendingRequests.filter((r) => r.id !== req.id);
-  }
 
-  getTx(req: WCSessionRequest, index = 0): any {
-    return req.params?.request?.params?.[index];
-  }
-
-  getRequestInfo(req) {
-    const tx = this.getTx(req);
-    return {
-      method: req.params.request.method,
-      params: tx,
-    };
+    this.requestManager.resolveRequest(req);
   }
 
   private async waitForProposalOnce(timeoutMs: number) {
-    if (!this.client) throw new Error('WC client not initialized');
+    if (!this.signClient) throw new Error('WC client not initialized');
 
     return await new Promise<any>((resolve, reject) => {
       const t = setTimeout(
@@ -385,7 +257,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
         timeoutMs,
       );
 
-      this.client.once('session_proposal', (proposal) => {
+      this.signClient.once('session_proposal', (proposal) => {
         clearTimeout(t);
         resolve(proposal);
       });
@@ -458,12 +330,13 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     throw new Error(`Token ${tokenName} not found in watched tokens`);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   importKey(secretKey: string, withChecks?: boolean): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
   assertTxAmount(req: WCSessionRequest, expectedAmount: string): void {
-    const requestInfo = this.getRequestInfo(req);
+    const requestInfo = this.requestManager.getRequestInfo(req);
 
     if (requestInfo.method === 'eth_sendTransaction') {
       const txAmount = formatEther(BigInt(requestInfo.params.value));
@@ -472,7 +345,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
   }
 
   assertReceiptAddress(req: WCSessionRequest, expectedAddress: string): void {
-    const requestInfo = this.getRequestInfo(req);
+    const requestInfo = this.requestManager.getRequestInfo(req);
 
     if (requestInfo.method === 'eth_sendTransaction') {
       expect(requestInfo.params.to.toLowerCase()).toEqual(
@@ -482,60 +355,21 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
   }
 
   async setupNetwork(networkConfig: NetworkConfig): Promise<void> {
-    this.networksByChainId.set(networkConfig.chainId, networkConfig);
-    this.chainIdByName.set(
-      this.normalizeChainName(networkConfig.chainName),
-      networkConfig.chainId,
-    );
-  }
-
-  private getActiveSession() {
-    if (!this.client) throw new Error('WC client not initialized');
-    const sessions = this.client.session.getAll();
-    const session = sessions[0];
-    if (!session) throw new Error('No active WC session');
-    return session;
-  }
-
-  private normalizeChainName(name: string) {
-    return name.trim().toLowerCase();
+    await this.networkSettings.setupNetwork(networkConfig);
   }
 
   async addNetwork(networkConfig: NetworkConfig): Promise<void> {
-    if (!this.client) throw new Error('WC client not initialized');
+    await this.networkSettings.addNetwork(networkConfig);
+  }
 
-    const session = this.getActiveSession();
-    const ns = session.namespaces?.eip155;
-    if (!ns) throw new Error('Session has no eip155 namespace');
-
-    const addr = this.hdAccount.address;
-    const newAccount = `eip155:${networkConfig.chainId}:${addr}`;
-
-    const nextNamespaces = {
-      ...session.namespaces,
-      eip155: {
-        accounts: Array.from(new Set([...(ns.accounts ?? []), newAccount])),
-        methods: ns.methods ?? [],
-        events: ns.events ?? [],
-      },
-    };
-
-    await this.client.update({
-      topic: session.topic,
-      namespaces: nextNamespaces,
-    });
-
-    this.networksByChainId.set(networkConfig.chainId, networkConfig);
-    this.chainIdByName.set(
-      this.normalizeChainName(networkConfig.chainName),
-      networkConfig.chainId,
-    );
+  async changeNetwork(networkName: string): Promise<void> {
+    const chain = await this.networkSettings.changeNetwork(networkName);
+    this.rebuildViemClients(chain);
   }
 
   private rebuildViemClients(chain: Chain) {
-    const net = this.networksByChainId.get(chain.id);
+    const net = this.networkSettings.networksByChainId.get(chain.id);
     if (net?.rpcUrl) {
-      //@ts-ignore
       this.walletClient = createWalletClient({
         account: this.hdAccount,
         chain,
@@ -550,41 +384,17 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
       this.walletClient = null;
       this.publicClient = null;
     }
-
-    this.activeChainId = chain.id;
-  }
-
-  async changeNetwork(networkName: string): Promise<void> {
-    if (!this.client) throw new Error('WC client not initialized');
-
-    const normalized = this.normalizeChainName(networkName);
-    const chainId = this.chainIdByName.get(normalized);
-    const networkConfig = this.networksByChainId.get(chainId);
-
-    if (!chainId) {
-      const known = Array.from(this.chainIdByName.keys()).sort();
-      throw new Error(
-        `Unknown network "${networkName}". Registered networks: ${known.join(
-          ', ',
-        )}`,
-      );
-    }
-    const chain =
-      SUPPORTED_CHAINS[chainId] ?? buildChainFromNetwork(networkConfig);
-    this.rebuildViemClients(chain);
-
-    const session = this.getActiveSession();
-    await this.client.emit({
-      topic: session.topic,
-      chainId: `eip155:${chainId}`,
-      event: { name: 'chainChanged', data: `0x${chainId.toString(16)}` },
-    });
   }
 
   async cancelAllTxRequests() {
-    while (this.requestQueue.length > 0 || this.pendingRequests.length > 0) {
+    while (
+      this.requestManager.queue.length > 0 ||
+      this.requestManager.pendings.length > 0
+    ) {
       const req =
-        this.requestQueue.shift() || this.pendingRequests.shift() || null;
+        this.requestManager.queue.shift() ||
+        this.requestManager.pendings.shift() ||
+        null;
       if (req) await this.cancelTx(req);
     }
   }
