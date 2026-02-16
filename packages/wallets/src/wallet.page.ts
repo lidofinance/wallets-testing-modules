@@ -7,6 +7,7 @@ import {
   WalletConnectType,
   WalletConnectTypes,
 } from './wallets.constants';
+import { WCSessionRequest } from './walletConnect/components';
 
 /** Required options to manage wallet */
 export interface WalletPageOptions {
@@ -54,21 +55,36 @@ export interface WalletPage<T extends WalletConnectType> {
     param?: T extends WalletConnectTypes.EOA ? Page : string,
   ): Promise<void>;
 
-  assertTxAmount(page: Page, expectedAmount: string): Promise<void>;
+  assertTxAmount(
+    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
+    expectedAmount: string,
+  ): Promise<void> | void;
 
-  confirmTx(page: Page, setAggressiveGas?: boolean): Promise<void>;
+  confirmTx(
+    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
+    setAggressiveGas?: boolean,
+  ): Promise<void>;
 
-  cancelTx(page: Page): Promise<void>;
+  cancelTx(
+    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
+  ): Promise<void>;
 
-  approveTokenTx?(page: Page): Promise<void>;
+  approveTokenTx?(
+    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
+  ): Promise<void>;
 
   openLastTxInEthplorer?(txIndex?: number): Promise<Page>;
 
   getTokenBalance?(tokenName: string): Promise<number>;
 
-  confirmAddTokenToWallet?(page: Page): Promise<void>;
+  confirmAddTokenToWallet?(
+    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
+  ): Promise<void>;
 
-  assertReceiptAddress(page: Page, expectedAddress: string): Promise<void>;
+  assertReceiptAddress(
+    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
+    expectedAddress: string,
+  ): Promise<void> | void;
 
   getWalletAddress?(): Promise<string>;
 
@@ -87,4 +103,8 @@ export interface WalletPage<T extends WalletConnectType> {
     isClosePage?: boolean,
   ): Promise<void>;
   isWalletAddressExist?(address: string): Promise<boolean>;
+
+  // WC SDK
+  waitForTransaction?(timeoutMs?: number): Promise<WCSessionRequest>;
+  cancelAllTxRequests?(): Promise<void>;
 }
