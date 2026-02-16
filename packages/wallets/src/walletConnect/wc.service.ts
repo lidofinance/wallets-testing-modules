@@ -160,7 +160,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     this.requestManager.waiters = [];
   }
 
-  async nextRequest(timeoutMs?: number): Promise<WCSessionRequest> {
+  async waitForTransaction(timeoutMs?: number): Promise<WCSessionRequest> {
     if (!timeoutMs) {
       timeoutMs =
         this.options.walletConfig.walletConnectConfig.requestHandleTimeoutMs;

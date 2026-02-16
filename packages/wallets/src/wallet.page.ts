@@ -108,6 +108,6 @@ export interface WalletPage<T extends WalletConnectType> {
   isWalletAddressExist?(address: string): Promise<boolean>;
 
   // WC SDK
-  nextRequest?(timeoutMs?: number): Promise<WCSessionRequest>;
+  waitForTransaction?(timeoutMs?: number): Promise<WCSessionRequest>;
   cancelAllTxRequests?(): Promise<void>;
 }
