@@ -49,6 +49,8 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
   protected publicClient?: ReturnType<typeof createPublicClient>;
   protected walletClient?: ReturnType<typeof createWalletClient>;
   protected hdAccount: HDAccount;
+  protected defaultTimeoutMs: number;
+  protected namespaces?: WCApproveNamespaces;
 
   protected watchedTokensByAccount: Map<string, WatchedToken[]> = new Map();
 
@@ -60,25 +62,21 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     this.hdAccount = mnemonicToAccount(
       this.options.accountConfig.SECRET_PHRASE,
     );
-
-    this.options.walletConfig.walletConnectConfig = {
-      requestHandleTimeoutMs: 30_000,
-      namespaces: {
-        eip155: {
-          accounts: [
-            `eip155:${this.options.standConfig.chainId}:${this.hdAccount.address}`,
-          ],
-          methods: [
-            'eth_sendTransaction',
-            'personal_sign',
-            'eth_signTypedData_v4',
-            'wallet_watchAsset',
-            'wallet_getCapabilities',
-          ],
-          events: ['accountsChanged', 'chainChanged'],
-        },
+    this.defaultTimeoutMs = 30000;
+    this.namespaces = {
+      eip155: {
+        accounts: [
+          `eip155:${this.options.standConfig.chainId}:${this.hdAccount.address}`,
+        ],
+        methods: [
+          'eth_sendTransaction',
+          'personal_sign',
+          'eth_signTypedData_v4',
+          'wallet_watchAsset',
+          'wallet_getCapabilities',
+        ],
+        events: ['accountsChanged', 'chainChanged'],
       },
-      ...options.walletConfig?.walletConnectConfig,
     };
   }
 
@@ -86,7 +84,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     if (this.signClient) return;
 
     this.signClient = await SignClient.init({
-      projectId: this.options.walletConfig.walletConnectConfig.projectId,
+      projectId: this.options.walletConfig.WC_PROJECT_ID,
     });
 
     this.networkSettings = new NetworkSettings(this.signClient, this.hdAccount);
@@ -125,16 +123,13 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
     if (!this.signClient) throw new Error('WC client not initialized');
 
     const [proposal] = await Promise.all([
-      this.waitForProposalOnce(
-        this.options.walletConfig.walletConnectConfig.requestHandleTimeoutMs,
-      ),
+      this.waitForProposalOnce(this.defaultTimeoutMs),
       this.signClient.core.pairing.pair({ uri }),
     ]);
     const { id, params } = proposal;
 
     const namespaces =
-      this.options.walletConfig.walletConnectConfig.namespaces ??
-      this.buildNamespacesFromProposal(params);
+      this.namespaces ?? this.buildNamespacesFromProposal(params);
 
     const { acknowledged } = await this.signClient.approve({ id, namespaces });
     await acknowledged();
@@ -162,8 +157,7 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
 
   async waitForTransaction(timeoutMs?: number): Promise<WCSessionRequest> {
     if (!timeoutMs) {
-      timeoutMs =
-        this.options.walletConfig.walletConnectConfig.requestHandleTimeoutMs;
+      timeoutMs = this.defaultTimeoutMs;
     }
     return this.requestManager.nextRequest(timeoutMs);
   }
@@ -268,11 +262,8 @@ export class WCSDKWallet implements WalletPage<WalletConnectTypes.WC_SDK> {
       );
     }
 
-    const accounts = (
-      this.options.walletConfig.walletConnectConfig.namespaces?.eip155
-        ?.accounts ?? []
-    ).length
-      ? this.options.walletConfig.walletConnectConfig.namespaces.eip155.accounts
+    const accounts = (this.namespaces?.eip155?.accounts ?? []).length
+      ? this.namespaces.eip155.accounts
       : [];
 
     if (!accounts.length) {
