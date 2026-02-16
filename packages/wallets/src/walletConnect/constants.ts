@@ -11,7 +11,23 @@ import {
   unichain,
   unichainSepolia,
 } from 'viem/chains';
-import { NetworkConfig } from '../wallets.constants';
+import {
+  CommonWalletConfig,
+  NetworkConfig,
+  WalletConnectTypes,
+} from '../wallets.constants';
+
+export const WC_SDK_COMMON_CONFIG: CommonWalletConfig = {
+  WALLET_NAME: 'wcSDK',
+  EXTENSION_WALLET_NAME: null,
+  CONNECTED_WALLET_NAME: 'WalletConnect',
+  CONNECT_BUTTON_NAME: 'WalletConnect',
+  STORE_EXTENSION_ID: null,
+  WALLET_TYPE: WalletConnectTypes.WC_SDK,
+  LATEST_STABLE_DOWNLOAD_LINK: null,
+  EXTENSION_START_PATH: '/home.html',
+  WC_PROJECT_ID: process.env.WC_PROJECT_ID,
+};
 
 export const SUPPORTED_CHAINS: Record<number, Chain> = {
   1: mainnet as Chain,

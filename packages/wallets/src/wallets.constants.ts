@@ -17,17 +17,7 @@ export interface CommonWalletConfig {
   LATEST_STABLE_DOWNLOAD_LINK?: string; // Link to stable wallet extension version for test (optional)
   EXTENSION_START_PATH: string; // Start path for wallet setup
   // Only for WalletConnect wallets via API @walletconnect/sign-client
-  walletConnectConfig?: {
-    projectId: string;
-    metadata?: {
-      name: string;
-      description: string;
-      url: string;
-      icons: string[];
-    };
-    namespaces?: WCApproveNamespaces;
-    requestHandleTimeoutMs?: number;
-  };
+  WC_PROJECT_ID?: string; // WalletConnect Cloud project ID
 }
 
 export enum WalletConnectTypes {
