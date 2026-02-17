@@ -9,7 +9,7 @@ import { WidgetConfig } from '../config';
 
 export class StandWidgetPage implements WidgetPage {
   page: Page;
-  walletPage: WalletPage<WalletConnectTypes.EOA | WalletConnectTypes.WC>;
+  walletPage: WalletPage;
 
   connectBtn: Locator;
   stakeInput: Locator;
@@ -82,11 +82,8 @@ export class StandWidgetPage implements WidgetPage {
 
     switch (this.walletPage.options.walletConfig.WALLET_TYPE) {
       case WalletConnectTypes.EOA: {
-        const [connectWalletPage] = await Promise.all([
-          this.waitForPage(),
-          walletButton.dblclick(),
-        ]);
-        await this.walletPage.connectWallet(connectWalletPage);
+        await walletButton.dblclick();
+        await this.walletPage.connectWallet();
         break;
       }
       case WalletConnectTypes.WC: {
@@ -110,20 +107,13 @@ export class StandWidgetPage implements WidgetPage {
       await this.enabledStakeSubmitBtn.waitFor({ timeout: 15000 });
     });
 
-    const [walletSignPage] =
-      await test.step('Click to staking button', async () => {
-        return await Promise.all([
-          this.waitForPage(180000),
-          this.stakeSubmitBtn.click(),
-        ]);
-      });
+    await test.step('Click to staking button', async () => {
+      await this.stakeSubmitBtn.click();
+    });
 
-    await this.walletPage.assertTxAmount(walletSignPage, txAmount);
-    await this.walletPage.assertReceiptAddress(
-      walletSignPage,
-      this.widgetConfig.stakeContract,
-    );
-    await this.walletPage.confirmTx(walletSignPage, true);
+    await this.walletPage.assertTxAmount(txAmount);
+    await this.walletPage.assertReceiptAddress(this.widgetConfig.stakeContract);
+    await this.walletPage.confirmTx(true);
     await this.page.waitForSelector(
       'text="Staking operation was successful."',
       { timeout: 90000 },

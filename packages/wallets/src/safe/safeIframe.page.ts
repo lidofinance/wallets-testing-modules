@@ -1,10 +1,10 @@
 import { Page, test } from '@playwright/test';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
-import { NetworkConfig, WalletConnectTypes } from '../wallets.constants';
+import { NetworkConfig } from '../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 import { SetupPage, SettingPage, TransactionPage } from './pages';
 
-export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
+export class SafeIframePage implements WalletPage {
   logger = new ConsoleLogger(SafeIframePage.name);
   page: Page;
   safeUrl: URL;
@@ -35,6 +35,13 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
    */
   async setup() {
     await this.options.extensionPage.setup();
+    // close all pages
+    await Promise.all(
+      this.options.browserContext
+        .pages()
+        .slice(1)
+        .map((page) => page.close()),
+    );
 
     await test.step('Init Safe wallet', async () => {
       await this.initLocators();
@@ -105,8 +112,11 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
     });
   }
 
-  async assertReceiptAddress(page: Page, expectedAddress: string) {
+  async assertReceiptAddress(expectedAddress: string) {
     await test.step('Assert of receipt address', async () => {
+      const page = this.options.browserContext
+        .pages()
+        .find((page) => page.url().includes(this.safeUrl.hostname));
       await new TransactionPage(
         page,
         this.options.extensionPage,
@@ -114,8 +124,11 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
     });
   }
 
-  async confirmTx(page: Page) {
+  async confirmTx() {
     await test.step('Confirm transaction', async () => {
+      const page = this.options.browserContext
+        .pages()
+        .find((page) => page.url().includes(this.safeUrl.hostname));
       const transactionPage = new TransactionPage(
         page,
         this.options.extensionPage,
@@ -128,8 +141,11 @@ export class SafeIframePage implements WalletPage<WalletConnectTypes.IFRAME> {
     });
   }
 
-  async assertTxAmount(page: Page, expectedAmount: string) {
+  async assertTxAmount(expectedAmount: string) {
     await test.step('Assert of transaction amount', async () => {
+      const page = this.options.browserContext
+        .pages()
+        .find((page) => page.url().includes(this.safeUrl.hostname));
       await new TransactionPage(
         page,
         this.options.extensionPage,

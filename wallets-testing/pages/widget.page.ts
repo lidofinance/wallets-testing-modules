@@ -14,7 +14,7 @@ export enum tokenToWithdraw {
 
 export interface WidgetPage {
   page: Page;
-  walletPage: WalletPage<any>;
+  walletPage: WalletPage;
   widgetConfig: WidgetConfig;
 
   connectBtn: Locator;

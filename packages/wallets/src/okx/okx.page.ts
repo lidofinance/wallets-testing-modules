@@ -1,4 +1,4 @@
-import { NetworkConfig, WalletConnectTypes } from '../wallets.constants';
+import { NetworkConfig } from '../wallets.constants';
 import { WalletPage } from '../wallet.page';
 import { test, Page, expect } from '@playwright/test';
 import {
@@ -17,8 +17,9 @@ import {
 } from './helper';
 import { ConsoleLogger } from '@nestjs/common';
 import { WalletPageOptions } from '../wallet.page';
+import { getNotificationPage } from '../../utils/helper';
 
-export class OkxPage implements WalletPage<WalletConnectTypes.EOA> {
+export class OkxPage implements WalletPage {
   logger = new ConsoleLogger(OkxPage.name);
   page: Page | undefined;
   homePage: HomePage;
@@ -161,8 +162,12 @@ export class OkxPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   /** Click `Connect` button on the transaction `page` */
-  async connectWallet(page: Page) {
+  async connectWallet() {
     await test.step('Connect OKX wallet', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       const operationPage = new WalletOperations(page);
       await operationPage.connectButton.waitFor({
         state: 'visible',
@@ -179,8 +184,12 @@ export class OkxPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   /** Get the `amount` from transaction and comply with the `expectedAmount` */
-  async assertTxAmount(page: Page, expectedAmount: string) {
+  async assertTxAmount(expectedAmount: string) {
     await test.step('Assert TX Amount', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       const txAmount = await new WalletOperations(page).getTxAmount();
       if (txAmount) {
         expect(txAmount).toBe(expectedAmount);
@@ -189,15 +198,23 @@ export class OkxPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   /** Cancel transaction */
-  async cancelTx(page: Page) {
+  async cancelTx() {
     await test.step('Cancel TX', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       await new WalletOperations(page).cancelTxButton.click();
     });
   }
 
   /** Confirm transaction */
-  async confirmTx(page: Page) {
+  async confirmTx() {
     await test.step('Confirm TX', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       await new WalletOperations(page).confirmTxButton.click({
         timeout: 30000, // sometimes button is disabled awaits rpc
       });
@@ -205,16 +222,24 @@ export class OkxPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   /** Approve token transaction */
-  async approveTokenTx(page: Page) {
+  async approveTokenTx() {
     await test.step('Approve token tx', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       const walletOperations = new WalletOperations(page);
       await walletOperations.confirmTxButton.click();
     });
   }
 
   /** Get the `address` from transaction and comply with the `expectedAddress` */
-  async assertReceiptAddress(page: Page, expectedAddress: string) {
+  async assertReceiptAddress(expectedAddress: string) {
     await test.step('Assert receiptAddress/Contract', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       const recipientAddress = await new WalletOperations(
         page,
       ).getReceiptAddress();
@@ -223,9 +248,13 @@ export class OkxPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   /** Confirm tx to add token to wallet */
-  async confirmAddTokenToWallet(confirmPage: Page) {
+  async confirmAddTokenToWallet() {
     await test.step('Confirm add token to wallet', async () => {
-      await new WalletOperations(confirmPage).confirmTxButton.click();
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
+      await new WalletOperations(page).confirmTxButton.click();
     });
   }
 

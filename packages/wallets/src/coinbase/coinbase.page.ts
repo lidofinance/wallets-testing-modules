@@ -1,10 +1,11 @@
-import { NetworkConfig, WalletConnectTypes } from '../wallets.constants';
+import { NetworkConfig } from '../wallets.constants';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import expect from 'expect';
 import { test, Page } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
+import { getNotificationPage } from '../../utils/helper';
 
-export class CoinbasePage implements WalletPage<WalletConnectTypes.EOA> {
+export class CoinbasePage implements WalletPage {
   logger = new ConsoleLogger(CoinbasePage.name);
   page: Page | undefined;
 
@@ -120,22 +121,34 @@ export class CoinbasePage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async connectWallet(page: Page) {
+  async connectWallet() {
     await test.step('Connect wallet', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       await page.click('button:has-text("Connect")');
     });
   }
 
-  async assertTxAmount(page: Page, expectedAmount: string) {
+  async assertTxAmount(expectedAmount: string) {
     await test.step('Assert TX Amount', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       expect(await page.textContent('.currency-display-component__text')).toBe(
         expectedAmount,
       );
     });
   }
 
-  async confirmTx(page: Page) {
+  async confirmTx() {
     await test.step('Confirm TX', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       await this.closeTransactionPopover();
       await page.click('button[data-testid="request-confirm-button"]');
     });

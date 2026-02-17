@@ -1,4 +1,4 @@
-import { NetworkConfig, WalletConnectTypes } from '../wallets.constants';
+import { NetworkConfig } from '../wallets.constants';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { test, Page, expect } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
@@ -10,8 +10,9 @@ import {
   LoginPage,
 } from './pages';
 import { closeUnnecessaryPages } from '../okx/helper';
+import { getNotificationPage } from '../../utils/helper';
 
-export class TrustWalletPage implements WalletPage<WalletConnectTypes.EOA> {
+export class TrustWalletPage implements WalletPage {
   logger = new ConsoleLogger(TrustWalletPage.name);
   page?: Page;
 
@@ -105,10 +106,15 @@ export class TrustWalletPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   /** Click `Connect` button on the transaction `page` */
-  async connectWallet(page: Page) {
+  async connectWallet() {
     // [High risk connection] Need to research before connecting the Trust wallet methods to widget tests
     // https://linear.app/lidofi/issue/QA-3382/high-risk-popup-before-connect-to-trust-wallet
     await test.step('Connect wallet', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
+
       await new LoginPage(page, this.options.accountConfig).unlock();
 
       const txPage = new WalletOperations(page);
@@ -122,8 +128,12 @@ export class TrustWalletPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   /** Get the `amount` from transaction and comply with the `expectedAmount` */
-  async assertTxAmount(page: Page, expectedAmount: string) {
+  async assertTxAmount(expectedAmount: string) {
     await test.step('Assert TX Amount', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       const txPage = new WalletOperations(page);
       expect(parseFloat(await txPage.txAmountValue.textContent())).toBe(
         expectedAmount,
@@ -132,8 +142,12 @@ export class TrustWalletPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   /** Confirm transaction */
-  async confirmTx(page: Page) {
+  async confirmTx() {
     await test.step('Confirm TX', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       const txPage = new WalletOperations(page);
       await expect(txPage.confirmBtn).toBeEnabled();
       await txPage.confirmBtn.click();
@@ -141,8 +155,12 @@ export class TrustWalletPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   /** Reject transaction */
-  async cancelTx(page: Page) {
+  async cancelTx() {
     await test.step('Cancel TX', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       const txPage = new WalletOperations(page);
       await expect(txPage.rejectBtn).toBeEnabled();
       await txPage.rejectBtn.click();
@@ -150,8 +168,12 @@ export class TrustWalletPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   /** Confirm token approval transaction */
-  async approveTokenTx(page: Page) {
+  async approveTokenTx() {
     await test.step('Approve token TX', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       const txPage = new WalletOperations(page);
       await expect(txPage.confirmBtn).toBeEnabled();
       await txPage.confirmBtn.click();
@@ -159,8 +181,12 @@ export class TrustWalletPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   /** Get the `address` from transaction and comply with the `expectedAddress` */
-  async assertReceiptAddress(page: Page, expectedAddress: string) {
+  async assertReceiptAddress(expectedAddress: string) {
     await test.step('Assert receiptAddress/Contract', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       await new WalletOperations(page).viewDetailsBtn.click();
       await page.getByText(expectedAddress).isVisible();
     });

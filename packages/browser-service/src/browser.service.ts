@@ -52,9 +52,7 @@ type BrowserServiceOptions = {
  */
 export class BrowserService {
   private logger = new ConsoleLogger(BrowserService.name);
-  private walletPage: WalletPage<
-    WalletConnectTypes.WC | WalletConnectTypes.EOA | WalletConnectTypes.IFRAME
-  >;
+  private walletPage: WalletPage;
   private browserContextService: BrowserContextService;
   public ethereumNodeService: EthereumNodeService;
 
