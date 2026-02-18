@@ -98,10 +98,6 @@ export class CtrlPage implements WalletPage {
     throw new Error('Method not implemented.');
   }
 
-  approveTokenTx(): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-
   openLastTxInEthplorer(): Promise<Page> {
     throw new Error('Method not implemented.');
   }

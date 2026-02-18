@@ -18,7 +18,10 @@ import {
 } from './pages/elements';
 import { getAddress } from 'viem';
 import { isPopularMainnetNetwork, isPopularTestnetNetwork } from './helper';
-import { getNotificationPage } from '../../../utils/helper';
+import {
+  getNotificationPage,
+  waitForWalletPageClosed,
+} from '../../../utils/helper';
 
 export class MetamaskPage implements WalletPage {
   page: Page | undefined;
@@ -232,7 +235,9 @@ export class MetamaskPage implements WalletPage {
         this.options.browserContext,
         this.options.extensionUrl,
       );
+      const pageTitle = await page.locator('h2').textContent();
       await new WalletOperationPage(page).confirmTransaction(setAggressiveGas);
+      await waitForWalletPageClosed(page, pageTitle);
     });
   }
 
@@ -242,17 +247,9 @@ export class MetamaskPage implements WalletPage {
         this.options.browserContext,
         this.options.extensionUrl,
       );
+      const pageTitle = await page.locator('h2').textContent();
       await new WalletOperationPage(page).cancelTransaction();
-    });
-  }
-
-  async approveTokenTx() {
-    await test.step('Approve token TX', async () => {
-      const page = await getNotificationPage(
-        this.options.browserContext,
-        this.options.extensionUrl,
-      );
-      await new WalletOperationPage(page).confirmTransactionOfTokenApproval();
+      await waitForWalletPageClosed(page, pageTitle);
     });
   }
 

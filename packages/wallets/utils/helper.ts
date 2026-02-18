@@ -5,7 +5,7 @@ import { ConsoleLogger } from '@nestjs/common';
 export async function getNotificationPage(
   context: BrowserContext,
   extensionUrl: string,
-  timeout = 10000,
+  timeout = 20000,
 ) {
   const logger = new ConsoleLogger('PageWaiter');
   const isWalletPage = (page: Page) => page.url().includes(extensionUrl);
@@ -17,10 +17,14 @@ export async function getNotificationPage(
     for (let i = 1; i <= attempts; i++) {
       walletPage = context.pages().find(isWalletPage);
       if (!walletPage) {
-        walletPage = await context.waitForEvent('page', {
-          predicate: isWalletPage,
-          timeout,
-        });
+        try {
+          walletPage = await context.waitForEvent('page', {
+            predicate: isWalletPage,
+            timeout,
+          });
+        } catch (er) {
+          // page isn't opened
+        }
       }
 
       if (walletPage) break;
@@ -42,6 +46,32 @@ export async function getNotificationPage(
       logger.debug('Page loading timeout');
     }
   });
-
   return walletPage;
+}
+
+/**
+ * This function waits for the wallet transaction page will be closed or changed after the confirmTx() or cancelTx()
+ */
+export async function waitForWalletPageClosed(txPage: Page, pageTitle: string) {
+  await test.step('Wait for walletPage closed', async () => {
+    while (!txPage.isClosed()) {
+      try {
+        await txPage.waitForEvent('close', { timeout: 5000 });
+        break;
+      } catch (er) {
+        if (
+          pageTitle !==
+          (await txPage
+            .locator('h2')
+            .textContent()
+            .catch(() => ''))
+        ) {
+          new ConsoleLogger('PageWaiter').debug(
+            'The next tx page opened in the same window page',
+          );
+          break;
+        }
+      }
+    }
+  });
 }

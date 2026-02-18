@@ -22,7 +22,10 @@ import {
   isPopularTestnetNetwork,
 } from './helper';
 import { privateKeyToAccount } from 'viem/accounts';
-import { getNotificationPage } from '../../../utils/helper';
+import {
+  getNotificationPage,
+  waitForWalletPageClosed,
+} from '../../../utils/helper';
 
 export class MetamaskStablePage implements WalletPage {
   page: Page | undefined;
@@ -253,7 +256,9 @@ export class MetamaskStablePage implements WalletPage {
         this.options.browserContext,
         this.options.extensionUrl,
       );
+      const pageTitle = await page.locator('h2').textContent();
       await new WalletOperationPage(page).confirmTransaction(setAggressiveGas);
+      await waitForWalletPageClosed(page, pageTitle);
     });
   }
 
@@ -263,17 +268,9 @@ export class MetamaskStablePage implements WalletPage {
         this.options.browserContext,
         this.options.extensionUrl,
       );
+      const pageTitle = await page.locator('h2').textContent();
       await new WalletOperationPage(page).cancelTransaction();
-    });
-  }
-
-  async approveTokenTx() {
-    await test.step('Approve token TX', async () => {
-      const page = await getNotificationPage(
-        this.options.browserContext,
-        this.options.extensionUrl,
-      );
-      await new WalletOperationPage(page).confirmTransactionOfTokenApproval();
+      await waitForWalletPageClosed(page, pageTitle);
     });
   }
 

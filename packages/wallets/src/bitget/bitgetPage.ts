@@ -126,10 +126,6 @@ export class BitgetPage implements WalletPage {
     throw new Error('Method not implemented.');
   }
 
-  async approveTokenTx() {
-    throw new Error('Method not implemented.');
-  }
-
   async assertReceiptAddress() {
     throw new Error('Method not implemented.');
   }

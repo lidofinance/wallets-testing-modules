@@ -57,8 +57,6 @@ export interface WalletPage {
 
   cancelTx(): Promise<void>;
 
-  approveTokenTx?(): Promise<void>;
-
   openLastTxInEthplorer?(txIndex?: number): Promise<Page>;
 
   getTokenBalance?(tokenName: string): Promise<number>;

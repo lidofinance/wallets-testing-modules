@@ -167,19 +167,6 @@ export class TrustWalletPage implements WalletPage {
     });
   }
 
-  /** Confirm token approval transaction */
-  async approveTokenTx() {
-    await test.step('Approve token TX', async () => {
-      const page = await getNotificationPage(
-        this.options.browserContext,
-        this.options.extensionUrl,
-      );
-      const txPage = new WalletOperations(page);
-      await expect(txPage.confirmBtn).toBeEnabled();
-      await txPage.confirmBtn.click();
-    });
-  }
-
   /** Get the `address` from transaction and comply with the `expectedAddress` */
   async assertReceiptAddress(expectedAddress: string) {
     await test.step('Assert receiptAddress/Contract', async () => {

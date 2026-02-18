@@ -88,10 +88,6 @@ export class SafeWcPage implements WalletPage {
     throw new Error('Method not implemented.');
   }
 
-  approveTokenTx?(): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-
   getTokenBalance?(): Promise<number> {
     throw new Error('Method not implemented.');
   }

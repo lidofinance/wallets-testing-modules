@@ -221,18 +221,6 @@ export class OkxPage implements WalletPage {
     });
   }
 
-  /** Approve token transaction */
-  async approveTokenTx() {
-    await test.step('Approve token tx', async () => {
-      const page = await getNotificationPage(
-        this.options.browserContext,
-        this.options.extensionUrl,
-      );
-      const walletOperations = new WalletOperations(page);
-      await walletOperations.confirmTxButton.click();
-    });
-  }
-
   /** Get the `address` from transaction and comply with the `expectedAddress` */
   async assertReceiptAddress(expectedAddress: string) {
     await test.step('Assert receiptAddress/Contract', async () => {
