@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "feat/add-wc-wallet",
-        "channel": "alpha-add-wc-wallet",
-        "prerelease": "alpha-add-wc-wallet"
+        "name": "feat/add-wc-wallet-without-wait",
+        "channel": "alpha-add-wc-wallet-without-wait",
+        "prerelease": "alpha-add-wc-wallet-without-wait"
       }
     ]
   },

@@ -17,13 +17,19 @@ export class RequestManager {
   public waiters: Array<(req: WCSessionRequest) => void> = [];
 
   async nextRequest(timeoutMs?: number): Promise<WCSessionRequest> {
+    if (this.pendings.length > 0) {
+      console.warn(
+        'Some requests are still pending and have not been processed yet',
+      );
+    }
+
     const queued = this.queue.shift();
     if (queued) {
       this.pendings.push(queued);
       return queued;
     }
 
-    return await new Promise<WCSessionRequest>((resolve, reject) => {
+    return new Promise<WCSessionRequest>((resolve, reject) => {
       const t = setTimeout(() => {
         const idx = this.waiters.indexOf(resolve);
         if (idx >= 0) this.waiters.splice(idx, 1);
@@ -38,10 +44,13 @@ export class RequestManager {
     });
   }
 
-  isWCSessionRequest(x: any): x is WCSessionRequest {
-    return (
-      x && typeof x === 'object' && 'topic' in x && 'id' in x && 'params' in x
-    );
+  async getCurrentRequest(): Promise<WCSessionRequest | undefined> {
+    const currentPendingRequest = this.pendings[0];
+    if (currentPendingRequest) {
+      return this.validateRequest(currentPendingRequest);
+    }
+
+    return undefined;
   }
 
   getTx(req: WCSessionRequest, index = 0): any {
@@ -59,15 +68,7 @@ export class RequestManager {
   async validateRequest(
     req: WCSessionRequest,
   ): Promise<WCSessionRequest | undefined> {
-    if (!req) {
-      return this.nextRequest();
-    }
-
-    if (!this.isWCSessionRequest(req)) {
-      throw new Error(
-        'WC: Page parameter instead WCSessionRequest is not supported in WC wallet',
-      );
-    }
+    // @todo: think about it, i think its bullshit
     if (req.processed) {
       console.log('Request already processed');
       return undefined;
