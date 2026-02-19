@@ -4,8 +4,6 @@ import {
   CommonWalletConfig,
   NetworkConfig,
   StandConfig,
-  WalletConnectType,
-  WalletConnectTypes,
 } from './wallets.constants';
 import { WCSessionRequest } from './walletConnect/components';
 
@@ -15,7 +13,7 @@ export interface WalletPageOptions {
   walletConfig: CommonWalletConfig;
   accountConfig?: AccountConfig;
   extensionUrl?: string;
-  extensionPage?: WalletPage<WalletConnectTypes.EOA>;
+  extensionPage?: WalletPage;
   standConfig?: StandConfig;
 }
 
@@ -43,7 +41,7 @@ export interface WalletPageOptions {
  *   - extensionPage
  *   - standConfig
  * */
-export interface WalletPage<T extends WalletConnectType> {
+export interface WalletPage {
   options: WalletPageOptions;
   page?: Page;
 
@@ -51,40 +49,22 @@ export interface WalletPage<T extends WalletConnectType> {
 
   importKey(secretKey: string, withChecks?: boolean): Promise<void>;
 
-  connectWallet(
-    param?: T extends WalletConnectTypes.EOA ? Page : string,
-  ): Promise<void>;
+  /** @param param is url walletConnect */
+  connectWallet(param?: string): Promise<void>;
 
-  assertTxAmount(
-    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
-    expectedAmount: string,
-  ): Promise<void> | void;
+  assertTxAmount(expectedAmount: string): Promise<void>;
 
-  confirmTx(
-    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
-    setAggressiveGas?: boolean,
-  ): Promise<void>;
+  confirmTx(setAggressiveGas?: boolean): Promise<void>;
 
-  cancelTx(
-    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
-  ): Promise<void>;
-
-  approveTokenTx?(
-    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
-  ): Promise<void>;
+  cancelTx(): Promise<void>;
 
   openLastTxInEthplorer?(txIndex?: number): Promise<Page>;
 
   getTokenBalance?(tokenName: string): Promise<number>;
 
-  confirmAddTokenToWallet?(
-    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
-  ): Promise<void>;
+  confirmAddTokenToWallet?(): Promise<void>;
 
-  assertReceiptAddress(
-    page: T extends WalletConnectTypes.WC_SDK ? WCSessionRequest : Page,
-    expectedAddress: string,
-  ): Promise<void> | void;
+  assertReceiptAddress(expectedAddress: string): Promise<void>;
 
   getWalletAddress?(): Promise<string>;
 
@@ -98,10 +78,12 @@ export interface WalletPage<T extends WalletConnectType> {
     accountName: string,
     isClosePage?: boolean,
   ): Promise<void>;
+
   changeWalletAccountByAddress?(
     address: string,
     isClosePage?: boolean,
   ): Promise<void>;
+
   isWalletAddressExist?(address: string): Promise<boolean>;
 
   // WC SDK

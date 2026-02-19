@@ -1,4 +1,4 @@
-import { NetworkConfig, WalletConnectTypes } from '../../wallets.constants';
+import { NetworkConfig } from '../../wallets.constants';
 import { WalletPage, WalletPageOptions } from '../../wallet.page';
 import { expect } from '@playwright/test';
 import { test, Page } from '@playwright/test';
@@ -18,8 +18,12 @@ import {
 } from './pages/elements';
 import { getAddress } from 'viem';
 import { isPopularMainnetNetwork, isPopularTestnetNetwork } from './helper';
+import {
+  getNotificationPage,
+  waitForWalletPageClosed,
+} from '../../../utils/helper';
 
-export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
+export class MetamaskPage implements WalletPage {
   page: Page | undefined;
   header: Header;
   homePage: HomePage;
@@ -109,6 +113,7 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
 
   async setupNetwork(networkConfig: NetworkConfig) {
     await test.step(`Setup "${networkConfig.chainName}" Network`, async () => {
+      if (this.page.isClosed()) await this.navigate();
       await this.settingsMenu.openNetworksSettings();
       if (
         await this.networkList.isNetworkExist(
@@ -154,16 +159,24 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async connectWallet(page: Page) {
+  async connectWallet() {
     await test.step('Connect Metamask wallet', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       const operationPage = new WalletOperationPage(page);
       await operationPage.connectBtn.click(); // "Confirm" button to give permission
       await operationPage.page.close();
     });
   }
 
-  async assertTxAmount(page: Page, expectedAmount: string) {
+  async assertTxAmount(expectedAmount: string) {
     await test.step('Assert TX Amount', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       const txAmount = await new WalletOperationPage(page).getTxAmount();
       if (txAmount) {
         expect(txAmount).toBe(expectedAmount);
@@ -171,9 +184,13 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async confirmAddTokenToWallet(confirmPage: Page) {
+  async confirmAddTokenToWallet() {
     await test.step('Confirm add token to wallet', async () => {
-      await new WalletOperationPage(confirmPage).addTokenButton.click();
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
+      await new WalletOperationPage(page).addTokenButton.click();
     });
   }
 
@@ -212,26 +229,36 @@ export class MetamaskPage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async confirmTx(page: Page, setAggressiveGas?: boolean) {
+  async confirmTx(setAggressiveGas?: boolean) {
     await test.step('Confirm TX', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
+      const pageTitle = await page.locator('h2').textContent();
       await new WalletOperationPage(page).confirmTransaction(setAggressiveGas);
+      await waitForWalletPageClosed(page, pageTitle);
     });
   }
 
-  async cancelTx(page: Page) {
+  async cancelTx() {
     await test.step('Reject TX', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
+      const pageTitle = await page.locator('h2').textContent();
       await new WalletOperationPage(page).cancelTransaction();
+      await waitForWalletPageClosed(page, pageTitle);
     });
   }
 
-  async approveTokenTx(page: Page) {
-    await test.step('Approve token TX', async () => {
-      await new WalletOperationPage(page).confirmTransactionOfTokenApproval();
-    });
-  }
-
-  async assertReceiptAddress(page: Page, expectedAddress: string) {
+  async assertReceiptAddress(expectedAddress: string) {
     await test.step('Assert receiptAddress/Contract', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       const recipientAddress = await new WalletOperationPage(
         page,
       ).getReceiptAddress();

@@ -1,16 +1,13 @@
 import { expect, FrameLocator, Locator, Page, test } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
-import {
-  WalletPage,
-  WalletConnectTypes,
-} from '@lidofinance/wallets-testing-wallets';
+import { WalletPage } from '@lidofinance/wallets-testing-wallets';
 import { BrowserService } from '@lidofinance/browser-service';
 import { tokenToWithdraw, tokenToWrap, WidgetPage } from './widget.page';
 import { WidgetConfig } from '../config';
 
 export class IframeWidgetPage implements WidgetPage {
   logger = new ConsoleLogger(IframeWidgetPage.name);
-  walletPage: WalletPage<WalletConnectTypes.IFRAME>;
+  walletPage: WalletPage;
   app: FrameLocator;
   page: Page;
 
@@ -149,16 +146,13 @@ export class IframeWidgetPage implements WidgetPage {
       await this.stakeSubmitBtn.click();
     });
 
-    await this.walletPage.assertTxAmount(this.page, txAmount);
-    await this.walletPage.assertReceiptAddress(
-      this.page,
-      this.widgetConfig.stakeContract,
-    );
+    await this.walletPage.assertTxAmount(txAmount);
+    await this.walletPage.assertReceiptAddress(this.widgetConfig.stakeContract);
 
     // Skip next steps, because on the mainnet we need to check only tx initialization (without execution)
     if (this.widgetConfig.network.chainId == 1) return;
 
-    await this.walletPage.confirmTx(this.page, true);
+    await this.walletPage.confirmTx(true);
     await this.app
       .getByText('Staking operation was successful.')
       .waitFor({ state: 'visible', timeout: 90000 });
@@ -184,16 +178,15 @@ export class IframeWidgetPage implements WidgetPage {
       await this.wrapSubmitBtn.click();
     });
 
-    await this.walletPage.assertTxAmount(this.page, txAmount);
+    await this.walletPage.assertTxAmount(txAmount);
     await this.walletPage.assertReceiptAddress(
-      this.page,
       this.widgetConfig.wrapContract[token],
     );
 
     // Skip next steps, because on the mainnet we need to check only tx initialization (without execution)
     if (this.widgetConfig.network.chainId == 1) return;
 
-    await this.walletPage.confirmTx(this.page, true);
+    await this.walletPage.confirmTx(true);
     await this.app
       .getByText('Wrapping operation was successful.')
       .waitFor({ state: 'visible', timeout: 90000 });
@@ -215,16 +208,15 @@ export class IframeWidgetPage implements WidgetPage {
       await this.unwrapSubmitBtn.click();
     });
 
-    await this.walletPage.assertTxAmount(this.page, txAmount);
+    await this.walletPage.assertTxAmount(txAmount);
     await this.walletPage.assertReceiptAddress(
-      this.page,
       this.widgetConfig.wrapContract.stETH,
     );
 
     // Skip next steps, because on the mainnet we need to check only tx initialization (without execution)
     if (this.widgetConfig.network.chainId == 1) return;
 
-    await this.walletPage.confirmTx(this.page, true);
+    await this.walletPage.confirmTx(true);
     await this.app
       .getByText('Unwrapping operation was successful.')
       .waitFor({ state: 'visible', timeout: 90000 });
@@ -250,16 +242,15 @@ export class IframeWidgetPage implements WidgetPage {
       await this.requestSubmitBtn.click();
     });
 
-    await this.walletPage.assertTxAmount(this.page, txAmount);
+    await this.walletPage.assertTxAmount(txAmount);
     await this.walletPage.assertReceiptAddress(
-      this.page,
       this.widgetConfig.withdrawalContract,
     );
 
     // Skip next steps, because on the mainnet we need to check only tx initialization (without execution)
     if (this.widgetConfig.network.chainId == 1) return;
 
-    await this.walletPage.confirmTx(this.page, true);
+    await this.walletPage.confirmTx(true);
     await this.app
       .getByText('Withdrawal request successfully sent')
       .waitFor({ state: 'visible', timeout: 90000 });
@@ -289,14 +280,13 @@ export class IframeWidgetPage implements WidgetPage {
     });
 
     await this.walletPage.assertReceiptAddress(
-      this.page,
       this.widgetConfig.withdrawalContract,
     );
 
     // Skip next steps, because on the mainnet we need to check only tx initialization (without execution)
     if (this.widgetConfig.network.chainId == 1) return;
 
-    await this.walletPage.confirmTx(this.page, true);
+    await this.walletPage.confirmTx(true);
     await this.app
       .getByText('Claiming operation was successful')
       .waitFor({ state: 'visible', timeout: 90000 });

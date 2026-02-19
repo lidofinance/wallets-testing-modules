@@ -19,7 +19,7 @@ export interface WidgetConfig {
 
 const ETHEREUM_WIDGET_CONFIG: WidgetConfig = {
   url: 'https://stake.lido.fi',
-  rpcUrlToMock: '**/api/rpc?chainId=1',
+  rpcUrlToMock: '.*/api/rpc\\?chainId=1',
   name: 'ethereum',
   network: {
     ...NETWORKS_CONFIG.mainnet.ETHEREUM,

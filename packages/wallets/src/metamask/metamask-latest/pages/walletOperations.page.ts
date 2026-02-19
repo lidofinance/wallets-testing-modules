@@ -46,9 +46,9 @@ export class WalletOperationPage {
       'button[aria-label="Close"]',
     );
     this.txDetailBlock = this.page.getByTestId('simulation-details-layout');
-    this.txDetailAmount = this.txDetailBlock.getByTestId(
-      'simulation-details-amount-pill',
-    );
+    this.txDetailAmount = this.txDetailBlock
+      .getByTestId('simulation-details-amount-pill')
+      .first();
   }
 
   async cancelAllTxInQueue() {
@@ -79,15 +79,6 @@ export class WalletOperationPage {
     }
   }
 
-  async confirmTransactionOfTokenApproval() {
-    await test.step('Click "Use default" button in case if it exist', async () => {
-      // todo: im not sure this step is needed now
-      if (await this.page.locator('text=Use default').isVisible())
-        await this.page.click('text=Use default');
-    });
-    await this.confirmButton.click();
-  }
-
   async confirmTransaction(setAggressiveGas?: boolean) {
     if (setAggressiveGas) {
       await this.editGasFeeButton.click();
@@ -110,7 +101,8 @@ export class WalletOperationPage {
 
   async getTxAmount() {
     if (await this.txDetailBlock.isVisible()) {
-      return await this.txDetailAmount.textContent();
+      const amount = await this.txDetailAmount.textContent();
+      return amount.match(/\d+\.\d*/)[0];
     }
     return null;
   }

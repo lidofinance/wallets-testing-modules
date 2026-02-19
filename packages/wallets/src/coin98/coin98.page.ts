@@ -1,9 +1,9 @@
-import { WalletConnectTypes } from '../wallets.constants';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { test, Page } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
+import { getNotificationPage } from '../../utils/helper';
 
-export class Coin98 implements WalletPage<WalletConnectTypes.EOA> {
+export class Coin98 implements WalletPage {
   logger = new ConsoleLogger(Coin98.name);
   page: Page | undefined;
 
@@ -94,8 +94,12 @@ export class Coin98 implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async connectWallet(page: Page) {
+  async connectWallet() {
     await test.step('Connect wallet', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       await this.unlock(page);
       const selectAllBtn = page.getByText('Select all', { exact: true });
       // for polygon network there is no account selection preview
@@ -108,6 +112,7 @@ export class Coin98 implements WalletPage<WalletConnectTypes.EOA> {
       await page.click('button:has-text("Connect")');
     });
   }
+
   async closePopover(popUpPage: Page) {
     //popUpPage param required since noisy pop-up can appear in confirmation pages
     try {
@@ -137,8 +142,12 @@ export class Coin98 implements WalletPage<WalletConnectTypes.EOA> {
     throw new Error('Method not implemented.');
   }
 
-  async confirmTx(page: Page) {
+  async confirmTx() {
     await test.step('Confirm TX', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       await page.click('button:has-text("Confirm")');
     });
   }
