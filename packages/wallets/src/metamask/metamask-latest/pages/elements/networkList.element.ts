@@ -108,6 +108,7 @@ export class NetworkList {
       });
       await this.networkSetting.addCustomNetwork(networkConfig);
     }
+    await this.page.close();
   }
 
   async addPopularTestnetNetwork(networkConfig: NetworkConfig) {
@@ -118,6 +119,7 @@ export class NetworkList {
       await this.showTestnetButton.click();
     }
     await this.dialogSection.getByTestId(networkConfig.chainName).click();
+    await this.page.close();
   }
 
   async addPopularNetwork(networkName: string) {
