@@ -52,19 +52,24 @@ export async function getNotificationPage(
 /**
  * This function waits for the wallet transaction page will be closed or changed after the confirmTx() or cancelTx()
  */
-export async function waitForWalletPageClosed(txPage: Page, pageTitle: string) {
+export async function waitForWalletPageClosed(
+  txPage: Page,
+  pageTitle?: string,
+) {
   await test.step('Wait for walletPage closed', async () => {
-    while (!txPage.isClosed()) {
+    const maxAttempts = 5;
+    for (let i = 1; i <= maxAttempts && !txPage.isClosed(); i++) {
       try {
         await txPage.waitForEvent('close', { timeout: 5000 });
         break;
       } catch (er) {
         if (
+          pageTitle &&
           pageTitle !==
-          (await txPage
-            .locator('h2')
-            .textContent()
-            .catch(() => ''))
+            (await txPage
+              .locator('h2')
+              .textContent()
+              .catch(() => ''))
         ) {
           new ConsoleLogger('PageWaiter').debug(
             'The next tx page opened in the same window page',

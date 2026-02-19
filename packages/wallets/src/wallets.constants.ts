@@ -165,7 +165,7 @@ export const NETWORKS_CONFIG: {
       chainId: 48900,
       chainName: 'Zircuit',
       tokenSymbol: 'ETH',
-      rpcUrl: 'https://zircuit1-mainnet.p2pify.com',
+      rpcUrl: 'https://mainnet.zircuit.com',
       scan: '',
     },
     LISK: {
