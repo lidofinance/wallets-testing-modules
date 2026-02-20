@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "feat/wait-for-tx",
-        "channel": "wait-for-tx-alpha",
-        "prerelease": "wait-for-tx-alpha"
+        "name": "develop",
+        "channel": "alpha",
+        "prerelease": "alpha"
       }
     ]
   },
