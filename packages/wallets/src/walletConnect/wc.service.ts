@@ -347,6 +347,10 @@ export class WCSDKWallet implements WalletPage {
     this.rebuildViemClients(chain);
   }
 
+  async getWalletAddress(): Promise<string> {
+    return this.hdAccount.address.toLowerCase();
+  }
+
   private rebuildViemClients(chain: Chain) {
     const net = this.networkSettings.networksByChainId.get(chain.id);
     if (net?.rpcUrl) {
