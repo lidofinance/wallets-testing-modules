@@ -1,11 +1,11 @@
 import { WalletPage } from '../wallet.page';
 import { test, Page } from '@playwright/test';
-import { WalletConnectTypes } from '../wallets.constants';
 import { LoginPage, OnboardingPage, WalletOperations } from './pages';
 import { WalletPageOptions } from '../wallet.page';
 import { ConsoleLogger } from '@nestjs/common';
+import { getNotificationPage } from '../../utils/helper';
 
-export class CtrlPage implements WalletPage<WalletConnectTypes.EOA> {
+export class CtrlPage implements WalletPage {
   logger = new ConsoleLogger(CtrlPage.name);
   page: Page | undefined;
   onboardingPage: OnboardingPage;
@@ -53,8 +53,12 @@ export class CtrlPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   /** Click `Connect` button */
-  async connectWallet(page: Page) {
+  async connectWallet() {
     await test.step('Connect Ctrl wallet', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       const operationPage = new WalletOperations(page);
       await operationPage.connectBtn.waitFor({
         state: 'visible',
@@ -91,10 +95,6 @@ export class CtrlPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   cancelTx(): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-
-  approveTokenTx(): Promise<void> {
     throw new Error('Method not implemented.');
   }
 

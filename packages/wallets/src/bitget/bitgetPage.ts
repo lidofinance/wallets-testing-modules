@@ -1,9 +1,9 @@
-import { WalletConnectTypes } from '../wallets.constants';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { test, Page } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
+import { getNotificationPage } from '../../utils/helper';
 
-export class BitgetPage implements WalletPage<WalletConnectTypes.EOA> {
+export class BitgetPage implements WalletPage {
   logger = new ConsoleLogger(BitgetPage.name);
   page: Page | undefined;
 
@@ -82,8 +82,12 @@ export class BitgetPage implements WalletPage<WalletConnectTypes.EOA> {
     });
   }
 
-  async connectWallet(page: Page) {
+  async connectWallet() {
     await test.step('Connect wallet', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       await page.waitForTimeout(1000);
       await page.click("button:has-text('Connect')");
       await page.close();
@@ -119,10 +123,6 @@ export class BitgetPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   async signTx() {
-    throw new Error('Method not implemented.');
-  }
-
-  async approveTokenTx() {
     throw new Error('Method not implemented.');
   }
 

@@ -2,9 +2,9 @@ import { Page, test } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
 import { HomePage, SetupPage } from './pages';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
-import { NetworkConfig, WalletConnectTypes } from '../wallets.constants';
+import { NetworkConfig } from '../wallets.constants';
 
-export class SafeWcPage implements WalletPage<WalletConnectTypes.WC> {
+export class SafeWcPage implements WalletPage {
   logger = new ConsoleLogger(SafeWcPage.name);
   page: Page;
   setupPage: SetupPage;
@@ -26,6 +26,14 @@ export class SafeWcPage implements WalletPage<WalletConnectTypes.WC> {
 
   async setup() {
     await this.options.extensionPage.setup();
+    // close all pages
+    await Promise.all(
+      this.options.browserContext
+        .pages()
+        .slice(1)
+        .map((page) => page.close()),
+    );
+
     await this.initLocators();
     this.safeAccountUrl = await this.setupPage.firstTimeSetupWallet();
   }
@@ -77,10 +85,6 @@ export class SafeWcPage implements WalletPage<WalletConnectTypes.WC> {
   }
 
   cancelTx(): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-
-  approveTokenTx?(): Promise<void> {
     throw new Error('Method not implemented.');
   }
 

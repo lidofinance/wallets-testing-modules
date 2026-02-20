@@ -1,7 +1,6 @@
 import { Locator, Page, test, expect } from '@playwright/test';
 import { ConsoleLogger } from '@nestjs/common';
 import { WalletPage } from '../../wallet.page';
-import { WalletConnectTypes } from '../../wallets.constants';
 import { Big } from 'big.js';
 
 export class TransactionPage {
@@ -20,10 +19,7 @@ export class TransactionPage {
   contentLoader: Locator;
   transactionFailBanner: Locator;
 
-  constructor(
-    public page: Page,
-    public extensionPage: WalletPage<WalletConnectTypes.EOA>,
-  ) {
+  constructor(public page: Page, public extensionPage: WalletPage) {
     this.transactionCardContent = this.page.getByTestId('card-content').first();
     this.contractExplorerUrl = this.transactionCardContent
       .getByTestId('explorer-btn')
@@ -122,11 +118,8 @@ export class TransactionPage {
 
     await test.step('Switch network if needed', async () => {
       if (await this.switchNetworkBtn.isVisible()) {
-        const [extensionTxPage] = await Promise.all([
-          this.page.context().waitForEvent('page', { timeout: 10000 }),
-          await this.switchNetworkBtn.click(),
-        ]);
-        await this.extensionPage.confirmTx(extensionTxPage);
+        await this.switchNetworkBtn.click();
+        await this.extensionPage.confirmTx();
       }
     });
 
@@ -149,12 +142,10 @@ export class TransactionPage {
         await this.selectOptionToExecuteTx();
     });
 
-    const [extensionTxPage] = await Promise.all([
-      this.executeTxBtnClick(),
-      this.executeTxBtn.click(),
-    ]);
-    await this.extensionPage.confirmTx(extensionTxPage, true);
-    return extensionTxPage;
+    await this.executeTxBtn.click();
+    await this.executeTxBtnClick();
+
+    await this.extensionPage.confirmTx(true);
   }
 
   private async executeTxBtnClick(maxAttempts = 3) {

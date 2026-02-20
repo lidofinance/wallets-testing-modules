@@ -1,6 +1,5 @@
 import { Locator, Page, test } from '@playwright/test';
 import { WalletPage } from '../../wallet.page';
-import { WalletConnectTypes } from '../../wallets.constants';
 import { ConsoleLogger } from '@nestjs/common';
 
 export class SetupPage {
@@ -18,7 +17,7 @@ export class SetupPage {
 
   constructor(
     public page: Page,
-    public extensionPage: WalletPage<WalletConnectTypes.EOA>,
+    public extensionPage: WalletPage,
     public chainId: number,
   ) {
     this.setupUrl =
@@ -76,10 +75,11 @@ export class SetupPage {
       await test.step('Add trusted Safes', async () => {
         try {
           // If the button is visible, the trusted Safe is selected
-          await this.manageTrustedSafesBtn.waitFor({
-            state: 'visible',
-            timeout: 3000,
-          });
+          if (this.chainId === 1)
+            await this.manageTrustedSafesBtn.waitFor({
+              state: 'visible',
+              timeout: 3000,
+            });
         } catch {
           await this.addSafesBtn.click();
 
@@ -152,16 +152,12 @@ export class SetupPage {
       }
 
       try {
-        const [connectWalletPage] = await Promise.all([
-          this.page.context().waitForEvent('page', { timeout: 5000 }),
-
-          this.page
-            .getByText(
-              this.extensionPage.options.walletConfig.EXTENSION_WALLET_NAME,
-            )
-            .click(),
-        ]);
-        await this.extensionPage.connectWallet(connectWalletPage);
+        await this.page
+          .getByText(
+            this.extensionPage.options.walletConfig.EXTENSION_WALLET_NAME,
+          )
+          .click();
+        await this.extensionPage.connectWallet();
       } catch (er) {
         // Expect the wallet is connected
       }

@@ -1,10 +1,10 @@
-import { WalletConnectTypes } from '../wallets.constants';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { test, Page } from '@playwright/test';
 import { OnboardingPage } from './pages';
 import { ConsoleLogger } from '@nestjs/common';
+import { getNotificationPage } from '../../utils/helper';
 
-export class ExodusPage implements WalletPage<WalletConnectTypes.EOA> {
+export class ExodusPage implements WalletPage {
   logger = new ConsoleLogger(ExodusPage.name);
   page: Page | undefined;
   onboardingPage: OnboardingPage;
@@ -63,8 +63,12 @@ export class ExodusPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   /** Click `Connect` button on the transaction `page` */
-  async connectWallet(page: Page) {
+  async connectWallet() {
     await test.step('Connect wallet', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       const connectWalletBtn = page.getByText('Connect').nth(2);
       // the connect button is disabled by default, and it will be enabled after hover with awaiting
       await connectWalletBtn.hover();
@@ -74,8 +78,12 @@ export class ExodusPage implements WalletPage<WalletConnectTypes.EOA> {
   }
 
   /** Click `Confirm` button on the transaction `page` */
-  async confirmTx(page: Page) {
+  async confirmTx() {
     await test.step('Confirm TX', async () => {
+      const page = await getNotificationPage(
+        this.options.browserContext,
+        this.options.extensionUrl,
+      );
       await page.getByText('Confirm').click();
     });
   }
