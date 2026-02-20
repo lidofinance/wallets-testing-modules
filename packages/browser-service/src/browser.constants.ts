@@ -10,6 +10,7 @@ import {
   SafeIframePage,
   SafeWcPage,
   TrustWalletPage,
+  WCSDKWallet,
 } from '@lidofinance/wallets-testing-wallets';
 import { z } from 'zod';
 
@@ -25,6 +26,7 @@ export const WALLET_PAGES = {
   bitget: BitgetPage,
   safeWc: SafeWcPage,
   safeIframe: SafeIframePage,
+  wcSDK: WCSDKWallet,
 };
 
 export const DEFAULT_BROWSER_CONTEXT_DIR_NAME = '.browser_context';

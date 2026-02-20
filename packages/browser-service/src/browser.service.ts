@@ -83,8 +83,13 @@ export class BrowserService {
     } else {
       await this.setup();
       await this.walletPage.setupNetwork(this.options.networkConfig);
-      await this.walletPage.changeNetwork(this.options.networkConfig.chainName);
-      await this.browserContextService.closePages();
+
+      if (this.options.walletConfig.WALLET_TYPE !== WalletConnectTypes.WC_SDK) {
+        await this.walletPage.changeNetwork(
+          this.options.networkConfig.chainName,
+        );
+        await this.browserContextService.closePages();
+      }
     }
   }
 
@@ -96,10 +101,12 @@ export class BrowserService {
     const account = this.ethereumNodeService.getAccount();
     await this.setup();
 
-    if (!(await this.walletPage.isWalletAddressExist(account.address))) {
-      await this.walletPage.importKey(account.secretKey);
-    } else {
-      await this.walletPage.changeWalletAccountByAddress(account.address);
+    if (this.options.walletConfig.WALLET_TYPE !== WalletConnectTypes.WC_SDK) {
+      if (!(await this.walletPage.isWalletAddressExist(account.address))) {
+        await this.walletPage.importKey(account.secretKey);
+      } else {
+        await this.walletPage.changeWalletAccountByAddress(account.address);
+      }
     }
 
     await this.walletPage.setupNetwork({
@@ -112,10 +119,22 @@ export class BrowserService {
       this.options.nodeConfig.rpcUrlToMock,
       this.browserContextService.browserContext,
     );
-    await this.browserContextService.closePages();
+    if (this.options.walletConfig.WALLET_TYPE !== WalletConnectTypes.WC_SDK) {
+      await this.browserContextService.closePages();
+    }
   }
 
   async setup() {
+    if (this.options.walletConfig.WALLET_TYPE === WalletConnectTypes.WC_SDK) {
+      this.browserContextService = new BrowserContextService(null, {
+        browserOptions: this.options.browserOptions,
+      });
+
+      await this.browserContextService.initBrowserContext();
+      this.setWalletPage();
+      await this.walletPage.setup();
+      return;
+    }
     const extensionService = new ExtensionService();
 
     const extensionPath = await extensionService.getExtensionDirFromId(
@@ -126,6 +145,7 @@ export class BrowserService {
     const contextDataDir = `${DEFAULT_BROWSER_CONTEXT_DIR_NAME}_${
       mnemonicToAccount(this.options.accountConfig.SECRET_PHRASE).address
     }_isFork-${this.isFork}_${this.options.walletConfig.WALLET_NAME}`;
+
     this.browserContextService = new BrowserContextService(extensionPath, {
       contextDataDir,
       browserOptions: this.options.browserOptions,
@@ -146,6 +166,24 @@ export class BrowserService {
   }
 
   private setWalletPage() {
+    if (this.options.walletConfig.WALLET_TYPE === WalletConnectTypes.WC_SDK) {
+      this.walletPage = new WALLET_PAGES[this.options.walletConfig.WALLET_NAME](
+        {
+          browserContext: this.browserContextService.browserContext,
+          walletConfig: this.options.walletConfig,
+          accountConfig: this.options.accountConfig,
+          standConfig: {
+            chainId: this.options.networkConfig.chainId,
+            standUrl: this.options.standUrl,
+            rpcUrl:
+              this.ethereumNodeService?.state.nodeUrl ||
+              this.options.networkConfig.rpcUrl,
+          },
+        },
+      );
+      return;
+    }
+
     const extension = new Extension(this.browserContextService.extensionId);
     const extensionWalletPage = new WALLET_PAGES[
       this.options.walletConfig.EXTENSION_WALLET_NAME

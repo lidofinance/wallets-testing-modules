@@ -29,7 +29,7 @@ export type BrowserOptions = {
 type OptionsBrowserContext = {
   // If contextDataDir is undefined - will be created temp dir for context data.
   // Else contextDataDir is not undefined - will be created user dir for context data in current folder.
-  contextDataDir: string;
+  contextDataDir?: string;
   browserOptions?: BrowserOptions;
 };
 
@@ -41,7 +41,7 @@ export class BrowserContextService {
   private readonly logger = new ConsoleLogger(BrowserContextService.name);
 
   constructor(
-    public walletExtensionStartPath: string,
+    public walletExtensionStartPath: string | null,
     public options: OptionsBrowserContext,
   ) {
     this.defaultBrowserOptions = {
@@ -50,7 +50,9 @@ export class BrowserContextService {
       args: [
         '--lang=en-US',
         '--disable-dev-shm-usage',
-        `--disable-extensions-except=${this.walletExtensionStartPath}`,
+        this.walletExtensionStartPath
+          ? `--disable-extensions-except=${this.walletExtensionStartPath}`
+          : '',
         '--js-flags="--max-old-space-size=2048"',
       ],
       permissions: ['clipboard-read', 'clipboard-write'],
@@ -63,10 +65,6 @@ export class BrowserContextService {
   }
 
   async initBrowserContext() {
-    this.logger.debug(
-      `Starting a new browser context (temp context: ${!this.options
-        .contextDataDir})`,
-    );
     let browserContextPath = '';
 
     if (this.options.contextDataDir) {
@@ -79,6 +77,10 @@ export class BrowserContextService {
         recursive: true,
       });
     }
+
+    this.logger.debug(
+      `Starting a new browser context (temp context: ${browserContextPath})`,
+    );
 
     let attemptsLeft = 3;
     while (attemptsLeft > 0) {
@@ -111,10 +113,12 @@ export class BrowserContextService {
       await this.browserContext.addCookies(this.options.browserOptions.cookies);
     }
 
-    let [background] = this.browserContext.serviceWorkers();
-    if (!background)
-      background = await this.browserContext.waitForEvent('serviceworker');
-    this.extensionId = background.url().split('/')[2];
+    if (this.walletExtensionStartPath) {
+      let [background] = this.browserContext.serviceWorkers();
+      if (!background)
+        background = await this.browserContext.waitForEvent('serviceworker');
+      this.extensionId = background.url().split('/')[2];
+    }
   }
 
   async closePages() {

@@ -251,7 +251,7 @@ export class ReporterRuntime {
         });
       }
 
-      const suite = suiteStats.get(suiteKey)!;
+      const suite = suiteStats.get(suiteKey);
       suite.total++;
 
       if (testCase.status === 'passed') suite.passed++;

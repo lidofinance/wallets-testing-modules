@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "feat/wait-for-tx",
-        "channel": "wait-for-tx-alpha",
-        "prerelease": "wait-for-tx-alpha"
+        "name": "feat/add-wc-wallet-without-wait",
+        "channel": "alpha-add-wc-wallet-without-wait",
+        "prerelease": "alpha-add-wc-wallet-without-wait"
       }
     ]
   },
