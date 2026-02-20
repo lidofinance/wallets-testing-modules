@@ -5,7 +5,6 @@ import {
   NetworkConfig,
   StandConfig,
 } from './wallets.constants';
-import { WCSessionRequest } from './walletConnect/components';
 
 /** Required options to manage wallet */
 export interface WalletPageOptions {
@@ -87,6 +86,5 @@ export interface WalletPage {
   isWalletAddressExist?(address: string): Promise<boolean>;
 
   // WC SDK
-  waitForTransaction?(timeoutMs?: number): Promise<WCSessionRequest>;
   cancelAllTxRequests?(): Promise<void>;
 }

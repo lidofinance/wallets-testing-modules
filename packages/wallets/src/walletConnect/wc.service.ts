@@ -151,15 +151,8 @@ export class WCSDKWallet implements WalletPage {
     this.requestManager.waiters = [];
   }
 
-  async waitForTransaction(timeoutMs?: number): Promise<WCSessionRequest> {
-    if (!timeoutMs) {
-      timeoutMs = this.defaultTimeoutMs;
-    }
-    return this.requestManager.nextRequest(timeoutMs);
-  }
-
   async confirmTx(): Promise<void> {
-    let request = await this.requestManager.nextRequest();
+    let request = await this.requestManager.getCurrentRequest();
     request = await this.requestManager.validateRequest(request);
 
     if (!this.signClient) throw new Error('WC client not initialized');
@@ -176,7 +169,7 @@ export class WCSDKWallet implements WalletPage {
   }
 
   async confirmAddTokenToWallet(): Promise<void> {
-    let request = await this.requestManager.nextRequest();
+    let request = await this.requestManager.getCurrentRequest();
     request = await this.requestManager.validateRequest(request);
 
     if (!this.signClient) throw new Error('WC client not initialized');
@@ -193,7 +186,7 @@ export class WCSDKWallet implements WalletPage {
   }
 
   async cancelTx(): Promise<void> {
-    let request = await this.requestManager.nextRequest();
+    let request = await this.requestManager.getCurrentRequest();
     request = await this.requestManager.validateRequest(request);
 
     if (!this.signClient) throw new Error('WC client not initialized');

@@ -8,6 +8,7 @@ export type WCSessionRequest = {
       params: any[] | any;
     };
   };
+  // @todo: we could remove it, if dont need to return Request to tests
   processed: boolean; // custom field to track if request was handled
 };
 
@@ -16,7 +17,8 @@ export class RequestManager {
   public pendings: WCSessionRequest[] = [];
   public waiters: Array<(req: WCSessionRequest) => void> = [];
 
-  async nextRequest(timeoutMs?: number): Promise<WCSessionRequest> {
+  async nextRequest(): Promise<WCSessionRequest> {
+    const timeoutMs = 30000;
     if (this.pendings.length > 0) {
       console.warn(
         'Some requests are still pending and have not been processed yet',
@@ -44,13 +46,13 @@ export class RequestManager {
     });
   }
 
-  async getCurrentRequest(): Promise<WCSessionRequest | undefined> {
+  async getCurrentRequest(): Promise<WCSessionRequest> {
     const currentPendingRequest = this.pendings[0];
     if (currentPendingRequest) {
       return this.validateRequest(currentPendingRequest);
     }
 
-    return undefined;
+    return this.nextRequest();
   }
 
   getTx(req: WCSessionRequest, index = 0): any {
