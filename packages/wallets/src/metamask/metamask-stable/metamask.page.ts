@@ -256,7 +256,10 @@ export class MetamaskStablePage implements WalletPage {
         this.options.browserContext,
         this.options.extensionUrl,
       );
-      const pageTitle = await page.locator('h2').textContent();
+      const pageTitle = await page
+        .locator('h2')
+        .textContent()
+        .catch(() => undefined);
       await new WalletOperationPage(page).confirmTransaction(setAggressiveGas);
       await waitForWalletPageClosed(page, pageTitle);
     });
@@ -268,7 +271,10 @@ export class MetamaskStablePage implements WalletPage {
         this.options.browserContext,
         this.options.extensionUrl,
       );
-      const pageTitle = await page.locator('h2').textContent();
+      const pageTitle = await page
+        .locator('h2')
+        .textContent()
+        .catch(() => undefined);
       await new WalletOperationPage(page).cancelTransaction();
       await waitForWalletPageClosed(page, pageTitle);
     });
