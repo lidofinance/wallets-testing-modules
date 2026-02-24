@@ -41,7 +41,7 @@
     "branches": [
       "main",
       {
-        "name": "opsgenie-alpha",
+        "name": "add-opsgenie-reporter",
         "channel": "opsgenie-alpha",
         "prerelease": "opsgenie-alpha"
       }
