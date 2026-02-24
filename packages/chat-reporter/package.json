@@ -31,6 +31,7 @@
   "dependencies": {
     "@nestjs/common": "^10.0.0",
     "axios": "^1.10.0",
+    "opsgenie-sdk": "^0.5.1",
     "reflect-metadata": "^0.1.13"
   },
   "peerDependencies": {

@@ -12,6 +12,7 @@ import {
   getResultMessageStatus,
   testStatusToEmoji,
 } from './utils/helpers';
+import { OpsGenieReporter } from './reporters/opsgenieReporter';
 
 export type RunInfo = {
   testNames: { [key: string]: string };
@@ -33,40 +34,57 @@ export enum ReportType {
 }
 
 export type ReporterOptions = {
-  enabled: string;
   customTitle?: string;
   customDescription?: string;
   ciRunUrl?: string;
-  reportType: ReportType;
-  failuresOnly: boolean;
+  reportType?: ReportType;
+  failuresOnly?: boolean;
   tag?: string;
 
   // Discord
+  discordEnabled?: boolean;
   discordWebhookUrl?: string;
   discordDutyTag?: string;
 
   // Slack
+  slackEnabled?: boolean;
   slackWebhookUrl?: string;
   slackDutyTag?: string;
+
+  // OpsGenie
+  opsGenieEnabled?: boolean;
+  opsGenieApiKey?: string;
+  opsGenieApiUrl?: string;
 };
 
 class ChatReporter implements Reporter {
   logger = new ConsoleLogger(ChatReporter.name);
   public discordReporter: DiscordReporter;
   public slackReporter: SlackReporter;
-  private enabled: boolean;
+  public opsGenieReporter: OpsGenieReporter;
   private runInfo: RunInfo;
 
   constructor(private options: ReporterOptions) {
-    this.enabled = (this.options.enabled ?? '').trim().toLowerCase() === 'true';
-    if (!this.options.discordWebhookUrl && !this.options.slackWebhookUrl) {
-      this.logger.error('No discordWebhookUrl nor slackWebhookUrl provided');
-      this.enabled = false;
+    if (this.options.discordEnabled && !this.options.discordWebhookUrl) {
+      this.logger.error('No discordWebhookUrl provided');
+      this.options.discordEnabled = false;
     }
-    if (!this.enabled) return;
+
+    if (this.options.slackEnabled && !this.options.slackWebhookUrl) {
+      this.logger.error('No slackWebhookUrl provided');
+      this.options.slackEnabled = false;
+    }
+
+    if (
+      this.options.opsGenieEnabled &&
+      (!this.options.opsGenieApiUrl || !this.options.opsGenieApiKey)
+    ) {
+      this.logger.error('No opsGenieApiUrl or opsGenieApiKey provided');
+      this.options.opsGenieEnabled = false;
+    }
 
     this.runInfo = {
-      ciUrl: this.options.ciRunUrl?.trim() || undefined,
+      ciUrl: this.options.ciRunUrl?.trim() || '',
       testNames: {},
       testCount: {
         passed: 0,
@@ -75,15 +93,15 @@ class ChatReporter implements Reporter {
         skipped: 0,
       },
     };
+
     this.options.reportType = this.options.reportType || ReportType.count;
 
     this.discordReporter = new DiscordReporter(this.options, this.runInfo);
     this.slackReporter = new SlackReporter(this.options, this.runInfo);
+    this.opsGenieReporter = new OpsGenieReporter(this.options, this.runInfo);
   }
 
   onTestEnd(test: TestCase, result: TestResult) {
-    if (!this.enabled) return;
-
     switch (result.status) {
       case 'passed':
         if (result.retry > 0) this.runInfo.testCount.flaky++;
@@ -99,6 +117,46 @@ class ChatReporter implements Reporter {
         break;
     }
 
+    this.runInfo.testNames[test.id] = this.getTestName(test, result);
+  }
+
+  async onEnd(result: FullResult) {
+    if (this.options.failuresOnly) {
+      this.options.discordEnabled =
+        this.runInfo.testCount.failed > 0 && this.options.discordEnabled;
+      this.options.slackEnabled =
+        this.runInfo.testCount.failed > 0 && this.options.slackEnabled;
+      return;
+    }
+
+    this.runInfo.duration = formatDuration(result.duration);
+    this.runInfo.status = getResultMessageStatus(result.status, this.runInfo);
+
+    await this.sendEnabledReports();
+  }
+
+  private async sendEnabledReports() {
+    const tasks: Promise<any>[] = [];
+
+    if (this.options.discordEnabled) {
+      const discordPayload = this.discordReporter.getEmbed();
+      tasks.push(this.discordReporter.send(discordPayload));
+    }
+
+    if (this.options.slackEnabled) {
+      const slackPayload = this.slackReporter.getEmbed();
+      tasks.push(this.slackReporter.send(slackPayload));
+    }
+
+    if (this.options.opsGenieEnabled) {
+      const opsGeniePayload = this.opsGenieReporter.getEmbed();
+      tasks.push(this.opsGenieReporter.send(opsGeniePayload));
+    }
+
+    await Promise.allSettled(tasks);
+  }
+
+  private getTestName(test: TestCase, result: TestResult) {
     const walletVersion =
       test.annotations.length > 0 && test.annotations[0].description
         ? ` \`(v.${test.annotations[0].description})\``
@@ -108,31 +166,8 @@ class ChatReporter implements Reporter {
       testStatusToEmoji[
         result.retry > 0 && result.status == 'passed' ? 'flaky' : result.status
       ];
-    this.runInfo.testNames[
-      test.id
-    ] = `- ${emojiStatus} ${test.title} ${walletVersion}`;
-  }
 
-  async onEnd(result: FullResult) {
-    if (!this.enabled) return;
-
-    if (this.options.failuresOnly && this.runInfo.testCount.failed === 0) {
-      this.logger.log(
-        'No failed tests detected, skipping chat report sending.',
-      );
-      return;
-    }
-    this.runInfo.duration = formatDuration(result.duration);
-    this.runInfo.status = getResultMessageStatus(result.status, this.runInfo);
-
-    const discordPayload = this.discordReporter.getEmbed();
-    const slackPayload = this.slackReporter.getEmbed();
-
-    const tasks: Promise<any>[] = [];
-    tasks.push(this.discordReporter.send(discordPayload));
-    tasks.push(this.slackReporter.send(slackPayload));
-
-    await Promise.allSettled(tasks);
+    return `- ${emojiStatus} ${test.title} ${walletVersion}`;
   }
 }
 
