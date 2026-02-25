@@ -1,10 +1,7 @@
 import { WCSessionRequest } from '../components';
-import { WCSDKWallet } from '../wc.service';
+import { WCWallet } from '../wc.service';
 
-export async function wallet_watchAsset(
-  this: WCSDKWallet,
-  req: WCSessionRequest,
-) {
+export async function wallet_watchAsset(this: WCWallet, req: WCSessionRequest) {
   console.log('Try to add token to wallet');
   const params = req.params.request.params;
 

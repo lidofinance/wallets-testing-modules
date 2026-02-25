@@ -1,8 +1,8 @@
 import { WCSessionRequest } from '../components';
-import { WCSDKWallet } from '../wc.service';
+import { WCWallet } from '../wc.service';
 
 export async function eth_sendTransaction(
-  this: WCSDKWallet,
+  this: WCWallet,
   req: WCSessionRequest,
 ) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

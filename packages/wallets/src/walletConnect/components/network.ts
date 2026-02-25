@@ -22,6 +22,10 @@ export class NetworkSettings {
     return session;
   }
 
+  setActiveChainId(chainId: number) {
+    this.activeChainId = chainId;
+  }
+
   async setupNetwork(networkConfig: NetworkConfig): Promise<void> {
     this.networksByChainId.set(networkConfig.chainId, networkConfig);
     this.chainIdByName.set(
@@ -76,6 +80,12 @@ export class NetworkSettings {
         )}`,
       );
     }
+
+    if (chainId === this.activeChainId) {
+      console.log(`Network "${networkName}" is already active`);
+      return SUPPORTED_CHAINS[chainId] ?? buildChainFromNetwork(networkConfig);
+    }
+
     const session = this.getActiveSession();
     await this.client.emit({
       topic: session.topic,
@@ -84,7 +94,7 @@ export class NetworkSettings {
     });
     const chain =
       SUPPORTED_CHAINS[chainId] ?? buildChainFromNetwork(networkConfig);
-    this.activeChainId = chain.id;
+    this.setActiveChainId(chain.id);
 
     return chain;
   }

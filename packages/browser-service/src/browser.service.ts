@@ -83,13 +83,8 @@ export class BrowserService {
     } else {
       await this.setup();
       await this.walletPage.setupNetwork(this.options.networkConfig);
-
-      if (this.options.walletConfig.WALLET_TYPE !== WalletConnectTypes.WC_SDK) {
-        await this.walletPage.changeNetwork(
-          this.options.networkConfig.chainName,
-        );
-        await this.browserContextService.closePages();
-      }
+      await this.walletPage.changeNetwork(this.options.networkConfig.chainName);
+      await this.browserContextService.closePages();
     }
   }
 

@@ -38,7 +38,7 @@ const handlers: Record<string, (req: WCSessionRequest) => Promise<void>> = {
   wallet_watchAsset: wallet_watchAsset,
 };
 
-export class WCSDKWallet implements WalletPage {
+export class WCWallet implements WalletPage {
   protected signClient?: SignClient;
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -77,7 +77,7 @@ export class WCSDKWallet implements WalletPage {
   }
 
   async setup(): Promise<void> {
-    await test.step('WCSDKWallet: setup', async () => {
+    await test.step('Setup wallet', async () => {
       if (this.signClient) return;
 
       this.signClient = await SignClient.init({
@@ -118,6 +118,8 @@ export class WCSDKWallet implements WalletPage {
         if (waiter) waiter(req);
         else this.requestManager.queue.push(req);
       });
+
+      this.networkSettings.setActiveChainId(this.options.standConfig.chainId);
     });
   }
 

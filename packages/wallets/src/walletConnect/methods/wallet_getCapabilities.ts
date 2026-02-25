@@ -1,8 +1,8 @@
 import { WCSessionRequest } from '../components';
-import { WCSDKWallet } from '../wc.service';
+import { WCWallet } from '../wc.service';
 
 export async function wallet_getCapabilities(
-  this: WCSDKWallet,
+  this: WCWallet,
   req: WCSessionRequest,
 ) {
   console.log(

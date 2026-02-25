@@ -1,8 +1,8 @@
 import { WCSessionRequest } from '../components';
-import { WCSDKWallet } from '../wc.service';
+import { WCWallet } from '../wc.service';
 
 export async function eth_signTypedData_v4(
-  this: WCSDKWallet,
+  this: WCWallet,
   req: WCSessionRequest,
 ) {
   const typed = req.params.request.params[1];
