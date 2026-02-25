@@ -1,3 +1,5 @@
+import { test } from '@playwright/test';
+
 export type WCSessionRequest = {
   topic: string;
   id: number;
@@ -18,30 +20,32 @@ export class RequestManager {
   public waiters: Array<(req: WCSessionRequest) => void> = [];
 
   async nextRequest(): Promise<WCSessionRequest> {
-    const timeoutMs = 30000;
-    if (this.pendings.length > 0) {
-      console.warn(
-        'Some requests are still pending and have not been processed yet',
-      );
-    }
+    return test.step('Wait for next WC transaction request', async () => {
+      const timeoutMs = 30000;
+      if (this.pendings.length > 0) {
+        console.warn(
+          'Some requests are still pending and have not been processed yet',
+        );
+      }
 
-    const queued = this.queue.shift();
-    if (queued) {
-      this.pendings.push(queued);
-      return queued;
-    }
+      const queued = this.queue.shift();
+      if (queued) {
+        this.pendings.push(queued);
+        return queued;
+      }
 
-    return new Promise<WCSessionRequest>((resolve, reject) => {
-      const t = setTimeout(() => {
-        const idx = this.waiters.indexOf(resolve);
-        if (idx >= 0) this.waiters.splice(idx, 1);
-        reject(new Error(`WC: session_request timeout after ${timeoutMs}ms`));
-      }, timeoutMs);
+      return new Promise<WCSessionRequest>((resolve, reject) => {
+        const t = setTimeout(() => {
+          const idx = this.waiters.indexOf(resolve);
+          if (idx >= 0) this.waiters.splice(idx, 1);
+          reject(new Error(`WC: session_request timeout after ${timeoutMs}ms`));
+        }, timeoutMs);
 
-      this.waiters.push((req) => {
-        clearTimeout(t);
-        this.pendings.push(req);
-        resolve(req);
+        this.waiters.push((req) => {
+          clearTimeout(t);
+          this.pendings.push(req);
+          resolve(req);
+        });
       });
     });
   }
