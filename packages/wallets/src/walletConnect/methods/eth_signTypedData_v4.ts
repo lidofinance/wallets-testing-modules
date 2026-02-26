@@ -8,8 +8,10 @@ export async function eth_signTypedData_v4(
   const typed = req.params.request.params[1];
   const typedData = typeof typed === 'string' ? JSON.parse(typed) : typed;
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   const signature = await this.walletClient.signTypedData({
-    account: this.hdAccount,
+    account: this.currentAccount,
     domain: {
       ...typedData.domain,
       chainId: Number(typedData.domain.chainId),

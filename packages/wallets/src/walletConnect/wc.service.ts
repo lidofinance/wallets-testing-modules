@@ -9,7 +9,7 @@ import {
   Account,
 } from 'viem';
 import { mnemonicToAccount, privateKeyToAccount } from 'viem/accounts';
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { NetworkConfig, WCApproveNamespaces } from '../wallets.constants';
 import { expect } from '@playwright/test';
@@ -54,7 +54,7 @@ export class WCWallet implements WalletPage {
   private networkSettings: NetworkSettings;
   private requestManager: RequestManager;
   private accounts: Accounts;
-  private currentAccount: Account;
+  protected currentAccount: Account;
 
   constructor(public options: WalletPageOptions) {
     this.currentAccount = mnemonicToAccount(
@@ -76,10 +76,6 @@ export class WCWallet implements WalletPage {
         events: ['accountsChanged', 'chainChanged'],
       },
     };
-  }
-  page?: Page;
-  openLastTxInEthplorer?(txIndex?: number): Promise<Page> {
-    throw new Error('Method not implemented.');
   }
 
   async setup(): Promise<void> {
