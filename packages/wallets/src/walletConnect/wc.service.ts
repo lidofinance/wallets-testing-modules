@@ -454,6 +454,7 @@ export class WCWallet implements WalletPage {
         await this.changeWalletAccountByAddress(target);
         return;
       }
+
       this.accounts.setActiveAccount(account);
       this.namespaces.eip155.accounts = [
         this.accounts.getEip115Account(
@@ -462,7 +463,7 @@ export class WCWallet implements WalletPage {
         ),
       ];
 
-      const chain = SUPPORTED_CHAINS[await this.networkSettings.activeChainId];
+      const chain = SUPPORTED_CHAINS[this.networkSettings.activeChainId];
       await this.rebuildViemClients(chain);
       await this.updateAllSessionsNamespaces();
     });
@@ -470,13 +471,25 @@ export class WCWallet implements WalletPage {
 
   async changeWalletAccountByName?(accountName: string): Promise<void> {
     await test.step(`Change wallet account to ${accountName}`, async () => {
-      await this.accounts.changeWalletAccountByName(accountName);
+      console.log(`Not implemented changeWalletAccountByName`);
     });
   }
 
   async changeWalletAccountByAddress?(address: string): Promise<void> {
     await test.step(`Change wallet account to ${address}`, async () => {
-      await this.accounts.changeWalletAccountByAddress(address);
+      const account = this.accounts.getAccountByAddress(address);
+
+      this.accounts.setActiveAccount(account);
+      this.namespaces.eip155.accounts = [
+        this.accounts.getEip115Account(
+          this.networkSettings.activeChainId,
+          account.address,
+        ),
+      ];
+
+      const chain = SUPPORTED_CHAINS[this.networkSettings.activeChainId];
+      await this.rebuildViemClients(chain);
+      await this.updateAllSessionsNamespaces();
     });
   }
 
