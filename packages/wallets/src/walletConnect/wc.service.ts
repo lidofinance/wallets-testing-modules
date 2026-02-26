@@ -6,7 +6,6 @@ import {
   formatEther,
   formatUnits,
   Chain,
-  Account,
 } from 'viem';
 import { mnemonicToAccount, privateKeyToAccount } from 'viem/accounts';
 import { test } from '@playwright/test';
@@ -53,19 +52,13 @@ export class WCWallet implements WalletPage {
   // network settings
   private networkSettings: NetworkSettings;
   private requestManager: RequestManager;
-  private accounts: Accounts;
-  protected currentAccount: Account;
+  protected accounts: Accounts;
 
   constructor(public options: WalletPageOptions) {
-    this.currentAccount = mnemonicToAccount(
-      this.options.accountConfig.SECRET_PHRASE,
-    );
     this.defaultTimeoutMs = 30000;
     this.namespaces = {
       eip155: {
-        accounts: [
-          `eip155:${this.options.standConfig.chainId}:${this.currentAccount.address}`,
-        ],
+        accounts: [],
         methods: [
           'eth_sendTransaction',
           'personal_sign',
@@ -79,6 +72,8 @@ export class WCWallet implements WalletPage {
   }
 
   async setup(): Promise<void> {
+    const account = mnemonicToAccount(this.options.accountConfig.SECRET_PHRASE);
+
     await test.step('Setup wallet', async () => {
       if (this.signClient) return;
 
@@ -86,15 +81,12 @@ export class WCWallet implements WalletPage {
         projectId: this.options.walletConfig.WC_PROJECT_ID,
       });
 
-      this.networkSettings = new NetworkSettings(
-        this.signClient,
-        this.currentAccount,
-      );
+      this.networkSettings = new NetworkSettings(this.signClient, account);
       this.requestManager = new RequestManager();
-      this.accounts = new Accounts(this.namespaces?.eip155?.accounts ?? []);
+      this.accounts = new Accounts();
 
       this.walletClient = createWalletClient({
-        account: this.currentAccount,
+        account: account,
         chain: SUPPORTED_CHAINS[this.options.standConfig.chainId],
         transport: http(this.options.standConfig.rpcUrl),
       });
@@ -122,6 +114,15 @@ export class WCWallet implements WalletPage {
         else this.requestManager.queue.push(req);
       });
 
+      this.accounts.setActiveAccount(account);
+
+      this.namespaces.eip155.accounts = [
+        this.accounts.getEip115Account(
+          this.options.standConfig.chainId,
+          account.address,
+        ),
+      ];
+
       this.networkSettings.setActiveChainId(this.options.standConfig.chainId);
     });
   }
@@ -143,6 +144,14 @@ export class WCWallet implements WalletPage {
 
       const namespaces =
         this.namespaces ?? this.buildNamespacesFromProposal(params);
+      const activeAccount = this.accounts.getActiveAccount();
+
+      this.namespaces.eip155.accounts = [
+        this.accounts.getEip115Account(
+          this.options.standConfig.chainId,
+          activeAccount.address,
+        ),
+      ];
 
       await test.step(`Approve session`, async () => {
         const { acknowledged } = await this.signClient.approve({
@@ -173,6 +182,7 @@ export class WCWallet implements WalletPage {
       this.signClient = undefined;
       this.requestManager.queue = [];
       this.requestManager.waiters = [];
+      // @todo: remove active account
     });
   }
 
@@ -307,8 +317,9 @@ export class WCWallet implements WalletPage {
 
   async getTokenBalance(tokenName: string): Promise<number> {
     return test.step(`Get balance for token ${tokenName}`, async () => {
+      const activeAccount = this.accounts.getActiveAccount();
       const contractAddress = this.watchedTokensByAccount
-        .get(this.currentAccount.address.toLowerCase())
+        .get(activeAccount.address.toLowerCase())
         ?.find((t) => t.symbol === tokenName)?.address;
 
       if (contractAddress) {
@@ -325,7 +336,7 @@ export class WCWallet implements WalletPage {
               },
             ],
             functionName: 'balanceOf',
-            args: [this.currentAccount.address],
+            args: [activeAccount.address],
           });
           return Number(formatUnits(balance, 18));
         });
@@ -388,7 +399,10 @@ export class WCWallet implements WalletPage {
   }
 
   async getWalletAddress(): Promise<string> {
-    return this.currentAccount.address.toLowerCase();
+    return test.step(`Get wallet address`, async () => {
+      const activeAccount = this.accounts.getActiveAccount();
+      return activeAccount.address.toLowerCase();
+    });
   }
 
   async isWalletAddressExist(address: string): Promise<boolean> {
@@ -428,10 +442,14 @@ export class WCWallet implements WalletPage {
         await this.changeWalletAccountByAddress(target);
         return;
       }
-      this.namespaces.eip155.accounts.push(
-        `eip155:${this.networkSettings.activeChainId}:${target}`,
-      );
-      this.currentAccount = account;
+      this.accounts.setActiveAccount(account);
+      this.namespaces.eip155.accounts = [
+        this.accounts.getEip115Account(
+          this.networkSettings.activeChainId,
+          target,
+        ),
+      ];
+
       const chain = SUPPORTED_CHAINS[await this.networkSettings.activeChainId];
       await this.rebuildViemClients(chain);
       await this.updateAllSessionsNamespaces();
@@ -455,7 +473,7 @@ export class WCWallet implements WalletPage {
       const net = this.networkSettings.networksByChainId.get(chain.id);
       if (net?.rpcUrl) {
         this.walletClient = createWalletClient({
-          account: this.currentAccount,
+          account: this.accounts.getActiveAccount(),
           chain,
           transport: http(net.rpcUrl),
         });

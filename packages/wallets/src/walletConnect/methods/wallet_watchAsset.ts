@@ -5,7 +5,7 @@ export async function wallet_watchAsset(this: WCWallet, req: WCSessionRequest) {
   console.log('Try to add token to wallet');
   const params = req.params.request.params;
 
-  const account = this.currentAccount.address.toLowerCase();
+  const account = this.accounts.getActiveAccount().address.toLowerCase();
 
   if (params?.type === 'ERC20' && params?.options?.address) {
     const list = this.watchedTokensByAccount.get(account) ?? [];

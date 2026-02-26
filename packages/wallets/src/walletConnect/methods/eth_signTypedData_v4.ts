@@ -11,7 +11,7 @@ export async function eth_signTypedData_v4(
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const signature = await this.walletClient.signTypedData({
-    account: this.currentAccount,
+    account: this.accounts.getActiveAccount(),
     domain: {
       ...typedData.domain,
       chainId: Number(typedData.domain.chainId),
