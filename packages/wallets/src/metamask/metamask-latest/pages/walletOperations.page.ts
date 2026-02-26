@@ -64,6 +64,8 @@ export class WalletOperationPage {
           await this.page.locator('button:has-text("Remove")').click();
           await this.page.waitForTimeout(2000);
         }
+        if (await this.page.getByText('Account removed').isVisible())
+          await this.page.locator('button:has-text("Ok")').click();
         return;
       }
 
