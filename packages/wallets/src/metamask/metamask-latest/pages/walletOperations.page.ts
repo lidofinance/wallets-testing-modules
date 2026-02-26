@@ -60,7 +60,11 @@ export class WalletOperationPage {
           timeout: 1000,
         });
       } catch (er) {
-        if (!(await this.cancelAllTxsButton.isVisible())) return;
+        while (await this.page.getByText('Remove account').isVisible()) {
+          await this.page.locator('button:has-text("Remove")').click();
+          await this.page.waitForTimeout(2000);
+        }
+        return;
       }
 
       if (await this.cancelAllTxsButton.isVisible()) {
