@@ -1,3 +1,4 @@
+import { ConsoleLogger } from '@nestjs/common';
 import SignClient from '@walletconnect/sign-client';
 import {
   createPublicClient,
@@ -37,6 +38,8 @@ const handlers: Record<string, (req: WCSessionRequest) => Promise<void>> = {
   wallet_watchAsset: wallet_watchAsset,
   wallet_getCapabilities: wallet_getCapabilities,
 };
+
+const logger = new ConsoleLogger('WCWallet');
 
 export class WCWallet implements WalletPage {
   protected signClient?: SignClient;
@@ -111,7 +114,7 @@ export class WCWallet implements WalletPage {
           return;
         }
 
-        console.log(
+        logger.log(
           `WC: session_request received: ${req.params.request.method}`,
         );
         const waiter = this.requestManager.waiters.shift();
@@ -174,7 +177,7 @@ export class WCWallet implements WalletPage {
 
       const sessions = this.signClient.session.getAll();
       for (const sess of sessions) {
-        console.log('WC: disconnecting session', sess.topic);
+        logger.log('WC: disconnecting session', sess.topic);
         await this.signClient.disconnect({
           topic: sess.topic,
           reason: {
@@ -471,7 +474,7 @@ export class WCWallet implements WalletPage {
 
   async changeWalletAccountByName?(accountName: string): Promise<void> {
     await test.step(`Change wallet account to ${accountName}`, async () => {
-      console.log(`Not implemented changeWalletAccountByName`);
+      logger.warn(`Not implemented changeWalletAccountByName`);
     });
   }
 

@@ -1,3 +1,4 @@
+import { ConsoleLogger } from '@nestjs/common';
 import { test } from '@playwright/test';
 
 export type WCSessionRequest = {
@@ -14,6 +15,8 @@ export type WCSessionRequest = {
   processed: boolean; // custom field to track if request was handled
 };
 
+const logger = new ConsoleLogger('WCWallet.RequestManager');
+
 export class RequestManager {
   public queue: WCSessionRequest[] = [];
   public pendings: WCSessionRequest[] = [];
@@ -23,7 +26,7 @@ export class RequestManager {
     return test.step('Wait for next WC transaction request', async () => {
       const timeoutMs = 30000;
       if (this.pendings.length > 0) {
-        console.warn(
+        logger.warn(
           'Some requests are still pending and have not been processed yet',
         );
       }
@@ -76,7 +79,7 @@ export class RequestManager {
   ): Promise<WCSessionRequest | undefined> {
     // @todo: think about it, i think its bullshit
     if (req.processed) {
-      console.log('Request already processed');
+      logger.log('Request already processed');
       return undefined;
     }
     return req;

@@ -25,7 +25,6 @@ export async function eth_signTypedData_v4(
       deadline: BigInt(typedData.message.deadline),
     },
   });
-  console.log('Signature was created.');
 
   await this.signClient.respond({
     topic: req.topic,

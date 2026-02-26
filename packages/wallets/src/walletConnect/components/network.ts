@@ -1,7 +1,10 @@
+import { ConsoleLogger } from '@nestjs/common';
 import { Account, Chain } from 'viem';
 import { NetworkConfig } from '../../wallets.constants';
 import { SUPPORTED_CHAINS, buildChainFromNetwork } from '../constants';
 import { SignClient } from '@walletconnect/sign-client/dist/types/client';
+
+const logger = new ConsoleLogger('WCWallet.NetworkSettings');
 
 export class NetworkSettings {
   public activeChainId: number;
@@ -82,7 +85,7 @@ export class NetworkSettings {
     }
 
     if (chainId === this.activeChainId) {
-      console.log(`Network "${networkName}" is already active`);
+      logger.log(`Network "${networkName}" is already active`);
       return SUPPORTED_CHAINS[chainId] ?? buildChainFromNetwork(networkConfig);
     }
 
