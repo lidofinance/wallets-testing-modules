@@ -96,12 +96,10 @@ export class BrowserService {
     const account = this.ethereumNodeService.getAccount();
     await this.setup();
 
-    if (this.options.walletConfig.WALLET_TYPE !== WalletConnectTypes.WC_SDK) {
-      if (!(await this.walletPage.isWalletAddressExist(account.address))) {
-        await this.walletPage.importKey(account.secretKey);
-      } else {
-        await this.walletPage.changeWalletAccountByAddress(account.address);
-      }
+    if (!(await this.walletPage.isWalletAddressExist(account.address))) {
+      await this.walletPage.importKey(account.secretKey);
+    } else {
+      await this.walletPage.changeWalletAccountByAddress(account.address);
     }
 
     await this.walletPage.setupNetwork({
@@ -114,9 +112,7 @@ export class BrowserService {
       this.options.nodeConfig.rpcUrlToMock,
       this.browserContextService.browserContext,
     );
-    if (this.options.walletConfig.WALLET_TYPE !== WalletConnectTypes.WC_SDK) {
-      await this.browserContextService.closePages();
-    }
+    await this.browserContextService.closePages();
   }
 
   async setup() {
