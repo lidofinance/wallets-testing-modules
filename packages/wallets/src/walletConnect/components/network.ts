@@ -1,4 +1,4 @@
-import { Chain, HDAccount } from 'viem';
+import { Account, Chain } from 'viem';
 import { NetworkConfig } from '../../wallets.constants';
 import { SUPPORTED_CHAINS, buildChainFromNetwork } from '../constants';
 import { SignClient } from '@walletconnect/sign-client/dist/types/client';
@@ -8,7 +8,7 @@ export class NetworkSettings {
   public networksByChainId = new Map<number, NetworkConfig>();
   public chainIdByName = new Map<string, number>();
 
-  constructor(private client: SignClient, private hdAccount: HDAccount) {}
+  constructor(private client: SignClient, private account: Account) {}
 
   private normalizeChainName(name: string) {
     return name.trim().toLowerCase();
@@ -41,7 +41,7 @@ export class NetworkSettings {
     const ns = session.namespaces?.eip155;
     if (!ns) throw new Error('Session has no eip155 namespace');
 
-    const addr = this.hdAccount.address;
+    const addr = this.account.address;
     const newAccount = `eip155:${networkConfig.chainId}:${addr}`;
 
     const newNamespaces = {

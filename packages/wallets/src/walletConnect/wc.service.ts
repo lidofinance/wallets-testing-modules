@@ -2,19 +2,20 @@ import SignClient from '@walletconnect/sign-client';
 import {
   createPublicClient,
   createWalletClient,
-  HDAccount,
   http,
   formatEther,
   formatUnits,
   Chain,
+  Account,
 } from 'viem';
-import { mnemonicToAccount } from 'viem/accounts';
-import { test } from '@playwright/test';
+import { mnemonicToAccount, privateKeyToAccount } from 'viem/accounts';
+import { Page, test } from '@playwright/test';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { NetworkConfig, WCApproveNamespaces } from '../wallets.constants';
 import { expect } from '@playwright/test';
 import { SUPPORTED_CHAINS } from './constants';
 import {
+  Accounts,
   NetworkSettings,
   RequestManager,
   WCSessionRequest,
@@ -44,7 +45,6 @@ export class WCWallet implements WalletPage {
   // @ts-ignore
   protected publicClient?: ReturnType<typeof createPublicClient>;
   protected walletClient?: ReturnType<typeof createWalletClient>;
-  protected hdAccount: HDAccount;
   protected defaultTimeoutMs: number;
   protected namespaces?: WCApproveNamespaces;
 
@@ -53,16 +53,18 @@ export class WCWallet implements WalletPage {
   // network settings
   private networkSettings: NetworkSettings;
   private requestManager: RequestManager;
+  private accounts: Accounts;
+  private currentAccount: Account;
 
   constructor(public options: WalletPageOptions) {
-    this.hdAccount = mnemonicToAccount(
+    this.currentAccount = mnemonicToAccount(
       this.options.accountConfig.SECRET_PHRASE,
     );
     this.defaultTimeoutMs = 30000;
     this.namespaces = {
       eip155: {
         accounts: [
-          `eip155:${this.options.standConfig.chainId}:${this.hdAccount.address}`,
+          `eip155:${this.options.standConfig.chainId}:${this.currentAccount.address}`,
         ],
         methods: [
           'eth_sendTransaction',
@@ -75,6 +77,10 @@ export class WCWallet implements WalletPage {
       },
     };
   }
+  page?: Page;
+  openLastTxInEthplorer?(txIndex?: number): Promise<Page> {
+    throw new Error('Method not implemented.');
+  }
 
   async setup(): Promise<void> {
     await test.step('Setup wallet', async () => {
@@ -86,12 +92,13 @@ export class WCWallet implements WalletPage {
 
       this.networkSettings = new NetworkSettings(
         this.signClient,
-        this.hdAccount,
+        this.currentAccount,
       );
       this.requestManager = new RequestManager();
+      this.accounts = new Accounts(this.namespaces?.eip155?.accounts ?? []);
 
       this.walletClient = createWalletClient({
-        account: this.hdAccount,
+        account: this.currentAccount,
         chain: SUPPORTED_CHAINS[this.options.standConfig.chainId],
         transport: http(this.options.standConfig.rpcUrl),
       });
@@ -305,7 +312,7 @@ export class WCWallet implements WalletPage {
   async getTokenBalance(tokenName: string): Promise<number> {
     return test.step(`Get balance for token ${tokenName}`, async () => {
       const contractAddress = this.watchedTokensByAccount
-        .get(this.hdAccount.address.toLowerCase())
+        .get(this.currentAccount.address.toLowerCase())
         ?.find((t) => t.symbol === tokenName)?.address;
 
       if (contractAddress) {
@@ -322,18 +329,13 @@ export class WCWallet implements WalletPage {
               },
             ],
             functionName: 'balanceOf',
-            args: [this.hdAccount.address],
+            args: [this.currentAccount.address],
           });
           return Number(formatUnits(balance, 18));
         });
       }
       throw new Error(`Token ${tokenName} not found in watched tokens`);
     });
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  importKey(secretKey: string, withChecks?: boolean): Promise<void> {
-    throw new Error('Method not implemented.');
   }
 
   async assertTxAmount(expectedAmount: string): Promise<void> {
@@ -390,7 +392,66 @@ export class WCWallet implements WalletPage {
   }
 
   async getWalletAddress(): Promise<string> {
-    return this.hdAccount.address.toLowerCase();
+    return this.currentAccount.address.toLowerCase();
+  }
+
+  async isWalletAddressExist(address: string): Promise<boolean> {
+    return test.step(`Check if wallet address ${address} exist`, () => {
+      return this.accounts.isWalletAddressExist(address);
+    });
+  }
+
+  private async updateAllSessionsNamespaces(): Promise<void> {
+    if (!this.signClient) throw new Error('WC client not initialized');
+
+    const sessions = this.signClient.session.getAll();
+    for (const sess of sessions) {
+      await this.signClient.update({
+        topic: sess.topic,
+        namespaces: this.namespaces,
+      });
+    }
+  }
+
+  async importKey(secretKey: string, withChecks?: boolean): Promise<void> {
+    const key = secretKey.startsWith('0x') ? secretKey : `0x${secretKey}`;
+    const account = privateKeyToAccount(key as `0x${string}`);
+
+    await test.step(`Import Key for ${account.address}`, async () => {
+      const target = account.address.toLowerCase();
+
+      if (withChecks) {
+        const currentWalletAddress = await this.getWalletAddress();
+        const current = currentWalletAddress.toLowerCase();
+        if (current === target) return;
+      }
+
+      const isExist = await this.isWalletAddressExist(target);
+
+      if (isExist) {
+        await this.changeWalletAccountByAddress(target);
+        return;
+      }
+      this.namespaces.eip155.accounts.push(
+        `eip155:${this.networkSettings.activeChainId}:${target}`,
+      );
+      this.currentAccount = account;
+      const chain = SUPPORTED_CHAINS[await this.networkSettings.activeChainId];
+      await this.rebuildViemClients(chain);
+      await this.updateAllSessionsNamespaces();
+    });
+  }
+
+  async changeWalletAccountByName?(accountName: string): Promise<void> {
+    await test.step(`Change wallet account to ${accountName}`, async () => {
+      await this.accounts.changeWalletAccountByName(accountName);
+    });
+  }
+
+  async changeWalletAccountByAddress?(address: string): Promise<void> {
+    await test.step(`Change wallet account to ${address}`, async () => {
+      await this.accounts.changeWalletAccountByAddress(address);
+    });
   }
 
   private async rebuildViemClients(chain: Chain) {
@@ -398,7 +459,7 @@ export class WCWallet implements WalletPage {
       const net = this.networkSettings.networksByChainId.get(chain.id);
       if (net?.rpcUrl) {
         this.walletClient = createWalletClient({
-          account: this.hdAccount,
+          account: this.currentAccount,
           chain,
           transport: http(net.rpcUrl),
         });

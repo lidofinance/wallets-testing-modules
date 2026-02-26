@@ -26,7 +26,7 @@ export const WALLET_PAGES = {
   bitget: BitgetPage,
   safeWc: SafeWcPage,
   safeIframe: SafeIframePage,
-  wc: WCWallet,
+  walletconnect: WCWallet,
 };
 
 export const DEFAULT_BROWSER_CONTEXT_DIR_NAME = '.browser_context';
