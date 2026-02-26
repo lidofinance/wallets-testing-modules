@@ -8,10 +8,9 @@ import {
   Chain,
 } from 'viem';
 import { mnemonicToAccount, privateKeyToAccount } from 'viem/accounts';
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { WalletPage, WalletPageOptions } from '../wallet.page';
 import { NetworkConfig, WCApproveNamespaces } from '../wallets.constants';
-import { expect } from '@playwright/test';
 import { SUPPORTED_CHAINS } from './constants';
 import {
   Accounts,
@@ -23,8 +22,8 @@ import {
   eth_sendTransaction,
   eth_signTypedData_v4,
   wallet_watchAsset,
+  wallet_getCapabilities,
 } from './methods';
-import { wallet_getCapabilities } from './methods/wallet_getCapabilities';
 
 type WatchedToken = {
   address: `0x${string}`;
@@ -36,6 +35,7 @@ const handlers: Record<string, (req: WCSessionRequest) => Promise<void>> = {
   eth_sendTransaction: eth_sendTransaction,
   eth_signTypedData_v4: eth_signTypedData_v4,
   wallet_watchAsset: wallet_watchAsset,
+  wallet_getCapabilities: wallet_getCapabilities,
 };
 
 export class WCWallet implements WalletPage {
@@ -102,7 +102,12 @@ export class WCWallet implements WalletPage {
         const method = req.params.request.method;
 
         if (method === 'wallet_getCapabilities') {
-          await wallet_getCapabilities.call(this, req);
+          const handler = handlers[method];
+          if (!handler) {
+            throw new Error(`WC: unsupported method: ${method}`);
+          }
+
+          await handler.call(this, req);
           return;
         }
 
@@ -219,6 +224,13 @@ export class WCWallet implements WalletPage {
           `WC: unsupported method for confirm add token to wallet: ${method}`,
         );
       }
+
+      const handler = handlers[method];
+      if (!handler) {
+        throw new Error(`WC: unsupported method: ${method}`);
+      }
+
+      await handler.call(this, request);
 
       this.requestManager.resolveRequest(request);
     });
