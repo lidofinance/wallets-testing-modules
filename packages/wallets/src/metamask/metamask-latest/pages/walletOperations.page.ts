@@ -60,6 +60,7 @@ export class WalletOperationPage {
           timeout: 1000,
         });
       } catch (er) {
+        await this.page.locator('button:has-text("Cancel")').isVisible();
         return;
       }
 

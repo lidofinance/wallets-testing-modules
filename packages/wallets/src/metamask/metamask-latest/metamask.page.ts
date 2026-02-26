@@ -55,6 +55,13 @@ export class MetamaskPage implements WalletPage {
     this.settingsMenu = new SettingsElement(this.page);
     this.popoverElements = new PopoverElements(this.page);
     this.accountMenu = new AccountMenu(this.page);
+
+    this.page
+      .context()
+      .pages()
+      .forEach((page) => {
+        if (page != this.page) page.close();
+      });
   }
 
   async navigate() {
