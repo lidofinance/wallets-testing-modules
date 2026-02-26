@@ -53,13 +53,6 @@ export class WalletOperationPage {
 
   async cancelAllTxInQueue() {
     await test.step('Cancel all tx in queue', async () => {
-      this.page
-        .context()
-        .pages()
-        .forEach((page) => {
-          if (page != this.page) page.close();
-        });
-
       //Is there is any tx in queue.
       try {
         await this.cancelButton.waitFor({
@@ -67,10 +60,7 @@ export class WalletOperationPage {
           timeout: 1000,
         });
       } catch (er) {
-        console.log(
-          await this.page.locator('button:has-text("Cancel")').innerHTML(),
-        );
-        return;
+        if (!(await this.cancelAllTxsButton.isVisible())) return;
       }
 
       if (await this.cancelAllTxsButton.isVisible()) {
