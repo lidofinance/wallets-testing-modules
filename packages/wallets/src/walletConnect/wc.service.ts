@@ -392,8 +392,8 @@ export class WCWallet implements WalletPage {
   }
 
   async setupNetwork(networkConfig: NetworkConfig): Promise<void> {
-    await test.step(`Setup network ${networkConfig.chainName} (${networkConfig.chainId})`, async () => {
-      await this.networkSettings.setupNetwork(networkConfig);
+    await test.step(`Setup network ${networkConfig.chainName} (${networkConfig.chainId})`, () => {
+      this.networkSettings.setupNetwork(networkConfig);
     });
   }
 
@@ -495,7 +495,9 @@ export class WCWallet implements WalletPage {
 
   private async rebuildViemClients(chain: Chain) {
     test.step(`Rebuild Viem clients for chain ${chain.id}`, async () => {
-      const net = this.networkSettings.networksByChainId.get(chain.id);
+      const net =
+        this.networkSettings.networksByChainId.get(chain.id) ||
+        this.options.standConfig;
       if (net?.rpcUrl) {
         this.walletClient = createWalletClient({
           account: this.accounts.getActiveAccount(),

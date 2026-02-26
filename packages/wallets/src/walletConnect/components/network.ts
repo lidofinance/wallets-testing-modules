@@ -26,7 +26,7 @@ export class NetworkSettings {
     this.activeChainId = chainId;
   }
 
-  async setupNetwork(networkConfig: NetworkConfig): Promise<void> {
+  setupNetwork(networkConfig: NetworkConfig): void {
     this.networksByChainId.set(networkConfig.chainId, networkConfig);
     this.chainIdByName.set(
       this.normalizeChainName(networkConfig.chainName),
