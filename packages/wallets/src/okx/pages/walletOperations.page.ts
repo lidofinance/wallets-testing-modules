@@ -13,7 +13,9 @@ export class WalletOperations {
 
   constructor(public page: Page) {
     this.connectButton = this.page.locator('button:has-text("Connect")');
-    this.confirmTxButton = this.page.locator('button:has-text("Confirm")');
+    this.confirmTxButton = this.page
+      .locator('button:has-text("Confirm")')
+      .or(this.page.locator('button:has-text("Continue on this network")')); // OKX displays this button if it doubts the reliability
     this.cancelTxButton = this.page.locator('button:has-text("Cancel")');
     this.rejectTxButton = this.page.locator('button:has-text("Reject")');
     this.txYouPayBlock = this.page
