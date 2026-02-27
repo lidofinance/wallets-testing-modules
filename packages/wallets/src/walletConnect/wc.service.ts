@@ -68,6 +68,7 @@ export class WCWallet implements WalletPage {
           'eth_signTypedData_v4',
           'wallet_watchAsset',
           'wallet_getCapabilities',
+          'wallet_switchEthereumChain',
         ],
         events: ['accountsChanged', 'chainChanged'],
       },

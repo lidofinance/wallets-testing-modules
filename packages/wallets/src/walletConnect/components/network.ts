@@ -11,15 +11,15 @@ export class NetworkSettings {
   public networksByChainId = new Map<number, NetworkConfig>();
   public chainIdByName = new Map<string, number>();
 
-  constructor(private client: SignClient, private account: Account) {}
+  constructor(private signClient: SignClient, private account: Account) {}
 
   private normalizeChainName(name: string) {
     return name.trim().toLowerCase();
   }
 
   private getActiveSession() {
-    if (!this.client) throw new Error('WC client not initialized');
-    const sessions = this.client.session.getAll();
+    if (!this.signClient) throw new Error('WC client not initialized');
+    const sessions = this.signClient.session.getAll();
     const session = sessions[0];
     if (!session) throw new Error('No active WC session');
     return session;
@@ -38,7 +38,7 @@ export class NetworkSettings {
   }
 
   async addNetwork(networkConfig: NetworkConfig): Promise<void> {
-    if (!this.client) throw new Error('WC client not initialized');
+    if (!this.signClient) throw new Error('WC client not initialized');
 
     const session = this.getActiveSession();
     const ns = session.namespaces?.eip155;
@@ -56,7 +56,7 @@ export class NetworkSettings {
       },
     };
 
-    await this.client.update({
+    await this.signClient.update({
       topic: session.topic,
       namespaces: newNamespaces,
     });
@@ -69,11 +69,10 @@ export class NetworkSettings {
   }
 
   async changeNetwork(networkName: string): Promise<Chain> {
-    if (!this.client) throw new Error('WC client not initialized');
+    if (!this.signClient) throw new Error('WC client not initialized');
 
     const normalized = this.normalizeChainName(networkName);
     const chainId = this.chainIdByName.get(normalized);
-    const networkConfig = this.networksByChainId.get(chainId);
 
     if (!chainId) {
       const known = Array.from(this.chainIdByName.keys()).sort();
@@ -84,13 +83,15 @@ export class NetworkSettings {
       );
     }
 
+    const networkConfig = this.networksByChainId.get(chainId);
+
     if (chainId === this.activeChainId) {
       logger.log(`Network "${networkName}" is already active`);
       return SUPPORTED_CHAINS[chainId] ?? buildChainFromNetwork(networkConfig);
     }
 
     const session = this.getActiveSession();
-    await this.client.emit({
+    await this.signClient.emit({
       topic: session.topic,
       chainId: `eip155:${chainId}`,
       event: { name: 'chainChanged', data: `0x${chainId.toString(16)}` },
