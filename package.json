@@ -41,9 +41,9 @@
     "branches": [
       "main",
       {
-        "name": "develop",
-        "channel": "alpha",
-        "prerelease": "alpha"
+        "name": "fix-browser-context-launch",
+        "channel": "alpha-fix-br-ctx",
+        "prerelease": "alpha-fix-br-ctx"
       }
     ]
   },

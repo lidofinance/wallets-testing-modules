@@ -87,14 +87,23 @@ export class BrowserContextService {
           browserContextPath,
           {
             ...this.options.browserOptions,
-            timeout: 5000,
+            timeout: 20000,
           },
         );
         break;
       } catch (er) {
         attemptsLeft--;
-        if (attemptsLeft == 0)
-          throw new Error(`Failed to launch persistent context: ${er}`);
+        if (attemptsLeft == 0) {
+          this.logger.error('Failed to launch persistent context');
+          await fs.rm(browserContextPath, { recursive: true, force: true });
+          this.browserContext = await chromium.launchPersistentContext(
+            browserContextPath,
+            {
+              ...this.options.browserOptions,
+              timeout: 20000,
+            },
+          );
+        }
       }
     }
 
