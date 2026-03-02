@@ -26,6 +26,7 @@ export class NetworkSettings {
   }
 
   setActiveChainId(chainId: number) {
+    logger.log(`Active chain ID set to ${chainId}`);
     this.activeChainId = chainId;
   }
 
@@ -66,6 +67,7 @@ export class NetworkSettings {
       this.normalizeChainName(networkConfig.chainName),
       networkConfig.chainId,
     );
+    logger.log(`Network "${networkConfig.chainName}" added to WC session`);
   }
 
   async changeNetwork(networkName: string): Promise<Chain> {
@@ -99,7 +101,7 @@ export class NetworkSettings {
     const chain =
       SUPPORTED_CHAINS[chainId] ?? buildChainFromNetwork(networkConfig);
     this.setActiveChainId(chain.id);
-
+    logger.log(`Network changed to "${networkName}"`);
     return chain;
   }
 }

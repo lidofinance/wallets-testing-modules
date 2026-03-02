@@ -24,6 +24,7 @@ import {
   eth_signTypedData_v4,
   wallet_watchAsset,
   wallet_getCapabilities,
+  personal_sign,
 } from './methods';
 
 type WatchedToken = {
@@ -37,6 +38,7 @@ const handlers: Record<string, (req: WCSessionRequest) => Promise<void>> = {
   eth_signTypedData_v4: eth_signTypedData_v4,
   wallet_watchAsset: wallet_watchAsset,
   wallet_getCapabilities: wallet_getCapabilities,
+  personal_sign: personal_sign,
 };
 
 const logger = new ConsoleLogger('WCWallet');
@@ -513,7 +515,11 @@ export class WCWallet implements WalletPage {
           chain,
           transport: http(net.rpcUrl),
         });
+        logger.log(`Viem clients rebuilt for chain ${chain.id} `);
       } else {
+        logger.error(
+          `RPC URL not found for chain ${chain.id}, cannot rebuild Viem clients`,
+        );
         this.walletClient = null;
         this.publicClient = null;
       }
