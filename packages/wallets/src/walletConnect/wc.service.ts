@@ -209,13 +209,7 @@ export class WCWallet implements WalletPage {
       });
 
       await test.step('Resetting local state', async () => {
-        // reset local state
-        this.requestManager.queue = [];
-        this.requestManager.waiters = [];
-        this.requestManager.pendings = []; // если есть
-        this.watchedTokensByAccount.clear();
-        this.namespaces.eip155.accounts = [];
-
+        this.requestManager.clear();
         this.signClient = undefined;
       });
     });

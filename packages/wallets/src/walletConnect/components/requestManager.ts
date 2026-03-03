@@ -89,4 +89,10 @@ export class RequestManager {
     req.processed = true;
     this.pendings = this.pendings.filter((r) => r.id !== req.id);
   }
+
+  clear() {
+    this.queue = [];
+    this.pendings = [];
+    this.waiters = [];
+  }
 }
