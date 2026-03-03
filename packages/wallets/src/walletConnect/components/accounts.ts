@@ -33,8 +33,8 @@ export class Accounts {
   }
 
   storeAccount(account: Account) {
-    if (!this.accountsStore.has(account.address)) {
-      this.accountsStore.set(account.address, account);
+    if (!this.accountsStore.has(account.address.toLowerCase())) {
+      this.accountsStore.set(account.address.toLowerCase(), account);
     }
   }
 
