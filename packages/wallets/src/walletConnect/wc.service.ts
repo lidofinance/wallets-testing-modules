@@ -78,6 +78,26 @@ export class WCWallet implements WalletPage {
     };
   }
 
+  private async onSessionRequest(event: any) {
+    const req = event as unknown as WCSessionRequest;
+    const method = req.params.request.method;
+
+    if (method === 'wallet_getCapabilities') {
+      const handler = handlers[method];
+      if (!handler) {
+        throw new Error(`WC: unsupported method: ${method}`);
+      }
+
+      await handler.call(this, req);
+      return;
+    }
+
+    logger.log(`WC: session_request received: ${req.params.request.method}`);
+    const waiter = this.requestManager.waiters.shift();
+    if (waiter) waiter(req);
+    else this.requestManager.queue.push(req);
+  }
+
   async setup(): Promise<void> {
     const account = mnemonicToAccount(this.options.accountConfig.SECRET_PHRASE);
 
@@ -104,27 +124,7 @@ export class WCWallet implements WalletPage {
       });
 
       // Collect incoming requests into an async queue
-      this.signClient.on('session_request', async (event) => {
-        const req = event as unknown as WCSessionRequest;
-        const method = req.params.request.method;
-
-        if (method === 'wallet_getCapabilities') {
-          const handler = handlers[method];
-          if (!handler) {
-            throw new Error(`WC: unsupported method: ${method}`);
-          }
-
-          await handler.call(this, req);
-          return;
-        }
-
-        logger.log(
-          `WC: session_request received: ${req.params.request.method}`,
-        );
-        const waiter = this.requestManager.waiters.shift();
-        if (waiter) waiter(req);
-        else this.requestManager.queue.push(req);
-      });
+      this.signClient.on('session_request', this.onSessionRequest);
 
       this.accounts.setActiveAccount(account);
 
@@ -179,22 +179,45 @@ export class WCWallet implements WalletPage {
     await test.step('Disconnect wallet', async () => {
       if (!this.signClient) throw new Error('WC client not initialized');
 
-      const sessions = this.signClient.session.getAll();
-      for (const sess of sessions) {
-        logger.log('WC: disconnecting session', sess.topic);
-        await this.signClient.disconnect({
-          topic: sess.topic,
-          reason: {
-            code: 6000,
-            message: 'Session disconnected by test wallet',
-          },
-        });
-      }
-      await this.signClient.core.relayer.transportClose();
-      this.signClient = undefined;
-      this.requestManager.queue = [];
-      this.requestManager.waiters = [];
-      // @todo: remove active account
+      await test.step('Disconnecting all sessions', async () => {
+        const sessions = this.signClient.session.getAll();
+        for (const sess of sessions) {
+          logger.log('WC: disconnecting session', sess.topic);
+          await this.signClient.disconnect({
+            topic: sess.topic,
+            reason: {
+              code: 6000,
+              message: 'Session disconnected by test wallet',
+            },
+          });
+          this.signClient.off('session_request', this.onSessionRequest);
+        }
+      });
+
+      await test.step('Disconnecting all pairings', async () => {
+        const pairings = this.signClient.core.pairing.getPairings() ?? [];
+        for (const pairing of pairings) {
+          logger.log('WC: disconnecting pairing', pairing.topic);
+          await this.signClient.core.pairing.disconnect?.({
+            topic: pairing.topic,
+          });
+        }
+      });
+
+      await test.step('Closing relayer transport', async () => {
+        await this.signClient.core.relayer.transportClose();
+      });
+
+      await test.step('Resetting local state', async () => {
+        // reset local state
+        this.requestManager.queue = [];
+        this.requestManager.waiters = [];
+        this.requestManager.pendings = []; // если есть
+        this.watchedTokensByAccount.clear();
+        this.namespaces.eip155.accounts = [];
+
+        this.signClient = undefined;
+      });
     });
   }
 
@@ -281,18 +304,16 @@ export class WCWallet implements WalletPage {
     if (!this.signClient) throw new Error('WC client not initialized');
 
     return new Promise<any>((resolve, reject) => {
-      const t = setTimeout(
-        () =>
-          reject(
-            new Error(`WC: session_proposal timeout after ${timeoutMs}ms`),
-          ),
-        timeoutMs,
-      );
-
-      this.signClient.once('session_proposal', (proposal) => {
+      const handler = (proposal: any) => {
         clearTimeout(t);
         resolve(proposal);
-      });
+      };
+      const t = setTimeout(() => {
+        this.signClient?.off('session_proposal', handler);
+        reject(new Error(`WC: session_proposal timeout after ${timeoutMs}ms`));
+      }, timeoutMs);
+
+      this.signClient.once('session_proposal', handler);
     });
   }
 
