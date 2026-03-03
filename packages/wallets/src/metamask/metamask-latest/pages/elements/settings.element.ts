@@ -9,7 +9,7 @@ export class SettingsElement {
 
   constructor(public page: Page) {
     this.settingsMenu = this.page.getByTestId('account-options-menu-button');
-    this.menuTooltip = this.page.getByRole('tooltip');
+    this.menuTooltip = this.page.getByRole('dialog');
     this.menuSettingButton = this.menuTooltip.getByText('Settings');
     this.accountDetailsButton = this.menuTooltip.getByTestId(
       'account-list-menu-details',
