@@ -2,6 +2,7 @@ export type WCApproveNamespaces = Record<
   string,
   {
     accounts: string[];
+    chains: string[];
     methods: string[];
     events: string[];
   }

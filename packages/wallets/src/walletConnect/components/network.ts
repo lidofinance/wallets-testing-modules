@@ -52,15 +52,19 @@ export class NetworkSettings {
       ...session.namespaces,
       eip155: {
         accounts: Array.from(new Set([...(ns.accounts ?? []), newAccount])),
+        chains: Array.from(
+          new Set([...(ns.chains ?? []), `eip155:${networkConfig.chainId}`]),
+        ),
         methods: ns.methods ?? [],
         events: ns.events ?? [],
       },
     };
 
-    await this.signClient.update({
+    const { acknowledged } = await this.signClient.update({
       topic: session.topic,
       namespaces: newNamespaces,
     });
+    await acknowledged();
 
     this.networksByChainId.set(networkConfig.chainId, networkConfig);
     this.chainIdByName.set(

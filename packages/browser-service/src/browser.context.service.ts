@@ -85,18 +85,26 @@ export class BrowserContextService {
     let attemptsLeft = 3;
     while (attemptsLeft > 0) {
       try {
-        this.browserContext = await chromium.launchPersistentContext(
-          browserContextPath,
-          {
-            ...this.options.browserOptions,
-            timeout: 5000,
-          },
-        );
-        break;
+        if (this.walletExtensionStartPath) {
+          this.browserContext = await chromium.launchPersistentContext(
+            browserContextPath,
+            {
+              ...this.options.browserOptions,
+              timeout: 5000,
+            },
+          );
+          break;
+        } else {
+          const browser = await chromium.launch(this.options.browserOptions);
+          this.browserContext = await browser.newContext();
+          break;
+        }
       } catch (er) {
         attemptsLeft--;
         if (attemptsLeft == 0)
-          throw new Error(`Failed to launch persistent context: ${er}`);
+          throw new Error(
+            `Failed to launch browser with persistent context or new context: ${er}`,
+          );
       }
     }
 

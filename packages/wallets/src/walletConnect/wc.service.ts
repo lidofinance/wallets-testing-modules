@@ -64,6 +64,7 @@ export class WCWallet implements WalletPage {
     this.namespaces = {
       eip155: {
         accounts: [],
+        chains: ['eip155:1', 'eip155:560048'],
         methods: [
           'eth_sendTransaction',
           'personal_sign',
