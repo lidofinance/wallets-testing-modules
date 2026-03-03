@@ -308,13 +308,6 @@ export class WCWallet implements WalletPage {
     const methods: string[] = eip155.methods ?? [];
     const events: string[] = eip155.events ?? [];
 
-    // If dApp didn't specify chains (rare), you must provide at least one.
-    if (!chains.length) {
-      throw new Error(
-        `WC: proposal has no chains in requiredNamespaces.eip155`,
-      );
-    }
-
     const accounts = (this.namespaces?.eip155?.accounts ?? []).length
       ? this.namespaces.eip155.accounts
       : [];
@@ -328,6 +321,7 @@ export class WCWallet implements WalletPage {
     return {
       eip155: {
         accounts,
+        chains,
         methods,
         events,
       },
