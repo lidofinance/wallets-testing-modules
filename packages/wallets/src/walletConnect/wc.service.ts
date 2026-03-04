@@ -124,7 +124,7 @@ export class WCWallet implements WalletPage {
       });
 
       // Collect incoming requests into an async queue
-      this.signClient.on('session_request', this.onSessionRequest);
+      this.signClient.on('session_request', this.onSessionRequest.bind(this));
 
       this.accounts.setActiveAccount(account);
 
@@ -190,7 +190,10 @@ export class WCWallet implements WalletPage {
               message: 'Session disconnected by test wallet',
             },
           });
-          this.signClient.off('session_request', this.onSessionRequest);
+          this.signClient.off(
+            'session_request',
+            this.onSessionRequest.bind(this),
+          );
         }
       });
 
