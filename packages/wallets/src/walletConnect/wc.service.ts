@@ -283,20 +283,6 @@ export class WCWallet implements WalletPage {
     });
   }
 
-  async cancelAllTxRequests() {
-    // @todo: think about it later
-    // while (
-    //   this.requestManager.queue.length > 0 ||
-    //   this.requestManager.pendings.length > 0
-    // ) {
-    //   const req =
-    //     this.requestManager.queue.shift() ||
-    //     this.requestManager.pendings.shift() ||
-    //     null;
-    //   if (req) await this.cancelTx(req);
-    // }
-  }
-
   private async waitForProposalOnce(timeoutMs: number) {
     if (!this.signClient) throw new Error('WC client not initialized');
 

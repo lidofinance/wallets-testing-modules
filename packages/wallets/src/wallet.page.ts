@@ -84,7 +84,4 @@ export interface WalletPage {
   ): Promise<void>;
 
   isWalletAddressExist?(address: string): Promise<boolean>;
-
-  // WC SDK
-  cancelAllTxRequests?(): Promise<void>;
 }
