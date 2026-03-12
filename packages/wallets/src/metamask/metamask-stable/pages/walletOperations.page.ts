@@ -1,4 +1,4 @@
-import { Locator, Page, test } from '@playwright/test';
+import { Locator, Page, test, expect } from '@playwright/test';
 
 export class WalletOperationPage {
   connectBtn: Locator;
@@ -86,7 +86,12 @@ export class WalletOperationPage {
       await this.setHighGasFeeButton.click();
     }
     await this.confirmButton.waitFor({ state: 'visible', timeout: 30000 });
-    await this.confirmButton.click();
+    try {
+      await expect(this.confirmButton).toBeEnabled({ timeout: 10000 });
+    } catch {
+      // button is not enabled. Try to click to the button in the next step
+    }
+    await this.confirmButton.click({ force: true });
   }
 
   async getReceiptAddress() {
