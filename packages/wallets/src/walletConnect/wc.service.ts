@@ -145,13 +145,14 @@ export class WCWallet implements WalletPage {
     await test.step('Connect wallet', async () => {
       if (!this.signClient) throw new Error('WC client not initialized');
 
-      let proposal;
-      await test.step(`Pairing`, async () => {
-        [proposal] = await Promise.all([
+      const proposal = await test.step(`Pairing`, async () => {
+        const [proposal] = await Promise.all([
           this.waitForProposalOnce(this.defaultTimeoutMs),
           this.signClient.core.pairing.pair({ uri }),
         ]);
+        return proposal;
       });
+
       const { id, params } = proposal;
 
       const namespaces =
@@ -220,9 +221,7 @@ export class WCWallet implements WalletPage {
 
   async confirmTx(): Promise<void> {
     await test.step('Confirm transaction', async () => {
-      let request = await this.requestManager.getCurrentRequest();
-      request = await this.requestManager.validateRequest(request);
-
+      const request = await this.requestManager.getCurrentRequest();
       if (!this.signClient) throw new Error('WC client not initialized');
 
       const method = request.params.request.method;
@@ -239,9 +238,7 @@ export class WCWallet implements WalletPage {
 
   async confirmAddTokenToWallet(): Promise<void> {
     await test.step('Confirm add token to wallet', async () => {
-      let request = await this.requestManager.getCurrentRequest();
-      request = await this.requestManager.validateRequest(request);
-
+      const request = await this.requestManager.getCurrentRequest();
       if (!this.signClient) throw new Error('WC client not initialized');
 
       const method = request.params.request.method;
@@ -265,9 +262,7 @@ export class WCWallet implements WalletPage {
 
   async cancelTx(): Promise<void> {
     await test.step('Cancel transaction', async () => {
-      let request = await this.requestManager.getCurrentRequest();
-      request = await this.requestManager.validateRequest(request);
-
+      const request = await this.requestManager.getCurrentRequest();
       if (!this.signClient) throw new Error('WC client not initialized');
 
       await this.signClient.respond({
@@ -469,7 +464,7 @@ export class WCWallet implements WalletPage {
       ];
 
       const chain = SUPPORTED_CHAINS[this.networkSettings.activeChainId];
-      await this.rebuildViemClients(chain);
+      this.rebuildViemClients(chain);
       await this.updateAllSessionsNamespaces();
     });
   }
@@ -493,35 +488,34 @@ export class WCWallet implements WalletPage {
       ];
 
       const chain = SUPPORTED_CHAINS[this.networkSettings.activeChainId];
-      await this.rebuildViemClients(chain);
+      this.rebuildViemClients(chain);
       await this.updateAllSessionsNamespaces();
     });
   }
 
-  private async rebuildViemClients(chain: Chain) {
-    test.step(`Rebuild Viem clients for chain ${chain.id}`, async () => {
-      const net =
+  private rebuildViemClients(chain: Chain) {
+    test.step(`Rebuild Viem clients for chain ${chain.id}`, () => {
+      const networkConfig =
         this.networkSettings.networksByChainId.get(chain.id) ||
         this.options.standConfig;
-      if (net?.rpcUrl) {
-        this.walletClient = createWalletClient({
-          account: this.accounts.getActiveAccount(),
-          chain,
-          transport: http(net.rpcUrl),
-        });
 
-        this.publicClient = createPublicClient({
-          chain,
-          transport: http(net.rpcUrl),
-        });
-        logger.log(`Viem clients rebuilt for chain ${chain.id} `);
-      } else {
-        logger.error(
-          `RPC URL not found for chain ${chain.id}, cannot rebuild Viem clients`,
+      if (!networkConfig) {
+        throw new Error(
+          `Network config not found for chain ${chain.id} in network settings or stand config`,
         );
-        this.walletClient = null;
-        this.publicClient = null;
       }
+
+      this.walletClient = createWalletClient({
+        account: this.accounts.getActiveAccount(),
+        chain,
+        transport: http(networkConfig.rpcUrl),
+      });
+
+      this.publicClient = createPublicClient({
+        chain,
+        transport: http(networkConfig.rpcUrl),
+      });
+      logger.log(`Viem clients rebuilt for chain ${chain.id} `);
     });
   }
 }

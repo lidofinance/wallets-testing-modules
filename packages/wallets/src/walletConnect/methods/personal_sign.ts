@@ -1,8 +1,6 @@
-import { isHex } from 'viem';
+import { isHex, isAddress } from 'viem';
 import type { WCSessionRequest } from '../components';
 import type { WCWallet } from '../wc.service';
-
-const isAddr = (v: unknown) => /^0x[a-fA-F0-9]{40}$/.test(String(v));
 
 export async function personal_sign(this: WCWallet, req: WCSessionRequest) {
   const respond = (response: any) =>
@@ -16,7 +14,7 @@ export async function personal_sign(this: WCWallet, req: WCSessionRequest) {
       throw new Error('personal_sign: invalid params');
     }
 
-    const message = String(params.find((x) => !isAddr(x)) ?? '');
+    const message = String(params.find((x) => !isAddress(x)) ?? '');
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

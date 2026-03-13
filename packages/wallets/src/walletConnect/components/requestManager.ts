@@ -11,8 +11,6 @@ export type WCSessionRequest = {
       params: any[] | any;
     };
   };
-  // @todo: we could remove it, if dont need to return Request to tests
-  processed: boolean; // custom field to track if request was handled
 };
 
 const logger = new ConsoleLogger('WCWallet.RequestManager');
@@ -54,12 +52,7 @@ export class RequestManager {
   }
 
   async getCurrentRequest(): Promise<WCSessionRequest> {
-    const currentPendingRequest = this.pendings[0];
-    if (currentPendingRequest) {
-      return this.validateRequest(currentPendingRequest);
-    }
-
-    return this.nextRequest();
+    return this.pendings[0] || this.nextRequest();
   }
 
   getTx(req: WCSessionRequest, index = 0): any {
@@ -74,19 +67,7 @@ export class RequestManager {
     };
   }
 
-  async validateRequest(
-    req: WCSessionRequest,
-  ): Promise<WCSessionRequest | undefined> {
-    // @todo: think about it, i think its bullshit
-    if (req.processed) {
-      logger.log('Request already processed');
-      return undefined;
-    }
-    return req;
-  }
-
   resolveRequest(req: WCSessionRequest) {
-    req.processed = true;
     this.pendings = this.pendings.filter((r) => r.id !== req.id);
   }
 
