@@ -137,7 +137,7 @@ export class BrowserService {
     });
 
     await this.browserContextService.initBrowserContext();
-    if (this.options.walletConfig.STORE_EXTENSION_ID) {
+    if (this.options.walletConfig?.STORE_EXTENSION_ID) {
       await this.annotateExtensionWalletVersion(extensionService);
     }
     this.setWalletPage();
