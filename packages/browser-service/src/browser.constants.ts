@@ -12,7 +12,6 @@ import {
   TrustWalletPage,
   WCWallet,
 } from '@lidofinance/wallets-testing-wallets';
-import { z } from 'zod';
 
 export const WALLET_PAGES = {
   metamaskStable: MetamaskStablePage,
@@ -30,8 +29,3 @@ export const WALLET_PAGES = {
 };
 
 export const DEFAULT_BROWSER_CONTEXT_DIR_NAME = '.browser_context';
-
-export const BrowserExtension = z.object({
-  id: z.string(),
-  name: z.string(),
-});
