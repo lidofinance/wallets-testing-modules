@@ -116,23 +116,30 @@ export class BrowserService {
   }
 
   async setup() {
-    const extensionService = new ExtensionService();
+    let extensionPath, extensionService, contextDataDir;
 
-    const extensionPath = await extensionService.getExtensionDirFromId(
-      this.options.walletConfig.STORE_EXTENSION_ID,
-      this.options.walletConfig.LATEST_STABLE_DOWNLOAD_LINK,
-    );
+    if (this.options.walletConfig?.STORE_EXTENSION_ID) {
+      extensionService = new ExtensionService();
 
-    const contextDataDir = `${DEFAULT_BROWSER_CONTEXT_DIR_NAME}_${
-      mnemonicToAccount(this.options.accountConfig.SECRET_PHRASE).address
-    }_isFork-${this.isFork}_${this.options.walletConfig.WALLET_NAME}`;
+      extensionPath = await extensionService.getExtensionDirFromId(
+        this.options.walletConfig.STORE_EXTENSION_ID,
+        this.options.walletConfig.LATEST_STABLE_DOWNLOAD_LINK,
+      );
+
+      contextDataDir = `${DEFAULT_BROWSER_CONTEXT_DIR_NAME}_${
+        mnemonicToAccount(this.options.accountConfig.SECRET_PHRASE).address
+      }_isFork-${this.isFork}_${this.options.walletConfig.WALLET_NAME}`;
+    }
+
     this.browserContextService = new BrowserContextService(extensionPath, {
       contextDataDir,
       browserOptions: this.options.browserOptions,
     });
 
     await this.browserContextService.initBrowserContext();
-    await this.annotateExtensionWalletVersion(extensionService);
+    if (this.options.walletConfig?.STORE_EXTENSION_ID) {
+      await this.annotateExtensionWalletVersion(extensionService);
+    }
     this.setWalletPage();
     await this.walletPage.setup();
   }
@@ -146,15 +153,16 @@ export class BrowserService {
   }
 
   private setWalletPage() {
-    const extension = new Extension(this.browserContextService.extensionId);
-    const extensionWalletPage = new WALLET_PAGES[
-      this.options.walletConfig.EXTENSION_WALLET_NAME
-    ]({
-      browserContext: this.browserContextService.browserContext,
-      extensionUrl: extension.url,
-      accountConfig: this.options.accountConfig,
-      walletConfig: this.options.walletConfig,
-    });
+    const buildExtensionWalletPage = () => {
+      const extension = new Extension(this.browserContextService.extensionId);
+
+      return new WALLET_PAGES[this.options.walletConfig.EXTENSION_WALLET_NAME]({
+        browserContext: this.browserContextService.browserContext,
+        extensionUrl: extension.url,
+        accountConfig: this.options.accountConfig,
+        walletConfig: this.options.walletConfig,
+      });
+    };
 
     switch (this.options.walletConfig.WALLET_TYPE) {
       case WalletConnectTypes.WC:
@@ -163,7 +171,7 @@ export class BrowserService {
           this.options.walletConfig.WALLET_NAME
         ]({
           browserContext: this.browserContextService.browserContext,
-          extensionPage: extensionWalletPage,
+          extensionPage: buildExtensionWalletPage(),
           walletConfig: this.options.walletConfig,
           standConfig: {
             chainId: this.options.networkConfig.chainId,
@@ -174,8 +182,24 @@ export class BrowserService {
           },
         });
         break;
+      case WalletConnectTypes.WC_SDK:
+        this.walletPage = new WALLET_PAGES[
+          this.options.walletConfig.WALLET_NAME
+        ]({
+          browserContext: this.browserContextService.browserContext,
+          walletConfig: this.options.walletConfig,
+          accountConfig: this.options.accountConfig,
+          standConfig: {
+            chainId: this.options.networkConfig.chainId,
+            standUrl: this.options.standUrl,
+            rpcUrl:
+              this.ethereumNodeService?.state.nodeUrl ||
+              this.options.networkConfig.rpcUrl,
+          },
+        });
+        break;
       default:
-        this.walletPage = extensionWalletPage;
+        this.walletPage = buildExtensionWalletPage();
     }
   }
 
