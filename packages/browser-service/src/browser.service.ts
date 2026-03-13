@@ -118,7 +118,7 @@ export class BrowserService {
   async setup() {
     let extensionPath, extensionService, contextDataDir;
 
-    if (this.options.walletConfig.STORE_EXTENSION_ID) {
+    if (this.options.walletConfig?.STORE_EXTENSION_ID) {
       extensionService = new ExtensionService();
 
       extensionPath = await extensionService.getExtensionDirFromId(

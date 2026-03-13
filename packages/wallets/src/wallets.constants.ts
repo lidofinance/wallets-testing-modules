@@ -193,7 +193,7 @@ export const NETWORKS_CONFIG: {
       chainId: 43114,
       chainName: 'Avalanche',
       tokenSymbol: 'AVAX',
-      rpcUrl: null,
+      rpcUrl: 'https://avalanche-c-chain.publicnode.com',
       scan: 'https://snowtrace.io/',
     },
   },
