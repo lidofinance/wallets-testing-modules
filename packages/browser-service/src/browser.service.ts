@@ -164,6 +164,14 @@ export class BrowserService {
       });
     };
 
+    const standConfig = {
+      chainId: this.options.networkConfig.chainId,
+      standUrl: this.options.standUrl,
+      rpcUrl:
+        this.ethereumNodeService?.state.nodeUrl ||
+        this.options.networkConfig.rpcUrl,
+    };
+
     switch (this.options.walletConfig.WALLET_TYPE) {
       case WalletConnectTypes.WC:
       case WalletConnectTypes.IFRAME:
@@ -173,13 +181,7 @@ export class BrowserService {
           browserContext: this.browserContextService.browserContext,
           extensionPage: buildExtensionWalletPage(),
           walletConfig: this.options.walletConfig,
-          standConfig: {
-            chainId: this.options.networkConfig.chainId,
-            standUrl: this.options.standUrl,
-            rpcUrl:
-              this.ethereumNodeService?.state.nodeUrl ||
-              this.options.networkConfig.rpcUrl,
-          },
+          standConfig,
         });
         break;
       case WalletConnectTypes.WC_SDK:
@@ -189,13 +191,7 @@ export class BrowserService {
           browserContext: this.browserContextService.browserContext,
           walletConfig: this.options.walletConfig,
           accountConfig: this.options.accountConfig,
-          standConfig: {
-            chainId: this.options.networkConfig.chainId,
-            standUrl: this.options.standUrl,
-            rpcUrl:
-              this.ethereumNodeService?.state.nodeUrl ||
-              this.options.networkConfig.rpcUrl,
-          },
+          standConfig,
         });
         break;
       default:

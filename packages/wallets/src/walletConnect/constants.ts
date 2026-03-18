@@ -10,6 +10,17 @@ import {
   soneium,
   unichain,
   unichainSepolia,
+  zksync,
+  arbitrum,
+  polygon,
+  base,
+  bsc,
+  linea,
+  mantle,
+  scroll,
+  mode,
+  zircuit,
+  lisk,
 } from 'viem/chains';
 import {
   CommonWalletConfig,
@@ -40,6 +51,17 @@ export const SUPPORTED_CHAINS: Record<number, Chain> = {
   1946: soneiumMinato as Chain,
   130: unichain as Chain,
   1301: unichainSepolia as Chain,
+  324: zksync as Chain,
+  42161: arbitrum as Chain,
+  137: polygon as Chain,
+  8453: base as Chain,
+  56: bsc as Chain,
+  59144: linea as Chain,
+  5000: mantle as Chain,
+  534352: scroll as Chain,
+  34443: mode as Chain,
+  48900: zircuit as Chain,
+  1135: lisk as Chain,
 };
 
 export function buildChainFromNetwork(network: NetworkConfig): Chain {
