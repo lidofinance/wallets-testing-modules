@@ -1,3 +1,13 @@
+export type WCApproveNamespaces = Record<
+  string,
+  {
+    accounts: string[];
+    chains: string[];
+    methods: string[];
+    events: string[];
+  }
+>;
+
 export interface CommonWalletConfig {
   WALLET_NAME: string; // Name of the wallet being tested
   EXTENSION_WALLET_NAME: string; // Wallet name for install extension
@@ -6,17 +16,21 @@ export interface CommonWalletConfig {
   STORE_EXTENSION_ID: string;
   WALLET_TYPE: WalletConnectType;
   LATEST_STABLE_DOWNLOAD_LINK?: string; // Link to stable wallet extension version for test (optional)
-  EXTENSION_START_PATH: string; // Start path for wallet setup
+  EXTENSION_START_PATH?: string; // Start path for wallet setup
+  // Only for WC_SDK wallets via API @walletconnect/sign-client
+  WC_PROJECT_ID?: string; // WalletConnect Cloud project ID
 }
 
 export enum WalletConnectTypes {
   EOA = 'EOA',
-  WC = 'WC',
+  WC_EOA = 'WC_EOA',
+  WC_SDK = 'WC_SDK',
   IFRAME = 'IFRAME',
 }
 
 export type WalletConnectType =
-  | WalletConnectTypes.WC
+  | WalletConnectTypes.WC_EOA
+  | WalletConnectTypes.WC_SDK
   | WalletConnectTypes.EOA
   | WalletConnectTypes.IFRAME;
 
@@ -102,42 +116,42 @@ export const NETWORKS_CONFIG: {
       chainId: 324,
       chainName: 'zkSync Era',
       tokenSymbol: 'ETH',
-      rpcUrl: null,
+      rpcUrl: 'https://mainnet.era.zksync.io',
       scan: '',
     },
     ARBITRUM: {
       chainId: 42161,
       chainName: 'Arbitrum',
       tokenSymbol: 'ETH',
-      rpcUrl: null,
+      rpcUrl: 'https://arb1.arbitrum.io/rpc',
       scan: '',
     },
     POLYGON: {
       chainId: 137,
       chainName: 'Polygon',
       tokenSymbol: 'ETH',
-      rpcUrl: null,
+      rpcUrl: 'https://polygon-bor-rpc.publicnode.com',
       scan: '',
     },
     BASE: {
       chainId: 8453,
       chainName: 'Base',
       tokenSymbol: 'ETH',
-      rpcUrl: null,
+      rpcUrl: 'https://mainnet.base.org',
       scan: '',
     },
     BNB: {
       chainId: 56,
       chainName: 'BNB Chain',
       tokenSymbol: 'ETH',
-      rpcUrl: null,
+      rpcUrl: 'https://bsc-dataseed.binance.org',
       scan: '',
     },
     LINEA: {
       chainId: 59144,
       chainName: 'Linea',
       tokenSymbol: 'ETH',
-      rpcUrl: null,
+      rpcUrl: 'https://rpc.linea.build',
       scan: '',
     },
     MANTLE: {
@@ -179,7 +193,7 @@ export const NETWORKS_CONFIG: {
       chainId: 43114,
       chainName: 'Avalanche',
       tokenSymbol: 'AVAX',
-      rpcUrl: null,
+      rpcUrl: 'https://avalanche-c-chain.publicnode.com',
       scan: 'https://snowtrace.io/',
     },
   },

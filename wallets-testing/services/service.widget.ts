@@ -31,7 +31,7 @@ export class WidgetService {
     await test.step(`Connect wallet ${this.browserService.walletConfig.WALLET_NAME}`, async () => {
       switch (this.browserService.walletConfig.WALLET_TYPE) {
         case WalletConnectTypes.EOA:
-        case WalletConnectTypes.WC:
+        case WalletConnectTypes.WC_EOA:
           await this.navigate();
           await this.widgetPage.connectWallet();
           break;
@@ -50,7 +50,7 @@ export class WidgetService {
     });
   }
 
-  // Function not tested with walletConnectTypes.WC
+  // Function not tested with walletConnectTypes.WC_EOA
   async doStaking(txAmount: string) {
     await test.step('Do staking', async () => {
       await waitForTextContent(this.widgetPage.ethAvailableToStakeValue);
@@ -58,28 +58,28 @@ export class WidgetService {
     });
   }
 
-  // Function not tested with walletConnectTypes.WC
+  // Function not tested with walletConnectTypes.WC_EOA
   async doWrapping(txAmount: string, token: tokenToWrap) {
     await test.step('Do wrapping', async () => {
       await this.widgetPage.wrap(txAmount, token);
     });
   }
 
-  // Function not tested with walletConnectTypes.WC
+  // Function not tested with walletConnectTypes.WC_EOA
   async doUnwrapping(txAmount: string) {
     await test.step('Do unwrapping', async () => {
       await this.widgetPage.unwrap(txAmount);
     });
   }
 
-  // Function not tested with walletConnectTypes.WC
+  // Function not tested with walletConnectTypes.WC_EOA
   async doWithdrawal(txAmount: string, token: tokenToWithdraw) {
     await test.step('Do withdrawal request', async () => {
       await this.widgetPage.request(txAmount, token);
     });
   }
 
-  // Function not tested with walletConnectTypes.WC
+  // Function not tested with walletConnectTypes.WC_EOA
   async doClaiming() {
     await test.step('Do claiming', async () => {
       await this.widgetPage.claim();

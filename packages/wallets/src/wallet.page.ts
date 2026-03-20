@@ -24,7 +24,7 @@ export interface WalletPageOptions {
  *   - extensionUrl
  *   - accountConfig
  *
- *  **T -> WalletConnectTypes.WC**
+ *  **T -> WalletConnectTypes.WC_EOA**
  * - describes the connection with WalletConnect wallet (_Safe_) and lets to manage these wallets with included methods
  * - required options:
  *   - browserContext
