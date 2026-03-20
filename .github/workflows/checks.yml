@@ -8,5 +8,3 @@ jobs:
     permissions:
       security-events: write
       contents: read
-  todos:
-    uses: lidofinance/linters/.github/workflows/todos.yml@master
