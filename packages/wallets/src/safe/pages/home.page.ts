@@ -17,7 +17,7 @@ export class HomePage {
 
   async connectWallet(wcUrl: string) {
     await test.step('Connect wallet', async () => {
-      await test.step('Fill the WC url', async () => {
+      await test.step('Fill the WC_EOA url', async () => {
         await this.wcBtn.waitFor({ state: 'visible' });
         await this.wcBtn.click();
         await this.wcUrlInput.fill(wcUrl);

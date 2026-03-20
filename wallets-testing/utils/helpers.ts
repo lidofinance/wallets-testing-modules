@@ -52,7 +52,7 @@ export async function connectWallet(browserService: BrowserService) {
   await widgetService.connectWallet();
 }
 
-// Function not tested with walletConnectTypes.WC
+// Function not tested with walletConnectTypes.WC_EOA
 export async function stake(browserService: BrowserService, txAmount: string) {
   const widgetService = new WidgetService(browserService);
   await widgetService.connectWallet();

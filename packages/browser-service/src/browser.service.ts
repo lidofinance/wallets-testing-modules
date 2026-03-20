@@ -36,7 +36,7 @@ type BrowserServiceOptions = {
 
 /**
  * Required options depends on `WalletConnectTypes`:
- * - `WalletConnectType.EOA` and `WalletConnectType.WC`:
+ * - `WalletConnectType.EOA` and `WalletConnectType.WC_EOA`:
  *   - networkConfig
  *   - accountConfig
  *   - walletConfig
@@ -173,7 +173,7 @@ export class BrowserService {
     };
 
     switch (this.options.walletConfig.WALLET_TYPE) {
-      case WalletConnectTypes.WC:
+      case WalletConnectTypes.WC_EOA:
       case WalletConnectTypes.IFRAME:
         this.walletPage = new WALLET_PAGES[
           this.options.walletConfig.WALLET_NAME

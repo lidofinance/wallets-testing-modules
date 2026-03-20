@@ -86,7 +86,7 @@ export class StandWidgetPage implements WidgetPage {
         await this.walletPage.connectWallet();
         break;
       }
-      case WalletConnectTypes.WC: {
+      case WalletConnectTypes.WC_EOA: {
         await walletButton.click();
         await this.page
           .getByTestId('wui-qr-code')
@@ -100,7 +100,7 @@ export class StandWidgetPage implements WidgetPage {
     }
   }
 
-  // Function not tested with walletConnectTypes.WC
+  // Function not tested with walletConnectTypes_EOA
   async stake(txAmount: string) {
     await test.step('Fill stake input', async () => {
       await this.stakeInput.fill(txAmount);

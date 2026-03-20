@@ -23,13 +23,13 @@ export interface CommonWalletConfig {
 
 export enum WalletConnectTypes {
   EOA = 'EOA',
-  WC = 'WC',
+  WC_EOA = 'WC_EOA',
   WC_SDK = 'WC_SDK',
   IFRAME = 'IFRAME',
 }
 
 export type WalletConnectType =
-  | WalletConnectTypes.WC
+  | WalletConnectTypes.WC_EOA
   | WalletConnectTypes.WC_SDK
   | WalletConnectTypes.EOA
   | WalletConnectTypes.IFRAME;
