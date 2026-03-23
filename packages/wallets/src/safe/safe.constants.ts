@@ -7,7 +7,7 @@ export const WC_SAFE_COMMON_CONFIG: CommonWalletConfig = {
   CONNECTED_WALLET_NAME: 'WalletConnect',
   STORE_EXTENSION_ID: 'nkbihfbeogaeaoehlefnkodbefgpgknn',
   CONNECT_BUTTON_NAME: 'WalletConnect',
-  WALLET_TYPE: WalletConnectTypes.WC,
+  WALLET_TYPE: WalletConnectTypes.WC_EOA,
   LATEST_STABLE_DOWNLOAD_LINK: null,
   EXTENSION_START_PATH: '/home.html',
 };

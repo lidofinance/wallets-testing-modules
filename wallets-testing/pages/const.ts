@@ -3,6 +3,6 @@ import { IframeWidgetPage } from './iframeWidget.page';
 
 export const WIDGET_PAGE = {
   EOA: StandWidgetPage,
-  WC: StandWidgetPage,
+  WC_EOA: StandWidgetPage,
   IFRAME: IframeWidgetPage,
 };
