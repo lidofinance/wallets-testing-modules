@@ -347,8 +347,10 @@ export class EthereumNodeService {
 
     await contextOrPage.route(new RegExp(url.join('|')), async (route) => {
       if (!this.state) {
-        logger.warn(`[mockRoute] No active node state`);
-        return route.continue();
+        logger.warn(
+          `[mockRoute] No active node state, so we mock just with autotest rpc`,
+        );
+        // return route.continue();
       }
       const postDataRaw = route.request().postData();
 
@@ -365,7 +367,7 @@ export class EthereumNodeService {
       const proxyRequest = async (payload: any) => {
         const res = await this.fetchSafety(
           contextOrPage.request,
-          this.state.nodeUrl,
+          this.state?.nodeUrl || this.options.rpcUrl,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
