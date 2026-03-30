@@ -90,7 +90,6 @@ export class BrowserService {
     }
 
     await this.ethereumNodeService.mockRoute(
-      this.options.nodeConfig.mockConfig.rpcUrlToMock,
       this.browserContextService.browserContext,
     );
   }
