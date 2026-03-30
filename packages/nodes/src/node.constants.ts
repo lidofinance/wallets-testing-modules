@@ -3,7 +3,10 @@ export const ERC20_SHORT_ABI =
 
 export type EthereumNodeServiceOptions = {
   rpcUrl: string;
-  rpcUrlToMock: string[];
+  mockConfig: {
+    rpcUrlToMock: string[];
+    mockEnabled: boolean;
+  };
   port?: number;
   defaultBalance?: number;
   tokens?: {

@@ -78,6 +78,8 @@ export class BrowserService {
   }
 
   async initWalletSetup(useFork?: boolean) {
+    this.ethereumNodeService = new EthereumNodeService(this.options.nodeConfig);
+
     if (useFork) {
       await this.setupWithNode();
     } else {
@@ -86,11 +88,14 @@ export class BrowserService {
       await this.walletPage.changeNetwork(this.options.networkConfig.chainName);
       await this.browserContextService.closePages();
     }
+
+    await this.ethereumNodeService.mockRoute(
+      this.browserContextService.browserContext,
+    );
   }
 
   async setupWithNode() {
     this.isFork = true;
-    this.ethereumNodeService = new EthereumNodeService(this.options.nodeConfig);
     await this.ethereumNodeService.startNode();
     await this.ethereumNodeService.setupDefaultTokenBalances();
     const account = this.ethereumNodeService.getAccount();
@@ -107,11 +112,6 @@ export class BrowserService {
       chainName: this.options.networkConfig.chainName,
       rpcUrl: this.ethereumNodeService.state.nodeUrl,
     });
-
-    await this.ethereumNodeService.mockRoute(
-      this.options.nodeConfig.rpcUrlToMock,
-      this.browserContextService.browserContext,
-    );
     await this.browserContextService.closePages();
   }
 
@@ -168,7 +168,7 @@ export class BrowserService {
       chainId: this.options.networkConfig.chainId,
       standUrl: this.options.standUrl,
       rpcUrl:
-        this.ethereumNodeService?.state.nodeUrl ||
+        this.ethereumNodeService?.state?.nodeUrl ||
         this.options.networkConfig.rpcUrl,
     };
 

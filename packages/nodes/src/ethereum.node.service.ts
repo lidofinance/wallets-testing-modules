@@ -339,66 +339,63 @@ export class EthereumNodeService {
     });
   }
 
-  async mockRoute(
-    url: string[],
-    contextOrPage: BrowserContext | Page,
-  ): Promise<void> {
-    logger.debug(`[mockRoute] Registered for URL: ${url}`);
+  async mockRoute(contextOrPage: BrowserContext | Page): Promise<void> {
+    if (!this.options.mockConfig.mockEnabled) return;
+    const rpcUrl = this.state?.nodeUrl || this.options.rpcUrl;
+    logger.debug(
+      `[mockRoute] RPC mocker enabled and uses the ${
+        this.state ? 'FORK' : 'ENV'
+      } rpc url.\nRegistered for URL: ${this.options.mockConfig.rpcUrlToMock}.`,
+    );
 
-    await contextOrPage.route(new RegExp(url.join('|')), async (route) => {
-      if (!this.state) {
-        logger.warn(`[mockRoute] No active node state`);
-        return route.continue();
-      }
-      const postDataRaw = route.request().postData();
+    await contextOrPage.route(
+      new RegExp(this.options.mockConfig.rpcUrlToMock.join('|')),
+      async (route) => {
+        const postDataRaw = route.request().postData();
+        if (!postDataRaw) return route.continue();
 
-      if (!postDataRaw) return route.continue();
+        let parsed;
+        try {
+          parsed = JSON.parse(postDataRaw);
+        } catch (err) {
+          logger.error(`[mockRoute] JSON parse error`, err);
+          return route.continue();
+        }
 
-      let parsed;
-      try {
-        parsed = JSON.parse(postDataRaw);
-      } catch (err) {
-        logger.error(`[mockRoute] JSON parse error`, err);
-        return route.continue();
-      }
-
-      const proxyRequest = async (payload: any) => {
-        const res = await this.fetchSafety(
-          contextOrPage.request,
-          this.state.nodeUrl,
-          {
+        const proxyRequest = async (payload: any) => {
+          const res = await this.fetchSafety(contextOrPage.request, rpcUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(payload),
-          },
-        );
+          });
 
-        if (!res) {
-          return {
-            jsonrpc: '2.0',
-            id: payload.id ?? null,
-            error: { code: -32000, message: 'Mock route fetch failed' },
-          };
-        }
+          if (!res) {
+            return {
+              jsonrpc: '2.0',
+              id: payload.id ?? null,
+              error: { code: -32000, message: 'Mock route fetch failed' },
+            };
+          }
 
-        try {
-          return JSON.parse(await res.text());
-        } catch {
-          return {
-            jsonrpc: '2.0',
-            id: payload.id ?? null,
-            error: { code: -32700, message: 'Invalid JSON in response' },
-          };
-        }
-      };
+          try {
+            return JSON.parse(await res.text());
+          } catch {
+            return {
+              jsonrpc: '2.0',
+              id: payload.id ?? null,
+              error: { code: -32700, message: 'Invalid JSON in response' },
+            };
+          }
+        };
 
-      const singleResponse = await proxyRequest(parsed);
-      return route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(singleResponse),
-      });
-    });
+        const singleResponse = await proxyRequest(parsed);
+        return route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(singleResponse),
+        });
+      },
+    );
   }
 
   async fetchSafety(
