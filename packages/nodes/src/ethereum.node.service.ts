@@ -343,17 +343,18 @@ export class EthereumNodeService {
     url: string[],
     contextOrPage: BrowserContext | Page,
   ): Promise<void> {
+    if (!this.options.mockConfig.mockEnabled) return;
     logger.debug(`[mockRoute] Registered for URL: ${url}`);
 
     await contextOrPage.route(new RegExp(url.join('|')), async (route) => {
-      if (!this.state) {
-        logger.warn(
-          `[mockRoute] No active node state, so we mock just with autotest rpc`,
-        );
-        // return route.continue();
-      }
-      const postDataRaw = route.request().postData();
+      const rpcUrl = this.state?.nodeUrl || this.options.rpcUrl;
+      logger.warn(
+        `[mockRoute] RPC mocker enabled and uses the ${
+          this.state ? 'FORK' : 'ENV'
+        } rpc url`,
+      );
 
+      const postDataRaw = route.request().postData();
       if (!postDataRaw) return route.continue();
 
       let parsed;
@@ -365,15 +366,11 @@ export class EthereumNodeService {
       }
 
       const proxyRequest = async (payload: any) => {
-        const res = await this.fetchSafety(
-          contextOrPage.request,
-          this.state?.nodeUrl || this.options.rpcUrl,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            data: JSON.stringify(payload),
-          },
-        );
+        const res = await this.fetchSafety(contextOrPage.request, rpcUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          data: JSON.stringify(payload),
+        });
 
         if (!res) {
           return {

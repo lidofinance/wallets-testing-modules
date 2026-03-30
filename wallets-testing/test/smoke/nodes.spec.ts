@@ -10,7 +10,10 @@ test.describe('Ethereum node', () => {
     const widgetConfig = getWidgetConfig['Ethereum Mainnet'];
     ethereumNodeService = new EthereumNodeService({
       rpcUrl: widgetConfig.network.rpcUrl,
-      rpcUrlToMock: widgetConfig.rpcUrlToMock,
+      mockConfig: {
+        rpcUrlToMock: widgetConfig.mockConfig.rpcUrlToMock,
+        mockEnabled: true,
+      },
       defaultBalance: 1000,
     });
   });
