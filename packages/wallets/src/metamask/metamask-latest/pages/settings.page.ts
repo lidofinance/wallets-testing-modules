@@ -62,6 +62,7 @@ export class SettingsPage {
         if (toggleState === 'false') {
           await test.step('Turn on the toggle of the Extension in full size', async () => {
             await this.selectExtensionInFullSizeToggle.click();
+            await this.page.waitForTimeout(1000); // wait for avoid mm error
           });
         }
       }

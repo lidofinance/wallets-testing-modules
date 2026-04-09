@@ -58,6 +58,7 @@ export class WCWallet implements WalletPage {
   private networkSettings: NetworkSettings;
   private requestManager: RequestManager;
   protected accounts: Accounts;
+  private projectId: string;
 
   constructor(public options: WalletPageOptions) {
     this.defaultTimeoutMs = 30000;
@@ -76,6 +77,9 @@ export class WCWallet implements WalletPage {
         events: ['accountsChanged', 'chainChanged'],
       },
     };
+    this.projectId = process.env.WC_PROJECT_ID;
+    if (!this.projectId)
+      logger.error('WC_PROJECT_ID is not defined in the env');
   }
 
   private async onSessionRequest(event: any) {
@@ -103,10 +107,7 @@ export class WCWallet implements WalletPage {
 
     await test.step('Setup wallet', async () => {
       if (this.signClient) return;
-
-      this.signClient = await SignClient.init({
-        projectId: this.options.walletConfig.WC_PROJECT_ID,
-      });
+      this.signClient = await SignClient.init({ projectId: this.projectId });
 
       this.networkSettings = new NetworkSettings(this.signClient, account);
       this.requestManager = new RequestManager();
@@ -360,16 +361,25 @@ export class WCWallet implements WalletPage {
   async assertTxAmount(expectedAmount: string): Promise<void> {
     await test.step(`Assert transaction amount ${expectedAmount} ETH`, async () => {
       const request = await this.requestManager.getCurrentRequest();
-      expect(
-        request,
-        'Not found pending request for check transaction amount',
-      ).not.toBeUndefined();
+      expect(request, 'The request must not be undefined').not.toBeUndefined();
 
       const requestInfo = this.requestManager.getRequestInfo(request);
-
-      if (requestInfo.method === 'eth_sendTransaction') {
-        const txAmount = formatEther(BigInt(requestInfo.params.value));
-        expect(txAmount).toEqual(expectedAmount);
+      switch (requestInfo.method) {
+        case 'eth_sendTransaction': {
+          const txAmount = formatEther(BigInt(requestInfo.params[0].value));
+          expect(txAmount).toEqual(expectedAmount);
+          break;
+        }
+        case 'eth_signTypedData_v4': {
+          const paramJson = JSON.parse(requestInfo.params[1]);
+          const txAmount = formatEther(BigInt(paramJson.message.sellAmount));
+          expect(txAmount).toEqual(expectedAmount);
+          break;
+        }
+        default:
+          logger.error(
+            `${requestInfo.method} is not defined to check tx amount`,
+          );
       }
     });
   }
@@ -377,16 +387,27 @@ export class WCWallet implements WalletPage {
   async assertReceiptAddress(expectedAddress: string): Promise<void> {
     await test.step(`Assert transaction receipt address ${expectedAddress}`, async () => {
       const request = await this.requestManager.getCurrentRequest();
-      expect(
-        request,
-        'Not found pending request for check transaction receipt address',
-      ).not.toBeUndefined();
+      expect(request, 'The request must not be undefined').not.toBeUndefined();
 
       const requestInfo = this.requestManager.getRequestInfo(request);
-      if (requestInfo.method === 'eth_sendTransaction') {
-        expect(requestInfo.params.to.toLowerCase()).toEqual(
-          expectedAddress.toLowerCase(),
-        );
+      switch (requestInfo.method) {
+        case 'eth_sendTransaction': {
+          expect(requestInfo.params[0].to.toLowerCase()).toEqual(
+            expectedAddress.toLowerCase(),
+          );
+          break;
+        }
+        case 'eth_signTypedData_v4': {
+          const paramJson = JSON.parse(requestInfo.params[1]);
+          expect(paramJson.domain.verifyingContract).toEqual(
+            expectedAddress.toLowerCase(),
+          );
+          break;
+        }
+        default:
+          logger.error(
+            `${requestInfo.method} is not defined to check tx address`,
+          );
       }
     });
   }

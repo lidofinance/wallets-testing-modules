@@ -25,6 +25,7 @@ const config: PlaywrightTestConfig = {
   reporter: new ReportersSettings(wtmReporter).getReporters(),
   use: {
     actionTimeout: 120000,
+    permissions: ['clipboard-read', 'clipboard-write'],
     screenshot: { fullPage: true, mode: 'only-on-failure' },
     trace: 'on-first-retry',
   },

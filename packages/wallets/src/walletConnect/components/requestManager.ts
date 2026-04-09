@@ -55,16 +55,8 @@ export class RequestManager {
     return this.pendings[0] || this.nextRequest();
   }
 
-  getTx(req: WCSessionRequest, index = 0): any {
-    return req.params?.request?.params?.[index];
-  }
-
-  getRequestInfo(req) {
-    const tx = this.getTx(req);
-    return {
-      method: req.params.request.method,
-      params: tx,
-    };
+  getRequestInfo(req: WCSessionRequest) {
+    return req.params.request;
   }
 
   resolveRequest(req: WCSessionRequest) {

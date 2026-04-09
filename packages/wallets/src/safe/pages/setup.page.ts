@@ -1,6 +1,7 @@
-import { Locator, Page, test } from '@playwright/test';
+import { Locator, Page, test, expect } from '@playwright/test';
 import { WalletPage } from '../../wallet.page';
 import { ConsoleLogger } from '@nestjs/common';
+import { WC_SDK_COMMON_CONFIG } from '../../walletConnect';
 
 export class SetupPage {
   logger = new ConsoleLogger(`Safe. ${SetupPage.name}`);
@@ -104,6 +105,7 @@ export class SetupPage {
       });
 
       await this.safeAccount.click();
+      await this.page.waitForLoadState();
       return this.page.url();
     });
   }
@@ -123,7 +125,7 @@ export class SetupPage {
   }
 
   async connectWalletExtension() {
-    await test.step('Connect MetaMask wallet', async () => {
+    await test.step(`Connect ${this.extensionPage.options.walletConfig.EXTENSION_WALLET_NAME} wallet`, async () => {
       await this.agreeCookiesSetting();
       await this.page.waitForTimeout(2000);
       await this.closeBeamerAnnouncementBanner();
@@ -133,18 +135,15 @@ export class SetupPage {
         return;
       }
 
+      const walletBtnLocator = this.page.getByRole('button', {
+        name: this.extensionPage.options.walletConfig.SAFE_CONNECT_BUTTON_NAME,
+      });
+
       const attempts = 3; // to connect wallet
       for (let attempt = 1; attempt <= attempts; attempt++) {
         await this.connectWalletBtn.click();
 
-        if (
-          await this.waitForVisible(
-            this.page.getByText(
-              this.extensionPage.options.walletConfig.EXTENSION_WALLET_NAME,
-            ),
-            5000,
-          )
-        ) {
+        if (await this.waitForVisible(walletBtnLocator, 5000)) {
           break;
         }
         this.logger.log(`[Attempt ${attempt}] Connect wallet to Safe failed`);
@@ -152,12 +151,17 @@ export class SetupPage {
       }
 
       try {
-        await this.page
-          .getByText(
-            this.extensionPage.options.walletConfig.EXTENSION_WALLET_NAME,
-          )
-          .click();
-        await this.extensionPage.connectWallet();
+        await walletBtnLocator.click();
+
+        if (
+          this.extensionPage.options.walletConfig.EXTENSION_WALLET_NAME ==
+          WC_SDK_COMMON_CONFIG.WALLET_NAME
+        ) {
+          const qrUri = await this.getWcConnectionUri();
+          await this.extensionPage.connectWallet(qrUri);
+        } else {
+          await this.extensionPage.connectWallet();
+        }
       } catch (er) {
         // Expect the wallet is connected
       }
@@ -180,5 +184,27 @@ export class SetupPage {
     } catch {
       return false;
     }
+  }
+
+  private async getWcConnectionUri() {
+    const wcUriCopyBtn = this.page
+      .locator('.wcm-card')
+      .locator('button[class="wcm-action-btn"]');
+    await wcUriCopyBtn.waitFor({ state: 'visible', timeout: 15000 });
+
+    await expect
+      .poll(
+        async () => {
+          await wcUriCopyBtn.click();
+          return await this.page.evaluate(() => navigator.clipboard.readText());
+        },
+        {
+          timeout: 15000,
+          intervals: [2000],
+        },
+      )
+      .toContain('wc:');
+
+    return await this.page.evaluate(() => navigator.clipboard.readText());
   }
 }
