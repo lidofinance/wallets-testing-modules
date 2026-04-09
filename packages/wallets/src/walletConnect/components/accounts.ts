@@ -1,7 +1,4 @@
-import { ConsoleLogger } from '@nestjs/common';
 import { Account } from 'viem';
-
-const logger = new ConsoleLogger('WCWallet.Accounts');
 
 export class Accounts {
   private activeAccount: Account;
@@ -13,9 +10,7 @@ export class Accounts {
 
   setActiveAccount(account: Account) {
     if (!this.accountsStore.has(account.address.toLowerCase())) {
-      logger.warn(
-        `Account ${account.address} not found in accounts list while setting active account, adding it to accounts list`,
-      );
+      // Account ${account.address} not found in accounts list while setting active account, adding it to accounts list
       this.storeAccount(account);
     }
     this.activeAccount = account;

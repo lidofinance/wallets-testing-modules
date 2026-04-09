@@ -345,7 +345,7 @@ export class EthereumNodeService {
     logger.debug(
       `[mockRoute] RPC mocker enabled and uses the ${
         this.state ? 'FORK' : 'ENV'
-      } rpc url.\nRegistered for URL: ${this.options.mockConfig.rpcUrlToMock}.`,
+      } rpc url. (to mock: /${this.options.mockConfig.rpcUrlToMock}/)`,
     );
 
     await contextOrPage.route(

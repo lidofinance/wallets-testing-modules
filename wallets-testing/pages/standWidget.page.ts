@@ -95,8 +95,8 @@ export class StandWidgetPage implements WidgetPage {
           .poll(
             async () => {
               await this.copyWcUrlBtn.click();
-              return await this.walletPage.connectWallet(
-                await this.page.evaluate(() => navigator.clipboard.readText()),
+              return await this.page.evaluate(() =>
+                navigator.clipboard.readText(),
               );
             },
             {
@@ -106,7 +106,6 @@ export class StandWidgetPage implements WidgetPage {
           )
           .toMatch(/wc:.+/);
 
-        await this.copyWcUrlBtn.click();
         await this.walletPage.connectWallet(
           await this.page.evaluate(() => navigator.clipboard.readText()),
         );
