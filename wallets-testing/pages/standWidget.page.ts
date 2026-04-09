@@ -1,4 +1,4 @@
-import { Locator, Page, test } from '@playwright/test';
+import { expect, Locator, Page, test } from '@playwright/test';
 import { WidgetPage } from './widget.page';
 import { BrowserService } from '@lidofinance/browser-service';
 import {
@@ -91,6 +91,21 @@ export class StandWidgetPage implements WidgetPage {
         await this.page
           .getByTestId('wui-qr-code')
           .waitFor({ state: 'visible' });
+        await expect
+          .poll(
+            async () => {
+              await this.copyWcUrlBtn.click();
+              return await this.walletPage.connectWallet(
+                await this.page.evaluate(() => navigator.clipboard.readText()),
+              );
+            },
+            {
+              timeout: 15000,
+              intervals: [2000],
+            },
+          )
+          .toMatch(/wc:.+/);
+
         await this.copyWcUrlBtn.click();
         await this.walletPage.connectWallet(
           await this.page.evaluate(() => navigator.clipboard.readText()),

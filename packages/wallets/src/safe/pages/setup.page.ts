@@ -211,7 +211,7 @@ export class SetupPage {
           intervals: [2000],
         },
       )
-      .toContain('wc:');
+      .toMatch(/wc:.+/);
 
     return await this.page.evaluate(() => navigator.clipboard.readText());
   }
