@@ -104,9 +104,17 @@ export class SetupPage {
         }
       });
 
+      const accountUrl =
+        await test.step('Extract account url from button', async () => {
+          const accountBtnUrl = await this.safeAccount
+            .getByRole('link')
+            .getAttribute('href');
+          return new URL(this.page.url()).origin + accountBtnUrl;
+        });
+
       await this.safeAccount.click();
       await this.page.waitForLoadState();
-      return this.page.url();
+      return accountUrl;
     });
   }
 
