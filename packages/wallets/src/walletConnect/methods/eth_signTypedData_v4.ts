@@ -8,6 +8,20 @@ export async function eth_signTypedData_v4(
   const typed = req.params.request.params[1];
   const typedData = typeof typed === 'string' ? JSON.parse(typed) : typed;
 
+  const primaryType = typedData.primaryType;
+  const typeFields: { name: string; type: string }[] =
+    typedData.types[primaryType] ?? [];
+
+  const message = Object.fromEntries(
+    Object.entries(typedData.message).map(([key, val]) => {
+      const field = typeFields.find((f) => f.name === key);
+      if (field && /^uint\d*$|^int\d*$/.test(field.type)) {
+        return [key, BigInt(val as string)];
+      }
+      return [key, val];
+    }),
+  );
+
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const signature = await this.walletClient.signTypedData({
@@ -18,12 +32,7 @@ export async function eth_signTypedData_v4(
     },
     types: typedData.types,
     primaryType: typedData.primaryType,
-    message: {
-      ...typedData.message,
-      value: BigInt(typedData.message.value),
-      nonce: BigInt(typedData.message.nonce),
-      deadline: BigInt(typedData.message.deadline),
-    },
+    message,
   });
 
   await this.signClient.respond({

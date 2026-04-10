@@ -37,7 +37,6 @@ export const WC_SDK_COMMON_CONFIG: CommonWalletConfig = {
   WALLET_TYPE: WalletConnectTypes.WC_SDK,
   LATEST_STABLE_DOWNLOAD_LINK: null,
   EXTENSION_START_PATH: null,
-  WC_PROJECT_ID: process.env.WC_PROJECT_ID,
 };
 
 export const SUPPORTED_CHAINS: Record<number, Chain> = {

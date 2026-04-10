@@ -92,7 +92,6 @@ export class NetworkSettings {
     const networkConfig = this.networksByChainId.get(chainId);
 
     if (chainId === this.activeChainId) {
-      logger.log(`Network "${networkName}" is already active`);
       return SUPPORTED_CHAINS[chainId] ?? buildChainFromNetwork(networkConfig);
     }
 

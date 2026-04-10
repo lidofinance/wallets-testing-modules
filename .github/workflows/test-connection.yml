@@ -51,6 +51,7 @@ jobs:
             xvfb-run --auto-servernum -- yarn test:wallets
         working-directory: wallets-testing
         env:
+          WC_PROJECT_ID: ${{ secrets.WC_PROJECT_ID }}
           RPC_URL_TOKEN: ${{ secrets.RPC_URL_TOKEN }}
           WALLET_SECRET_PHRASE: ${{ secrets.WALLET_SECRET_PHRASE }}
           WALLET_PASSWORD: ${{ secrets.WALLET_PASSWORD }}

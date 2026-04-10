@@ -95,11 +95,11 @@ export class BitgetPage implements WalletPage {
   }
 
   async setupNetwork() {
-    this.logger.debug('Method "setupNetwork()" not implemented.');
+    this.logger.warn('Method "setupNetwork()" not implemented.');
   }
 
   async changeNetwork() {
-    this.logger.debug('Method "changeNetwork()" not implemented.');
+    this.logger.warn('Method "changeNetwork()" not implemented.');
   }
 
   async addNetwork() {

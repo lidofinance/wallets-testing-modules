@@ -153,6 +153,14 @@ export class BrowserService {
   }
 
   private setWalletPage() {
+    const standConfig = {
+      chainId: this.options.networkConfig.chainId,
+      standUrl: this.options.standUrl,
+      rpcUrl:
+        this.ethereumNodeService?.state?.nodeUrl ||
+        this.options.networkConfig.rpcUrl,
+    };
+
     const buildExtensionWalletPage = () => {
       const extension = new Extension(this.browserContextService.extensionId);
 
@@ -161,15 +169,8 @@ export class BrowserService {
         extensionUrl: extension.url,
         accountConfig: this.options.accountConfig,
         walletConfig: this.options.walletConfig,
+        standConfig,
       });
-    };
-
-    const standConfig = {
-      chainId: this.options.networkConfig.chainId,
-      standUrl: this.options.standUrl,
-      rpcUrl:
-        this.ethereumNodeService?.state?.nodeUrl ||
-        this.options.networkConfig.rpcUrl,
     };
 
     switch (this.options.walletConfig.WALLET_TYPE) {

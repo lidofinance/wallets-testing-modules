@@ -13,12 +13,11 @@ export interface CommonWalletConfig {
   EXTENSION_WALLET_NAME: string; // Wallet name for install extension
   CONNECTED_WALLET_NAME: string; // Displayed name of connected wallet
   CONNECT_BUTTON_NAME: string; // Button name in the wallet list
+  SAFE_CONNECT_BUTTON_NAME?: string; // Button name to connect wallet in the Safe UI
   STORE_EXTENSION_ID: string;
   WALLET_TYPE: WalletConnectType;
   LATEST_STABLE_DOWNLOAD_LINK?: string; // Link to stable wallet extension version for test (optional)
   EXTENSION_START_PATH?: string; // Start path for wallet setup
-  // Only for WC_SDK wallets via API @walletconnect/sign-client
-  WC_PROJECT_ID?: string; // WalletConnect Cloud project ID
 }
 
 export enum WalletConnectTypes {
