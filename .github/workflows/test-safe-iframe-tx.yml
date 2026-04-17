@@ -16,9 +16,8 @@ on:
         options:
           - tx-exec_hoodi
           - tx-init_mainnet
-# TEMPORARILY DISABLED
-#  schedule:
-#    - cron: '0 12 * * *'
+  schedule:
+    - cron: '0 12 * * *'
 
 jobs:
   test:
