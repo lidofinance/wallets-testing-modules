@@ -23,7 +23,7 @@ export class SetupPage {
   ) {
     this.setupUrl =
       this.chainId === 1
-        ? 'https://app.safe.global/welcome/accounts'
+        ? 'https://safe-wallet-web.dev.5afe.dev' // Staging gnosis safe
         : 'https://app.safe.protofire.io/welcome/accounts'; //Hoodi
     this.saveCookiesSettingBtn = this.page.locator(
       'button:has-text("Save settings")',
