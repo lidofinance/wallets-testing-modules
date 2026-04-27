@@ -96,7 +96,7 @@ export class WCWallet implements WalletPage {
       return;
     }
 
-    logger.log(`WC: session_request received: ${req.params.request.method}`);
+    logger.log(`event received: ${req.params.request.method}`);
     const waiter = this.requestManager.waiters.shift();
     if (waiter) waiter(req);
     else this.requestManager.queue.push(req);

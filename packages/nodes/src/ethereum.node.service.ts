@@ -159,11 +159,10 @@ export class EthereumNodeService {
     let process;
 
     if (!this.options.useExternalFork) {
-      logger.log('Using local Anvil node...');
       const rpcUrl = this.options.rpcUrl;
       if (!rpcUrl) throw new Error('RPC URL is required');
 
-      logger.log('Starting Anvil node...');
+      logger.log('Starting local Anvil node...');
       process = this.startAnvil();
 
       await this.waitForAnvilReady(nodeUrl, process, {
