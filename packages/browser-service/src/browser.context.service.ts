@@ -117,7 +117,7 @@ export class BrowserContextService {
       this.logger.debug('Browser context closed');
     });
 
-    if (this.options.browserOptions.cookies) {
+    if (this.options.browserOptions.cookies.length > 0) {
       await this.browserContext.addCookies(this.options.browserOptions.cookies);
     }
 

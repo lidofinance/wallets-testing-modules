@@ -20,7 +20,7 @@
     "resolveJsonModule": true,
     "composite": true,
     "sourceMap": true,
-    "lib": ["ES2020"],
+    "lib": ["ESNext", "DOM"],
     "outDir": "./dist",
     "rootDir": "."
   },
