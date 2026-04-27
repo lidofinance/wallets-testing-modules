@@ -23,7 +23,7 @@ import {
   ANVIL_LOG_DIR,
   ANVIL_RESTART_PATTERNS,
 } from './anvil.constants';
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import fs, { WriteStream } from 'node:fs';
 
@@ -587,7 +587,7 @@ export class EthereumNodeService {
 
   static async forceStopNode(port: number): Promise<void> {
     logger.warn(`Port ${port} used. Killing process...`);
-    const pids = execSync(`lsof -ti:${port}`)
+    const pids = execFileSync('lsof', ['-ti', String(port)])
       .toString()
       .trim()
       .split('\n')
