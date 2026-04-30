@@ -42,7 +42,9 @@ export class NetworkSetting {
       'button:has-text("Add URL")',
     );
     this.networkExplorerUrlInput = this.page.getByTestId('explorer-url-input');
-    this.saveNewTokenButton = this.page.getByText('Save');
+    this.saveNewTokenButton = this.saveNewTokenButton = this.page
+      .getByRole('button')
+      .getByText('Save', { exact: true });
   }
 
   async addRpcForNetwork(networkUrl, blockExplorer) {
